@@ -12,13 +12,20 @@
             size="icon"
             class="w-full"
             :class="{ 'bg-blue-50 text-blue-600': route.path === '/' }"
+            @click="router.push('/')"
           >
             <LayoutGrid class="w-5 h-5" />
           </Button>
         </li>
         <li>
-          <Button variant="ghost" size="icon" class="w-full">
-            <Mail class="w-5 h-5" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            class="w-full"
+            :class="{ 'bg-blue-50 text-blue-600': route.path === '/projects' }"
+            @click="router.push('/projects')"
+          >
+            <Inbox class="w-5 h-5" />
           </Button>
         </li>
         <li>
@@ -60,11 +67,11 @@
 </template>
 
 <script setup>
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { Button } from '@/components/ui/button';
   import { 
     LayoutGrid, 
-    Mail, 
+    Inbox, 
     Percent,
     Truck,
     Presentation,    
@@ -74,4 +81,5 @@
   } from 'lucide-vue-next';
 
   const route = useRoute();
+  const router = useRouter();
 </script>
