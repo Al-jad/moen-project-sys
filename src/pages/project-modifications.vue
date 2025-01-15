@@ -1,9 +1,8 @@
 <template>
   <DefaultLayout>
     <main class="p-6 bg-gray-100">
-      <div class="mb-4 bg-white rounded-lg shadow-sm">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-6">
+      <div>
+        <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-6">
               <Button
                 variant="link"
@@ -16,6 +15,10 @@
               <h1 class="text-xl font-bold">الاجراءات الادارية</h1>
             </div>
           </div>
+      </div>
+      <div class="mb-4 bg-white rounded-lg shadow-sm">
+        <div class="p-6">
+
           <div class="flex items-center justify-between gap-4 mb-8">
             <div class="flex items-center gap-6">
               <Button variant="outline" class="px-2">
