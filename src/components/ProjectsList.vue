@@ -7,7 +7,6 @@
         :key="project.id"
         v-bind="{ 
           ...project,
-          progress: 85,
           duration: '12'
         }"
       />
