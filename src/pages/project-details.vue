@@ -120,11 +120,12 @@
                 إجراءات إدارية
               </h1>
               <div>
-                <button class="text-blue-600 hover:underline"
-                  >
-                  عرض سجل التعديلات
-                  </button
+                <button 
+                  @click="router.push({ name: 'project-modifications', params: { id: $route.params.id }})"
+                  class="text-blue-600 hover:underline"
                 >
+                  عرض سجل التعديلات
+                </button>
               </div>
             </div>
             <div class="grid grid-cols-[300px_1fr] gap-x-16 gap-y-6">
@@ -188,7 +189,11 @@
 <script setup>
   import { defineAsyncComponent } from 'vue';
   import { ArrowRight } from 'lucide-vue-next';
+  import { useRouter } from 'vue-router';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import DocumentCard from '@/components/DocumentCard.vue';
+  import { Button } from '@/components/ui/button';
+  
+  const router = useRouter();
   const Map = defineAsyncComponent(() => import('@/components/Map.vue'));
 </script>

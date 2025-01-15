@@ -34,8 +34,8 @@
           </Button>
         </li>
         <li>
-          <Button variant="ghost" size="icon" class="w-full">
-            <Truck class="w-5 h-5" />
+          <Button variant="ghost" size="icon" class="w-full" @click="router.push('/modifications')">
+            <FilePen class="w-5 h-5" />
           </Button>
         </li>
         <li>
@@ -73,7 +73,7 @@
     LayoutGrid, 
     Inbox, 
     MapPinned,
-    Truck,
+    FilePen,
     Presentation,    
     Bell, 
     Settings ,
