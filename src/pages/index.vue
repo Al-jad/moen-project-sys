@@ -132,7 +132,7 @@
                 كل المشاريع
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="projects" class="mt-4">
+            <TabsContent dir="rtl" value="projects" class="mt-4">
               <ProjectsList :projects="allProjects" />
             </TabsContent>
             <TabsContent value="users" class="mt-4">
