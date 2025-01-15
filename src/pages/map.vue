@@ -7,19 +7,19 @@
         </div>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <div class="flex items-center gap-6 p-4 mb-4">
-            <Button variant="primary" class="px-5 py-4 text-white rounded-lg bg-slate-700">
+            <Button variant="primary" class="px-5 py-2 text-white rounded-lg bg-slate-700">
               عرض الكل ( 400 )
             </Button>
-            <Button variant="outline" class="px-5 py-4 border-2 rounded-lg text-slate-700 border-slate-700">
+            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
               المنجزة (100)
             </Button>
-            <Button variant="outline" class="px-5 py-4 border-2 rounded-lg text-slate-700 border-slate-700">
+            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
               قيد التنفيذ (100)
             </Button>
-            <Button variant="outline" class="px-5 py-4 border-2 rounded-lg text-slate-700 border-slate-700">
+            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
               المتلكئة ( 100 )
             </Button>
-            <Button variant="outline" class="px-5 py-4 border-2 rounded-lg text-slate-700 border-slate-700">
+            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
               الملغاة ( 100 )
             </Button>
           </div>
