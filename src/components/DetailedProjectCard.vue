@@ -88,6 +88,10 @@
       default: 'منجز',
     },
     startDate: String,
+    id: {
+      type: [String, Number],
+      required: true
+    }
   });
 
   const router = useRouter();

@@ -22,15 +22,15 @@
             variant="ghost" 
             size="icon" 
             class="w-full"
-            :class="{ 'bg-blue-50 text-blue-600': route.path === '/projects' }"
+            :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/project') }"
             @click="router.push('/projects')"
           >
             <Inbox class="w-5 h-5" />
           </Button>
         </li>
         <li>
-          <Button variant="ghost" size="icon" class="w-full">
-            <Percent class="w-5 h-5" />
+          <Button variant="ghost" size="icon" :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/map') }" class="w-full" @click="router.push('/map')">
+            <MapPinned class="w-5 h-5" />
           </Button>
         </li>
         <li>
@@ -72,7 +72,7 @@
   import { 
     LayoutGrid, 
     Inbox, 
-    Percent,
+    MapPinned,
     Truck,
     Presentation,    
     Bell, 

@@ -30,12 +30,21 @@
       <hr class="border-gray-200" />
       <div class="flex items-end justify-end">
         <div class="flex gap-4">
-          <Button variant="primary" size="xl" class="font-medium text-gray-600 hover:text-gray-900"
-            >عرض</Button
+          <Button 
+            variant="primary" 
+            size="xl" 
+            class="font-medium text-gray-600 hover:text-gray-900"
+            @click="viewProject"
           >
-          <Button variant="ghost" size="xl" class="font-bold text-gray-900 hover:text-gray-600"
-            >تعديل</Button
+            عرض
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="xl" 
+            class="font-bold text-gray-900 hover:text-gray-600"
           >
+            تعديل
+          </Button>
         </div>
       </div>
     </div>
@@ -45,8 +54,14 @@
 <script setup>
   import { Badge } from '@/components/ui/badge';
   import { Button } from '@/components/ui/button';
+  import { useRouter } from 'vue-router';
 
-  defineProps({
+  const router = useRouter();
+  const props = defineProps({
+    id: {
+      type: [String, Number],
+      required: true
+    },
     title: String,
     department: String,
     startDate: String,
@@ -57,4 +72,11 @@
       default: 'default',
     },
   });
+
+  const viewProject = () => {
+    router.push({
+      name: 'project-details',
+      params: { id: props.id.toString() }
+    });
+  };
 </script>

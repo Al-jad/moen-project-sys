@@ -9,11 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/core": "^12.4.0",
     "apexcharts": "^4.3.0",
     "chart.js": "^4.4.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
     "lucide-vue-next": "^0.469.0",
     "radix-vue": "^1.9.12",
     "tailwind-merge": "^2.6.0",
