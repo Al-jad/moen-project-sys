@@ -1,6 +1,6 @@
 <template>
   <div class="fixed right-0 top-0 flex h-1/2 w-[60px] flex-col bg-white">
-    <div class="flex items-center justify-center h-16 pt-4 mt-4">
+    <div class="flex items-center justify-center h-16 pt-4 mt-4 cursor-pointer" @click="router.push('/')">
       <img src="/public/img/Logo.png" alt="Logo" class="bg-transparent" />
     </div>
 

@@ -1,6 +1,6 @@
 <template>
   <header class="fixed top-0 right-[60px] left-0 z-10 flex items-center justify-between p-4 bg-white shadow-md" dir="rtl">
-    <div class="flex flex-col items-center gap-2">
+    <div class="flex flex-col items-center gap-2 cursor-pointer" @click="router.push('/')">
       <h1 class="text-2xl font-bold text-gray-800 transition-colors hover:text-gray-900">برنامج ادارة المشاريع</h1>
       <span class="text-sm font-medium text-gray-600">دائرة التخطيط - وزارة البيئة</span>
     </div>
@@ -40,4 +40,7 @@
 <script setup>
   import { Sun, Bell, User } from 'lucide-vue-next';
   import { Button } from '@/components/ui/button';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 </script>

@@ -148,8 +148,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue'
-import { Sun, Bell, Users, LineChart, Package, MapPin } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
+import { Users, LineChart, Package, MapPin } from 'lucide-vue-next'
 import { 
   Select,
   SelectContent,
