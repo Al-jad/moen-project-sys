@@ -127,7 +127,13 @@
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" class="w-full">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  class="w-full"
+                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/settings') }"
+                  @click="router.push('/settings')"
+                >
                   <Settings class="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
