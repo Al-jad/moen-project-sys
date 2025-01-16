@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/index.vue'
 import Projects from '@/pages/projects.vue'
 import Users from '@/pages/users.vue'
+import Login from '@/pages/login.vue'
+import ProjectDetails from '@/pages/project-details.vue'
+import ProjectModifications from '@/pages/project-modifications.vue'
+import Map from '@/pages/map.vue'
+import Settings from '@/pages/settings.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,27 +24,32 @@ const router = createRouter({
     {
       path: '/projects/:id',
       name: 'project-details',
-      component: () => import('@/pages/project-details.vue')
+      component: ProjectDetails
     },
     {
       path: '/modifications/:id?',
       name: 'modifications',
-      component: () => import('@/pages/project-modifications.vue')
+      component: ProjectModifications
     },
     {
       path: '/map',
       name: 'map',
-      component: () => import('@/pages/map.vue')
+      component: Map
     },
     {
       path: '/users',
       name: 'users',
-      component: () => import('@/pages/users.vue')
+      component: Users
     },
     {
       path: '/settings',
       name: 'settings',
-      component: () => import('@/pages/settings.vue')
+      component: Settings
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     }
   ]
 })
