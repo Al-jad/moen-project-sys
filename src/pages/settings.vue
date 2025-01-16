@@ -1,7 +1,8 @@
 <template>
   <DefaultLayout>
     <main class="p-6 bg-gray-100">
-      <div class="max-w-5xl mx-auto">
+      <div class="max-w-5xl mx-auto space-y-6">
+        <!-- Personal Info Section -->
         <div class="p-6 bg-white rounded-xl">
           <div class="mb-6">
             <h1 class="text-xl font-bold">المعلومات الشخصية</h1>
@@ -12,9 +13,8 @@
             <div class="grid grid-cols-2 gap-x-8 gap-y-4">
               <div>
                 <label class="block mb-2 text-sm">الاسم</label>
-                <input 
+                <Input 
                   type="text" 
-                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value="اصيل السلماسي"
                   readonly
                 />
@@ -22,9 +22,8 @@
 
               <div>
                 <label class="block mb-2 text-sm">رقم الهاتف</label>
-                <input 
+                <Input 
                   type="text" 
-                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value="07724206921"
                   readonly
                 />
@@ -32,9 +31,8 @@
 
               <div>
                 <label class="block mb-2 text-sm">اللقب</label>
-                <input 
+                <Input 
                   type="text" 
-                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value="رئيس مهندسين اقدم"
                   readonly
                 />
@@ -42,9 +40,8 @@
 
               <div>
                 <label class="block mb-2 text-sm">الدائرة والقسم</label>
-                <input 
+                <Input 
                   type="text" 
-                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value="قسم المشاريع دائرة التخطيط"
                   readonly
                 />
@@ -83,13 +80,121 @@
             </div>
           </div>
         </div>
+
+        <!-- Security Settings Section -->
+        <div class="p-6 bg-white rounded-xl">
+          <div class="mb-6">
+            <h1 class="text-xl font-bold">اعدادات الامان</h1>
+            <p class="text-sm text-gray-500">يمكنك تغيير كلمة المرور او تسجيل الخروج من الحساب</p>
+          </div>
+
+          <form @submit.prevent="handlePasswordChange" class="space-y-6" dir="rtl">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between gap-4">
+                <label class="text-sm font-medium min-w-[120px] text-right">كلمة المرور الحالية</label>
+                <div class="relative flex-1">
+                  <div class="relative w-1/2">
+                    <Input
+                      :type="showCurrentPassword ? 'text' : 'password'"
+                      v-model="currentPassword"
+                      placeholder="****************"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost" 
+                      size="icon"
+                      @click="showCurrentPassword = !showCurrentPassword"
+                      class="absolute w-8 h-8 -translate-y-1/2 left-1 top-1/2 hover:bg-transparent"
+                    >
+                      <EyeOff v-if="showCurrentPassword" class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                      <Eye v-else class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-4">
+                <label class="text-sm font-medium min-w-[120px] text-right">كلمة المرور الجديدة</label>
+                <div class="relative flex-1">
+                  <div class="relative w-1/2">
+                    <Input
+                      :type="showNewPassword ? 'text' : 'password'"
+                      v-model="newPassword"
+                      placeholder="ادخل كلمة المرور الجديدة"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost" 
+                      size="icon"
+                      @click="showNewPassword = !showNewPassword"
+                      class="absolute w-8 h-8 -translate-y-1/2 left-1 top-1/2 hover:bg-transparent"
+                    >
+                      <EyeOff v-if="showNewPassword" class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                      <Eye v-else class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-4">
+                <label class="text-sm font-medium min-w-[120px] text-right">تأكيد كلمة المرور</label>
+                <div class="relative flex-1">
+                  <div class="relative w-1/2">
+                    <Input
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      v-model="confirmPassword"
+                      placeholder="تأكيد كلمة المرور"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost" 
+                      size="icon"
+                      @click="showConfirmPassword = !showConfirmPassword"
+                      class="absolute w-8 h-8 -translate-y-1/2 left-1 top-1/2 hover:bg-transparent"
+                    >
+                      <EyeOff v-if="showConfirmPassword" class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                      <Eye v-else class="w-4 h-4 transition-colors text-muted-foreground hover:text-foreground" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr class="border-gray-200">
+            <div class="flex justify-start">
+              <Button type="submit" class="text-white bg-[#003049] hover:bg-[#003049]/90">
+                تأكيد تغيير كلمة المرور
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   </DefaultLayout>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { ImageUp } from 'lucide-vue-next';
+import { ImageUp, Eye, EyeOff } from 'lucide-vue-next';
+
+// Personal info
+const avatarFile = ref(null);
+
+// Password change
+const currentPassword = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmPassword = ref(false);
+
+const handlePasswordChange = () => {
+  // TODO: Implement password change logic
+  console.log('Password change submitted');
+};
 </script> 
