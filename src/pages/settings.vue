@@ -11,19 +11,19 @@
             <div class="grid grid-cols-2 gap-x-8 gap-y-4">
               <div>
                 <label class="block mb-2 text-sm">الاسم</label>
-                <Input type="text" value="اصيل السلماسي" readonly />
+                <Input type="text"  placeholder="اصيل السلماسي" />
               </div>
               <div>
                 <label class="block mb-2 text-sm">رقم الهاتف</label>
-                <Input type="text" value="07724206921" readonly />
+                <Input type="text" placeholder="07724206921" />
               </div>
               <div>
                 <label class="block mb-2 text-sm">اللقب</label>
-                <Input type="text" value="رئيس مهندسين اقدم" readonly />
+                <Input type="text" placeholder="رئيس مهندسين اقدم" />
               </div>
               <div>
                 <label class="block mb-2 text-sm">الدائرة والقسم</label>
-                <Input type="text" value="قسم المشاريع دائرة التخطيط" readonly />
+                <Input type="text" placeholder="قسم المشاريع دائرة التخطيط" />
               </div>
             </div>
             <div>

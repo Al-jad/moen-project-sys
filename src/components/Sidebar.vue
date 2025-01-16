@@ -94,6 +94,26 @@
                   variant="ghost" 
                   size="icon" 
                   class="relative w-full"
+                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/attachments') }"
+                  @click="router.push('/attachments')"
+                >
+                  <Paperclip class="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <p>المرفقات</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </li>
+        <li>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  class="relative w-full"
                   :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/users') }"
                   @click="router.push('/users')"
                 >
@@ -179,7 +199,8 @@ import {
   User,    
   Bell, 
   Settings,
-  Info
+  Info,
+  Paperclip
 } from 'lucide-vue-next';
 
 const route = useRoute();

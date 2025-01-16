@@ -7,7 +7,7 @@ import ProjectDetails from '@/pages/project-details.vue'
 import ProjectModifications from '@/pages/project-modifications.vue'
 import Map from '@/pages/map.vue'
 import Settings from '@/pages/settings.vue'
-
+import Attachment from '@/pages/attachment.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -50,6 +50,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/attachments',
+      name: 'attachments',
+      component: Attachment
     }
   ]
 })
