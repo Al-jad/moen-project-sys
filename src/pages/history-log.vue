@@ -93,8 +93,8 @@
           <!-- Table -->
           <div class="overflow-hidden bg-white border rounded-lg">
             <Table>
-              <TableHeader>
-                <TableRow>
+              <TableHeader >
+                <TableRow class="bg-gray-100">
                   <TableHead class="text-right">اسم الموظف</TableHead>
                   <TableHead class="text-right">المشروع</TableHead>
                   <TableHead class="text-right">تاريخ التعديل</TableHead>
@@ -102,7 +102,7 @@
                   <TableHead class="text-right">حقل التعديل</TableHead>
                   <TableHead class="text-right">القيمة السابقة</TableHead>
                   <TableHead class="text-right">القيمة الجديدة</TableHead>
-                  <TableHead class="text-right">عرض</TableHead>
+                  <TableHead class="text-right"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -157,51 +157,10 @@
       </div>
 
       <!-- View Details Dialog -->
-      <Dialog v-model:open="showDetailsDialog">
-        <DialogContent class="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>تفاصيل التعديل</DialogTitle>
-          </DialogHeader>
-          <div class="grid gap-4 py-4">
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">الموظف</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.employee_name }}
-              </div>
-            </div>
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">المشروع</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.project_name }}
-              </div>
-            </div>
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">التاريخ والوقت</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.date }} {{ selectedLog?.time }}
-              </div>
-            </div>
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">حقل التعديل</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.field }}
-              </div>
-            </div>
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">القيمة السابقة</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.old_value }}
-              </div>
-            </div>
-            <div class="grid items-center grid-cols-4 gap-4">
-              <Label class="text-right">القيمة الجديدة</Label>
-              <div class="col-span-3">
-                {{ selectedLog?.new_value }}
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ViewLogModal 
+        v-model:open="showDetailsDialog"
+        :log="selectedLog"
+      />
 
     </main>
   </DefaultLayout>
@@ -222,7 +181,7 @@ import {
   FileSpreadsheet,
   Eye,
   ArrowRight,
-  Folder
+  FolderClosed
 } from 'lucide-vue-next'
 
 import { 
@@ -243,12 +202,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -256,6 +209,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import ViewLogModal from '@/components/ViewLogModal.vue'
 
 // State
 const search = ref('')
