@@ -128,6 +128,7 @@ import {
   FileClock,
   Building2,
   LogOut,
+  ScrollText,
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -138,13 +139,14 @@ const isAnyItemHovered = ref(false);
 const menuItems = [
   { path: '/', icon: LayoutGrid, label: 'لوحة التحكم' },
   { path: '/projects', icon: Inbox, label: 'المشاريع' },
+  { path: '/contracts', icon: ScrollText, label: 'العقود' },
   { path: '/map', icon: MapPinned, label: 'الخريطة' },
   { path: '/reports', icon: ChartLine, label: 'التقارير و الاحصائيات' },
   { path: '/modifications', icon: FilePen, label: 'الاجراءات الادارية' },
   { path: '/history-log', icon: FileClock, label: 'سجل الأحداث' },
   { path: '/attachments', icon: Paperclip, label: 'المرفقات' },
   { path: '/users', icon: User, label: 'المستخدمين' },
-  { path: '/buildings', icon: Building2, label: 'الجهات المستفيدة' },
+  { path: '/beneficiaries', icon: Building2, label: 'الجهات المستفيدة' },
   { type: 'separator' },
   { path: '/tasks', icon: Bell, label: 'المهام' },
   { path: '/settings', icon: Settings, label: 'الاعدادات' },
