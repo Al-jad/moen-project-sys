@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-[400px] bg-gray-200 p-6">
+  <div class="min-h-screen w-[400px] bg-gray-50 p-6">
     <div class="flex flex-col gap-6">
       <!-- Search Input -->
 

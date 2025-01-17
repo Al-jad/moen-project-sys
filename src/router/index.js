@@ -10,6 +10,7 @@ import Settings from '@/pages/settings.vue'
 import Attachment from '@/pages/attachment.vue'
 import AddAction from '@/pages/add-action.vue'
 import HistoryLog from '@/pages/history-log.vue'
+import Tasks from '@/pages/tasks.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -67,7 +68,12 @@ const router = createRouter({
       path: '/history-log',
       name: 'history-log',
       component: HistoryLog
-    }
+    },
+    {
+      path: '/tasks',
+      name: 'tasks',
+      component: Tasks
+    },
   ]
 })
 

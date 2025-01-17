@@ -144,9 +144,9 @@ const menuItems = [
   { path: '/history-log', icon: FileClock, label: 'سجل الأحداث' },
   { path: '/attachments', icon: Paperclip, label: 'المرفقات' },
   { path: '/users', icon: User, label: 'المستخدمين' },
-  { path: '/buildings', icon: Building2, label: 'الحهات المستفيدة' },
+  { path: '/buildings', icon: Building2, label: 'الجهات المستفيدة' },
   { type: 'separator' },
-  { path: '/notifications', icon: Bell, label: 'الاشعارات' },
+  { path: '/tasks', icon: Bell, label: 'المهام' },
   { path: '/settings', icon: Settings, label: 'الاعدادات' },
   { path: '/info', icon: Info, label: 'المعلومات' },
 ];

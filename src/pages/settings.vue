@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-100">
+    <main class="p-6 bg-gray-50">
       <div class="max-w-5xl mx-auto space-y-6">
         <div class="p-6 bg-white rounded-xl">
           <div class="mb-6">

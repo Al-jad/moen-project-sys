@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-100">
+    <main class="p-6 bg-gray-50">
       <div class="mb-4 bg-white rounded-lg shadow-sm">
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
@@ -94,7 +94,7 @@
           <div class="mb-6">
             <div class="flex items-center justify-between">
               <h1 class="text-xl font-bold">المرفقات (251)</h1>
-              <button class="text-blue-600  hover:underline">الكل</button>
+              <button class="text-blue-600 hover:underline">الكل</button>
             </div>
           </div>
           <div class="grid grid-cols-4 gap-4">
