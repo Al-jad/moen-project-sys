@@ -11,6 +11,7 @@ import Attachment from '@/pages/attachment.vue'
 import AddAction from '@/pages/add-action.vue'
 import HistoryLog from '@/pages/history-log.vue'
 import Tasks from '@/pages/tasks.vue'
+import Contracts from '@/pages/contracts.vue'
 import Beneficiaries from '@/pages/beneficiaries.vue'
 const router = createRouter({
   history: createWebHistory(),
@@ -79,6 +80,11 @@ const router = createRouter({
       path: '/beneficiaries',
       name: 'beneficiaries',
       component: Beneficiaries
+    },
+    {
+      path: '/contracts',
+      name: 'contracts',
+      component: Contracts
     }
   ]
 })
