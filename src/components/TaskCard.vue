@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-6">
+  <div class="grid gap-2 p-4">
     <!-- Project Info -->
     <div class="grid grid-cols-[200px,1fr] gap-8">
       <div class="text-sm text-gray-500">اسم المشروع</div>
@@ -36,7 +36,7 @@
     <!-- Status -->
     <div class="grid grid-cols-[200px,1fr] gap-8">
       <div class="text-sm text-gray-500">حالة المهمة</div>
-      <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
         <div class="flex items-center gap-2">
           <Check v-if="task.status === 'مكتملة'" class="w-4 h-4 font-bold text-green-500 border border-green-500 rounded-full" />
           <p class="text-sm" :class="task.status === 'مكتملة' ? 'text-green-500 font-bold' : 'text-none'">
