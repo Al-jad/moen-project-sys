@@ -1,196 +1,119 @@
 <template>
-  <div class="fixed right-0 top-0 flex h-1/2 w-[60px] flex-col bg-white">
-    <div class="flex items-center justify-center h-16 pt-4 mt-4 cursor-pointer" @click="router.push('/')">
-      <img src="/public/img/Logo.png" alt="Logo" class="bg-transparent" />
+  <div 
+    class="fixed top-0 right-0 z-50 flex flex-col h-screen bg-white shadow-lg group"
+    @mouseenter="isAnyItemHovered = true"
+    @mouseleave="isAnyItemHovered = false"
+  >
+    <div 
+      class="relative flex items-center h-24 overflow-hidden transition-all duration-300 ease-in-out cursor-pointer"
+      :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
+      @click="router.push('/')"
+    >
+      <div class="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-l from-blue-50/30 via-transparent to-transparent group-hover:opacity-100"/>
+      <div class="relative flex items-center justify-center w-full h-full px-3">
+        <img 
+          src="/public/img/Logo.png" 
+          alt="Logo" 
+          class="absolute object-contain w-8 h-8 transition-all duration-300 ease-in-out bg-transparent right-3"
+          :class="{'opacity-100 scale-100': !isAnyItemHovered, 'opacity-0 scale-95': isAnyItemHovered}"
+        />
+        <img 
+          src="/public/img/logo-text.png" 
+          alt="Logo with Text" 
+          class="absolute object-contain h-12 transition-all duration-300 ease-in-out bg-transparent"
+          :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
+        />
+      </div>
     </div>
 
-    <nav class="flex-1 p-2">
-      <ul class="mt-4 space-y-4">
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path === '/' }"
-                  @click="router.push('/')"
-                >
-                  <LayoutGrid class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>لوحة التحكم</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/project') }"
-                  @click="router.push('/projects')"
-                >
-                  <Inbox class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>المشاريع</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/map') }"
-                  @click="router.push('/map')"
-                >
-                  <MapPinned class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>الخريطة</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/modifications') }"
-                  @click="router.push('/modifications')"
-                >
-                  <FilePen class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>الاجراءات الادارية</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/attachments') }"
-                  @click="router.push('/attachments')"
-                >
-                  <Paperclip class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>المرفقات</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="relative w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/users') }"
-                  @click="router.push('/users')"
-                >
-                  <User class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>المستخدمين</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <hr class="w-full h-px bg-gray-200 border-0 rounded">
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" class="w-full">
-                  <Bell class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>الاشعارات</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  class="w-full"
-                  :class="{ 'bg-blue-50 text-blue-600': route.path.startsWith('/settings') }"
-                  @click="router.push('/settings')"
-                >
-                  <Settings class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>الاعدادات</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        <li>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" class="w-full">
-                  <Info class="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>المعلومات</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
+    <nav 
+      class="flex-1 p-2 overflow-hidden transition-all duration-300 ease-in-out"
+      :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
+    >
+      <ul class="mt-4 space-y-1.5">
+        <template v-for="(item, index) in menuItems" :key="index">
+          <li v-if="item.type === 'separator'" class="px-2">
+            <hr class="w-full h-px my-2 border-0 rounded opacity-30 bg-gradient-to-l from-gray-200 to-transparent">
+          </li>
+          <li 
+            v-else
+            class="relative group/item"
+            @mouseenter="hoveredItem = index"
+            @mouseleave="hoveredItem = null"
+          >
+            <div 
+              class="absolute inset-0 transition-opacity duration-200 rounded-md opacity-0 bg-gradient-to-l from-blue-50/20 via-transparent to-transparent group-hover/item:opacity-100"
+              :class="{'!opacity-0': isActive(item.path)}"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              class="relative flex items-center justify-start w-full gap-3 px-3 py-2 transition-all duration-200 ease-in-out rounded-md whitespace-nowrap"
+              :class="{ 
+                'bg-blue-50 text-blue-600': isActive(item.path),
+                'hover:bg-gray-50/50': !isActive(item.path),
+                'scale-[1.01]': hoveredItem === index && !isActive(item.path)
+              }"
+              @click="router.push(item.path)"
+            >
+              <component 
+                :is="item.icon" 
+                class="w-5 h-5 min-w-[20px] transition-transform duration-200"
+                :class="{
+                  'scale-105': hoveredItem === index,
+                  'text-blue-600': isActive(item.path)
+                }"
+              />
+              <span 
+                class="text-sm font-medium transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                :class="{'text-blue-600': isActive(item.path)}"
+              >
+                {{ item.label }}
+              </span>
+              <div 
+                v-if="isActive(item.path)"
+                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-blue-600"
+                :class="{'scale-95': hoveredItem === index}"
+              />
+            </Button>
+          </li>
+        </template>
       </ul>
     </nav>
+
+    <!-- User Profile Section -->
+    <div 
+      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-100 cursor-pointer hover:bg-gray-50/50"
+      :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
+      @click="router.push('/profile')"
+    >
+      <div class="flex items-center gap-3 px-2 py-1.5">
+        <img 
+          src="/public/img/avatar.png" 
+          alt="User Avatar" 
+          class="object-cover w-8 h-8 rounded-full"
+        />
+        <div 
+          class="flex flex-col transition-all duration-300"
+          :class="{'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered}"
+        >
+          <span class="text-sm font-medium whitespace-nowrap">أ. دعاء الشبيلي</span>
+          <span class="text-xs text-gray-500 whitespace-nowrap">مدير المشروع</span>
+        </div>
+        <LogOut 
+          class="w-4 h-4 mr-auto text-gray-400 transition-all duration-200 hover:text-red-500"
+          :class="{'opacity-0 translate-x-2': !isAnyItemHovered, 'opacity-100 translate-x-0': isAnyItemHovered}"
+          @click.stop="handleLogout"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { 
   LayoutGrid, 
   Inbox, 
@@ -200,13 +123,47 @@ import {
   Bell, 
   Settings,
   Info,
-  Paperclip
+  Paperclip,
+  ChartLine,
+  FileClock,
+  Building2,
+  LogOut,
 } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
+const hoveredItem = ref(null);
+const isAnyItemHovered = ref(false);
+
+const menuItems = [
+  { path: '/', icon: LayoutGrid, label: 'لوحة التحكم' },
+  { path: '/projects', icon: Inbox, label: 'المشاريع' },
+  { path: '/map', icon: MapPinned, label: 'الخريطة' },
+  { path: '/reports', icon: ChartLine, label: 'التقارير و الاحصائيات' },
+  { path: '/modifications', icon: FilePen, label: 'الاجراءات الادارية' },
+  { path: '/history-log', icon: FileClock, label: 'سجل الأحداث' },
+  { path: '/attachments', icon: Paperclip, label: 'المرفقات' },
+  { path: '/users', icon: User, label: 'المستخدمين' },
+  { path: '/buildings', icon: Building2, label: 'الحهات المستفيدة' },
+  { type: 'separator' },
+  { path: '/notifications', icon: Bell, label: 'الاشعارات' },
+  { path: '/settings', icon: Settings, label: 'الاعدادات' },
+  { path: '/info', icon: Info, label: 'المعلومات' },
+];
+
+const isActive = (path) => {
+  if (path === '/') return route.path === '/';
+  return route.path.startsWith(path);
+};
+
+const handleLogout = () => {
+  // Add your logout logic here
+  console.log('Logging out...');
+};
 </script>
 
 <style scoped>
-/* Remove CSS tooltip styles as we're using shadcn tooltips now */
+.router-link-active {
+  @apply bg-blue-50 text-blue-600;
+}
 </style>

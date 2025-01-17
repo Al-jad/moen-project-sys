@@ -2,12 +2,6 @@
   <div class="min-h-screen w-[400px] bg-gray-200 p-6">
     <div class="flex flex-col gap-6">
       <!-- Search Input -->
-      <div class="bg-gray-200 rounded-md">
-        <div class="relative">
-          <Search class="absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
-          <Input type="text" placeholder="ابحث عن اسم او وصف او الرقم المرجعي" class="pr-10" />
-        </div>
-      </div>
 
       <div class="p-6 bg-white rounded-md">
         <!-- Filter Header -->
@@ -20,15 +14,13 @@
           </div>
           <hr class="w-full my-2 border-gray-200" />
         </div>
-
-        <!-- Reference Number -->
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">الرقم المرجعي</label>
+        <div class="my-4 rounded-md">
+          <label class="text-sm font-medium text-gray-700"> بحث </label>
           <div class="relative">
-            <Input type="text" placeholder="اكتب الرقم المرجعي" />
+            <Search class="absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
+            <Input type="text" placeholder="ابحث عن اسم او وصف او الرقم المرجعي" class="pr-10" />
           </div>
         </div>
-
         <div>
           <hr class="my-4 border border-gray-100 border-dashed" />
         </div>
@@ -164,8 +156,6 @@
           <div>
             <hr class="my-4 border border-gray-100 border-dashed" />
           </div>
-
-          
         </div>
 
         <!-- Beneficiary -->
@@ -181,7 +171,10 @@
               <label for="beneficiary-baghdad" class="text-sm">مديرية تربية بغداد</label>
             </div>
             <div class="flex items-center gap-2">
-              <Checkbox id="beneficiary-environment" v-model="selectedBeneficiaries.environmentProtection" />
+              <Checkbox
+                id="beneficiary-environment"
+                v-model="selectedBeneficiaries.environmentProtection"
+              />
               <label for="beneficiary-environment" class="text-sm">دائرة حماية تحسين بيئة</label>
             </div>
             <div class="flex items-center gap-2">
@@ -199,17 +192,8 @@
           <hr class="my-4 border border-gray-100 border-dashed" />
         </div>
         <div class="flex gap-3 mt-6">
-          <Button 
-            variant="outline" 
-            class="flex-1 text-gray-700"
-          >
-            الغاء
-          </Button>
-          <Button 
-            class="flex-1 bg-slate-700 "
-          >
-            تطبيق
-          </Button>
+          <Button variant="outline" class="flex-1 text-gray-700"> الغاء </Button>
+          <Button class="flex-1 bg-slate-700"> تطبيق </Button>
         </div>
       </div>
     </div>
@@ -246,6 +230,6 @@
     baghdadEducation: false,
     environmentProtection: false,
     najafEducation: false,
-    basraEducation: false
+    basraEducation: false,
   });
 </script>
