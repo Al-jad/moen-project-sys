@@ -8,6 +8,8 @@ import ProjectModifications from '@/pages/project-modifications.vue'
 import Map from '@/pages/map.vue'
 import Settings from '@/pages/settings.vue'
 import Attachment from '@/pages/attachment.vue'
+import AddAction from '@/pages/add-action.vue'
+import HistoryLog from '@/pages/history-log.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -55,6 +57,16 @@ const router = createRouter({
       path: '/attachments',
       name: 'attachments',
       component: Attachment
+    },
+    {
+      path: '/add-action',
+      name: 'add-action',
+      component: AddAction
+    },
+    {
+      path: '/history-log',
+      name: 'history-log',
+      component: HistoryLog
     }
   ]
 })
