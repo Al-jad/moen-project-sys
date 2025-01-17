@@ -43,7 +43,7 @@
             {{ task.status }}
           </p>
         </div>
-        <Button v-if="task.status !== 'مكتملة'"
+        <Button 
           variant="ghost" 
           class="flex items-center gap-2 p-1 px-2 text-blue-600 border border-blue-600 rounded-lg"
           @click="showStatusModal = true"
