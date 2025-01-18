@@ -97,6 +97,15 @@ const router = createRouter({
       path: '/contracts/:id',
       name: 'contract-details',
       component: ContractDetails
+    },
+    {
+      path: '/reports',
+      name: 'reports',
+      component: () => import('@/pages/reports.vue'),
+      meta: {
+        requiresAuth: true,
+        title: 'التقارير'
+      }
     }
   ]
 })
