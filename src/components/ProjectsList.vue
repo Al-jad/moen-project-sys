@@ -63,7 +63,7 @@ const route = useRoute()
 const useDetailedCard = computed(() => route.path === '/projects')
 
 // Pagination logic
-const itemsPerPage = 5
+const itemsPerPage = 10
 const currentPage = ref(1)
 
 const totalPages = computed(() => Math.ceil(props.projects.length / itemsPerPage))

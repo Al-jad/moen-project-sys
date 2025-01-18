@@ -15,6 +15,8 @@ import Contracts from '@/pages/contracts.vue'
 import Beneficiaries from '@/pages/beneficiaries.vue'
 import ContractDetails from '@/pages/contract-details.vue'
 import UserDetails from '@/pages/user-details.vue'
+import AddProject from '@/pages/add-project.vue'
+import Reports from '@/pages/reports.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -101,11 +103,16 @@ const router = createRouter({
     {
       path: '/reports',
       name: 'reports',
-      component: () => import('@/pages/reports.vue'),
+      component: Reports,
       meta: {
         requiresAuth: true,
         title: 'التقارير'
       }
+    },
+    {
+      path: '/add-project',
+      name: 'add-project',
+      component: AddProject,
     }
   ]
 })

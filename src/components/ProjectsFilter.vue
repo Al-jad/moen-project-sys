@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-[400px] bg-gray-50 p-6">
+  <div class="min-h-screen w-[300px] bg-gray-50 p-6">
     <div class="flex flex-col gap-6">
       <!-- Search Input -->
 
@@ -31,27 +31,36 @@
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <Checkbox id="all" />
-              <label for="all" class="text-sm">الكل</label>
+              <label for="all" class="text-sm text-gray-800">الكل</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="government" />
-              <label for="government" class="text-sm">البرنامج الحكومي</label>
+              <label for="government" class="text-sm text-gray-800">البرنامج الحكومي</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="investment" />
-              <label for="investment" class="text-sm">الموازنة الاستثمارية</label>
+              <label for="investment" class="text-sm text-gray-800">الموازنة الاستثمارية</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="operational" />
-              <label for="operational" class="text-sm">الموازنة التشغيلية</label>
+              <label for="operational" class="text-sm text-gray-800">الموازنة التشغيلية</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="environment" />
-              <label for="environment" class="text-sm">صندوق حماية وتحسين البيئة</label>
+              <label for="environment" class="text-sm text-gray-800">صندوق حماية وتحسين البيئة</label>
+            </div>
+            <div class="flex items-center gap-2">
+              <Checkbox id="environment" />
+              <label for="environment" class="text-sm text-gray-800">صندوق حماية وتحسين البيئة</label>
+            </div>
+            <div class="flex items-center gap-2">
+              <Checkbox id="environment" />
+              <label for="environment" class="text-sm text-gray-800"> 
+                ممولة
+              </label>
             </div>
           </div>
         </div>
-
         <div>
           <hr class="my-4 border border-gray-100 border-dashed" />
         </div>
@@ -68,14 +77,15 @@
               class="w-full"
             />
             <div class="grid grid-cols-2 gap-4">
+              <!-- ! fix -->
               <div class="space-y-2">
                 <label class="text-xs text-gray-500">الحد الادنى</label>
                 <div class="relative">
                   <Input
-                    v-model="budgetRange[0]"
+                    v-model="budgetRange[1]"
                     type="number"
                     :min="100000"
-                    :max="budgetRange[1]"
+                    :max="budgetRange[0]"
                   />
                   <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
                     >د.ع</span
@@ -86,9 +96,9 @@
                 <label class="text-xs text-gray-500">الحد الاعلى</label>
                 <div class="relative">
                   <Input
-                    v-model="budgetRange[1]"
+                    v-model="budgetRange[0]"
                     type="number"
-                    :min="budgetRange[0]"
+                    :min="budgetRange[1]"
                     :max="9000000"
                   />
                   <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"

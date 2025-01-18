@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-white rounded-xl">
-    <div class="grid grid-cols-3 gap-6 p-6">
+  <div class="bg-gray-50 hover:shadow-md hover:scale-[1.01] transition-all duration-300 cursor-pointer hover:bg-white rounded-xl" @click="$router.push(`/projects/${id}`)">
+    <div class="grid grid-cols-3 gap-3 p-6">
       <div class="flex col-span-2">
-        <div class="grid w-full grid-cols-2 gap-y-4">
+        <div class="grid w-full grid-cols-2 gap-y-0">
           <h3 class="text-sm font-medium text-gray-500">اسم المشروع</h3>
           <p class="text-lg font-medium text-gray-900">{{ title }}</p>
           
@@ -17,7 +17,6 @@
         </div>
       </div>
       <div class="flex flex-col items-center justify-center p-4 after:rounded-xl">
-        <h3 class="mb-6 text-base font-semibold text-gray-700">حالة المشروع</h3>
         <div class="relative w-36 h-36">
           <div class="flex items-center justify-center w-full h-full">
             <div class="absolute w-full h-full">
@@ -36,11 +35,12 @@
                   fill="none"
                   :stroke-dasharray="circumference"
                   :stroke-dashoffset="circumference"
-                  class="transition-all duration-700 ease-out animate-progress-fill"
+                  class="transition-all duration-[2500ms] ease-out hover:[stroke-dashoffset:0] animate-progress-fill"
                 />
               </svg>
             </div>
             <div class="flex flex-col items-center justify-center space-y-2 text-center">
+              <!--! number progrees too -->
               <span class="text-4xl font-bold" :class="statusTextColor">
                 {{ progress }}%
               </span>
@@ -53,19 +53,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="grid items-center grid-cols-2 gap-4 px-4 py-6">
-      <Button
-        variant="primary"
-        class="p-5 text-sm font-medium text-white rounded-lg bg-slate-700 hover:bg-slate-700/90"
-      >
-        تعديل المشروع
-      </Button>
-      <Button @click="router.push({ name: 'project-details', params: { id }})" variant="outline" class="p-5 text-sm font-medium text-gray-900 border-gray-900">
-        عرض المشروع
-      </Button>
     </div>
   </div>
 </template>
