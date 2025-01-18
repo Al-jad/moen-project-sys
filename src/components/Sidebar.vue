@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="fixed top-0 right-0 z-50 flex flex-col h-screen bg-white shadow-lg group"
+    class="fixed top-0 right-0 z-50 flex flex-col h-screen shadow-lg bg-[#08182F] group"
     @mouseenter="isAnyItemHovered = true"
     @mouseleave="isAnyItemHovered = false"
   >
@@ -9,7 +9,7 @@
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/')"
     >
-      <div class="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-l from-blue-50/30 via-transparent to-transparent group-hover:opacity-100"/>
+      <div class="absolute inset-0 transition-opacity duration-300 bg-white opacity-0 group-hover:opacity-100"/>
       <div class="relative flex items-center justify-center w-full h-full px-3">
         <img 
           src="/public/img/Logo.png" 
@@ -20,8 +20,8 @@
         <img 
           src="/public/img/logo-text.png" 
           alt="Logo with Text" 
-          class="absolute object-contain h-12 transition-all duration-300 ease-in-out bg-transparent"
-          :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
+            class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
+            :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
         />
       </div>
     </div>
@@ -50,7 +50,7 @@
               size="icon"
               class="relative flex items-center justify-start w-full gap-3 px-3 py-2 transition-all duration-200 ease-in-out rounded-md whitespace-nowrap"
               :class="{ 
-                'bg-blue-50 text-blue-600': isActive(item.path),
+                'bg-[#08182F] bg-opacity-30 text-[#08182F]': isActive(item.path),
                 'hover:bg-gray-50/50': !isActive(item.path),
                 'scale-[1.01]': hoveredItem === index && !isActive(item.path)
               }"
@@ -58,21 +58,21 @@
             >
               <component 
                 :is="item.icon" 
-                class="w-5 h-5 min-w-[20px] transition-transform duration-200"
+                class="w-5 h-5 min-w-[20px] text-white transition-transform duration-200"
                 :class="{
                   'scale-105': hoveredItem === index,
-                  'text-blue-600': isActive(item.path)
+                  'text-white': isActive(item.path)
                 }"
               />
               <span 
-                class="text-sm font-medium transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
-                :class="{'text-blue-600': isActive(item.path)}"
+                class="text-sm font-medium text-white transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                :class="{'text-white': isActive(item.path)}"
               >
                 {{ item.label }}
               </span>
               <div 
                 v-if="isActive(item.path)"
-                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-blue-600"
+                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-white"
                 :class="{'scale-95': hoveredItem === index}"
               />
             </Button>
@@ -166,6 +166,6 @@ const handleLogout = () => {
 
 <style scoped>
 .router-link-active {
-  @apply bg-blue-50 text-blue-600;
+  @apply bg-[#08182F] text-white;
 }
 </style>
