@@ -102,7 +102,7 @@
                   }"
                 >
                   <TableCell>
-                    <Button variant="link" class="h-auto p-0 text-blue-600">
+                    <Button @click="$router.push('/users/1')" variant="link" class="h-auto p-0 text-blue-600">
                       {{ n % 2 === 0 ? 'محمد انور' : ' دعاء الشيخلي' }}
                     </Button>
                   </TableCell>

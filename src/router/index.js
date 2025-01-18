@@ -14,6 +14,7 @@ import Tasks from '@/pages/tasks.vue'
 import Contracts from '@/pages/contracts.vue'
 import Beneficiaries from '@/pages/beneficiaries.vue'
 import ContractDetails from '@/pages/contract-details.vue'
+import UserDetails from '@/pages/user-details.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -46,6 +47,11 @@ const router = createRouter({
       path: '/users',
       name: 'users',
       component: Users
+    },
+    {
+      path: '/users/:id',
+      name: 'user-details',
+      component: UserDetails
     },
     {
       path: '/settings',
