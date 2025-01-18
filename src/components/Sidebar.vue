@@ -14,7 +14,7 @@
         <img 
           src="/public/img/Logo.png" 
           alt="Logo" 
-          class="absolute object-contain w-8 h-8 transition-all duration-300 ease-in-out bg-transparent right-3"
+          class="absolute object-contain w-10 h-12 transition-all duration-300 ease-in-out bg-transparent right-3"
           :class="{'opacity-100 scale-100': !isAnyItemHovered, 'opacity-0 scale-95': isAnyItemHovered}"
         />
         <img 
@@ -97,7 +97,7 @@
           class="flex flex-col transition-all duration-300"
           :class="{'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered}"
         >
-          <span class="text-sm font-medium whitespace-nowrap">أ. دعاء الشبيلي</span>
+          <span class="text-sm font-medium whitespace-nowrap">أ. دعاء الشيخلي</span>
           <span class="text-xs text-gray-500 whitespace-nowrap">مدير المشروع</span>
         </div>
         <LogOut 
