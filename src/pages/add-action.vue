@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50">
+    <main class="min-h-screen p-6 max-w-screen bg-gray-50">
       <div>
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-6">
@@ -94,9 +94,9 @@
               
             </div>
           </div>
-          <div class="w-full">
+          <div class="w-full overflow-x-auto">
             <Table class="overflow-hidden border rounded-xl">
-              <TableHeader class="text-right text-nowrap">
+              <TableHeader class="text-right">
                 <TableRow class="bg-gray-100">
                   <TableHead class="text-right text-gray-900 first:rounded-tr-xl">اسم الاجراء</TableHead>
                   <TableHead class="text-right text-gray-900">

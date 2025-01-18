@@ -95,6 +95,7 @@
             v-for="contract in filteredContracts" 
             :key="contract.id"
             :contract="contract"
+            @show-details="$router.push(`/contract-details/${contract.id}`)"
           />
         </div>
 
