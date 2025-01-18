@@ -2,8 +2,18 @@
   <DefaultLayout>
     <main class="p-6 bg-gray-50">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold">العقود</h1>
-      </div>
+            <div class="flex items-center gap-6">
+              <Button
+                variant="link"
+                @click="$router.push('/')"
+                class="flex items-center text-blue-600"
+              >
+                <ArrowRight class="w-4 h-4" />
+                الرئيسية
+              </Button>
+              <h1 class="text-xl font-bold">العقود</h1>
+            </div>
+          </div>
 
       <!-- Controls Container -->
       <div class="p-6 bg-white rounded-lg">
@@ -56,11 +66,11 @@
               <PopoverTrigger>
                 <Button variant="outline" class="flex justify-start w-56 text-black">
                   <CalendarIcon class="w-4 h-4 ml-2 text-gray-400" />
-                  {{ dateFrom ? formatDate(dateFrom) : 'من تاريخ الى' }}
+                  {{ date?.start ? dateRangeText : 'اختر التاريخ' }}
                 </Button>
               </PopoverTrigger>
               <PopoverContent class="w-auto p-0">
-                <Calendar v-model="dateFrom" />
+                <RangeCalendar v-model="date" :number-of-months="2" />
               </PopoverContent>
             </Popover>
           </div>
@@ -80,46 +90,12 @@
         </div>
 
         <!-- Cards Grid -->
-        <div class="space-y-4">
-          <Card v-for="contract in filteredContracts" :key="contract.id" class="p-6 transition-all hover:shadow-md">
-            <div class="grid grid-cols-3 gap-6">
-              <!-- Contract Number -->
-              <div class="text-right">
-                <p class="mb-2 text-sm text-muted-foreground">رقم العقد</p>
-                <p class="text-lg font-medium">{{ contract.number }}</p>
-              </div>
-              
-              <!-- Company -->
-              <div class="text-center">
-                <p class="mb-2 text-sm text-muted-foreground">الشركة المنفذة</p>
-                <p class="text-lg font-medium">{{ contract.company }}</p>
-              </div>
-              
-              <!-- Amount -->
-              <div class="text-left">
-                <p class="mb-2 text-sm text-muted-foreground">المبلغ العقد</p>
-                <p class="text-lg font-medium">{{ contract.amount.toLocaleString() }}</p>
-              </div>
-
-              <!-- Sign Date -->
-              <div class="text-right">
-                <p class="mb-2 text-sm text-muted-foreground">تاريخ التوقيع</p>
-                <p class="text-lg font-medium">{{ contract.signDate }}</p>
-              </div>
-              
-              <!-- Referral Date -->
-              <div class="text-center">
-                <p class="mb-2 text-sm text-muted-foreground">تاريخ الاحالة</p>
-                <p class="text-lg font-medium">{{ contract.referralDate }}</p>
-              </div>
-              
-              <!-- Change Orders -->
-              <div class="text-left">
-                <p class="mb-2 text-sm text-muted-foreground">عدد الاوامر التغييرية</p>
-                <p class="text-lg font-medium">({{ contract.changeOrders }})</p>
-              </div>
-            </div>
-          </Card>
+        <div class="space-y-3">
+          <ContractCard 
+            v-for="contract in filteredContracts" 
+            :key="contract.id"
+            :contract="contract"
+          />
         </div>
 
         <!-- Pagination -->
@@ -151,14 +127,17 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ArrowRight } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
+import type { DateRange } from 'radix-vue'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
+import ContractCard from '@/components/ContractCard.vue'
 import {
   Select,
   SelectContent,
@@ -167,7 +146,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
+import { RangeCalendar } from '@/components/ui/range-calendar'
 import {
   Pagination,
   PaginationContent,
@@ -179,34 +158,66 @@ import {
 import { 
   Search, 
   FileText, 
-  Settings2, 
   Calendar as CalendarIcon,
   FileSpreadsheet,
   Folder
 } from 'lucide-vue-next'
 
+interface Project {
+  id: string
+  name: string
+}
+
+interface ContractListItem {
+  id: string
+  name: string
+}
+
+interface Contract {
+  id: number
+  number: string
+  company: string
+  amount: number
+  signDate: string
+  referralDate: string
+  changeOrders: number
+  projectId?: string
+}
+
 const searchQuery = ref('')
 const currentPage = ref(1)
-const selectedProject = ref('all')
-const selectedContract = ref('all')
-const dateFrom = ref('')
+const selectedProject = ref<string>('all')
+const selectedContract = ref<string>('all')
+const date = ref<DateRange>()
 const itemsPerPage = 7
 
+const df = new DateFormatter('ar', { dateStyle: 'medium' })
+
+const dateRangeText = computed(() => {
+  if (!date.value?.start) return ''
+
+  if (!date.value?.end) {
+    return df.format(date.value.start.toDate(getLocalTimeZone()))
+  }
+
+  return `${df.format(date.value.start.toDate(getLocalTimeZone()))} - ${df.format(date.value.end.toDate(getLocalTimeZone()))}`
+})
+
 // Mock data for dropdowns
-const projects = ref([
-  { id: 1, name: 'مشروع A' },
-  { id: 2, name: 'مشروع B' },
-  { id: 3, name: 'مشروع C' },
+const projects = ref<Project[]>([
+  { id: '1', name: 'مشروع A' },
+  { id: '2', name: 'مشروع B' },
+  { id: '3', name: 'مشروع C' },
 ])
 
-const contractsList = ref([
-  { id: 1, name: 'عقد A' },
-  { id: 2, name: 'عقد B' },
-  { id: 3, name: 'عقد C' },
+const contractsList = ref<ContractListItem[]>([
+  { id: '1', name: 'عقد A' },
+  { id: '2', name: 'عقد B' },
+  { id: '3', name: 'عقد C' },
 ])
 
-// Sample contracts data
-const contracts = ref([
+// Update the contracts data with projectId
+const contracts = ref<Contract[]>([
   {
     id: 1,
     number: '23/2025',
@@ -214,7 +225,8 @@ const contracts = ref([
     amount: 23333000,
     signDate: '8/07/2025',
     referralDate: '6/07/2025',
-    changeOrders: 6
+    changeOrders: 6,
+    projectId: '1'
   },
   {
     id: 2,
@@ -223,7 +235,8 @@ const contracts = ref([
     amount: 23333000,
     signDate: '8/07/2025',
     referralDate: '6/07/2025',
-    changeOrders: 6
+    changeOrders: 6,
+    projectId: '2'
   },
   {
     id: 3,
@@ -232,7 +245,8 @@ const contracts = ref([
     amount: 23333000,
     signDate: '8/07/2025',
     referralDate: '6/07/2025',
-    changeOrders: 6
+    changeOrders: 6,
+    projectId: '3'
   }
 ])
 
@@ -252,7 +266,7 @@ const getContractName = (id) => {
   return contract ? contract.name : ''
 }
 
-// Computed
+// Update the filteredContracts computed to handle type checking
 const filteredContracts = computed(() => {
   let filtered = contracts.value
 
@@ -269,11 +283,19 @@ const filteredContracts = computed(() => {
   }
 
   if (selectedContract.value !== 'all') {
-    filtered = filtered.filter(contract => contract.id === selectedContract.value)
+    filtered = filtered.filter(contract => contract.id === Number(selectedContract.value))
   }
 
-  if (dateFrom.value) {
-    filtered = filtered.filter(contract => new Date(contract.signDate) >= dateFrom.value)
+  if (date.value?.start) {
+    const startDate = date.value.start.toDate(getLocalTimeZone())
+    const endDate = date.value.end?.toDate(getLocalTimeZone())
+    
+    filtered = filtered.filter(contract => {
+      const contractDate = new Date(contract.signDate)
+      if (contractDate < startDate) return false
+      if (endDate && contractDate > endDate) return false
+      return true
+    })
   }
 
   return filtered

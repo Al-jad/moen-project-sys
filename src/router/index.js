@@ -13,6 +13,7 @@ import HistoryLog from '@/pages/history-log.vue'
 import Tasks from '@/pages/tasks.vue'
 import Contracts from '@/pages/contracts.vue'
 import Beneficiaries from '@/pages/beneficiaries.vue'
+import ContractDetails from '@/pages/contract-details.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -85,6 +86,11 @@ const router = createRouter({
       path: '/contracts',
       name: 'contracts',
       component: Contracts
+    },
+    {
+      path: '/contracts/:id',
+      name: 'contract-details',
+      component: ContractDetails
     }
   ]
 })
