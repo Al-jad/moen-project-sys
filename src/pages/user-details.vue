@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50">
+    <main class="p-6 bg-gray-200">
       <div class="flex items-center justify-between mb-6">
         <Button variant="link" @click="$router.back()" class="flex items-center gap-2 text-blue-500">
           <ArrowRight class="w-4 h-4" />

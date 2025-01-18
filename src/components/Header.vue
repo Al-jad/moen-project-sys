@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed top-0 right-[60px] left-0 shadow-sm z-10 flex items-center justify-between p-4 bg-[#08182F] text-white" dir="rtl">
+  <header class="fixed top-0 right-[60px] left-0 z-10 flex items-center justify-between p-2 bg-[#08182F] shadow-md shadow-gray-400 text-white" dir="rtl">
     <div class="flex flex-col items-center gap-2 cursor-pointer" @click="router.push('/')">
       <h1 class="text-2xl font-bold text-white transition-colors hover:text-gray-200">برنامج ادارة المشاريع</h1>
       <span class="text-sm font-medium text-gray-200">دائرة التخطيط - وزارة البيئة</span>

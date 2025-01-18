@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <div class="p-6 space-y-6 bg-gray-50">
+    <div class="p-6 space-y-6 bg-gray-200">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center justify-between gap-2">
           <Button variant="link" class="gap-2 text-blue-500 hover:text-blue-600 hover:underline">

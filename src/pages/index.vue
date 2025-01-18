@@ -2,7 +2,7 @@
   <div class="flex" dir="rtl">
     <Sidebar />
     
-    <main class="flex-1 mr-[60px] bg-gray-50">
+    <main class="flex-1 mr-[60px] bg-gray-200">
       <Header />
       
       <div class="p-6 mt-[6%]">
@@ -11,80 +11,58 @@
         </h1>
         <!-- Stats Cards -->
         <div class="grid grid-cols-4 gap-4 mb-8">
-          <div class="p-8 bg-white shadow rounded-xl">
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col gap-2 text-right">
-                <p class="text-sm text-gray-500">كل المشاريع</p>
-                <p class="text-2xl font-bold">1,582</p>
-              </div>
-              <div class="p-2 bg-blue-100 rounded-full">
-                <Users class="w-6 h-6 text-blue-500" />
-              </div>
-            </div>
-          </div>
-          <div class="p-8 bg-white shadow rounded-xl">
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col gap-2 text-right">
-                <p class="text-sm text-gray-500">المنجزة</p>
-                <p class="text-2xl font-bold">982</p>
-              </div>
-              <div class="p-2 bg-green-100 rounded-full">
-                <Users class="w-6 h-6 text-green-500" />
-              </div>
-            </div>
-          </div>
-
-          <div class="p-8 bg-white shadow rounded-xl">
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col gap-2 text-right">
-                <p class="text-sm text-gray-500">المتلكئة</p>
-                <p class="text-2xl font-bold">245</p>
-              </div>
-              <div class="p-2 bg-yellow-100 rounded-full">
-                <LineChart class="w-6 h-6 text-yellow-500" />
-              </div>
-            </div>
-          </div>
-
-          <div class="p-8 bg-white shadow rounded-xl">
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col gap-2 text-right">
-                <p class="text-sm text-gray-500">قيد التنفيذ</p>
-                <p class="text-2xl font-bold">382</p>
-              </div>
-              <div class="p-2 bg-orange-100 rounded-full">
-                <Package class="w-6 h-6 text-orange-500" />
-              </div>
-            </div>
-          </div>
+          <ProjectStatCard
+            title="كل المشاريع"
+            :count="1582"
+            color="blue"
+            :icon="Users"
+          />
+          <ProjectStatCard
+            title="المنجزة"
+            :count="982"
+            color="green"
+            :icon="Users  "
+          />
+          <ProjectStatCard
+            title="قيد التنفيذ"
+            :count="382"
+            color="orange"
+            :icon="Users"
+          />
+          <ProjectStatCard
+            title="المتلكئة"
+            :count="245"
+            color="yellow"
+            :icon="Users"
+          />
         </div>
         <h1 class="mb-4 text-2xl font-bold text-right">
           الاختصارات
         </h1>
         <!-- Shortcuts Cards -->
         <div class="grid grid-cols-4 gap-4 mb-8">
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl">
+          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]">
             <span class="text-sm font-medium">البرنامج الحكومي</span>
             <div class="p-2">
               <Users class="w-12 h-12 p-2 rounded-full bg-sky-100 text-sky-500" />
             </div>
           </div>
 
-          <div class="flex items-center justify-between p-8 bg-white shadow cursor-pointer rounded-xl" @click="router.push('/projects')">
+          <div class="flex items-center justify-between p-8 bg-white shadow cursor-pointer rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]" @click="router.push('/projects')">
             <span class="text-sm font-medium">المشاريع</span>
             <div class="p-2">
               <Users class="w-12 h-12 p-2 rounded-full bg-sky-100 text-sky-500" />
             </div>
           </div>
 
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl">
+          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]">
             <span class="text-sm font-medium">تقرير رئاسة الوزراء</span>
             <div class="p-2">
               <LineChart class="w-12 h-12 p-2 text-green-500 bg-green-100 rounded-full" />
             </div>
           </div>
 
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl">
+          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01] cursor-pointer" @click="router.push('/map')">
             <span class="text-sm font-medium">بيانات على الخارطة</span>
             <div class="p-2">
               <MapPin class="w-12 h-12 p-2 text-yellow-500 bg-yellow-100 rounded-full" />
@@ -169,6 +147,12 @@ import {
 } from '@/components/ui/tabs'
 import ProjectsList from '@/components/ProjectsList.vue'
 import UsersList from '@/components/UsersList.vue'
+import ProjectStatCard from '@/components/ProjectStatCard.vue'
+
+// import AllProjectsIcon from '/public/img/icons/all-projects.svg'  
+// import DoneProjectsIcon from '/public/img/icons/done-projects.svg'
+// import PendingProjectsIcon from '/public/img/icons/pending-projects.svg'
+// import UndoneProjectsIcon from '/public/img/icons/undone-projects.svg'
 
 const selectedYear = ref('2024 - 2025')
 const router = useRouter();
@@ -262,59 +246,59 @@ const mockUsers = [
   {
     id: 1,
     name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
+    title: ' دائرة التخطيط - قسم المشاريع',
     avatar: '/img/avatar.png',
     isActive: true
   },
   {
     id: 2,
+    name: 'أ.  محمد علي',
+    title: ' دائرة التخطيط - قسم المشاريع',
+    avatar: '/img/avatar-2.png',
+    isActive: true
+  },
+  {
+    id: 1,
     name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
+    title: ' دائرة التخطيط - قسم المشاريع',
     avatar: '/img/avatar.png',
     isActive: true
   },
   {
-    id: 3,
-    name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
-    avatar: '/img/avatar.png',
-    isActive: false
+    id: 2,
+    name: 'أ.  محمد علي',
+    title: ' دائرة التخطيط - قسم المشاريع',
+    avatar: '/img/avatar-2.png',
+    isActive: true
   },
   {
-    id: 4,
+    id: 1,
     name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
+    title: ' دائرة التخطيط - قسم المشاريع',
     avatar: '/img/avatar.png',
     isActive: true
   },
   {
-    id: 5,
+    id: 2,
+    name: 'أ.  محمد علي',
+    title: ' دائرة التخطيط - قسم المشاريع',
+    avatar: '/img/avatar-2.png',
+    isActive: true
+  },
+  {
+    id: 1,
     name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
+    title: ' دائرة التخطيط - قسم المشاريع',
     avatar: '/img/avatar.png',
     isActive: true
   },
   {
-    id: 6,
-    name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
-    avatar: '/img/avatar.png',
-    isActive: false
+    id: 2,
+    name: 'أ.  محمد علي',
+    title: ' دائرة التخطيط - قسم المشاريع',
+    avatar: '/img/avatar-2.png',
+    isActive: true
   },
-  {
-    id: 7,
-    name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
-    avatar: '/img/avatar.png',
-    isActive: false
-  },  
-  {
-    id: 8,
-    name: 'أ. دعاء الشيخلي',
-    title: 'مديرة المشروع',
-    avatar: '/img/avatar.png',
-    isActive: false
-  }
 ]
 </script>
 

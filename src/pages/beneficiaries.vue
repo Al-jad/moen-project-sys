@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50">
+    <main class="p-6 bg-gray-200">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">الجهات المستفيدة</h1>
         <div class="flex items-center gap-4">

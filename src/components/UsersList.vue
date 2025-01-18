@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-4 gap-4">
-    <div v-for="user in users" :key="user.id" class="p-6 bg-white shadow-sm rounded-xl">
+  <div class="grid grid-cols-4 gap-4 ">
+    <div v-for="user in users" :key="user.id" class="p-6 bg-white shadow-sm rounded-xl cursor-pointer hover:scale-[1.01] transition-all duration-300 hover:shadow-md" @click="$router.push(`/users/${user.id}`)">
       <div class="flex flex-col items-center gap-4">
         <div class="relative">
           <img 
@@ -16,8 +16,8 @@
           <h3 class="text-lg font-medium text-gray-900">{{ user.name }}</h3>
           <p class="text-sm text-gray-500">{{ user.title }}</p>
         </div>
-        <Button variant="outline" size="sm" class="w-1/2 rounded-full border-sky-500 text-sky-500">
-          صلاحية
+        <Button variant="outline" size="xs" class="w-1/3 py-2 text-xs rounded-full border-sky-500 text-sky-500">
+          مدير المشروع
         </Button>
       </div>
     </div>

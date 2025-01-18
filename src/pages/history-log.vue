@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50">
+    <main class="p-6 bg-gray-200">
       <div>
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">

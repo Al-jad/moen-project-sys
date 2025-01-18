@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50">
+    <main class="p-6 bg-gray-200">
       <!-- Header -->
       <div class="flex items-center justify-start gap-2 mb-6">
         <Button

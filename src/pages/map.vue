@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <main class="p-4 bg-gray-50">
+    <main class="p-4 bg-gray-200">
       <div class="container p-4 mx-auto">
         <div class="flex flex-col items-center justify-between mb-8 md:flex-row">
           <h1 class="text-xl font-bold text-right"> عرض المشاريع على الخارطة </h1>
