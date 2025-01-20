@@ -83,7 +83,7 @@
 
     <!-- User Profile Section -->
     <div 
-      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-100 cursor-pointer hover:bg-gray-50/50"
+      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-100 cursor-pointer hover:bg-gray-50/10"
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/profile')"
     >
@@ -94,14 +94,14 @@
           class="object-cover w-8 h-8 rounded-full"
         />
         <div 
-          class="flex flex-col transition-all duration-300"
+          class="flex flex-col text-white transition-all duration-300"
           :class="{'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered}"
         >
           <span class="text-sm font-medium whitespace-nowrap">أ. دعاء الشيخلي</span>
-          <span class="text-xs text-gray-500 whitespace-nowrap">مدير المشروع</span>
+          <span class="text-xs whitespace-nowrap">مدير المشروع</span>
         </div>
         <LogOut 
-          class="w-4 h-4 mr-auto text-gray-400 transition-all duration-200 hover:text-red-500"
+          class="w-4 h-4 mr-auto text-white transition-all duration-200 hover:text-red-500"
           :class="{'opacity-0 translate-x-2': !isAnyItemHovered, 'opacity-100 translate-x-0': isAnyItemHovered}"
           @click.stop="handleLogout"
         />
