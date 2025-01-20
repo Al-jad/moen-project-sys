@@ -14,26 +14,22 @@
           <ProjectStatCard
             title="كل المشاريع"
             :count="1582"
-            color="blue"
-            :icon="Users"
+            :icon="AllProjectsIcon"
           />
           <ProjectStatCard
             title="المنجزة"
             :count="982"
-            color="green"
-            :icon="Users  "
+            :icon="DoneProjectsIcon"
           />
           <ProjectStatCard
             title="قيد التنفيذ"
             :count="382"
-            color="orange"
-            :icon="Users"
+            :icon="PendingProjectsIcon"
           />
           <ProjectStatCard
             title="المتلكئة"
             :count="245"
-            color="yellow"
-            :icon="Users"
+            :icon="UndoneProjectsIcon"
           />
         </div>
         <h1 class="mb-4 text-2xl font-bold text-right">
@@ -74,19 +70,16 @@
         <div class="w-full p-6 bg-white rounded-lg shadow">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
-              <Select v-model="selectedYear" class="w-[140px]">
-                <SelectTrigger>
-                  <SelectValue :placeholder="selectedYear" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>السنة</SelectLabel>
-                    <SelectItem value="2024 - 2025">2024 - 2025</SelectItem>
-                    <SelectItem value="2023 - 2024">2023 - 2024</SelectItem>
-                    <SelectItem value="2022 - 2023">2022 - 2023</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <CustomSelect
+                v-model="selectedYear"
+                :options="[
+                  { value: '2024 - 2025', label: '2024 - 2025' },
+                  { value: '2023 - 2024', label: '2023 - 2024' },
+                  { value: '2022 - 2023', label: '2022 - 2023' }
+                ]"
+                label="السنة"
+                class="w-[140px]"
+              />
             </div>
           </div>
           <div class="w-full">
@@ -125,7 +118,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, computed } from 'vue'
+import { ref, computed, defineComponent, h } from 'vue'
 import { Users, LineChart, Package, MapPin } from 'lucide-vue-next'
 import { 
   Select,
@@ -148,11 +141,36 @@ import {
 import ProjectsList from '@/components/ProjectsList.vue'
 import UsersList from '@/components/UsersList.vue'
 import ProjectStatCard from '@/components/ProjectStatCard.vue'
+import CustomSelect from '@/components/CustomSelect.vue'
 
-// import AllProjectsIcon from '/public/img/icons/all-projects.svg'  
-// import DoneProjectsIcon from '/public/img/icons/done-projects.svg'
-// import PendingProjectsIcon from '/public/img/icons/pending-projects.svg'
-// import UndoneProjectsIcon from '/public/img/icons/undone-projects.svg'
+// Replace the direct SVG imports with component imports
+const AllProjectsIcon = defineComponent({
+  name: 'AllProjectsIcon',
+  render() {
+    return h('img', { src: '/img/icons/all-projects.svg', class: 'w-12 h-12' })
+  }
+})
+
+const DoneProjectsIcon = defineComponent({
+  name: 'DoneProjectsIcon',
+  render() {
+    return h('img', { src: '/img/icons/done-projects.svg', class: 'w-12 h-12' })
+  }
+})
+
+const PendingProjectsIcon = defineComponent({
+  name: 'PendingProjectsIcon',
+  render() {
+    return h('img', { src: '/img/icons/pending-projects.svg', class: 'w-12 h-12' })
+  }
+})
+
+const UndoneProjectsIcon = defineComponent({
+  name: 'UndoneProjectsIcon',
+  render() {
+    return h('img', { src: '/img/icons/undone-projects.svg', class: 'w-12 h-12' })
+  }
+})
 
 const selectedYear = ref('2024 - 2025')
 const router = useRouter();

@@ -113,19 +113,12 @@
         <!-- Implementation Years -->
         <div class="space-y-2">
           <label class="text-sm text-gray-600">سنوات التنفيذ</label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="جميع المواعيد" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">جميع المواعيد</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2022">2022</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <CustomSelect
+            v-model="selectedYear"
+            :options="implementationYears"
+            placeholder="جميع المواعيد"
+            :triggerClass="'flex flex-row-reverse w-full'"
+          />
         </div>
 
         <div>
@@ -217,23 +210,9 @@
   import { Input } from '@/components/ui/input';
   import { Checkbox } from '@/components/ui/checkbox';
   import { Slider } from '@/components/ui/slider';
-  import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from '@/components/ui/select';
+  import CustomSelect from '@/components/CustomSelect.vue'
 
   const budgetRange = ref([100000, 9000000]);
-
-  const selectedStatuses = ref({
-    all: true,
-    completed: false,
-    inProgress: false,
-    delayed: false,
-  });
 
   const selectedBeneficiaries = ref({
     all: true,
@@ -242,4 +221,13 @@
     najafEducation: false,
     basraEducation: false,
   });
+
+  const selectedYear = ref('all')
+
+  const implementationYears = [
+    { value: 'all', label: 'جميع المواعيد' },
+    { value: '2024', label: '2024' },
+    { value: '2023', label: '2023' },
+    { value: '2022', label: '2022' }
+  ]
 </script>

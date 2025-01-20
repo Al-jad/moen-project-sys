@@ -8,7 +8,7 @@
       <div :class="`p-2 bg-${color}-100 rounded-full`">
         <component 
           :is="icon" 
-          class="w-6 h-6" 
+          class="w-12 h-12" 
           :class="`text-${color}-500`" 
         />
       </div>

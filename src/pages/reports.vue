@@ -30,15 +30,19 @@
           <div class="flex items-center justify-between p-2 mb-4">
             <CardTitle>تقرير تقدم العمل للمشروع</CardTitle>
             <div class="flex items-center gap-2">
-              <Select>
-                <SelectTrigger class="w-[240px]">
-                  <SelectValue placeholder="اختر المشروع" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">مشروع تجهيز محطات الخمس</SelectItem>
-                  <SelectItem value="2">مشروع تجهيز مضخات المياه</SelectItem>
-                </SelectContent>
-              </Select>
+              <CustomSelect
+                v-model="selectedProject"
+                placeholder="اختر المشروع"
+                :options="[
+                  { value: '1', label: 'مشروع تجهيز محطات الخمس' },
+                  { value: '2', label: 'مشروع تجهيز مضخات المياه' }
+                ]"
+                :triggerClass="'w-[240px] flex flex-row-reverse'"
+              >
+                <template #icon>
+                  <Folder class="w-5 h-5 text-gray-400" />
+                </template>
+              </CustomSelect>
               <Button variant="outline" class="gap-2">
                 <FileDown class="w-4 h-4" />
                 تصدير
@@ -111,16 +115,20 @@
               <p class="text-sm text-muted-foreground">تقرير شامل للمصروفات والميزانيات والتخصيصات المالية</p>
             </div>
             <div class="flex items-center gap-2">
-              <Select>
-                <SelectTrigger class="w-[180px]">
-                  <SelectValue placeholder="نوع التقرير" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="detailed">تقرير تفصيلي</SelectItem>
-                  <SelectItem value="summary">تقرير ملخص</SelectItem>
-                  <SelectItem value="quarterly">تقرير ربع سنوي</SelectItem>
-                </SelectContent>
-              </Select>
+              <CustomSelect
+                v-model="selectedReportType"
+                :options="[
+                  { value: 'detailed', label: 'تقرير تفصيلي' },
+                  { value: 'summary', label: 'تقرير ملخص' },
+                  { value: 'quarterly', label: 'تقرير ربع سنوي' }
+                ]"
+                placeholder="نوع التقرير"
+                :triggerClass="'w-[180px] flex flex-row-reverse'"
+              >
+                <template #icon>
+                  <FileText class="w-5 h-5 text-gray-400" />
+                </template>
+              </CustomSelect>
               <Button variant="outline" class="gap-2">
                 <FileDown class="w-4 h-4" />
                 تصدير التقرير
@@ -298,16 +306,18 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
-import { FileDown, Calendar as CalendarIcon, Clock, DollarSign, ArrowRight } from 'lucide-vue-next'
 import RadialProgress from '@/components/RadialProgress.vue'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { ref } from 'vue'
+import { FileDown, Calendar as CalendarIcon, Clock, DollarSign, ArrowRight, Folder, FileText } from 'lucide-vue-next'
+import CustomSelect from '@/components/CustomSelect.vue'
 
 const dateFrom = ref('')
+const selectedProject = ref('')
+const selectedReportType = ref('')
 
 const formatDate = (date) => {
   if (!date) return ''

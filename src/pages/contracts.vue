@@ -25,41 +25,36 @@
             </Button>
 
             <div class="min-w-[200px]">
-              <Select v-model="selectedProject">
-                <SelectTrigger class="flex flex-row-reverse w-full">
-                  <SelectValue placeholder="اختر المشروع" dir="rtl">
-                    <div class="flex items-center gap-2">
-                      <Folder class="w-5 h-5 text-gray-400" />
-                      <span>{{ selectedProject === 'all' ? 'اختر المشروع' : getProjectName(selectedProject) }}</span>
-                    </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">الكل</SelectItem>
-                  <SelectItem v-for="project in projects" :key="project.id" :value="project.id">
-                    {{ project.name }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              
+              <CustomSelect
+                v-model="selectedProject"
+                :options="[
+                  { value: 'all', label: 'الكل' },
+                  ...projects.map(p => ({ value: p.id, label: p.name }))
+                ]"
+                placeholder="اختر المشروع"
+                :triggerClass="'flex flex-row-reverse w-full'"
+              >
+              <template #icon>
+                  <Folder class="w-5 h-5 text-gray-400" />
+                </template>
+              </CustomSelect>
             </div>
 
             <div class="min-w-[200px]">
-              <Select v-model="selectedContract">
-                <SelectTrigger class="flex flex-row-reverse w-full">
-                  <SelectValue placeholder="اختر العقد" dir="rtl">
-                    <div class="flex items-center gap-2">
-                      <FileText class="w-5 h-5 text-gray-400" />
-                      <span>{{ selectedContract === 'all' ? 'اختر العقد' : getContractName(selectedContract) }}</span>
-                    </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">الكل</SelectItem>
-                  <SelectItem v-for="contract in contractsList" :key="contract.id" :value="contract.id">
-                    {{ contract.name }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <CustomSelect
+                v-model="selectedContract"
+                :options="[
+                  { value: 'all', label: 'الكل' },
+                  ...contractsList.map(c => ({ value: c.id, label: c.name }))
+                ]"
+                placeholder="اختر العقد"
+                :triggerClass="'flex flex-row-reverse w-full'"
+              >
+                <template #icon>
+                  <FileText class="w-5 h-5 text-gray-400" />
+                </template>
+              </CustomSelect>
             </div>
 
             <Popover>
@@ -139,13 +134,6 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import ContractCard from '@/components/ContractCard.vue'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { RangeCalendar } from '@/components/ui/range-calendar'
 import {
@@ -163,6 +151,7 @@ import {
   FileSpreadsheet,
   Folder
 } from 'lucide-vue-next'
+import CustomSelect from '@/components/CustomSelect.vue'
 
 interface Project {
   id: string

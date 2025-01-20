@@ -2,7 +2,7 @@
   <div class="flex" dir="rtl">
     <Sidebar />
     
-    <div class="mr-[60px] mt-[92px] flex-1">
+    <div class="mr-[60px] mt-[80px] flex-1">
       <Header />
       <slot></slot>
     </div>
