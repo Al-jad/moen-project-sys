@@ -9,7 +9,7 @@
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/')"
     >
-      <div class="absolute inset-0 transition-opacity duration-300 bg-white opacity-0 group-hover:opacity-100"/>
+      <div class="absolute inset-0 transition-opacity duration-300 bg-[#08182F] opacity-0 group-hover:opacity-100"/>
       <div class="relative flex items-center justify-center w-full h-full px-3">
         <img 
           src="/public/img/Logo.png" 
@@ -18,7 +18,7 @@
           :class="{'opacity-100 scale-100': !isAnyItemHovered, 'opacity-0 scale-95': isAnyItemHovered}"
         />
         <img 
-          src="/public/img/logo-text.png" 
+          src="/public/img/logo-white-text.png" 
           alt="Logo with Text" 
             class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
             :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
