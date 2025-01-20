@@ -56,13 +56,31 @@
                 </button>
               </div>
             </div>
-            <Button @click="$router.push('/add-project')"
-              variant="default"
-              class="flex items-center gap-2 p-4 bg-slate-700 hover:bg-slate-700/90"
-            >
-              <Plus class="w-4 h-4" />
-              اضافة مشروع جديد
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="default"
+                  class="flex items-center gap-2 p-4 bg-slate-700 hover:bg-slate-700/90"
+                >
+                  <Plus class="w-4 h-4" />
+                  اضافة مشروع جديد
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="w-[200px]">
+                <DropdownMenuItem @click="$router.push('/add-project?type=funded')">
+                  مشروع ممول
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="$router.push('/add-devlopment-project')">
+                  مشروع تنمية الاقاليم
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="$router.push('/add-project?type=investment')">
+                  مشروع استثمارية
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="$router.push('/add-project?type=operational')">
+                  مشروع تشغيلية
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -162,17 +180,6 @@
       status: 'منجز',
       statusVariant: 'success',
       progress: 92,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
       duration: '6',
     },
     {

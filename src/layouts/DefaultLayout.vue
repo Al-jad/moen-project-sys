@@ -6,10 +6,12 @@
       <Header />
       <slot></slot>
     </div>
+    <Toaster />
   </div>
 </template>
 
 <script setup>
 import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
+import Toaster from '@/components/ui/toaster.vue'
 </script> 

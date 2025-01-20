@@ -51,10 +51,6 @@
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800">صندوق حماية وتحسين البيئة</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="environment" />
               <label for="environment" class="text-sm text-gray-800"> 
                 ممولة
               </label>

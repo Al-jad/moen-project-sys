@@ -17,6 +17,7 @@ import ContractDetails from '@/pages/contract-details.vue'
 import UserDetails from '@/pages/user-details.vue'
 import AddProject from '@/pages/add-project.vue'
 import Reports from '@/pages/reports.vue'
+import AddDevlopmentProject from '@/pages/add-devlopment-project.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -113,6 +114,11 @@ const router = createRouter({
       path: '/add-project',
       name: 'add-project',
       component: AddProject,
+    },
+    {
+      path: '/add-devlopment-project',
+      name: 'add-devlopment-project',
+      component: AddDevlopmentProject
     }
   ]
 })
