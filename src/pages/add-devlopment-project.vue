@@ -3,29 +3,20 @@
     <div class="flex flex-col min-h-screen gap-4 p-6">
       <div class="w-full max-w-6xl mx-auto">
         <div class="flex flex-col gap-6 p-6 bg-white rounded-lg shadow">
-          <!-- Section Title -->
           <h2 class="text-xl font-semibold text-right">التفاصيل العامة للمشروع</h2>
-
           <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <!-- Project Name -->
             <div class="grid w-full gap-2">
               <Label class="text-right">اسم المشروع</Label>
               <Input v-model="form.projectName" dir="rtl" placeholder="ادخل اسم المشروع" />
             </div>
-
-            <!-- Plan/Directorate -->
             <div class="grid w-full gap-2">
               <Label class="text-right">الخطة (المديرية)</Label>
               <Input v-model="form.plan" dir="rtl" placeholder="ادخل الخطة" />
             </div>
-
-            <!-- Project Goal -->
             <div class="grid w-full gap-2">
               <Label class="text-right">هدف المشروع</Label>
               <Input v-model="form.projectGoal" dir="rtl" placeholder="ادخل هدف المشروع" />
             </div>
-
-            <!-- Sustainable Development Goals -->
             <div class="grid w-full gap-2">
               <Label class="text-right">ربط المشروع بأهداف التنمية المستدامة</Label>
               <CustomSelect
@@ -35,8 +26,6 @@
                 :triggerClass="'flex flex-row-reverse w-full'"
               />
             </div>
-
-            <!-- Beneficiary -->
             <div class="grid w-full gap-2">
               <Label class="text-right">اسم الجهة المستفيدة</Label>
               <CustomSelect
@@ -46,14 +35,10 @@
                 :triggerClass="'flex flex-row-reverse w-full'"
               />
             </div>
-
-            <!-- Geographic Location -->
             <div class="grid w-full gap-2">
               <Label class="text-right">الموقع الجغرافي</Label>
               <Input v-model="form.location" dir="rtl" placeholder="ادخل الموقع الجغرافي" />
             </div>
-
-            <!-- Supporting Entities - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الجهات الساندة</Label>
               <div class="flex gap-2">
@@ -66,7 +51,6 @@
                 />
                 <Button @click="addSupportingEntity" type="button"> اضافة </Button>
               </div>
-              <!-- Display added supporting entities -->
               <div
                 v-if="form.supportingEntities.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
@@ -86,8 +70,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Project Duration - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الفترة الزمنية لتنفيذ المشروع</Label>
               <div class="flex items-center gap-4">
@@ -116,14 +98,9 @@
             </div>
           </div>
         </div>
-
-        <!-- Section 2 -->
         <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <!-- Section Title -->
           <h2 class="text-xl font-semibold text-right">التاريخ المخطط والفعلي</h2>
-
           <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <!-- Planned Start Date -->
             <div class="grid w-full gap-2">
               <Label class="text-right">تاريخ المباشرة المخطط له</Label>
               <Popover>
@@ -144,8 +121,6 @@
                 </PopoverContent>
               </Popover>
             </div>
-
-            <!-- Actual Start Date -->
             <div class="grid w-full gap-2">
               <Label class="text-right">تاريخ المباشرة الفعلي</Label>
               <Popover>
@@ -166,8 +141,6 @@
                 </PopoverContent>
               </Popover>
             </div>
-
-            <!-- Planned Completion Date -->
             <div class="grid w-full gap-2">
               <Label class="text-right">تاريخ الانجاز المخطط له</Label>
               <Popover>
@@ -190,8 +163,6 @@
                 </PopoverContent>
               </Popover>
             </div>
-
-            <!-- Actual Completion Date -->
             <div class="grid w-full gap-2">
               <Label class="text-right">تاريخ الانجاز الفعلي</Label>
               <Popover>
@@ -216,13 +187,8 @@
             </div>
           </div>
         </div>
-
-        <!-- Section 3 -->
         <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <!-- Section Title -->
           <h2 class="text-xl font-semibold text-right">تفاصيل العقد</h2>
-
-          <!-- Contracts List -->
           <div class="space-y-6">
             <div
               v-for="(contract, contractIndex) in form.contracts"
@@ -235,9 +201,7 @@
                   <X class="w-4 h-4" />
                 </Button>
               </div>
-
               <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                <!-- Executing Company -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">اسم الجهة المنفذة \ الشركة</Label>
                   <Input
@@ -246,8 +210,6 @@
                     placeholder="ادخل اسم الشركة"
                   />
                 </div>
-
-                <!-- Contract Cost -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">كلفة العقد</Label>
                   <Input
@@ -257,8 +219,6 @@
                     placeholder="ادخل كلفة العقد"
                   />
                 </div>
-
-                <!-- Referral Date -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">تاريخ الاحالة</Label>
                   <Popover>
@@ -279,8 +239,6 @@
                     </PopoverContent>
                   </Popover>
                 </div>
-
-                <!-- Contract Signing Date -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">تاريخ توقيع العقد</Label>
                   <Popover>
@@ -301,14 +259,10 @@
                     </PopoverContent>
                   </Popover>
                 </div>
-
-                <!-- Contract Number -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">رقم العقد</Label>
                   <Input v-model="contract.number" dir="rtl" placeholder="ادخل رقم العقد" />
                 </div>
-
-                <!-- Number of Execution Procedures -->
                 <div class="grid w-full gap-2">
                   <Label class="text-right">عدد الاجراءات التنفيذية</Label>
                   <Input
@@ -320,8 +274,6 @@
                   />
                 </div>
               </div>
-
-              <!-- Execution Procedures -->
               <div class="mt-6">
                 <div class="flex items-center justify-between mb-4">
                   <h4 class="font-medium">الاجراءات التنفيذية</h4>
@@ -329,7 +281,6 @@
                     اضافة اجراء تنفيذي
                   </Button>
                 </div>
-
                 <div class="space-y-4">
                   <div
                     v-for="(procedure, procedureIndex) in contract.executionProcedures"
@@ -349,9 +300,7 @@
                         <X class="w-4 h-4" />
                       </Button>
                     </div>
-
                     <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                      <!-- Procedure Weight -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">وزن الاجراء</Label>
                         <Input
@@ -361,8 +310,6 @@
                           placeholder="ادخل وزن الاجراء"
                         />
                       </div>
-
-                      <!-- Procedure Duration -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">مدة الاجراء</Label>
                         <Input
@@ -372,8 +319,6 @@
                           placeholder="ادخل مدة الاجراء"
                         />
                       </div>
-
-                      <!-- Execution Start Date -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">تاريخ تنفيذ الاجراء</Label>
                         <Popover>
@@ -400,8 +345,6 @@
                           </PopoverContent>
                         </Popover>
                       </div>
-
-                      <!-- Execution Completion Date -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">تاريخ انجاز تنفيذ الاجراء</Label>
                         <Popover>
@@ -428,8 +371,6 @@
                           </PopoverContent>
                         </Popover>
                       </div>
-
-                      <!-- Planned Technical Progress -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">نسبة الانجاز الفني المخطط</Label>
                         <Input
@@ -439,8 +380,6 @@
                           placeholder="ادخل النسبة"
                         />
                       </div>
-
-                      <!-- Actual Technical Progress -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">نسبة الانجاز الفني الفعلي</Label>
                         <Input
@@ -450,8 +389,6 @@
                           placeholder="ادخل النسبة"
                         />
                       </div>
-
-                      <!-- Technical Deviation -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">نسبة الانحراف الفني</Label>
                         <Input
@@ -461,8 +398,6 @@
                           placeholder="ادخل النسبة"
                         />
                       </div>
-
-                      <!-- Planned Financial Progress -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">نسبة الانجاز المالي المخطط</Label>
                         <Input
@@ -472,8 +407,6 @@
                           placeholder="ادخل النسبة"
                         />
                       </div>
-
-                      <!-- Actual Financial Progress -->
                       <div class="grid w-full gap-2">
                         <Label class="text-right">نسبة الانجاز المالي الفعلي</Label>
                         <Input
@@ -488,19 +421,12 @@
                 </div>
               </div>
             </div>
-
-            <!-- Add Contract Button -->
             <Button @click="addContract" class="w-full"> اضافة عقد جديد </Button>
           </div>
         </div>
-
-        <!-- Section 4: Financial Details -->
         <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <!-- Section Title -->
           <h2 class="text-xl font-semibold text-right">تفاصيل الموقف المالي</h2>
-
           <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <!-- Planned Cost -->
             <div class="grid w-full gap-2">
               <Label class="text-right"
                 >كلفة الاجراءات التنفيذية المخطط لها لغاية تاريخ اليوم ({{
@@ -523,8 +449,6 @@
                 >
               </div>
             </div>
-
-            <!-- Total Project Budget -->
             <div class="grid w-full gap-2">
               <Label class="text-right">ميزانية المشروع (الكلفة الكلية للمشروع)</Label>
               <div class="relative">
@@ -539,8 +463,6 @@
                 >
               </div>
             </div>
-
-            <!-- Actual Work Value -->
             <div class="grid w-full gap-2">
               <Label class="text-right"
                 >قيمة العمل المنجز الفعلي للجراءات التنفيذية لغاية تاريخ اليوم ({{
@@ -563,8 +485,6 @@
                 >
               </div>
             </div>
-
-            <!-- Cumulative Expenses -->
             <div class="grid w-full gap-2">
               <Label class="text-right">المصروف التراكمي للمشروع</Label>
               <div class="relative">
@@ -579,8 +499,6 @@
                 >
               </div>
             </div>
-
-            <!-- Cumulative Financial Progress -->
             <div class="grid w-full gap-2">
               <Label class="text-right">نسبة الانجاز المالي التراكمي</Label>
               <div class="relative">
@@ -597,14 +515,9 @@
             </div>
           </div>
         </div>
-
-        <!-- Section 5: Project Execution Details -->
         <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <!-- Section Title -->
           <h2 class="text-xl font-semibold text-right">تفاصيل موقف تنفيذ المشروع</h2>
-
           <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <!-- Current Project Status -->
             <div class="grid w-full gap-2">
               <Label class="text-right">حالة المشروع الحالية</Label>
               <CustomSelect
@@ -614,62 +527,57 @@
                 :triggerClass="'flex flex-row-reverse w-full'"
               />
             </div>
-
-            <!-- Cumulative Technical Progress -->
             <div class="grid w-full gap-2">
               <Label class="text-right">نسبة الانجاز الفني التراكمي</Label>
               <div class="relative">
-                <Input 
-                  v-model="form.executionDetails.cumulativeTechnicalProgress" 
-                  type="number" 
-                  dir="rtl" 
+                <Input
+                  v-model="form.executionDetails.cumulativeTechnicalProgress"
+                  type="number"
+                  dir="rtl"
                   placeholder="ادخل النسبة"
                 />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2">%</span>
+                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
+                  >%</span
+                >
               </div>
             </div>
-
-            <!-- Cumulative Technical Deviation -->
             <div class="grid w-full gap-2">
               <Label class="text-right">نسبة الانحراف الفني التراكمي</Label>
               <div class="relative">
-                <Input 
-                  v-model="form.executionDetails.cumulativeTechnicalDeviation" 
-                  type="number" 
-                  dir="rtl" 
+                <Input
+                  v-model="form.executionDetails.cumulativeTechnicalDeviation"
+                  type="number"
+                  dir="rtl"
                   placeholder="ادخل النسبة"
                 />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2">%</span>
+                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
+                  >%</span
+                >
               </div>
             </div>
-
-            <!-- Deviation Reasons - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">اسباب الانحراف</Label>
               <div class="flex gap-2">
-                <Input 
-                  v-model="currentDeviationReason" 
-                  dir="rtl" 
+                <Input
+                  v-model="currentDeviationReason"
+                  dir="rtl"
                   placeholder="ادخل سبب الانحراف"
                   class="flex-1"
                   @keyup.enter="addDeviationReason"
                 />
-                <Button @click="addDeviationReason" type="button">
-                  اضافة
-                </Button>
+                <Button @click="addDeviationReason" type="button"> اضافة </Button>
               </div>
-              <!-- Display added deviation reasons -->
-              <div 
-                v-if="form.executionDetails.deviationReasons.length > 0" 
+              <div
+                v-if="form.executionDetails.deviationReasons.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
               >
-                <div 
-                  v-for="(reason, index) in form.executionDetails.deviationReasons" 
+                <div
+                  v-for="(reason, index) in form.executionDetails.deviationReasons"
                   :key="index"
                   class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
                 >
                   <span>{{ reason }}</span>
-                  <button 
+                  <button
                     @click="removeDeviationReason(index)"
                     class="text-gray-500 hover:text-red-500"
                   >
@@ -678,34 +586,29 @@
                 </div>
               </div>
             </div>
-
-            <!-- Stoppage Periods - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">مدد التوقفات</Label>
               <div class="flex gap-2">
-                <Input 
-                  v-model="currentStoppagePeriod" 
-                  dir="rtl" 
+                <Input
+                  v-model="currentStoppagePeriod"
+                  dir="rtl"
                   placeholder="ادخل مدة التوقف"
                   class="flex-1"
                   @keyup.enter="addStoppagePeriod"
                 />
-                <Button @click="addStoppagePeriod" type="button">
-                  اضافة
-                </Button>
+                <Button @click="addStoppagePeriod" type="button"> اضافة </Button>
               </div>
-              <!-- Display added stoppage periods -->
-              <div 
-                v-if="form.executionDetails.stoppagePeriods.length > 0" 
+              <div
+                v-if="form.executionDetails.stoppagePeriods.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
               >
-                <div 
-                  v-for="(period, index) in form.executionDetails.stoppagePeriods" 
+                <div
+                  v-for="(period, index) in form.executionDetails.stoppagePeriods"
                   :key="index"
                   class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
                 >
                   <span>{{ period }}</span>
-                  <button 
+                  <button
                     @click="removeStoppagePeriod(index)"
                     class="text-gray-500 hover:text-red-500"
                   >
@@ -714,34 +617,29 @@
                 </div>
               </div>
             </div>
-
-            <!-- Change Orders - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">اوامر الغيار</Label>
               <div class="flex gap-2">
-                <Input 
-                  v-model="currentChangeOrder" 
-                  dir="rtl" 
+                <Input
+                  v-model="currentChangeOrder"
+                  dir="rtl"
                   placeholder="ادخل امر الغيار"
                   class="flex-1"
                   @keyup.enter="addChangeOrder"
                 />
-                <Button @click="addChangeOrder" type="button">
-                  اضافة
-                </Button>
+                <Button @click="addChangeOrder" type="button"> اضافة </Button>
               </div>
-              <!-- Display added change orders -->
-              <div 
-                v-if="form.executionDetails.changeOrders.length > 0" 
+              <div
+                v-if="form.executionDetails.changeOrders.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
               >
-                <div 
-                  v-for="(order, index) in form.executionDetails.changeOrders" 
+                <div
+                  v-for="(order, index) in form.executionDetails.changeOrders"
                   :key="index"
                   class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
                 >
                   <span>{{ order }}</span>
-                  <button 
+                  <button
                     @click="removeChangeOrder(index)"
                     class="text-gray-500 hover:text-red-500"
                   >
@@ -750,34 +648,29 @@
                 </div>
               </div>
             </div>
-
-            <!-- Additional Periods - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">المدد الاضافية</Label>
               <div class="flex gap-2">
-                <Input 
-                  v-model="currentAdditionalPeriod" 
-                  dir="rtl" 
+                <Input
+                  v-model="currentAdditionalPeriod"
+                  dir="rtl"
                   placeholder="ادخل المدة الاضافية"
                   class="flex-1"
                   @keyup.enter="addAdditionalPeriod"
                 />
-                <Button @click="addAdditionalPeriod" type="button">
-                  اضافة
-                </Button>
+                <Button @click="addAdditionalPeriod" type="button"> اضافة </Button>
               </div>
-              <!-- Display added additional periods -->
-              <div 
-                v-if="form.executionDetails.additionalPeriods.length > 0" 
+              <div
+                v-if="form.executionDetails.additionalPeriods.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
               >
-                <div 
-                  v-for="(period, index) in form.executionDetails.additionalPeriods" 
+                <div
+                  v-for="(period, index) in form.executionDetails.additionalPeriods"
                   :key="index"
                   class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
                 >
                   <span>{{ period }}</span>
-                  <button 
+                  <button
                     @click="removeAdditionalPeriod(index)"
                     class="text-gray-500 hover:text-red-500"
                   >
@@ -786,25 +679,21 @@
                 </div>
               </div>
             </div>
-
-            <!-- Notes - Full Width -->
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الملاحظات</Label>
-              <Textarea 
-                v-model="form.executionDetails.notes" 
-                dir="rtl" 
+              <Textarea
+                v-model="form.executionDetails.notes"
+                dir="rtl"
                 placeholder="ادخل الملاحظات"
                 class="min-h-[100px]"
               />
             </div>
           </div>
         </div>
-
-        <!-- Sticky Save Button -->
         <div class="sticky left-0 right-0 mt-6 bottom-6">
           <div class="max-w-6xl px-6 mx-auto">
-            <Button 
-              @click="saveProject" 
+            <Button
+              @click="saveProject"
               class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800"
               :disabled="isSaving"
             >
@@ -818,7 +707,6 @@
     </div>
   </DefaultLayout>
 </template>
-
 <script setup>
   import { ref } from 'vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -830,9 +718,8 @@
   import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
   import CustomSelect from '@/components/CustomSelect.vue';
   import { X, Calendar as CalendarIcon, Plus, Loader2 } from 'lucide-vue-next';
-  import { Textarea } from '@/components/ui/textarea'
-  import { toast } from 'vue-sonner'
-
+  import { Textarea } from '@/components/ui/textarea';
+  import { toast } from 'vue-sonner';
   const form = ref({
     projectName: '',
     plan: '',
@@ -847,7 +734,28 @@
     actualStartDate: null,
     plannedCompletionDate: null,
     actualCompletionDate: null,
-    contracts: [],
+    contracts: [
+      {
+        executingCompany: '',
+        cost: '',
+        referralDate: null,
+        signingDate: null,
+        number: '',
+        executionProcedures: [
+          {
+            weight: '',
+            duration: '',
+            executionDate: null,
+            completionDate: null,
+            plannedTechnicalProgress: '',
+            actualTechnicalProgress: '',
+            technicalDeviation: '',
+            plannedFinancialProgress: '',
+            actualFinancialProgress: '',
+          },
+        ],
+      },
+    ],
     financials: {
       plannedCost: '',
       totalBudget: '',
@@ -863,16 +771,14 @@
       stoppagePeriods: [],
       changeOrders: [],
       additionalPeriods: [],
-      notes: ''
-    }
+      notes: '',
+    },
   });
-
   const currentSupportingEntity = ref('');
   const currentDeviationReason = ref('');
   const currentStoppagePeriod = ref('');
   const currentChangeOrder = ref('');
   const currentAdditionalPeriod = ref('');
-
   const sustainableDevelopmentGoals = [
     { value: '1', label: 'القضاء على الفقر' },
     { value: '2', label: 'القضاء التام على الجوع' },
@@ -892,31 +798,26 @@
     { value: '16', label: 'السلام والعدل والمؤسسات القوية' },
     { value: '17', label: 'عقد الشراكات لتحقيق الأهداف' },
   ];
-
   const beneficiaries = [
     { value: 'baghdad', label: 'مديرية تربية بغداد' },
     { value: 'environment', label: 'دائرة حماية تحسين بيئة' },
     { value: 'najaf', label: 'مديرية تربية النجف' },
     { value: 'basra', label: 'مديرية تربية البصرة' },
   ];
-
   const projectStatuses = [
     { value: 'ongoing', label: 'قيد التنفيذ' },
     { value: 'completed', label: 'منجز' },
-    { value: 'stopped', label: 'متوقف' }
-  ]
-
+    { value: 'stopped', label: 'متوقف' },
+  ];
   const addSupportingEntity = () => {
     if (currentSupportingEntity.value.trim()) {
       form.value.supportingEntities.push(currentSupportingEntity.value.trim());
       currentSupportingEntity.value = '';
     }
   };
-
   const removeSupportingEntity = (index) => {
     form.value.supportingEntities.splice(index, 1);
   };
-
   const formatDate = (date) => {
     if (!date) return '';
     return new Date(date).toLocaleDateString('ar-US', {
@@ -925,7 +826,6 @@
       day: 'numeric',
     });
   };
-
   const addContract = () => {
     form.value.contracts.push({
       executingCompany: '',
@@ -936,11 +836,9 @@
       executionProcedures: [],
     });
   };
-
   const removeContract = (contractIndex) => {
     form.value.contracts.splice(contractIndex, 1);
   };
-
   const addExecutionProcedure = (contractIndex) => {
     form.value.contracts[contractIndex].executionProcedures.push({
       weight: '',
@@ -954,87 +852,65 @@
       actualFinancialProgress: '',
     });
   };
-
   const removeExecutionProcedure = (contractIndex, procedureIndex) => {
     form.value.contracts[contractIndex].executionProcedures.splice(procedureIndex, 1);
   };
-
   const addDeviationReason = () => {
     if (currentDeviationReason.value.trim()) {
-      form.value.executionDetails.deviationReasons.push(currentDeviationReason.value.trim())
-      currentDeviationReason.value = ''
+      form.value.executionDetails.deviationReasons.push(currentDeviationReason.value.trim());
+      currentDeviationReason.value = '';
     }
-  }
-
+  };
   const removeDeviationReason = (index) => {
-    form.value.executionDetails.deviationReasons.splice(index, 1)
-  }
-
+    form.value.executionDetails.deviationReasons.splice(index, 1);
+  };
   const addStoppagePeriod = () => {
     if (currentStoppagePeriod.value.trim()) {
-      form.value.executionDetails.stoppagePeriods.push(currentStoppagePeriod.value.trim())
-      currentStoppagePeriod.value = ''
+      form.value.executionDetails.stoppagePeriods.push(currentStoppagePeriod.value.trim());
+      currentStoppagePeriod.value = '';
     }
-  }
-
+  };
   const removeStoppagePeriod = (index) => {
-    form.value.executionDetails.stoppagePeriods.splice(index, 1)
-  }
-
+    form.value.executionDetails.stoppagePeriods.splice(index, 1);
+  };
   const addChangeOrder = () => {
     if (currentChangeOrder.value.trim()) {
-      form.value.executionDetails.changeOrders.push(currentChangeOrder.value.trim())
-      currentChangeOrder.value = ''
+      form.value.executionDetails.changeOrders.push(currentChangeOrder.value.trim());
+      currentChangeOrder.value = '';
     }
-  }
-
+  };
   const removeChangeOrder = (index) => {
-    form.value.executionDetails.changeOrders.splice(index, 1)
-  }
-
+    form.value.executionDetails.changeOrders.splice(index, 1);
+  };
   const addAdditionalPeriod = () => {
     if (currentAdditionalPeriod.value.trim()) {
-      form.value.executionDetails.additionalPeriods.push(currentAdditionalPeriod.value.trim())
-      currentAdditionalPeriod.value = ''
+      form.value.executionDetails.additionalPeriods.push(currentAdditionalPeriod.value.trim());
+      currentAdditionalPeriod.value = '';
     }
-  }
-
+  };
   const removeAdditionalPeriod = (index) => {
-    form.value.executionDetails.additionalPeriods.splice(index, 1)
-  }
-
-  const isSaving = ref(false)
-
+    form.value.executionDetails.additionalPeriods.splice(index, 1);
+  };
+  const isSaving = ref(false);
   const saveProject = async () => {
     try {
       isSaving.value = true;
-      
-      // Validate required fields
       if (!form.value.projectName) {
         toast.error('يرجى ادخال اسم المشروع', {
-          description: 'الرجاء ملء جميع الحقول المطلوبة'
-        })
-        return
+          description: 'الرجاء ملء جميع الحقول المطلوبة',
+        });
+        return;
       }
-
-      // TODO: Add your API call here to save the project data
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulated API call
-      
-      // Show success message
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success('تم حفظ المشروع بنجاح', {
-        description: 'تم حفظ جميع بيانات المشروع'
-      })
-
-      // Optional: Reset form or redirect
-      // form.value = { ... }; // Reset form
-      // router.push('/projects'); // Redirect to projects list
-      
+        description: 'تم حفظ جميع بيانات المشروع',
+      });
     } catch (error) {
       toast.error('حدث خطأ اثناء الحفظ', {
-        description: 'لم يتم حفظ المشروع، يرجى المحاولة مرة أخرى'
-      })
+        description: 'لم يتم حفظ المشروع، يرجى المحاولة مرة أخرى',
+      });
     } finally {
       isSaving.value = false;
     }
-  }
+  };
 </script>
