@@ -1,7 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-col min-h-screen gap-4 p-6">
+    <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200">
       <div class="w-full max-w-6xl mx-auto">
+        <h1 class="py-4 pb-6 text-2xl font-bold text-right">اضافة مشروع - تنمية الأقاليم </h1>
         <div class="flex flex-col gap-6 p-6 bg-white rounded-lg shadow">
           <h2 class="text-xl font-semibold text-right">التفاصيل العامة للمشروع</h2>
           <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
@@ -19,7 +20,7 @@
             </div>
             <div class="grid w-full gap-2">
               <Label class="text-right">ربط المشروع بأهداف التنمية المستدامة</Label>
-              <CustomSelect
+              <CustomMultiSelect
                 v-model="form.sustainableDevelopmentGoal"
                 :options="sustainableDevelopmentGoals"
                 placeholder="اختر الهدف"
@@ -185,6 +186,8 @@
                 </PopoverContent>
               </Popover>
             </div>
+            <p class="text-right"> الانحراف الزمني = التاريخ الفعلي - التاريخ المخطط </p>
+            <p class="text-right"> 88 </p>
           </div>
         </div>
         <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
@@ -720,11 +723,12 @@
   import { X, Calendar as CalendarIcon, Plus, Loader2 } from 'lucide-vue-next';
   import { Textarea } from '@/components/ui/textarea';
   import { toast } from 'vue-sonner';
+  import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   const form = ref({
     projectName: '',
     plan: '',
     projectGoal: '',
-    sustainableDevelopmentGoal: '',
+    sustainableDevelopmentGoal: [],
     beneficiary: '',
     supportingEntities: [],
     location: '',
