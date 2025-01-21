@@ -6,7 +6,7 @@
       @click="isOpen = !isOpen"
       :disabled="disabled"
     >
-      <div class="flex flex-row-reverse items-start gap-2 w-full">
+      <div class="flex flex-row-reverse items-start w-full gap-2">
         <slot name="icon"></slot>
         <div class="flex flex-wrap gap-1 justify-end max-h-[80px] overflow-y-auto w-full">
           <span v-if="!selectedLabels.length" class="text-muted-foreground">{{ placeholder }}</span>
@@ -18,19 +18,19 @@
             <span class="truncate max-w-[150px]">{{ label }}</span>
             <button 
               @click.stop="removeOption(getValueByLabel(label))"
-              class="opacity-0 group-hover:opacity-100 transition-opacity"
+              class="transition-opacity group-hover:opacity-100"
             >
-              <X class="h-3 w-3 hover:text-red-500" />
+              <X class="w-3 h-3 hover:text-red-500" />
             </button>
           </div>
         </div>
       </div>
-      <ChevronDown class="h-4 w-4 opacity-50 shrink-0" :class="{ 'transform rotate-180': isOpen }" />
+      <ChevronDown class="w-4 h-4 opacity-50 shrink-0" :class="{ 'transform rotate-180': isOpen }" />
     </button>
 
     <div
       v-if="isOpen"
-      class="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200"
+      class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg"
     >
       <div class="p-1 max-h-[200px] overflow-y-auto">
         <div v-for="option in options" :key="option.value" class="relative">
@@ -39,7 +39,7 @@
             class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
             @click="toggleOption(option.value)"
           >
-            <div class="flex items-center gap-2 w-full">
+            <div class="flex items-center w-full gap-2">
               <Checkbox 
                 :checked="isSelected(option.value)"
                 @update:checked="() => toggleOption(option.value)"
@@ -54,7 +54,7 @@
     <!-- Backdrop -->
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-40"
+      class="fixed inset-0 z-40 bg-black/10"
       @click="isOpen = false"
     ></div>
   </div>

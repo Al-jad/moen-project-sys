@@ -45,8 +45,17 @@
             <div class="grid w-full gap-2">
               <Label class="text-right">الموقع الجغرافي</Label>
               <div class="flex gap-2">
-                <Input v-model="form.location" dir="rtl" placeholder="ادخل الموقع الجغرافي" class="flex-1" />
-                <Button @click="showLocationPicker = true" variant="outline" class="flex items-center gap-2">
+                <Input
+                  v-model="form.location"
+                  dir="rtl"
+                  placeholder="ادخل الموقع الجغرافي"
+                  class="flex-1"
+                />
+                <Button
+                  @click="showLocationPicker = true"
+                  variant="outline"
+                  class="flex items-center gap-2"
+                >
                   <MapPin class="w-4 h-4" />
                   اختر على الخريطة
                 </Button>
@@ -54,34 +63,10 @@
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الجهات الساندة</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="currentSupportingEntity"
-                  dir="rtl"
-                  placeholder="ادخل اسم الجهة الساندة"
-                  class="flex-1"
-                  @keyup.enter="addSupportingEntity"
-                />
-                <Button @click="addSupportingEntity" type="button"> اضافة </Button>
-              </div>
-              <div
-                v-if="form.supportingEntities.length > 0"
-                class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
-              >
-                <div
-                  v-for="(entity, index) in form.supportingEntities"
-                  :key="index"
-                  class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
-                >
-                  <span>{{ entity }}</span>
-                  <button
-                    @click="removeSupportingEntity(index)"
-                    class="text-gray-500 hover:text-red-500"
-                  >
-                    <X class="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+              <InputWithAddButton
+                v-model="form.supportingEntities"
+                placeholder="ادخل اسم الجهة الساندة"
+              />
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الفترة الزمنية لتنفيذ المشروع</Label>
@@ -572,16 +557,11 @@
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">اسباب الانحراف</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="currentDeviationReason"
-                  dir="rtl"
-                  placeholder="ادخل سبب الانحراف"
-                  class="flex-1"
-                  @keyup.enter="addDeviationReason"
-                />
-                <Button @click="addDeviationReason" type="button"> اضافة </Button>
-              </div>
+              <InputWithAddButton
+                v-model="form.executionDetails.deviationReasons"
+                placeholder="ادخل سبب الانحراف"
+                buttonText="اضافة"
+              />
               <div
                 v-if="form.executionDetails.deviationReasons.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
@@ -603,16 +583,11 @@
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">مدد التوقفات</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="currentStoppagePeriod"
-                  dir="rtl"
-                  placeholder="ادخل مدة التوقف"
-                  class="flex-1"
-                  @keyup.enter="addStoppagePeriod"
-                />
-                <Button @click="addStoppagePeriod" type="button"> اضافة </Button>
-              </div>
+              <InputWithAddButton
+                v-model="form.executionDetails.stoppagePeriods"
+                placeholder="ادخل مدة التوقف"
+                buttonText="اضافة"
+              />
               <div
                 v-if="form.executionDetails.stoppagePeriods.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
@@ -634,16 +609,11 @@
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">اوامر الغيار</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="currentChangeOrder"
-                  dir="rtl"
-                  placeholder="ادخل امر الغيار"
-                  class="flex-1"
-                  @keyup.enter="addChangeOrder"
-                />
-                <Button @click="addChangeOrder" type="button"> اضافة </Button>
-              </div>
+              <InputWithAddButton
+                v-model="form.executionDetails.changeOrders"
+                placeholder="ادخل امر الغيار"
+                buttonText="اضافة"
+              />
               <div
                 v-if="form.executionDetails.changeOrders.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
@@ -665,16 +635,11 @@
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">المدد الاضافية</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="currentAdditionalPeriod"
-                  dir="rtl"
-                  placeholder="ادخل المدة الاضافية"
-                  class="flex-1"
-                  @keyup.enter="addAdditionalPeriod"
-                />
-                <Button @click="addAdditionalPeriod" type="button"> اضافة </Button>
-              </div>
+              <InputWithAddButton
+                v-model="form.executionDetails.additionalPeriods"
+                placeholder="ادخل المدة الاضافية"
+                buttonText="اضافة"
+              />
               <div
                 v-if="form.executionDetails.additionalPeriods.length > 0"
                 class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
@@ -742,6 +707,7 @@
   import { toast } from 'vue-sonner';
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
+  import InputWithAddButton from '@/components/InputWithAddButton.vue';
 
   const form = ref({
     projectName: '',
@@ -799,7 +765,6 @@
       notes: '',
     },
   });
-  const currentSupportingEntity = ref('');
   const currentDeviationReason = ref('');
   const currentStoppagePeriod = ref('');
   const currentChangeOrder = ref('');
@@ -832,17 +797,8 @@
   const projectStatuses = [
     { value: 'ongoing', label: 'قيد التنفيذ' },
     { value: 'completed', label: 'منجز' },
-    { value: 'stopped', label: 'متوقف' }
+    { value: 'stopped', label: 'متوقف' },
   ];
-  const addSupportingEntity = () => {
-    if (currentSupportingEntity.value.trim()) {
-      form.value.supportingEntities.push(currentSupportingEntity.value.trim());
-      currentSupportingEntity.value = '';
-    }
-  };
-  const removeSupportingEntity = (index) => {
-    form.value.supportingEntities.splice(index, 1);
-  };
   const formatDate = (date) => {
     if (!date) return '';
     return new Date(date).toLocaleDateString('ar-US', {
@@ -946,9 +902,11 @@
   const handleLocationSelected = (location) => {
     form.value.coordinates = location;
     // Reverse geocode to get address
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`)
-      .then(res => res.json())
-      .then(data => {
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
         if (data.display_name) {
           form.value.location = data.display_name;
         }
