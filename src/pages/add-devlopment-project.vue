@@ -3,277 +3,168 @@
     <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200">
       <div class="w-full max-w-6xl mx-auto">
         <h1 class="py-4 pb-6 text-2xl font-bold text-right">اضافة مشروع - تنمية الأقاليم </h1>
-        <div class="flex flex-col gap-6 p-6 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-semibold text-right">التفاصيل العامة للمشروع</h2>
-          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <div class="grid w-full gap-2">
-              <Label class="text-right">اسم المشروع</Label>
-              <Input v-model="form.projectName" dir="rtl" placeholder="ادخل اسم المشروع" />
+        
+        <FormSection title="التفاصيل العامة للمشروع">
+          <FormField label="اسم المشروع">
+            <Input v-model="form.projectName" dir="rtl" placeholder="ادخل اسم المشروع" />
+          </FormField>
+
+          <FormField label="الخطة (المديرية)">
+            <Input v-model="form.plan" dir="rtl" placeholder="ادخل الخطة" />
+          </FormField>
+
+          <FormField label="هدف المشروع">
+            <Input v-model="form.projectGoal" dir="rtl" placeholder="ادخل هدف المشروع" />
+          </FormField>
+
+          <FormField label="ربط المشروع بأهداف التنمية المستدامة">
+            <CustomMultiSelect
+              v-model="form.sustainableDevelopmentGoal"
+              :options="sustainableDevelopmentGoals"
+              placeholder="اختر الهدف"
+              :triggerClass="'flex flex-row-reverse w-full'"
+            />
+          </FormField>
+
+          <FormField label="اسم الجهة المستفيدة">
+            <CustomSelect
+              v-model="form.beneficiary"
+              :options="beneficiaries"
+              placeholder="اختر الجهة المستفيدة"
+              :triggerClass="'flex flex-row-reverse w-full'"
+            />
+          </FormField>
+
+          <FormField label="العنوان">
+            <div class="flex gap-2">
+              <Input v-model="form.address" dir="rtl" placeholder="ادخل العنوان" class="flex-1" />
             </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">الخطة (المديرية)</Label>
-              <Input v-model="form.plan" dir="rtl" placeholder="ادخل الخطة" />
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">هدف المشروع</Label>
-              <Input v-model="form.projectGoal" dir="rtl" placeholder="ادخل هدف المشروع" />
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">ربط المشروع بأهداف التنمية المستدامة</Label>
-              <CustomMultiSelect
-                v-model="form.sustainableDevelopmentGoal"
-                :options="sustainableDevelopmentGoals"
-                placeholder="اختر الهدف"
-                :triggerClass="'flex flex-row-reverse w-full'"
+          </FormField>
+
+          <FormField label="الموقع الجغرافي">
+            <div class="flex gap-2">
+              <Input
+                v-model="form.location"
+                dir="rtl"
+                placeholder="ادخل الموقع الجغرافي"
+                class="flex-1"
               />
+              <Button
+                @click="showLocationPicker = true"
+                variant="outline"
+                class="flex items-center gap-2"
+              >
+                <MapPin class="w-4 h-4" />
+                اختر على الخريطة
+              </Button>
             </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">اسم الجهة المستفيدة</Label>
-              <CustomSelect
-                v-model="form.beneficiary"
-                :options="beneficiaries"
-                placeholder="اختر الجهة المستفيدة"
-                :triggerClass="'flex flex-row-reverse w-full'"
+          </FormField>
+
+          <FormField label="الجهات الساندة" class="md:col-span-2">
+            <InputWithAddButton
+              v-model="form.supportingEntities"
+              placeholder="ادخل اسم الجهة الساندة"
+            />
+          </FormField>
+
+          <FormField label="الفترة الزمنية لتنفيذ المشروع" class="md:col-span-2">
+            <div class="flex items-center gap-4">
+              <Input
+                v-model="form.duration"
+                type="number"
+                dir="rtl"
+                class="flex-1"
+                placeholder="ادخل المدة"
               />
+              <RadioGroup v-model="form.durationType" class="flex gap-4">
+                <div class="flex items-center gap-2">
+                  <RadioGroupItem value="days" id="duration-days" />
+                  <Label for="duration-days" class="text-sm">يوم</Label>
+                </div>
+                <div class="flex items-center gap-2">
+                  <RadioGroupItem value="months" id="duration-months" />
+                  <Label for="duration-months" class="text-sm">شهر</Label>
+                </div>
+                <div class="flex items-center gap-2">
+                  <RadioGroupItem value="years" id="duration-years" />
+                  <Label for="duration-years" class="text-sm">سنة</Label>
+                </div>
+              </RadioGroup>
             </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">العنوان</Label>
-              <div class="flex gap-2">
-                <Input v-model="form.address" dir="rtl" placeholder="ادخل العنوان" class="flex-1" />
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">الموقع الجغرافي</Label>
-              <div class="flex gap-2">
-                <Input
-                  v-model="form.location"
-                  dir="rtl"
-                  placeholder="ادخل الموقع الجغرافي"
-                  class="flex-1"
-                />
-                <Button
-                  @click="showLocationPicker = true"
-                  variant="outline"
-                  class="flex items-center gap-2"
-                >
-                  <MapPin class="w-4 h-4" />
-                  اختر على الخريطة
-                </Button>
-              </div>
-            </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">الجهات الساندة</Label>
-              <InputWithAddButton
-                v-model="form.supportingEntities"
-                placeholder="ادخل اسم الجهة الساندة"
-              />
-            </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">الفترة الزمنية لتنفيذ المشروع</Label>
-              <div class="flex items-center gap-4">
-                <Input
-                  v-model="form.duration"
-                  type="number"
-                  dir="rtl"
-                  class="flex-1"
-                  placeholder="ادخل المدة"
-                />
-                <RadioGroup v-model="form.durationType" class="flex gap-4">
-                  <div class="flex items-center gap-2">
-                    <RadioGroupItem value="days" id="duration-days" />
-                    <Label for="duration-days" class="text-sm">يوم</Label>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <RadioGroupItem value="months" id="duration-months" />
-                    <Label for="duration-months" class="text-sm">شهر</Label>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <RadioGroupItem value="years" id="duration-years" />
-                    <Label for="duration-years" class="text-sm">سنة</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-semibold text-right">التاريخ المخطط والفعلي</h2>
-          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <div class="grid w-full gap-2">
-              <Label class="text-right">تاريخ المباشرة المخطط له</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    class="justify-between w-full text-right"
-                    :class="!form.plannedStartDate && 'text-muted-foreground'"
-                  >
-                    <span>{{
-                      form.plannedStartDate ? formatDate(form.plannedStartDate) : 'اختر التاريخ'
-                    }}</span>
-                    <CalendarIcon class="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0" align="start">
-                  <Calendar mode="single" v-model="form.plannedStartDate" initialFocus />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">تاريخ المباشرة الفعلي</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    class="justify-between w-full text-right"
-                    :class="!form.actualStartDate && 'text-muted-foreground'"
-                  >
-                    <span>{{
-                      form.actualStartDate ? formatDate(form.actualStartDate) : 'اختر التاريخ'
-                    }}</span>
-                    <CalendarIcon class="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0" align="start">
-                  <Calendar mode="single" v-model="form.actualStartDate" initialFocus />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">تاريخ الانجاز المخطط له</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    class="justify-between w-full text-right"
-                    :class="!form.plannedCompletionDate && 'text-muted-foreground'"
-                  >
-                    <span>{{
-                      form.plannedCompletionDate
-                        ? formatDate(form.plannedCompletionDate)
-                        : 'اختر التاريخ'
-                    }}</span>
-                    <CalendarIcon class="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0" align="start">
-                  <Calendar mode="single" v-model="form.plannedCompletionDate" initialFocus />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">تاريخ الانجاز الفعلي</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    class="justify-between w-full text-right"
-                    :class="!form.actualCompletionDate && 'text-muted-foreground'"
-                  >
-                    <span>{{
-                      form.actualCompletionDate
-                        ? formatDate(form.actualCompletionDate)
-                        : 'اختر التاريخ'
-                    }}</span>
-                    <CalendarIcon class="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0" align="start">
-                  <Calendar mode="single" v-model="form.actualCompletionDate" initialFocus />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <p class="text-right"> الانحراف الزمني = التاريخ الفعلي - التاريخ المخطط </p>
-            <p class="text-right"> 88 </p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-semibold text-right">تفاصيل العقد</h2>
-          <div class="space-y-6">
+          </FormField>
+        </FormSection>
+        <FormSection title="التاريخ المخطط والفعلي">
+          <FormField label="تاريخ المباشرة المخطط له">
+            <DateInput v-model="form.plannedStartDate" />
+          </FormField>
+
+          <FormField label="تاريخ المباشرة الفعلي">
+            <DateInput v-model="form.actualStartDate" />
+          </FormField>
+
+          <FormField label="تاريخ الانجاز المخطط له">
+            <DateInput v-model="form.plannedCompletionDate" />
+          </FormField>
+
+          <FormField label="تاريخ الانجاز الفعلي">
+            <DateInput v-model="form.actualCompletionDate" />
+          </FormField>
+
+          <p class="text-right">الانحراف الزمني = التاريخ الفعلي - التاريخ المخطط</p>
+          <p class="text-right">88</p>
+        </FormSection>
+        <FormSection title="تفاصيل العقد">
+          <div class="space-y-6 md:col-span-2">
             <div
               v-for="(contract, contractIndex) in form.contracts"
               :key="contractIndex"
               class="p-4 border rounded-lg"
             >
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium"> عقد رقم {{ contractIndex + 1 }} </h3>
+                <h3 class="text-lg font-medium">عقد رقم {{ contractIndex + 1 }}</h3>
                 <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
                   <X class="w-4 h-4" />
                 </Button>
               </div>
+              
               <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">اسم الجهة المنفذة \ الشركة</Label>
+                <FormField label="اسم الجهة المنفذة \ الشركة">
                   <Input
                     v-model="contract.executingCompany"
                     dir="rtl"
                     placeholder="ادخل اسم الشركة"
                   />
-                </div>
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">كلفة العقد</Label>
-                  <Input
+                </FormField>
+
+                <FormField label="كلفة العقد">
+                  <NumberInput
                     v-model="contract.cost"
-                    type="number"
-                    dir="rtl"
                     placeholder="ادخل كلفة العقد"
+                    unit="د.ع"
                   />
-                </div>
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">تاريخ الاحالة</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        class="justify-between w-full text-right"
-                        :class="!contract.referralDate && 'text-muted-foreground'"
-                      >
-                        <span>{{
-                          contract.referralDate ? formatDate(contract.referralDate) : 'اختر التاريخ'
-                        }}</span>
-                        <CalendarIcon class="w-4 h-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent class="w-auto p-0" align="start">
-                      <Calendar mode="single" v-model="contract.referralDate" initialFocus />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">تاريخ توقيع العقد</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        class="justify-between w-full text-right"
-                        :class="!contract.signingDate && 'text-muted-foreground'"
-                      >
-                        <span>{{
-                          contract.signingDate ? formatDate(contract.signingDate) : 'اختر التاريخ'
-                        }}</span>
-                        <CalendarIcon class="w-4 h-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent class="w-auto p-0" align="start">
-                      <Calendar mode="single" v-model="contract.signingDate" initialFocus />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">رقم العقد</Label>
+                </FormField>
+
+                <FormField label="تاريخ الاحالة">
+                  <DateInput v-model="contract.referralDate" />
+                </FormField>
+
+                <FormField label="تاريخ توقيع العقد">
+                  <DateInput v-model="contract.signingDate" />
+                </FormField>
+
+                <FormField label="رقم العقد">
                   <Input v-model="contract.number" dir="rtl" placeholder="ادخل رقم العقد" />
-                </div>
-                <div class="grid w-full gap-2">
-                  <Label class="text-right">عدد الاجراءات التنفيذية</Label>
-                  <Input
+                </FormField>
+
+                <FormField label="عدد الاجراءات التنفيذية">
+                  <NumberInput
                     v-model="contract.executionProcedures.length"
-                    type="number"
-                    dir="rtl"
                     readonly
                     disabled
                   />
-                </div>
+                </FormField>
               </div>
+
               <div class="mt-6">
                 <div class="flex items-center justify-between mb-4">
                   <h4 class="font-medium">الاجراءات التنفيذية</h4>
@@ -281,6 +172,7 @@
                     اضافة اجراء تنفيذي
                   </Button>
                 </div>
+
                 <div class="space-y-4">
                   <div
                     v-for="(procedure, procedureIndex) in contract.executionProcedures"
@@ -288,10 +180,7 @@
                     class="p-4 border rounded-lg bg-gray-50"
                   >
                     <div class="flex items-center justify-between mb-4">
-                      <h5 class="font-medium">
-                        الاجراء التنفيذي رقم
-                        {{ procedureIndex + 1 }}
-                      </h5>
+                      <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
                       <Button
                         variant="destructive"
                         size="sm"
@@ -300,376 +189,259 @@
                         <X class="w-4 h-4" />
                       </Button>
                     </div>
+
                     <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">وزن الاجراء</Label>
-                        <Input
+                      <FormField label="وزن الاجراء">
+                        <NumberInput
                           v-model="procedure.weight"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل وزن الاجراء"
+                          unit="%"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">مدة الاجراء</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="مدة الاجراء">
+                        <NumberInput
                           v-model="procedure.duration"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل مدة الاجراء"
+                          unit="يوم"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">تاريخ تنفيذ الاجراء</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              class="justify-between w-full text-right"
-                              :class="!procedure.executionDate && 'text-muted-foreground'"
-                            >
-                              <span>{{
-                                procedure.executionDate
-                                  ? formatDate(procedure.executionDate)
-                                  : 'اختر التاريخ'
-                              }}</span>
-                              <CalendarIcon class="w-4 h-4" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent class="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              v-model="procedure.executionDate"
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">تاريخ انجاز تنفيذ الاجراء</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              class="justify-between w-full text-right"
-                              :class="!procedure.completionDate && 'text-muted-foreground'"
-                            >
-                              <span>{{
-                                procedure.completionDate
-                                  ? formatDate(procedure.completionDate)
-                                  : 'اختر التاريخ'
-                              }}</span>
-                              <CalendarIcon class="w-4 h-4" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent class="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              v-model="procedure.completionDate"
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">نسبة الانجاز الفني المخطط</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="تاريخ تنفيذ الاجراء">
+                        <DateInput v-model="procedure.executionDate" />
+                      </FormField>
+
+                      <FormField label="تاريخ انجاز تنفيذ الاجراء">
+                        <DateInput v-model="procedure.completionDate" />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز الفني المخطط">
+                        <NumberInput
                           v-model="procedure.plannedTechnicalProgress"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل النسبة"
+                          unit="%"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">نسبة الانجاز الفني الفعلي</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز الفني الفعلي">
+                        <NumberInput
                           v-model="procedure.actualTechnicalProgress"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل النسبة"
+                          unit="%"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">نسبة الانحراف الفني</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="نسبة الانحراف الفني">
+                        <NumberInput
                           v-model="procedure.technicalDeviation"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل النسبة"
+                          unit="%"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">نسبة الانجاز المالي المخطط</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز المالي المخطط">
+                        <NumberInput
                           v-model="procedure.plannedFinancialProgress"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل النسبة"
+                          unit="%"
                         />
-                      </div>
-                      <div class="grid w-full gap-2">
-                        <Label class="text-right">نسبة الانجاز المالي الفعلي</Label>
-                        <Input
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز المالي الفعلي">
+                        <NumberInput
                           v-model="procedure.actualFinancialProgress"
-                          type="number"
-                          dir="rtl"
                           placeholder="ادخل النسبة"
+                          unit="%"
                         />
-                      </div>
+                      </FormField>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <Button @click="addContract" class="w-full"> اضافة عقد جديد </Button>
+            <Button @click="addContract" class="w-full">اضافة عقد جديد</Button>
           </div>
-        </div>
-        <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-semibold text-right">تفاصيل الموقف المالي</h2>
-          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <div class="grid w-full gap-2">
-              <Label class="text-right"
-                >كلفة الاجراءات التنفيذية المخطط لها لغاية تاريخ اليوم ({{
-                  new Date().toLocaleDateString('ar-US', {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                  })
-                }})
-              </Label>
-              <div class="relative">
-                <Input
-                  v-model="form.financials.plannedCost"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل الكلفة"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >د.ع</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">ميزانية المشروع (الكلفة الكلية للمشروع)</Label>
-              <div class="relative">
-                <Input
-                  v-model="form.financials.totalBudget"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل الميزانية"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >د.ع</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right"
-                >قيمة العمل المنجز الفعلي للجراءات التنفيذية لغاية تاريخ اليوم ({{
-                  new Date().toLocaleDateString('ar-US', {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                  })
-                }})</Label
-              >
-              <div class="relative">
-                <Input
-                  v-model="form.financials.actualWorkValue"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل قيمة العمل المنجز"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >د.ع</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">المصروف التراكمي للمشروع</Label>
-              <div class="relative">
-                <Input
-                  v-model="form.financials.cumulativeExpenses"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل المصروف التراكمي"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >د.ع</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">نسبة الانجاز المالي التراكمي</Label>
-              <div class="relative">
-                <Input
-                  v-model="form.financials.cumulativeProgress"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل نسبة الانجاز"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >%</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex flex-col gap-6 p-6 mt-4 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-semibold text-right">تفاصيل موقف تنفيذ المشروع</h2>
-          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-            <div class="grid w-full gap-2">
-              <Label class="text-right">حالة المشروع الحالية</Label>
-              <CustomSelect
-                v-model="form.executionDetails.currentStatus"
-                :options="projectStatuses"
-                placeholder="اختر حالة المشروع"
-                :triggerClass="'flex flex-row-reverse w-full'"
-              />
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">نسبة الانجاز الفني التراكمي</Label>
-              <div class="relative">
-                <Input
-                  v-model="form.executionDetails.cumulativeTechnicalProgress"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل النسبة"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >%</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2">
-              <Label class="text-right">نسبة الانحراف الفني التراكمي</Label>
-              <div class="relative">
-                <Input
-                  v-model="form.executionDetails.cumulativeTechnicalDeviation"
-                  type="number"
-                  dir="rtl"
-                  placeholder="ادخل النسبة"
-                />
-                <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                  >%</span
-                >
-              </div>
-            </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">اسباب الانحراف</Label>
-              <InputWithAddButton
-                v-model="form.executionDetails.deviationReasons"
-                placeholder="ادخل سبب الانحراف"
-                buttonText="اضافة"
-              />
+        </FormSection>
+        <FormSection title="تفاصيل الموقف المالي">
+          <FormField :label="'كلفة الاجراءات التنفيذية المخطط لها لغاية تاريخ اليوم (' + new Date().toLocaleDateString('ar-US', { year: 'numeric', month: 'numeric', day: 'numeric', }) + ')'">
+            <NumberInput
+              v-model="form.financials.plannedCost"
+              placeholder="ادخل الكلفة"
+              unit="د.ع"
+            />
+          </FormField>
+
+          <FormField label="ميزانية المشروع (الكلفة الكلية للمشروع)">
+            <NumberInput
+              v-model="form.financials.totalBudget"
+              placeholder="ادخل الميزانية"
+              unit="د.ع"
+            />
+          </FormField>
+
+          <FormField :label="'قيمة العمل المنجز الفعلي للجراءات التنفيذية لغاية تاريخ اليوم (' + new Date().toLocaleDateString('ar-US', { year: 'numeric', month: 'numeric', day: 'numeric', }) + ')'">
+            <NumberInput
+              v-model="form.financials.actualWorkValue"
+              placeholder="ادخل قيمة العمل المنجز"
+              unit="د.ع"
+            />
+          </FormField>
+
+          <FormField label="المصروف التراكمي للمشروع">
+            <NumberInput
+              v-model="form.financials.cumulativeExpenses"
+              placeholder="ادخل المصروف التراكمي"
+              unit="د.ع"
+            />
+          </FormField>
+
+          <FormField label="نسبة الانجاز المالي التراكمي">
+            <NumberInput
+              v-model="form.financials.cumulativeProgress"
+              placeholder="ادخل نسبة الانجاز"
+              unit="%"
+            />
+          </FormField>
+        </FormSection>
+        <FormSection title="تفاصيل موقف تنفيذ المشروع">
+          <FormField label="حالة المشروع الحالية">
+            <CustomSelect
+              v-model="form.executionDetails.currentStatus"
+              :options="projectStatuses"
+              placeholder="اختر حالة المشروع"
+              :triggerClass="'flex flex-row-reverse w-full'"
+            />
+          </FormField>
+
+          <FormField label="نسبة الانجاز الفني التراكمي">
+            <NumberInput
+              v-model="form.executionDetails.cumulativeTechnicalProgress"
+              placeholder="ادخل النسبة"
+              unit="%"
+            />
+          </FormField>
+
+          <FormField label="نسبة الانحراف الفني التراكمي">
+            <NumberInput
+              v-model="form.executionDetails.cumulativeTechnicalDeviation"
+              placeholder="ادخل النسبة"
+              unit="%"
+            />
+          </FormField>
+
+          <FormField label="اسباب الانحراف" class="md:col-span-2">
+            <InputWithAddButton
+              v-model="form.executionDetails.deviationReasons"
+              placeholder="ادخل سبب الانحراف"
+              buttonText="اضافة"
+            />
+            <div
+              v-if="form.executionDetails.deviationReasons.length > 0"
+              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+            >
               <div
-                v-if="form.executionDetails.deviationReasons.length > 0"
-                class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+                v-for="(reason, index) in form.executionDetails.deviationReasons"
+                :key="index"
+                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
               >
-                <div
-                  v-for="(reason, index) in form.executionDetails.deviationReasons"
-                  :key="index"
-                  class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
+                <span>{{ reason }}</span>
+                <button
+                  @click="removeDeviationReason(index)"
+                  class="text-gray-500 hover:text-red-500"
                 >
-                  <span>{{ reason }}</span>
-                  <button
-                    @click="removeDeviationReason(index)"
-                    class="text-gray-500 hover:text-red-500"
-                  >
-                    <X class="w-3 h-3" />
-                  </button>
-                </div>
+                  <X class="w-3 h-3" />
+                </button>
               </div>
             </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">مدد التوقفات</Label>
-              <InputWithAddButton
-                v-model="form.executionDetails.stoppagePeriods"
-                placeholder="ادخل مدة التوقف"
-                buttonText="اضافة"
-              />
+          </FormField>
+
+          <FormField label="مدد التوقفات" class="md:col-span-2">
+            <InputWithAddButton
+              v-model="form.executionDetails.stoppagePeriods"
+              placeholder="ادخل مدة التوقف"
+              buttonText="اضافة"
+            />
+            <div
+              v-if="form.executionDetails.stoppagePeriods.length > 0"
+              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+            >
               <div
-                v-if="form.executionDetails.stoppagePeriods.length > 0"
-                class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+                v-for="(period, index) in form.executionDetails.stoppagePeriods"
+                :key="index"
+                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
               >
-                <div
-                  v-for="(period, index) in form.executionDetails.stoppagePeriods"
-                  :key="index"
-                  class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
+                <span>{{ period }}</span>
+                <button
+                  @click="removeStoppagePeriod(index)"
+                  class="text-gray-500 hover:text-red-500"
                 >
-                  <span>{{ period }}</span>
-                  <button
-                    @click="removeStoppagePeriod(index)"
-                    class="text-gray-500 hover:text-red-500"
-                  >
-                    <X class="w-3 h-3" />
-                  </button>
-                </div>
+                  <X class="w-3 h-3" />
+                </button>
               </div>
             </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">اوامر الغيار</Label>
-              <InputWithAddButton
-                v-model="form.executionDetails.changeOrders"
-                placeholder="ادخل امر الغيار"
-                buttonText="اضافة"
-              />
+          </FormField>
+
+          <FormField label="اوامر الغيار" class="md:col-span-2">
+            <InputWithAddButton
+              v-model="form.executionDetails.changeOrders"
+              placeholder="ادخل امر الغيار"
+              buttonText="اضافة"
+            />
+            <div
+              v-if="form.executionDetails.changeOrders.length > 0"
+              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+            >
               <div
-                v-if="form.executionDetails.changeOrders.length > 0"
-                class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+                v-for="(order, index) in form.executionDetails.changeOrders"
+                :key="index"
+                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
               >
-                <div
-                  v-for="(order, index) in form.executionDetails.changeOrders"
-                  :key="index"
-                  class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
+                <span>{{ order }}</span>
+                <button
+                  @click="removeChangeOrder(index)"
+                  class="text-gray-500 hover:text-red-500"
                 >
-                  <span>{{ order }}</span>
-                  <button
-                    @click="removeChangeOrder(index)"
-                    class="text-gray-500 hover:text-red-500"
-                  >
-                    <X class="w-3 h-3" />
-                  </button>
-                </div>
+                  <X class="w-3 h-3" />
+                </button>
               </div>
             </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">المدد الاضافية</Label>
-              <InputWithAddButton
-                v-model="form.executionDetails.additionalPeriods"
-                placeholder="ادخل المدة الاضافية"
-                buttonText="اضافة"
-              />
+          </FormField>
+
+          <FormField label="المدد الاضافية" class="md:col-span-2">
+            <InputWithAddButton
+              v-model="form.executionDetails.additionalPeriods"
+              placeholder="ادخل المدة الاضافية"
+              buttonText="اضافة"
+            />
+            <div
+              v-if="form.executionDetails.additionalPeriods.length > 0"
+              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+            >
               <div
-                v-if="form.executionDetails.additionalPeriods.length > 0"
-                class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50"
+                v-for="(period, index) in form.executionDetails.additionalPeriods"
+                :key="index"
+                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
               >
-                <div
-                  v-for="(period, index) in form.executionDetails.additionalPeriods"
-                  :key="index"
-                  class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
+                <span>{{ period }}</span>
+                <button
+                  @click="removeAdditionalPeriod(index)"
+                  class="text-gray-500 hover:text-red-500"
                 >
-                  <span>{{ period }}</span>
-                  <button
-                    @click="removeAdditionalPeriod(index)"
-                    class="text-gray-500 hover:text-red-500"
-                  >
-                    <X class="w-3 h-3" />
-                  </button>
-                </div>
+                  <X class="w-3 h-3" />
+                </button>
               </div>
             </div>
-            <div class="grid w-full gap-2 md:col-span-2">
-              <Label class="text-right">الملاحظات</Label>
-              <Textarea
-                v-model="form.executionDetails.notes"
-                dir="rtl"
-                placeholder="ادخل الملاحظات"
-                class="min-h-[100px]"
-              />
-            </div>
-          </div>
-        </div>
+          </FormField>
+
+          <FormField label="الملاحظات" class="md:col-span-2">
+            <Textarea
+              v-model="form.executionDetails.notes"
+              dir="rtl"
+              placeholder="ادخل الملاحظات"
+              class="min-h-[100px]"
+            />
+          </FormField>
+        </FormSection>
         <div class="sticky left-0 right-0 mt-6 bottom-6">
           <div class="max-w-6xl px-6 mx-auto">
             <Button
@@ -699,8 +471,6 @@
   import { Label } from '@/components/ui/label';
   import { Button } from '@/components/ui/button';
   import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-  import { Calendar } from '@/components/ui/calendar';
-  import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
   import CustomSelect from '@/components/CustomSelect.vue';
   import { X, Calendar as CalendarIcon, Plus, Loader2, MapPin } from 'lucide-vue-next';
   import { Textarea } from '@/components/ui/textarea';
@@ -708,6 +478,10 @@
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
   import InputWithAddButton from '@/components/InputWithAddButton.vue';
+  import FormSection from '@/components/FormSection.vue';
+  import FormField from '@/components/FormField.vue';
+  import DateInput from '@/components/DateInput.vue';
+  import NumberInput from '@/components/NumberInput.vue';
 
   const form = ref({
     projectName: '',
