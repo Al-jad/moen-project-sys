@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-6">
       <!-- Search Input -->
 
-      <div class="p-6 bg-white dark:bg-gray-800/95 rounded-md border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50">
+      <div class="p-6 bg-white border border-gray-100 rounded-md shadow-sm dark:bg-gray-800/95 dark:border-gray-700/50 dark:shadow-gray-900/50">
         <!-- Filter Header -->
         <div class="bg-white dark:bg-gray-800/95">
           <div class="flex items-center justify-between">
@@ -22,7 +22,7 @@
           </div>
         </div>
         <div>
-          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
+          <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
         </div>
 
         <!-- Funding Type -->
@@ -47,16 +47,16 @@
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200">صندوق حماية وتحسين البيئة</label>
+              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200"> الممولة دوليا  </label>
             </div>
             <div class="flex items-center gap-2">
-              <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200">ممولة</label>
+              <Checkbox id="fund" />
+              <label for="fund" class="text-sm text-gray-800 dark:text-gray-200">ممولة</label>
             </div>
           </div>
         </div>
         <div>
-          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
+          <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
         </div>
 
         <!-- Budget Range -->
@@ -80,7 +80,7 @@
                     :min="100000"
                     :max="budgetRange[0]"
                   />
-                  <span class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-1/2 left-2 top-1/2">د.ع</span>
+                  <span class="absolute text-sm text-gray-500 -translate-y-1/2 dark:text-gray-400 left-2 top-1/2">د.ع</span>
                 </div>
               </div>
               <div class="space-y-2">
@@ -92,7 +92,7 @@
                     :min="budgetRange[1]"
                     :max="9000000"
                   />
-                  <span class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-1/2 left-2 top-1/2">د.ع</span>
+                  <span class="absolute text-sm text-gray-500 -translate-y-1/2 dark:text-gray-400 left-2 top-1/2">د.ع</span>
                 </div>
               </div>
             </div>
@@ -111,7 +111,7 @@
         </div>
 
         <div>
-          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
+          <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
         </div>
 
         <!-- Project Status -->
@@ -146,7 +146,7 @@
           </div>
 
           <div>
-            <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
+            <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
           </div>
         </div>
 
@@ -181,7 +181,7 @@
         </div>
 
         <div>
-          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
+          <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
         </div>
         <div class="flex gap-3 mt-6">
           <PrimaryButton variant="outline" buttonClass="flex-1 text-gray-700 dark:text-gray-200"> الغاء </PrimaryButton>
