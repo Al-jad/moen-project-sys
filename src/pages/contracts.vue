@@ -1,22 +1,22 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-200">
+    <main class="p-6 bg-gray-50 dark:bg-[#0f172a]">
       <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-6">
               <Button
                 variant="link"
                 @click="$router.push('/')"
-                class="flex items-center text-blue-600"
+                class="flex items-center text-blue-600 dark:text-blue-400"
               >
                 <ArrowRight class="w-4 h-4" />
                 الرئيسية
               </Button>
-              <h1 class="text-xl font-bold">العقود</h1>
+              <h1 class="text-xl font-bold text-gray-900 dark:text-white">العقود</h1>
             </div>
           </div>
 
       <!-- Controls Container -->
-      <div class="p-6 bg-white rounded-lg">
+      <div class="p-6 bg-white dark:bg-gray-800/95 rounded-lg border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50">
         <div class="flex items-center justify-between gap-4 mb-6">
           <div class="flex items-center gap-6">
             <Button variant="outline" class="px-2">
@@ -25,7 +25,6 @@
             </Button>
 
             <div class="min-w-[200px]">
-              
               <CustomSelect
                 v-model="selectedProject"
                 :options="[
@@ -36,7 +35,7 @@
                 :triggerClass="'flex flex-row-reverse w-full'"
               >
               <template #icon>
-                  <Folder class="w-5 h-5 text-gray-400" />
+                  <Folder class="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 </template>
               </CustomSelect>
             </div>
@@ -52,19 +51,19 @@
                 :triggerClass="'flex flex-row-reverse w-full'"
               >
                 <template #icon>
-                  <FileText class="w-5 h-5 text-gray-400" />
+                  <FileText class="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 </template>
               </CustomSelect>
             </div>
 
             <Popover>
               <PopoverTrigger>
-                <Button variant="outline" class="flex justify-start w-56 text-black">
-                  <CalendarIcon class="w-4 h-4 ml-2 text-gray-400" />
+                <Button variant="outline" class="flex justify-start w-56 text-gray-700 dark:text-gray-200">
+                  <CalendarIcon class="w-4 h-4 ml-2 text-gray-400 dark:text-gray-500" />
                   {{ date?.start ? dateRangeText : 'اختر التاريخ' }}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent class="w-auto p-0">
+              <PopoverContent class="w-auto p-0 bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
                 <RangeCalendar v-model="date" :number-of-months="2" />
               </PopoverContent>
             </Popover>
@@ -76,10 +75,10 @@
               v-model="searchQuery"
               type="text"
               placeholder="بحث سريع"
-              class="pr-10 border-gray-200 placeholder:text-gray-400 focus:border-gray-200"
+              class="pr-10 border-gray-200 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-gray-200 dark:focus:border-gray-700"
             />
             <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
-              <Search class="text-gray-400 size-6" />
+              <Search class="text-gray-400 dark:text-gray-500 size-6" />
             </span>
           </div>
         </div>
@@ -99,19 +98,19 @@
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious :disabled="currentPage === 1" @click="currentPage--">
+                <PaginationPrevious :disabled="currentPage === 1" @click="currentPage--" class="dark:text-gray-300">
                   التالي
                 </PaginationPrevious>
               </PaginationItem>
 
               <PaginationItem v-for="page in totalPages" :key="page">
-                <PaginationLink :isActive="page === currentPage" @click="currentPage = page">
+                <PaginationLink :isActive="page === currentPage" @click="currentPage = page" class="dark:text-gray-300 dark:hover:bg-gray-700/50">
                   {{ page }}
                 </PaginationLink>
               </PaginationItem>
 
               <PaginationItem>
-                <PaginationNext :disabled="currentPage === totalPages" @click="currentPage++">
+                <PaginationNext :disabled="currentPage === totalPages" @click="currentPage++" class="dark:text-gray-300">
                   السابق
                 </PaginationNext>
               </PaginationItem>

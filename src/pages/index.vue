@@ -2,11 +2,11 @@
   <div class="flex" dir="rtl">
     <Sidebar />
     
-    <main class="flex-1 mr-[60px] bg-gray-200">
+    <main class="flex-1 mr-[60px] bg-gray-200 dark:bg-[#0f172a]">
       <Header />
       
       <div class="p-6 mt-[6%]">
-        <h1 class="mb-4 text-2xl font-bold text-right"> 
+        <h1 class="mb-4 text-2xl font-bold text-right text-gray-900 dark:text-white"> 
           المشاريع
         </h1>
         <!-- Stats Cards -->
@@ -65,7 +65,7 @@
         </div>
 
         <!-- Chart Section -->
-        <div class="w-full p-6 bg-white rounded-lg shadow">
+        <div class="w-full p-6 bg-white border border-gray-100 rounded-lg shadow dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:border-gray-700/50">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <CustomSelect
@@ -87,16 +87,16 @@
 
         <div class="mt-8">
           <Tabs default-value="projects" class="w-full">
-            <TabsList class="justify-end w-full p-0 bg-transparent border-b rounded-none">
+            <TabsList class="justify-end w-full p-0 bg-transparent border-b border-gray-200 rounded-none dark:border-gray-700">
               <TabsTrigger 
                 value="users"
-                class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 المستخدمين
               </TabsTrigger>
               <TabsTrigger 
                 value="projects"
-                class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 كل المشاريع
               </TabsTrigger>

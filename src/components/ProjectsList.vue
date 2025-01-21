@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="space-y-6">
     <div class="grid gap-4" :class="useDetailedCard ? 'grid-cols-1' : 'grid-cols-4'">
       <component 
         :is="useDetailedCard ? DetailedProjectCard : ProjectCard"
@@ -18,6 +18,7 @@
         v-model="currentPage"
         :total="projects.length"
         :per-page="itemsPerPage"
+        class="text-gray-600 dark:text-gray-300"
       />
     </div>
   </div>

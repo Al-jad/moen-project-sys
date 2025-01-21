@@ -1,19 +1,22 @@
 <template>
-  <div class="bg-gray-50 hover:shadow-md hover:scale-[1.01] transition-all duration-300 cursor-pointer hover:bg-white rounded-xl" @click="$router.push(`/projects/${id}`)">
+  <div 
+    class="bg-white dark:bg-gray-800/95 hover:shadow-md hover:scale-[1.01] transition-all duration-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50" 
+    @click="$router.push(`/projects/${id}`)"
+  >
     <div class="grid grid-cols-3 gap-3 p-6">
       <div class="flex col-span-2">
         <div class="grid w-full grid-cols-2 gap-y-0">
-          <h3 class="text-sm font-medium text-gray-500">اسم المشروع</h3>
-          <p class="text-lg font-medium text-gray-900">{{ title }}</p>
+          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">اسم المشروع</h3>
+          <p class="text-lg font-medium text-gray-900 dark:text-white">{{ title }}</p>
           
-          <h3 class="text-sm font-medium text-gray-500">فترة التنفيذ</h3>
-          <p class="text-sm font-medium">{{ duration }} شهر</p>
+          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">فترة التنفيذ</h3>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ duration }} شهر</p>
           
-          <h3 class="text-sm font-medium text-gray-500">تاريخ المباشرة</h3>
-          <p class="text-sm font-medium">{{ startDate }}</p>
+          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">تاريخ المباشرة</h3>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ startDate }}</p>
           
-          <h3 class="text-sm font-medium text-gray-500">الجهة المستفيدة</h3>
-          <p class="text-sm font-medium">{{ department }}</p>
+          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">الجهة المستفيدة</h3>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ department }}</p>
         </div>
       </div>
       <div class="flex flex-col items-center justify-center p-4 after:rounded-xl">
@@ -22,7 +25,7 @@
             <div class="absolute w-full h-full">
               <svg class="w-full h-full transform -rotate-90">
                 <circle cx="72" cy="72" r="66" 
-                  stroke="#f3f4f6"
+                  class="stroke-gray-100 dark:stroke-gray-700"
                   stroke-width="10" 
                   fill="none" 
                 />
@@ -40,7 +43,6 @@
               </svg>
             </div>
             <div class="flex flex-col items-center justify-center space-y-2 text-center">
-              <!--! number progrees too -->
               <span class="text-4xl font-bold" :class="statusTextColor">
                 {{ progress }}%
               </span>
@@ -110,21 +112,21 @@
 
   const statusTextColor = computed(() => {
     if (props.progress >= 90) {
-      return 'text-green-600';
+      return 'text-green-600 dark:text-green-500';
     } else if (props.progress >= 50) {
-      return 'text-yellow-600';
+      return 'text-yellow-600 dark:text-yellow-500';
     } else {
-      return 'text-red-600';
+      return 'text-red-600 dark:text-red-500';
     }
   });
 
   const statusBgColor = computed(() => {
     if (props.progress >= 90) {
-      return 'bg-green-100';
+      return 'bg-green-100 dark:bg-green-900/30';
     } else if (props.progress >= 50) {
-      return 'bg-yellow-100';
+      return 'bg-yellow-100 dark:bg-yellow-900/30';
     } else {
-      return 'bg-red-100';
+      return 'bg-red-100 dark:bg-red-900/30';
     }
   });
 </script>

@@ -3,12 +3,12 @@
     <div class="flex flex-1">
       <ProjectsFilter />
       
-      <div class="flex-1 p-6 bg-gray-200">
+      <div class="flex-1 p-6 bg-gray-50 dark:bg-[#0f172a]">
         <!-- Projects Header -->
         <div class="flex items-center justify-between mb-6">
           <div class="space-y-1">
-            <h1 class="text-2xl font-bold">قائمة المشاريع</h1>
-            <p class="text-sm text-gray-500">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">قائمة المشاريع</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
               النتائج: عرض {{ paginatedCount }} مشروع من اصل {{ totalProjects }} مشروع
             </p>
           </div>
@@ -22,34 +22,34 @@
                     ترتيب
                   </PrimaryButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent class="w-[250px] p-0" align="end">
-                  <div class="px-4 py-3 border-b">
-                    <h3 class="text-base font-medium text-right">ترتيب</h3>
+                <DropdownMenuContent class="w-[250px] p-0 bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700" align="end">
+                  <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                    <h3 class="text-base font-medium text-right text-gray-900 dark:text-white">ترتيب</h3>
                   </div>
                   <div class="flex flex-col">
                     <DropdownMenuItem
                       v-for="option in sortOptions"
                       :key="option.id"
-                      class="flex items-center justify-between w-full px-4 py-2.5 text-sm text-right transition-colors hover:bg-gray-50 border-b last:border-b-0 focus:bg-gray-50"
-                      :class="{ 'bg-gray-50': selectedSort === option.id }"
+                      class="flex items-center justify-between w-full px-4 py-2.5 text-sm text-right transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b last:border-b-0 focus:bg-gray-50 dark:focus:bg-gray-700/50 dark:border-gray-700"
+                      :class="{ 'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id }"
                       @click="handleSort(option.id)"
                     >
                       <component 
                         :is="option.icon" 
-                        class="w-4 h-4 text-gray-500"
+                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
                       />
-                      {{ option.label }}
+                      <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
               <div 
                 v-if="selectedSort" 
-                class="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 rounded-lg text-gray-700"
+                class="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200"
               >
                 <span>{{ getSelectedSortLabel }}</span>
                 <button 
-                  class="p-0.5 hover:bg-gray-200 rounded-full"
+                  class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
                   @click="clearSort"
                 >
                   <X class="w-3 h-3" />
@@ -66,17 +66,17 @@
                   اضافة مشروع جديد
                 </PrimaryButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent class="w-[200px]">
-                <DropdownMenuItem @click="$router.push('/add-project?type=funded')">
+              <DropdownMenuContent class="w-[200px] bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
+                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=funded')">
                   مشروع ممول
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="$router.push('/add-devlopment-project')">
+                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-devlopment-project')">
                   مشروع تنمية الاقاليم
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="$router.push('/add-project?type=investment')">
+                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=investment')">
                   مشروع استثمارية
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="$router.push('/add-project?type=operational')">
+                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=operational')">
                   مشروع تشغيلية
                 </DropdownMenuItem>
               </DropdownMenuContent>

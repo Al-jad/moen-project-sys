@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="fixed top-0 right-0 z-50 flex flex-col h-screen shadow-lg bg-[#08182F] group"
+    class="fixed top-0 right-0 z-50 flex flex-col h-screen shadow-lg bg-white dark:bg-gray-900 group"
     @mouseenter="isAnyItemHovered = true"
     @mouseleave="isAnyItemHovered = false"
   >
@@ -9,7 +9,7 @@
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/')"
     >
-      <div class="absolute inset-0 transition-opacity duration-300 bg-[#08182F] opacity-0 group-hover:opacity-100"/>
+      <div class="absolute inset-0 transition-opacity duration-300 bg-gray-50 dark:bg-gray-800 opacity-0 group-hover:opacity-100"/>
       <div class="relative flex items-center justify-center w-full h-full px-3">
         <img 
           src="/public/img/Logo.png" 
@@ -20,8 +20,8 @@
         <img 
           src="/public/img/logo-white-text.png" 
           alt="Logo with Text" 
-            class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
-            :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
+          class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
+          :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
         />
       </div>
     </div>
@@ -33,7 +33,7 @@
       <ul class="mt-4 space-y-1.5">
         <template v-for="(item, index) in menuItems" :key="index">
           <li v-if="item.type === 'separator'" class="px-2">
-            <hr class="w-full h-px my-2 border-0 rounded opacity-30 bg-gradient-to-l from-gray-200 to-transparent">
+            <hr class="w-full h-px my-2 border-0 rounded opacity-30 bg-gradient-to-l from-gray-200 dark:from-gray-700 to-transparent">
           </li>
           <li 
             v-else
@@ -42,7 +42,7 @@
             @mouseleave="hoveredItem = null"
           >
             <div 
-              class="absolute inset-0 transition-opacity duration-200 rounded-md opacity-0 bg-gradient-to-l from-blue-50/20 via-transparent to-transparent group-hover/item:opacity-100"
+              class="absolute inset-0 transition-opacity duration-200 rounded-md opacity-0 bg-gradient-to-l from-gray-100 dark:from-gray-800 via-transparent to-transparent group-hover/item:opacity-100"
               :class="{'!opacity-0': isActive(item.path)}"
             />
             <Button
@@ -50,29 +50,29 @@
               size="icon"
               class="relative flex items-center justify-start w-full gap-3 px-3 py-2 transition-all duration-200 ease-in-out rounded-md whitespace-nowrap"
               :class="{ 
-                'bg-[#08182F] bg-opacity-30 text-[#08182F]': isActive(item.path),
-                'hover:bg-gray-50/50': !isActive(item.path),
+                'bg-primary/10 text-primary dark:bg-primary/20': isActive(item.path),
+                'hover:bg-gray-100 dark:hover:bg-gray-800': !isActive(item.path),
                 'scale-[1.01]': hoveredItem === index && !isActive(item.path)
               }"
               @click="router.push(item.path)"
             >
               <component 
                 :is="item.icon" 
-                class="w-5 h-5 min-w-[20px] text-white transition-transform duration-200"
+                class="w-5 h-5 min-w-[20px] text-gray-500 dark:text-gray-400 transition-transform duration-200"
                 :class="{
                   'scale-105': hoveredItem === index,
-                  'text-white': isActive(item.path)
+                  'text-primary dark:text-primary': isActive(item.path)
                 }"
               />
               <span 
-                class="text-sm font-medium text-white transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
-                :class="{'text-white': isActive(item.path)}"
+                class="text-sm font-medium text-gray-700 dark:text-gray-200 transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                :class="{'text-primary dark:text-primary': isActive(item.path)}"
               >
                 {{ item.label }}
               </span>
               <div 
                 v-if="isActive(item.path)"
-                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-white"
+                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-primary"
                 :class="{'scale-95': hoveredItem === index}"
               />
             </Button>
@@ -83,7 +83,7 @@
 
     <!-- User Profile Section -->
     <div 
-      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-100 cursor-pointer hover:bg-gray-50/10"
+      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/profile')"
     >
@@ -91,17 +91,17 @@
         <img 
           src="/public/img/avatar.png" 
           alt="User Avatar" 
-          class="object-cover w-8 h-8 rounded-full"
+          class="object-cover w-8 h-8 rounded-full ring-2 ring-gray-200 dark:ring-gray-700"
         />
         <div 
-          class="flex flex-col text-white transition-all duration-300"
+          class="flex flex-col transition-all duration-300"
           :class="{'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered}"
         >
-          <span class="text-sm font-medium whitespace-nowrap">أ. دعاء الشيخلي</span>
-          <span class="text-xs whitespace-nowrap">مدير المشروع</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">أ. دعاء الشيخلي</span>
+          <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">مدير المشروع</span>
         </div>
         <LogOut 
-          class="w-4 h-4 mr-auto text-white transition-all duration-200 hover:text-red-500"
+          class="w-4 h-4 mr-auto text-gray-400 transition-all duration-200 hover:text-red-500"
           :class="{'opacity-0 translate-x-2': !isAnyItemHovered, 'opacity-100 translate-x-0': isAnyItemHovered}"
           @click.stop="handleLogout"
         />

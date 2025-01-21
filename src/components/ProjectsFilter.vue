@@ -1,69 +1,67 @@
 <template>
-  <div class="min-h-screen w-[300px] bg-gray-50 p-6">
+  <div class="min-h-screen w-[300px] bg-gray-50 dark:bg-gray-800/50 p-6">
     <div class="flex flex-col gap-6">
       <!-- Search Input -->
 
-      <div class="p-6 bg-white rounded-md">
+      <div class="p-6 bg-white dark:bg-gray-800/95 rounded-md border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50">
         <!-- Filter Header -->
-        <div class="bg-white">
+        <div class="bg-white dark:bg-gray-800/95">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <FilterIcon class="w-4 h-4 text-gray-500" />
-              <span class="text-sm font-medium text-gray-700">فلتر</span>
+              <FilterIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-200">فلتر</span>
             </div>
           </div>
-          <hr class="w-full my-2 border-gray-200" />
+          <hr class="w-full my-2 border-gray-200 dark:border-gray-700" />
         </div>
         <div class="my-4 rounded-md">
-          <label class="text-sm font-medium text-gray-700"> بحث </label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-200"> بحث </label>
           <div class="relative">
-            <Search class="absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
+            <Search class="absolute right-3 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
             <Input type="text" placeholder="ابحث عن اسم او وصف او الرقم المرجعي" class="pr-10" />
           </div>
         </div>
         <div>
-          <hr class="my-4 border border-gray-100 border-dashed" />
+          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
         </div>
 
         <!-- Funding Type -->
         <div class="space-y-3">
-          <label class="text-sm text-gray-600">نوع التمويل</label>
+          <label class="text-sm text-gray-600 dark:text-gray-300">نوع التمويل</label>
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <Checkbox id="all" />
-              <label for="all" class="text-sm text-gray-800">الكل</label>
+              <label for="all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="government" />
-              <label for="government" class="text-sm text-gray-800">البرنامج الحكومي</label>
+              <label for="government" class="text-sm text-gray-800 dark:text-gray-200">البرنامج الحكومي</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="investment" />
-              <label for="investment" class="text-sm text-gray-800">الموازنة الاستثمارية</label>
+              <label for="investment" class="text-sm text-gray-800 dark:text-gray-200">الموازنة الاستثمارية</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="operational" />
-              <label for="operational" class="text-sm text-gray-800">الموازنة التشغيلية</label>
+              <label for="operational" class="text-sm text-gray-800 dark:text-gray-200">الموازنة التشغيلية</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800">صندوق حماية وتحسين البيئة</label>
+              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200">صندوق حماية وتحسين البيئة</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800"> 
-                ممولة
-              </label>
+              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200">ممولة</label>
             </div>
           </div>
         </div>
         <div>
-          <hr class="my-4 border border-gray-100 border-dashed" />
+          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
         </div>
 
         <!-- Budget Range -->
         <div class="mt-4 space-y-3">
-          <label class="text-sm font-medium text-gray-700">المبلغ</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-200">المبلغ</label>
           <div class="space-y-4">
             <Slider
               v-model="budgetRange"
@@ -73,9 +71,8 @@
               class="w-full"
             />
             <div class="grid grid-cols-2 gap-4">
-              <!-- ! fix -->
               <div class="space-y-2">
-                <label class="text-xs text-gray-500">الحد الادنى</label>
+                <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <div class="relative">
                   <Input
                     v-model="budgetRange[1]"
@@ -83,13 +80,11 @@
                     :min="100000"
                     :max="budgetRange[0]"
                   />
-                  <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                    >د.ع</span
-                  >
+                  <span class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-1/2 left-2 top-1/2">د.ع</span>
                 </div>
               </div>
               <div class="space-y-2">
-                <label class="text-xs text-gray-500">الحد الاعلى</label>
+                <label class="text-xs text-gray-500 dark:text-gray-400">الحد الاعلى</label>
                 <div class="relative">
                   <Input
                     v-model="budgetRange[0]"
@@ -97,9 +92,7 @@
                     :min="budgetRange[1]"
                     :max="9000000"
                   />
-                  <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2"
-                    >د.ع</span
-                  >
+                  <span class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-1/2 left-2 top-1/2">د.ع</span>
                 </div>
               </div>
             </div>
@@ -108,7 +101,7 @@
 
         <!-- Implementation Years -->
         <div class="space-y-2">
-          <label class="text-sm text-gray-600">سنوات التنفيذ</label>
+          <label class="text-sm text-gray-600 dark:text-gray-300">سنوات التنفيذ</label>
           <CustomSelect
             v-model="selectedYear"
             :options="implementationYears"
@@ -118,80 +111,80 @@
         </div>
 
         <div>
-          <hr class="my-4 border border-gray-100 border-dashed" />
+          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
         </div>
 
         <!-- Project Status -->
         <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700">حالة المشروع</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-200">حالة المشروع</label>
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <Checkbox id="status-all" />
-              <label for="status-all" class="text-sm">الكل</label>
+              <label for="status-all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="status-completed" />
               <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                <label for="status-completed" class="text-sm">منجز</label>
+                <label for="status-completed" class="text-sm text-gray-800 dark:text-gray-200">منجز</label>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="status-in-progress" />
               <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 bg-yellow-500 rounded-full"></span>
-                <label for="status-in-progress" class="text-sm">قيد الانجاز</label>
+                <label for="status-in-progress" class="text-sm text-gray-800 dark:text-gray-200">قيد الانجاز</label>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="status-delayed" />
               <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
-                <label for="status-delayed" class="text-sm">متلكئ</label>
+                <label for="status-delayed" class="text-sm text-gray-800 dark:text-gray-200">متلكئ</label>
               </div>
             </div>
           </div>
 
           <div>
-            <hr class="my-4 border border-gray-100 border-dashed" />
+            <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
           </div>
         </div>
 
         <!-- Beneficiary -->
         <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700">الجهة المستفيدة</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-200">الجهة المستفيدة</label>
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <Checkbox id="beneficiary-all" v-model="selectedBeneficiaries.all" />
-              <label for="beneficiary-all" class="text-sm">الكل</label>
+              <label for="beneficiary-all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="beneficiary-baghdad" v-model="selectedBeneficiaries.baghdadEducation" />
-              <label for="beneficiary-baghdad" class="text-sm">مديرية تربية بغداد</label>
+              <label for="beneficiary-baghdad" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية بغداد</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox
                 id="beneficiary-environment"
                 v-model="selectedBeneficiaries.environmentProtection"
               />
-              <label for="beneficiary-environment" class="text-sm">دائرة حماية تحسين بيئة</label>
+              <label for="beneficiary-environment" class="text-sm text-gray-800 dark:text-gray-200">دائرة حماية تحسين بيئة</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="beneficiary-najaf" v-model="selectedBeneficiaries.najafEducation" />
-              <label for="beneficiary-najaf" class="text-sm">مديرية تربية النجف</label>
+              <label for="beneficiary-najaf" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية النجف</label>
             </div>
             <div class="flex items-center gap-2">
               <Checkbox id="beneficiary-basra" v-model="selectedBeneficiaries.basraEducation" />
-              <label for="beneficiary-basra" class="text-sm">مديرية تربية البصرة</label>
+              <label for="beneficiary-basra" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية البصرة</label>
             </div>
           </div>
         </div>
 
         <div>
-          <hr class="my-4 border border-gray-100 border-dashed" />
+          <hr class="my-4 border border-gray-100 dark:border-gray-700 border-dashed" />
         </div>
         <div class="flex gap-3 mt-6">
-          <PrimaryButton variant="outline" buttonClass="flex-1 text-gray-700"> الغاء </PrimaryButton>
+          <PrimaryButton variant="outline" buttonClass="flex-1 text-gray-700 dark:text-gray-200"> الغاء </PrimaryButton>
           <PrimaryButton buttonClass="flex-1"> تطبيق </PrimaryButton>
         </div>
       </div>
