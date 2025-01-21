@@ -12,11 +12,11 @@
                 <p class="text-sm text-gray-300">وزارة البيئة - جمهورية العراق</p>
               </div>
             </div>
-            <p class="text-sm leading-7 text-center text-gray-300">
+            <!-- <p class="text-sm leading-7 text-center text-gray-300">
               نظام متكامل لإدارة وتتبع المشاريع البيئية في وزارة البيئة العراقية.
-            </p>
+            </p> -->
             <!-- Social Links -->
-            <div class="flex justify-center gap-3">
+            <!-- <div class="flex justify-center gap-3">
               <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Facebook class="w-4 h-4" />
@@ -33,10 +33,72 @@
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Twitter class="w-4 h-4" />
               </a>
+            </div> -->
+          </div>
+          <div class="flex flex-col items-center space-y-6">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <img src="/img/MinisterLogo.png" alt="Ministry Logo" class="w-16 h-16" />
+              <div class="space-y-1">
+                <h3 class="text-xl font-bold text-white">رئاسة الوزراء</h3>
+                <p class="text-sm text-gray-300">  جمهورية العراق</p>
+              </div>
             </div>
+            <!-- <p class="text-sm leading-7 text-center text-gray-300">
+              نظام متكامل لإدارة وتتبع المشاريع البيئية في وزارة البيئة العراقية.
+            </p> -->
+            <!-- Social Links -->
+            <!-- <div class="flex justify-center gap-3">
+              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Facebook class="w-4 h-4" />
+              </a>
+              <a href="https://www.instagram.com/moen.gov.iq" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Instagram class="w-4 h-4" />
+              </a>
+              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Youtube class="w-4 h-4" />
+              </a>
+              <a href="https://x.com" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Twitter class="w-4 h-4" />
+              </a>
+            </div> -->
+          </div>
+          <div class="flex flex-col items-center space-y-6">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <img src="/img/WhatsApp.jpg" alt="Ministry Logo" class="w-16 h-16 rounded-full" />
+              <div class="space-y-1">
+                <h3 class="text-xl font-bold text-white">مركز البيانات الوطني</h3>
+                <p class="text-sm text-gray-300"> الأمانة العامة لمجلس الوزراء</p>
+              </div>
+            </div>
+            <!-- <p class="text-sm leading-7 text-center text-gray-300">
+              نظام متكامل لإدارة وتتبع المشاريع البيئية في وزارة البيئة العراقية.
+            </p> -->
+            <!-- Social Links -->
+            <!-- <div class="flex justify-center gap-3">
+              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Facebook class="w-4 h-4" />
+              </a>
+              <a href="https://www.instagram.com/moen.gov.iq" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Instagram class="w-4 h-4" />
+              </a>
+              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Youtube class="w-4 h-4" />
+              </a>
+              <a href="https://x.com" target="_blank" 
+                class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
+                <Twitter class="w-4 h-4" />
+              </a>
+            </div> -->
           </div>
 
-          <!-- Quick Links -->
+          <!-- Quick Links
           <div class="flex flex-col items-center space-y-6">
             <h3 class="text-lg font-semibold text-white">روابط سريعة</h3>
             <div class="flex flex-col items-center w-full gap-3">
@@ -77,10 +139,10 @@
                 <span>اتصل بنا</span>
               </RouterLink>
             </div>
-          </div>
+          </div> -->
 
           <!-- Contact Info -->
-          <div class="flex flex-col items-center space-y-6">
+          <!-- <div class="flex flex-col items-center space-y-6">
             <h3 class="text-lg font-semibold text-white">معلومات الاتصال</h3>
             <div class="flex flex-col items-center gap-4">
               <div class="flex items-center justify-center w-full gap-3 text-sm text-gray-300 group">
@@ -116,7 +178,7 @@
                 <span>ساعات العمل: 9:00 ص - 3:00 م</span>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </CardContent>
     </Card>

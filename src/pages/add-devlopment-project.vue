@@ -37,6 +37,12 @@
               />
             </div>
             <div class="grid w-full gap-2">
+              <Label class="text-right">العنوان</Label>
+              <div class="flex gap-2">
+                <Input v-model="form.address" dir="rtl" placeholder="ادخل العنوان" class="flex-1" />
+              </div>
+            </div>
+            <div class="grid w-full gap-2">
               <Label class="text-right">الموقع الجغرافي</Label>
               <div class="flex gap-2">
                 <Input v-model="form.location" dir="rtl" placeholder="ادخل الموقع الجغرافي" class="flex-1" />
@@ -744,6 +750,7 @@
     sustainableDevelopmentGoal: [],
     beneficiary: '',
     supportingEntities: [],
+    address: '',
     location: '',
     coordinates: { lat: null, lng: null },
     duration: '',
@@ -825,7 +832,7 @@
   const projectStatuses = [
     { value: 'ongoing', label: 'قيد التنفيذ' },
     { value: 'completed', label: 'منجز' },
-    { value: 'stopped', label: 'متوقف' },
+    { value: 'stopped', label: 'متوقف' }
   ];
   const addSupportingEntity = () => {
     if (currentSupportingEntity.value.trim()) {
