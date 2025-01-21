@@ -38,7 +38,13 @@
             </div>
             <div class="grid w-full gap-2">
               <Label class="text-right">الموقع الجغرافي</Label>
-              <Input v-model="form.location" dir="rtl" placeholder="ادخل الموقع الجغرافي" />
+              <div class="flex gap-2">
+                <Input v-model="form.location" dir="rtl" placeholder="ادخل الموقع الجغرافي" class="flex-1" />
+                <Button @click="showLocationPicker = true" variant="outline" class="flex items-center gap-2">
+                  <MapPin class="w-4 h-4" />
+                  اختر على الخريطة
+                </Button>
+              </div>
             </div>
             <div class="grid w-full gap-2 md:col-span-2">
               <Label class="text-right">الجهات الساندة</Label>
@@ -708,6 +714,11 @@
         </div>
       </div>
     </div>
+    <LocationPicker
+      v-model:show="showLocationPicker"
+      :initial-location="form.coordinates.lat ? form.coordinates : undefined"
+      @location-selected="handleLocationSelected"
+    />
   </DefaultLayout>
 </template>
 <script setup>
@@ -720,10 +731,12 @@
   import { Calendar } from '@/components/ui/calendar';
   import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
   import CustomSelect from '@/components/CustomSelect.vue';
-  import { X, Calendar as CalendarIcon, Plus, Loader2 } from 'lucide-vue-next';
+  import { X, Calendar as CalendarIcon, Plus, Loader2, MapPin } from 'lucide-vue-next';
   import { Textarea } from '@/components/ui/textarea';
   import { toast } from 'vue-sonner';
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
+  import LocationPicker from '@/components/LocationPicker.vue';
+
   const form = ref({
     projectName: '',
     plan: '',
@@ -732,6 +745,7 @@
     beneficiary: '',
     supportingEntities: [],
     location: '',
+    coordinates: { lat: null, lng: null },
     duration: '',
     durationType: 'days',
     plannedStartDate: null,
@@ -916,5 +930,24 @@
     } finally {
       isSaving.value = false;
     }
+  };
+
+  // Add new refs for location picker
+  const showLocationPicker = ref(false);
+
+  // Add location selection handler
+  const handleLocationSelected = (location) => {
+    form.value.coordinates = location;
+    // Reverse geocode to get address
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.display_name) {
+          form.value.location = data.display_name;
+        }
+      })
+      .catch(() => {
+        toast.error('حدث خطأ في تحديد العنوان');
+      });
   };
 </script>

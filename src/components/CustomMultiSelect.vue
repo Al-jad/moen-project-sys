@@ -2,31 +2,37 @@
   <div class="relative w-full">
     <button
       type="button"
-      class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      class="flex h-auto min-h-[40px] w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       @click="isOpen = !isOpen"
       :disabled="disabled"
     >
-      <div class="flex flex-row-reverse items-center gap-2 w-full">
+      <div class="flex flex-row-reverse items-start gap-2 w-full">
         <slot name="icon"></slot>
-        <div class="flex flex-wrap gap-1 justify-end">
+        <div class="flex flex-wrap gap-1 justify-end max-h-[80px] overflow-y-auto w-full">
           <span v-if="!selectedLabels.length" class="text-muted-foreground">{{ placeholder }}</span>
           <div 
-            v-for="label in selectedLabels" 
-            :key="label"
-            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-slate-100 rounded"
+            v-for="(label, index) in selectedLabels" 
+            :key="index"
+            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-slate-100 rounded group"
           >
-            {{ label }}
+            <span class="truncate max-w-[150px]">{{ label }}</span>
+            <button 
+              @click.stop="removeOption(getValueByLabel(label))"
+              class="opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X class="h-3 w-3 hover:text-red-500" />
+            </button>
           </div>
         </div>
       </div>
-      <ChevronDown class="h-4 w-4 opacity-50" :class="{ 'transform rotate-180': isOpen }" />
+      <ChevronDown class="h-4 w-4 opacity-50 shrink-0" :class="{ 'transform rotate-180': isOpen }" />
     </button>
 
     <div
       v-if="isOpen"
       class="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200"
     >
-      <div class="p-1">
+      <div class="p-1 max-h-[200px] overflow-y-auto">
         <div v-for="option in options" :key="option.value" class="relative">
           <button
             type="button"
@@ -38,7 +44,7 @@
                 :checked="isSelected(option.value)"
                 @update:checked="() => toggleOption(option.value)"
               />
-              {{ option.label }}
+              <span class="truncate">{{ option.label }}</span>
             </div>
           </button>
         </div>
@@ -56,7 +62,7 @@
 
 <script setup>
 import { Checkbox } from '@/components/ui/checkbox'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, X } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
 const props = defineProps({
@@ -104,6 +110,10 @@ const isSelected = (value) => {
   return props.modelValue.includes(value)
 }
 
+const getValueByLabel = (label) => {
+  return props.options.find(opt => opt.label === label)?.value
+}
+
 const toggleOption = (value) => {
   const newValue = [...props.modelValue]
   const index = newValue.indexOf(value)
@@ -116,10 +126,36 @@ const toggleOption = (value) => {
   
   emit('update:modelValue', newValue)
 }
+
+const removeOption = (value) => {
+  if (value) {
+    const newValue = props.modelValue.filter(v => v !== value)
+    emit('update:modelValue', newValue)
+  }
+}
 </script>
 
 <style scoped>
 .transform {
   transform: rotate(180deg);
+}
+
+/* Custom scrollbar styles */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
 }
 </style> 
