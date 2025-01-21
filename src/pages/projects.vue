@@ -17,10 +17,10 @@
             <div class="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" class="flex items-center gap-2">
+                  <PrimaryButton variant="outline" buttonClass="flex items-center gap-2">
                     <AlignLeft class="w-4 h-4" />
                     ترتيب
-                  </Button>
+                  </PrimaryButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-[250px] p-0" align="end">
                   <div class="px-4 py-3 border-b">
@@ -58,13 +58,13 @@
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="default"
-                  class="flex items-center gap-2 p-4 bg-slate-700 hover:bg-slate-700/90"
+                <PrimaryButton
+                  variant="primary"
+                  buttonClass="flex items-center gap-2 p-4"
                 >
                   <Plus class="w-4 h-4" />
                   اضافة مشروع جديد
-                </Button>
+                </PrimaryButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent class="w-[200px]">
                 <DropdownMenuItem @click="$router.push('/add-project?type=funded')">
@@ -103,6 +103,7 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
+  import PrimaryButton from '@/components/PrimaryButton.vue'
 
   const mockProjects = [
     {

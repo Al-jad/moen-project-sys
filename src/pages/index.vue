@@ -37,33 +37,31 @@
         </h1>
         <!-- Shortcuts Cards -->
         <div class="grid grid-cols-4 gap-4 mb-8">
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]">
-            <span class="text-sm font-medium">البرنامج الحكومي</span>
-            <div class="p-2">
-              <Users class="w-12 h-12 p-2 rounded-full bg-sky-100 text-sky-500" />
-            </div>
-          </div>
+          <ShortcutCard
+            title="البرنامج الحكومي"
+            :icon="Users"
+            color="sky"
+          />
 
-          <div class="flex items-center justify-between p-8 bg-white shadow cursor-pointer rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]" @click="router.push('/projects')">
-            <span class="text-sm font-medium">المشاريع</span>
-            <div class="p-2">
-              <Users class="w-12 h-12 p-2 rounded-full bg-sky-100 text-sky-500" />
-            </div>
-          </div>
+          <ShortcutCard
+            title="المشاريع"
+            :icon="Users"
+            to="/projects"
+            color="sky"
+          />
 
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01]">
-            <span class="text-sm font-medium">تقرير رئاسة الوزراء</span>
-            <div class="p-2">
-              <LineChart class="w-12 h-12 p-2 text-green-500 bg-green-100 rounded-full" />
-            </div>
-          </div>
+          <ShortcutCard
+            title="تقرير رئاسة الوزراء"
+            :icon="LineChart"
+            color="green"
+          />
 
-          <div class="flex items-center justify-between p-8 bg-white shadow rounded-xl transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-[1.01] cursor-pointer" @click="router.push('/map')">
-            <span class="text-sm font-medium">بيانات على الخارطة</span>
-            <div class="p-2">
-              <MapPin class="w-12 h-12 p-2 text-yellow-500 bg-yellow-100 rounded-full" />
-            </div>
-          </div>
+          <ShortcutCard
+            title="بيانات على الخارطة"
+            :icon="MapPin"
+            to="/map"
+            color="yellow"
+          />
         </div>
 
         <!-- Chart Section -->
@@ -142,6 +140,7 @@ import ProjectsList from '@/components/ProjectsList.vue'
 import UsersList from '@/components/UsersList.vue'
 import ProjectStatCard from '@/components/ProjectStatCard.vue'
 import CustomSelect from '@/components/CustomSelect.vue'
+import ShortcutCard from '@/components/ShortcutCard.vue'
 
 // Replace the direct SVG imports with component imports
 const AllProjectsIcon = defineComponent({

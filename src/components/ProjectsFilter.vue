@@ -191,8 +191,8 @@
           <hr class="my-4 border border-gray-100 border-dashed" />
         </div>
         <div class="flex gap-3 mt-6">
-          <Button variant="outline" class="flex-1 text-gray-700"> الغاء </Button>
-          <Button class="flex-1 bg-slate-700"> تطبيق </Button>
+          <PrimaryButton variant="outline" buttonClass="flex-1 text-gray-700"> الغاء </PrimaryButton>
+          <PrimaryButton buttonClass="flex-1"> تطبيق </PrimaryButton>
         </div>
       </div>
     </div>
@@ -202,8 +202,8 @@
 <script setup>
   import { ref } from 'vue';
   import { FilterIcon, Search } from 'lucide-vue-next';
-  import { Button } from '@/components/ui/button';
   import { Input } from '@/components/ui/input';
+  import PrimaryButton from '@/components/PrimaryButton.vue'
   import { Checkbox } from '@/components/ui/checkbox';
   import { Slider } from '@/components/ui/slider';
   import CustomSelect from '@/components/CustomSelect.vue'

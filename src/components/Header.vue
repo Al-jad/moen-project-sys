@@ -21,8 +21,10 @@
         variant="ghost" 
         size="icon"
         class="text-white transition-colors hover:bg-white/10"
+        @click="toggleTheme"
       >
-        <Sun class="w-5 h-5" />
+        <Sun v-if="theme === 'dark'" class="w-5 h-5" />
+        <Moon v-else class="w-5 h-5" />
       </Button>
       <Button 
         variant="ghost" 
@@ -38,9 +40,11 @@
   </header>
 </template>
 <script setup>
-  import { Sun, Bell, User } from 'lucide-vue-next';
+  import { Sun, Moon, Bell, User } from 'lucide-vue-next';
   import { Button } from '@/components/ui/button';
   import { useRouter } from 'vue-router';
+  import useTheme from '@/composables/useTheme';
 
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 </script>

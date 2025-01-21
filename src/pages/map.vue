@@ -7,21 +7,21 @@
         </div>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <div class="flex items-center gap-6 p-4 mb-4">
-            <Button variant="primary" class="px-5 py-2 text-white rounded-lg bg-slate-700">
+            <PrimaryButton >
               عرض الكل ( 400 )
-            </Button>
-            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
+            </PrimaryButton>
+            <PrimaryButton variant="outline" >
               المنجزة (100)
-            </Button>
-            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
+            </PrimaryButton>
+            <PrimaryButton variant="outline" >
               قيد التنفيذ (100)
-            </Button>
-            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
+            </PrimaryButton>
+            <PrimaryButton variant="outline">
               المتلكئة ( 100 )
-            </Button>
-            <Button variant="outline" class="px-5 py-2 border-2 rounded-lg text-slate-700 border-slate-700">
+            </PrimaryButton>
+            <PrimaryButton variant="outline">
               الملغاة ( 100 )
-            </Button>
+            </PrimaryButton>
           </div>
           <Map class="h-[600px] w-full rounded-lg mb-4" :is-map-page="true" />
         </div>
@@ -31,6 +31,7 @@
 </template>
 
 <script setup>
+  import PrimaryButton from '@/components/PrimaryButton.vue'
   import Map from '@/components/Map.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
 </script>
