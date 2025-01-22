@@ -2,7 +2,7 @@
   <div class="flex" dir="rtl">
     <Sidebar />
     
-    <main class="flex-1 mr-[60px] bg-gray-200 dark:bg-[#0f172a]">
+    <main class="flex-1 mr-[60px] bg-gray-200 dark:bg-darkmode">
       <Header />
       
       <div class="p-6 mt-[6%]">

@@ -51,5 +51,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const currentPage = computed(() => props.modelValue);
-const totalPages = computed(() => Math.ceil(props.total / props.perPage));
+const totalPages = computed(() => {
+  const total = Math.ceil(props.total / props.perPage)
+  return total > 0 ? total : 1
+});
 </script> 

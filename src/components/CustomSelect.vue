@@ -1,10 +1,10 @@
 <template>
   <Select 
-    :model-value="modelValue" 
+    :model-value="modelValue"  
     @update:model-value="$emit('update:modelValue', $event)"
     :disabled="disabled"
   >
-    <SelectTrigger :class="triggerClass">
+    <SelectTrigger :class="triggerClass" class="bg-white border-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-700">
       <SelectValue :placeholder="placeholder">
         <div class="flex flex-row-reverse items-center gap-2">
           <slot name="icon"></slot>
@@ -20,13 +20,13 @@
       </SelectValue>
     </SelectTrigger>
     <SelectContent>
-      <SelectGroup>
+      <SelectGroup class="bg-gray-800 dark:bg-gray-800">
         <SelectLabel v-if="label">{{ label }}</SelectLabel>
         <SelectItem 
           v-for="option in options" 
           :key="option.value" 
           :value="option.value"
-          class="flex items-center justify-end gap-2"
+          class="flex items-center justify-end gap-2 hover:bg-gray-700 dark:hover:bg-gray-700"
         >
           <template v-if="isStatusSelect">
             <StatusBadge :status="option.value" :label="option.label" />

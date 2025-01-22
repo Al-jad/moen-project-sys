@@ -35,7 +35,7 @@
         class="relative text-gray-600 transition-colors dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800"
       >
         <Bell class="w-5 h-5" />
-        <span class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[10px] text-white flex items-center justify-center">
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[10px] dark:text-gray-800 text-white flex items-center justify-center">
           2
         </span>
       </Button>

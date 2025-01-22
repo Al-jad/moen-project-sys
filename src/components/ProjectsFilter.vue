@@ -16,10 +16,13 @@
         </div>
         <div class="my-4 rounded-md">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200"> بحث </label>
-          <div class="relative">
-            <Search class="absolute right-3 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <Input type="text" placeholder="ابحث عن اسم او وصف او الرقم المرجعي" class="pr-10" />
-          </div>
+          <FormField>
+            <CustomInput 
+              v-model="searchQuery" 
+              placeholder="ابحث عن اسم او وصف او الرقم المرجعي" 
+              :icon="Search" 
+            />
+          </FormField>
         </div>
         <div>
           <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
@@ -29,30 +32,36 @@
         <div class="space-y-3">
           <label class="text-sm text-gray-600 dark:text-gray-300">نوع التمويل</label>
           <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <Checkbox id="all" />
-              <label for="all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="government" />
-              <label for="government" class="text-sm text-gray-800 dark:text-gray-200">البرنامج الحكومي</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="investment" />
-              <label for="investment" class="text-sm text-gray-800 dark:text-gray-200">الموازنة الاستثمارية</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="operational" />
-              <label for="operational" class="text-sm text-gray-800 dark:text-gray-200">الموازنة التشغيلية</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="environment" />
-              <label for="environment" class="text-sm text-gray-800 dark:text-gray-200"> الممولة دوليا  </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="fund" />
-              <label for="fund" class="text-sm text-gray-800 dark:text-gray-200">ممولة</label>
-            </div>
+            <CustomCheckbox 
+              v-model="selectedFunding.all" 
+              id="all"
+              label="الكل"
+            />
+            <CustomCheckbox 
+              v-model="selectedFunding.government" 
+              id="government"
+              label="البرنامج الحكومي"
+            />
+            <CustomCheckbox 
+              v-model="selectedFunding.investment" 
+              id="investment"
+              label="الموازنة الاستثمارية"
+            />
+            <CustomCheckbox 
+              v-model="selectedFunding.operational" 
+              id="operational"
+              label="الموازنة التشغيلية"
+            />
+            <CustomCheckbox 
+              v-model="selectedFunding.environment" 
+              id="environment"
+              label="الممولة دوليا"
+            />
+            <CustomCheckbox 
+              v-model="selectedFunding.fund" 
+              id="fund"
+              label="ممولة"
+            />
           </div>
         </div>
         <div>
@@ -74,7 +83,7 @@
               <div class="space-y-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <div class="relative">
-                  <Input
+                  <CustomInput
                     v-model="budgetRange[1]"
                     type="number"
                     :min="100000"
@@ -86,7 +95,7 @@
               <div class="space-y-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الاعلى</label>
                 <div class="relative">
-                  <Input
+                  <CustomInput
                     v-model="budgetRange[0]"
                     type="number"
                     :min="budgetRange[1]"
@@ -118,65 +127,68 @@
         <div class="space-y-3">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200">حالة المشروع</label>
           <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <Checkbox id="status-all" />
-              <label for="status-all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="status-completed" />
-              <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                <label for="status-completed" class="text-sm text-gray-800 dark:text-gray-200">منجز</label>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="status-in-progress" />
-              <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 bg-yellow-500 rounded-full"></span>
-                <label for="status-in-progress" class="text-sm text-gray-800 dark:text-gray-200">قيد الانجاز</label>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="status-delayed" />
-              <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
-                <label for="status-delayed" class="text-sm text-gray-800 dark:text-gray-200">متلكئ</label>
-              </div>
-            </div>
+            <CustomCheckbox 
+              v-model="selectedStatus.all" 
+              id="status-all"
+              label="الكل"
+            />
+            <CustomCheckbox 
+              v-model="selectedStatus.completed" 
+              id="status-completed"
+              label="منجز"
+            >
+              <div class="w-2.5 h-2.5 mx-1 bg-green-500 rounded-full"></div>
+            </CustomCheckbox>
+            <CustomCheckbox 
+              v-model="selectedStatus.inProgress" 
+              id="status-in-progress"
+              label="قيد الانجاز"
+            >
+              <div class="w-2.5 h-2.5 mx-1 bg-yellow-500 rounded-full"></div>
+            </CustomCheckbox>
+            <CustomCheckbox 
+              v-model="selectedStatus.delayed" 
+              id="status-delayed"
+              label="متلكئ"
+            >
+              <div class="w-2.5 h-2.5 mx-1 bg-red-500 rounded-full"></div>
+            </CustomCheckbox>
           </div>
+        </div>
 
-          <div>
-            <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
-          </div>
+        <div>
+          <hr class="my-4 border border-gray-100 border-dashed dark:border-gray-700" />
         </div>
 
         <!-- Beneficiary -->
         <div class="space-y-3">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200">الجهة المستفيدة</label>
           <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <Checkbox id="beneficiary-all" v-model="selectedBeneficiaries.all" />
-              <label for="beneficiary-all" class="text-sm text-gray-800 dark:text-gray-200">الكل</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="beneficiary-baghdad" v-model="selectedBeneficiaries.baghdadEducation" />
-              <label for="beneficiary-baghdad" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية بغداد</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox
-                id="beneficiary-environment"
-                v-model="selectedBeneficiaries.environmentProtection"
-              />
-              <label for="beneficiary-environment" class="text-sm text-gray-800 dark:text-gray-200">دائرة حماية تحسين بيئة</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="beneficiary-najaf" v-model="selectedBeneficiaries.najafEducation" />
-              <label for="beneficiary-najaf" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية النجف</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <Checkbox id="beneficiary-basra" v-model="selectedBeneficiaries.basraEducation" />
-              <label for="beneficiary-basra" class="text-sm text-gray-800 dark:text-gray-200">مديرية تربية البصرة</label>
-            </div>
+            <CustomCheckbox 
+              v-model="selectedBeneficiaries.all" 
+              id="beneficiary-all"
+              label="الكل"
+            />
+            <CustomCheckbox 
+              v-model="selectedBeneficiaries.baghdadEducation" 
+              id="beneficiary-baghdad"
+              label="مديرية تربية بغداد"
+            />
+            <CustomCheckbox 
+              v-model="selectedBeneficiaries.environmentProtection" 
+              id="beneficiary-environment"
+              label="دائرة حماية تحسين بيئة"
+            />
+            <CustomCheckbox 
+              v-model="selectedBeneficiaries.najafEducation" 
+              id="beneficiary-najaf"
+              label="مديرية تربية النجف"
+            />
+            <CustomCheckbox 
+              v-model="selectedBeneficiaries.basraEducation" 
+              id="beneficiary-basra"
+              label="مديرية تربية البصرة"
+            />
           </div>
         </div>
 
@@ -194,14 +206,24 @@
 
 <script setup>
   import { ref } from 'vue';
-  import { FilterIcon, Search } from 'lucide-vue-next';
-  import { Input } from '@/components/ui/input';
+  import { FilterIcon, Search, Dot } from 'lucide-vue-next';
   import PrimaryButton from '@/components/PrimaryButton.vue'
-  import { Checkbox } from '@/components/ui/checkbox';
   import { Slider } from '@/components/ui/slider';
   import CustomSelect from '@/components/CustomSelect.vue'
+  import CustomInput from '@/components/CustomInput.vue'
+  import FormField from '@/components/FormField.vue'
+  import CustomCheckbox from '@/components/CustomCheckbox.vue'
 
   const budgetRange = ref([100000, 9000000]);
+
+  const selectedFunding = ref({
+    all: false,
+    government: false,
+    investment: false,
+    operational: false,
+    environment: false,
+    fund: false
+  });
 
   const selectedBeneficiaries = ref({
     all: true,
@@ -219,4 +241,13 @@
     { value: '2023', label: '2023' },
     { value: '2022', label: '2022' }
   ]
+
+  const searchQuery = ref('');
+
+  const selectedStatus = ref({
+    all: false,
+    completed: false,
+    inProgress: false,
+    delayed: false
+  })
 </script>

@@ -3,7 +3,7 @@
     <div class="flex flex-1">
       <ProjectsFilter />
       
-      <div class="flex-1 p-6 bg-gray-50 dark:bg-[#0f172a]">
+      <div class="flex-1 p-6 bg-gray-50 dark:bg-darkmode">
         <!-- Projects Header -->
         <div class="flex items-center justify-between mb-6">
           <div class="space-y-1">
