@@ -57,7 +57,7 @@
     <!-- Note -->
     <div class="grid grid-cols-[200px,1fr] gap-8">
       <div class="text-sm text-gray-500">الملاحظة</div>
-      <div class="text-black">{{ task.description }}</div>
+      <div>{{ task.description }}</div>
     </div>
 
     <!-- Status Change Modal -->

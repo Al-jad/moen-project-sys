@@ -1,49 +1,52 @@
 <template>
   <DefaultLayout>
-    <div class="p-6 space-y-6 bg-gray-200">
+    <div class="p-6 space-y-6 bg-gray-200 dark:bg-darkmode">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center justify-between gap-2">
-          <Button variant="link" class="gap-2 text-blue-500 hover:text-blue-600 hover:underline">
-            <ArrowRight class="w-4 h-4" />
-            الرئيسية
-          </Button>
-          <h1 class="text-2xl font-bold">التقارير</h1>
+          <BackToMainButton />
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">التقارير</h1>
         </div>
         <div class="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger>
-              <Button variant="outline" class="flex justify-start w-56 text-black">
-                <CalendarIcon class="w-4 h-4 ml-2 text-gray-400" />
-                {{ dateFrom ? formatDate(dateFrom) : 'اختر السنة' }}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent class="w-auto p-0">
-              <Calendar v-model="dateFrom" />
-            </PopoverContent>
-          </Popover>
+          <CustomSelect
+            v-model="selectedYear"
+            :options="[
+              { value: '2024', label: '2024' },
+              { value: '2023', label: '2023' },
+              { value: '2022', label: '2022' },
+            ]"
+            placeholder="اختر السنة"
+            :triggerClass="'w-[200px]'"
+          >
+            <template #icon>
+              <CalendarIcon class="w-4 h-4 text-gray-400 dark:text-gray-500" />
+            </template>
+          </CustomSelect>
         </div>
       </div>
 
       <!-- Project Progress Report -->
-      <Card class="p-4">
+      <Card class="p-4 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
         <CardHeader className="space-y-1">
           <div class="flex items-center justify-between p-2 mb-4">
-            <CardTitle>تقرير تقدم العمل للمشروع</CardTitle>
+            <CardTitle class="text-gray-900 dark:text-white">تقرير تقدم العمل للمشروع</CardTitle>
             <div class="flex items-center gap-2">
-              <CustomSelect
-                v-model="selectedProject"
-                placeholder="اختر المشروع"
-                :options="[
-                  { value: '1', label: 'مشروع تجهيز محطات الخمس' },
-                  { value: '2', label: 'مشروع تجهيز مضخات المياه' }
-                ]"
-                :triggerClass="'w-[240px] flex flex-row-reverse'"
-              >
-                <template #icon>
-                  <Folder class="w-5 h-5 text-gray-400" />
-                </template>
-              </CustomSelect>
-              <Button variant="outline" class="gap-2">
+              <div class="min-w-[200px]">
+                <CustomSelect
+                  v-model="selectedProject"
+                  :options="[
+                    { value: 'all', label: 'الكل' },
+                    { value: '1', label: 'مشروع تجهيز محطات الخمس' },
+                    { value: '2', label: 'مشروع تجهيز مضخات المياه' },
+                  ]"
+                  placeholder="اختر المشروع"
+                  :triggerClass="'w-full'"
+                >
+                  <template #icon>
+                    <Folder class="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  </template>
+                </CustomSelect>
+              </div>
+              <Button variant="outline" class="gap-2 dark:bg-gray-700 dark:hover:bg-gray-600">
                 <FileDown class="w-4 h-4" />
                 تصدير
               </Button>
@@ -52,9 +55,11 @@
         </CardHeader>
         <CardContent>
           <div class="grid grid-cols-3 gap-4">
-            <Card>
+            <Card class="border dark:border-gray-700 dark:bg-gray-800">
               <CardHeader>
-                <CardTitle class="text-lg">نسبة الإنجاز الكلية</CardTitle>
+                <CardTitle class="text-lg text-gray-900 dark:text-white"
+                  >نسبة الإنجاز الكلية</CardTitle
+                >
               </CardHeader>
               <CardContent>
                 <div class="flex items-center gap-4">
@@ -63,41 +68,49 @@
                   </div>
                   <div class="space-y-1">
                     <p class="text-2xl font-bold text-success">85%</p>
-                    <p class="text-sm text-muted-foreground">من إجمالي المشروع</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle class="text-lg">المدة المتبقية</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div class="flex items-center gap-4">
-                  <div class="p-3 rounded-lg bg-primary/10">
-                    <Clock class="w-8 h-8 text-primary" />
-                  </div>
-                  <div class="space-y-1">
-                    <p class="text-2xl font-bold">45 يوم</p>
-                    <p class="text-sm text-muted-foreground">متبقي حتى الانتهاء</p>
+                    <p class="text-sm text-muted-foreground dark:text-gray-400"
+                      >من إجمالي المشروع</p
+                    >
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card class="border dark:border-gray-700 dark:bg-gray-800">
               <CardHeader>
-                <CardTitle class="text-lg">الميزانية المستهلكة</CardTitle>
+                <CardTitle class="text-lg text-gray-900 dark:text-white">المدة المتبقية</CardTitle>
               </CardHeader>
               <CardContent>
                 <div class="flex items-center gap-4">
-                  <div class="p-3 rounded-lg bg-success/10">
+                  <div class="p-3 rounded-lg bg-primary/10 dark:bg-primary/5">
+                    <Clock class="w-8 h-8 text-primary dark:text-primary" />
+                  </div>
+                  <div class="space-y-1">
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">45 يوم</p>
+                    <p class="text-sm text-muted-foreground dark:text-gray-400"
+                      >متبقي حتى الانتهاء</p
+                    >
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card class="border dark:border-gray-700 dark:bg-gray-800">
+              <CardHeader>
+                <CardTitle class="text-lg text-gray-900 dark:text-white"
+                  >الميزانية المستهلكة</CardTitle
+                >
+              </CardHeader>
+              <CardContent>
+                <div class="flex items-center gap-4">
+                  <div class="p-3 rounded-lg bg-success/10 dark:bg-success/5">
                     <DollarSign class="w-8 h-8 text-success" />
                   </div>
                   <div class="space-y-1">
-                    <p class="text-2xl font-bold">65%</p>
-                    <p class="text-sm text-muted-foreground">من الميزانية الكلية</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">65%</p>
+                    <p class="text-sm text-muted-foreground dark:text-gray-400"
+                      >من الميزانية الكلية</p
+                    >
                   </div>
                 </div>
               </CardContent>
@@ -107,29 +120,35 @@
       </Card>
 
       <!-- Financial Report -->
-      <Card>
+      <Card class="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <CardTitle>التقرير المالي للسنة المالية {{ dateFrom ? formatDate(dateFrom) : '2024' }}</CardTitle>
-              <p class="text-sm text-muted-foreground">تقرير شامل للمصروفات والميزانيات والتخصيصات المالية</p>
+              <CardTitle class="text-gray-900 dark:text-white"
+                >التقرير المالي للسنة المالية {{ selectedYear || '2024' }}</CardTitle
+              >
+              <p class="text-sm text-muted-foreground dark:text-gray-400"
+                >تقرير شامل للمصروفات والميزانيات والتخصيصات المالية</p
+              >
             </div>
             <div class="flex items-center gap-2">
-              <CustomSelect
-                v-model="selectedReportType"
-                :options="[
-                  { value: 'detailed', label: 'تقرير تفصيلي' },
-                  { value: 'summary', label: 'تقرير ملخص' },
-                  { value: 'quarterly', label: 'تقرير ربع سنوي' }
-                ]"
-                placeholder="نوع التقرير"
-                :triggerClass="'w-[180px] flex flex-row-reverse'"
-              >
-                <template #icon>
-                  <FileText class="w-5 h-5 text-gray-400" />
-                </template>
-              </CustomSelect>
-              <Button variant="outline" class="gap-2">
+              <div class="min-w-[200px]">
+                <CustomSelect
+                  v-model="selectedReportType"
+                  :options="[
+                    { value: 'detailed', label: 'تقرير تفصيلي' },
+                    { value: 'summary', label: 'تقرير ملخص' },
+                    { value: 'quarterly', label: 'تقرير ربع سنوي' },
+                  ]"
+                  placeholder="نوع التقرير"
+                  :triggerClass="'w-full'"
+                >
+                  <template #icon>
+                    <FileText class="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  </template>
+                </CustomSelect>
+              </div>
+              <Button variant="outline" class="gap-2 dark:bg-gray-700 dark:hover:bg-gray-600">
                 <FileDown class="w-4 h-4" />
                 تصدير التقرير
               </Button>
@@ -140,37 +159,47 @@
           <div class="grid gap-6">
             <!-- Summary Cards -->
             <div class="grid grid-cols-4 gap-4">
-              <Card className="border-none shadow-none bg-primary/5">
+              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-primary/5 dark:bg-gray-800">
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
-                    <span class="text-sm text-muted-foreground">إجمالي الميزانية</span>
-                    <span class="text-2xl font-bold">15,234,567</span>
-                    <span class="text-sm text-muted-foreground">دينار عراقي</span>
+                    <span class="text-sm text-muted-foreground dark:text-gray-400"
+                      >إجمالي الميزانية</span
+                    >
+                    <span class="text-2xl font-bold text-gray-900 dark:text-white">15,234,567</span>
+                    <span class="text-sm text-muted-foreground dark:text-gray-400"
+                      >دينار عراقي</span
+                    >
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-none shadow-none bg-success/5">
+              <Card className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-success/5 dark:bg-gray-800">
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
-                    <span class="text-sm text-muted-foreground">المبالغ المصروفة</span>
+                    <span class="text-sm text-muted-foreground dark:text-gray-400"
+                      >المبالغ المصروفة</span
+                    >
                     <span class="text-2xl font-bold text-success">8,567,890</span>
                     <span class="text-sm text-success">56% من الميزانية</span>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-none shadow-none bg-warning/5">
+              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-warning/5 dark:bg-gray-800">
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
-                    <span class="text-sm text-muted-foreground">المبالغ المتبقية</span>
+                    <span class="text-sm text-muted-foreground dark:text-gray-400"
+                      >المبالغ المتبقية</span
+                    >
                     <span class="text-2xl font-bold text-warning">6,666,677</span>
                     <span class="text-sm text-warning">44% من الميزانية</span>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-none shadow-none bg-destructive/5">
+              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-destructive/5 dark:bg-gray-800">
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
-                    <span class="text-sm text-muted-foreground">المبالغ المرجعة</span>
+                    <span class="text-sm text-muted-foreground dark:text-gray-400"
+                      >المبالغ المرجعة</span
+                    >
                     <span class="text-2xl font-bold text-destructive">123,456</span>
                     <span class="text-sm text-destructive">0.8% من الميزانية</span>
                   </div>
@@ -180,76 +209,106 @@
 
             <!-- Detailed Stats -->
             <div class="grid grid-cols-2 gap-4">
-              <Card className="border-none shadow-none bg-gray-50/50">
+              <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
                 <CardHeader>
-                  <CardTitle class="text-base text-muted-foreground">تفاصيل المشاريع</CardTitle>
+                  <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
+                    >تفاصيل المشاريع</CardTitle
+                  >
                 </CardHeader>
                 <CardContent class="space-y-4">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="success" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المشاريع المنجزة</span>
+                      <span class="text-sm text-gray-900 dark:text-white">المشاريع المنجزة</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <Badge variant="outline" class="h-6">12 مشروع</Badge>
-                      <Badge variant="outline" class="h-6 bg-success/10 text-success">4,567,890 د.ع</Badge>
+                      <Badge variant="outline" class="h-6 dark:border-gray-600">12 مشروع</Badge>
+                      <Badge
+                        variant="outline"
+                        class="h-6 bg-success/10 text-success dark:bg-success/20"
+                        >4,567,890 د.ع</Badge
+                      >
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="warning" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المشاريع قيد التنفيذ</span>
+                      <span class="text-sm text-gray-900 dark:text-white"
+                        >المشاريع قيد التنفيذ</span
+                      >
                     </div>
                     <div class="flex items-center gap-2">
-                      <Badge variant="outline" class="h-6">8 مشاريع</Badge>
-                      <Badge variant="outline" class="h-6 bg-warning/10 text-warning">3,890,450 د.ع</Badge>
+                      <Badge variant="outline" class="h-6 dark:border-gray-600">8 مشاريع</Badge>
+                      <Badge
+                        variant="outline"
+                        class="h-6 bg-warning/10 text-warning dark:bg-warning/20"
+                        >3,890,450 د.ع</Badge
+                      >
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="destructive" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المشاريع المتلكئة</span>
+                      <span class="text-sm text-gray-900 dark:text-white">المشاريع المتلكئة</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <Badge variant="outline" class="h-6">3 مشاريع</Badge>
-                      <Badge variant="outline" class="h-6 bg-destructive/10 text-destructive">890,450 د.ع</Badge>
+                      <Badge variant="outline" class="h-6 dark:border-gray-600">3 مشاريع</Badge>
+                      <Badge
+                        variant="outline"
+                        class="h-6 bg-destructive/10 text-destructive dark:bg-destructive/20"
+                        >890,450 د.ع</Badge
+                      >
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-none shadow-none bg-gray-50/50">
+              <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
                 <CardHeader>
-                  <CardTitle class="text-base text-muted-foreground">التخصيصات المالية</CardTitle>
+                  <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
+                    >التخصيصات المالية</CardTitle
+                  >
                 </CardHeader>
                 <CardContent class="space-y-4">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="primary" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المبالغ المرصودة</span>
+                      <span class="text-sm text-gray-900 dark:text-white">المبالغ المرصودة</span>
                     </div>
                     <div class="space-y-1">
-                      <Badge variant="outline" class="h-6">15,234,567 د.ع</Badge>
-                      <div class="text-xs text-left text-muted-foreground">تم تخصيصها في 15/1/2024</div>
+                      <Badge variant="outline" class="h-6 dark:border-gray-600"
+                        >15,234,567 د.ع</Badge
+                      >
+                      <div class="text-xs text-left text-muted-foreground dark:text-gray-400"
+                        >تم تخصيصها في 15/1/2024</div
+                      >
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="success" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المبالغ المصروفة</span>
+                      <span class="text-sm text-gray-900 dark:text-white">المبالغ المصروفة</span>
                     </div>
                     <div class="space-y-1">
-                      <Badge variant="outline" class="h-6 bg-success/10 text-success">8,567,890 د.ع</Badge>
+                      <Badge
+                        variant="outline"
+                        class="h-6 bg-success/10 text-success dark:bg-success/20"
+                        >8,567,890 د.ع</Badge
+                      >
                       <div class="text-xs text-left text-success">56% من الميزانية الكلية</div>
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <Badge variant="destructive" className="h-2 w-2 rounded-full p-0" />
-                      <span class="text-sm">المبالغ المرجعة</span>
+                      <span class="text-sm text-gray-900 dark:text-white">المبالغ المرجعة</span>
                     </div>
                     <div class="space-y-1">
-                      <Badge variant="outline" class="h-6 bg-destructive/10 text-destructive">123,456 د.ع</Badge>
+                      <Badge
+                        variant="outline"
+                        class="h-6 bg-destructive/10 text-destructive dark:bg-destructive/20"
+                        >123,456 د.ع</Badge
+                      >
                       <div class="text-xs text-left text-destructive">تم إرجاعها في 1/3/2024</div>
                     </div>
                   </div>
@@ -258,9 +317,11 @@
             </div>
 
             <!-- Progress Indicators -->
-            <Card className="border-none shadow-none bg-gray-50/50">
+            <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
               <CardHeader>
-                <CardTitle class="text-base text-muted-foreground">مؤشرات الأداء المالي</CardTitle>
+                <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
+                  >مؤشرات الأداء المالي</CardTitle
+                >
               </CardHeader>
               <CardContent>
                 <div class="grid grid-cols-3 gap-8">
@@ -269,7 +330,7 @@
                       <RadialProgress :progress="56" variant="success" />
                     </div>
                     <div class="space-y-1">
-                      <p class="font-medium">نسبة الصرف</p>
+                      <p class="font-medium text-gray-900 dark:text-white">نسبة الصرف</p>
                       <p class="text-sm text-success">8.5 مليار من 15.2 مليار</p>
                     </div>
                   </div>
@@ -278,7 +339,7 @@
                       <RadialProgress :progress="44" variant="warning" />
                     </div>
                     <div class="space-y-1">
-                      <p class="font-medium">المبالغ المتبقية</p>
+                      <p class="font-medium text-gray-900 dark:text-white">المبالغ المتبقية</p>
                       <p class="text-sm text-warning">6.6 مليار متبقي</p>
                     </div>
                   </div>
@@ -287,7 +348,7 @@
                       <RadialProgress :progress="85" variant="primary" />
                     </div>
                     <div class="space-y-1">
-                      <p class="font-medium">كفاءة الإنفاق</p>
+                      <p class="font-medium text-gray-900 dark:text-white">كفاءة الإنفاق</p>
                       <p class="text-sm text-primary">85% معدل الكفاءة</p>
                     </div>
                   </div>
@@ -302,25 +363,25 @@
 </template>
 
 <script setup>
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import RadialProgress from '@/components/RadialProgress.vue'
-import { format } from 'date-fns'
-import { ar } from 'date-fns/locale'
-import { ref } from 'vue'
-import { FileDown, Calendar as CalendarIcon, Clock, DollarSign, ArrowRight, Folder, FileText } from 'lucide-vue-next'
-import CustomSelect from '@/components/CustomSelect.vue'
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import BackToMainButton from '@/components/BackToMainButton.vue';
+  import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+  import { Button } from '@/components/ui/button';
+  import { Badge } from '@/components/ui/badge';
+  import RadialProgress from '@/components/RadialProgress.vue';
+  import { ref } from 'vue';
+  import {
+    FileDown,
+    Calendar as CalendarIcon,
+    Clock,
+    DollarSign,
+    ArrowRight,
+    Folder,
+    FileText,
+  } from 'lucide-vue-next';
+  import CustomSelect from '@/components/CustomSelect.vue';
 
-const dateFrom = ref('')
-const selectedProject = ref('')
-const selectedReportType = ref('')
-
-const formatDate = (date) => {
-  if (!date) return ''
-  return format(date, 'yyyy', { locale: ar })
-}
+  const selectedYear = ref('');
+  const selectedProject = ref('');
+  const selectedReportType = ref('');
 </script>

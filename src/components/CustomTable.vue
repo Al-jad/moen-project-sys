@@ -3,71 +3,40 @@
     <!-- Filters Section -->
     <div class="flex items-center justify-between gap-4 mb-8">
       <div class="flex items-center gap-6">
-        <Button variant="outline" class="px-2" @click="$emit('export')">
+        <Button variant="outline" class="px-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" @click="$emit('export')">
           <FileSpreadsheet class="w-4 h-4 ml-2" />
           تصدير Excel
         </Button>
-        <Popover>
-          <PopoverTrigger>
-            <Button variant="outline" class="flex justify-start w-56 text-black">
-              <CalendarIcon class="w-4 h-4 ml-2 text-gray-400" />
-              {{ dateRange?.start ? dateRangeText : 'اختر التاريخ' }}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-auto p-0">
-            <RangeCalendar v-model="dateRange" :number-of-months="2" />
-          </PopoverContent>
-        </Popover>
+        <DateRangeInput v-model="dateRange" />
 
         <div v-for="filter in filters" :key="filter.key" class="min-w-[200px]">
-          <Select v-model="selectedFilters[filter.key]">
-            <SelectTrigger class="flex flex-row-reverse w-full">
-              <SelectValue :placeholder="filter.placeholder">
-                <div class="flex items-center justify-end gap-2">
-                  <span>{{ 
-                    selectedFilters[filter.key] === 'all' ? 
-                    filter.placeholder : 
-                    filter.options.find(o => o.value === selectedFilters[filter.key])?.label 
-                  }}</span>
-                  <component :is="filter.icon" class="w-4 h-4 text-gray-400" />
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem 
-                v-for="option in filter.options" 
-                :key="option.value" 
-                :value="option.value"
-                class="text-right"
-              >
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <CustomSelect
+            v-model="selectedFilters[filter.key]"
+            :options="filter.options"
+            :placeholder="filter.placeholder"
+            :icon="filter.icon"
+            :trigger-class="filter.triggerClass"
+          />
         </div>
       </div>
 
       <div class="relative min-w-[240px]">
-        <Input
+        <CustomInput
           v-model="searchQuery"
-          type="text"
           placeholder="بحث سريع"
-          class="pr-10 border-gray-200 placeholder:text-gray-400 focus:border-gray-200"
+          :icon="Search"
         />
-        <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
-          <Search class="text-gray-400 size-6" />
-        </span>
       </div>
     </div>
 
     <!-- Table Section -->
-    <Table class="overflow-hidden border rounded-xl">
+    <Table class="overflow-hidden border rounded-xl dark:border-gray-700">
       <TableHeader>
-        <TableRow class="bg-gray-100">
+        <TableRow class="bg-gray-100 dark:bg-gray-900">
           <TableHead 
             v-for="column in columns" 
             :key="column.key"
-            class="text-right text-gray-900"
+            class="text-right text-gray-900 dark:text-gray-300"
             :class="{
               'first:rounded-tr-xl': column === columns[0],
               'last:rounded-tl-xl w-10': column === columns[columns.length - 1]
@@ -81,7 +50,7 @@
         <TableRow 
           v-for="(item, index) in filteredData" 
           :key="index"
-          class="hover:bg-gray-50/50"
+          class="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 dark:text-gray-300"
           :class="{ 
             'last:[&>td:first-child]:rounded-br-xl last:[&>td:last-child]:rounded-bl-xl': 
               index === filteredData.length - 1 
@@ -100,7 +69,7 @@
               <template v-if="column.type === 'button'">
                 <Button 
                   variant="link" 
-                  class="h-auto p-0 text-blue-600"
+                  class="h-auto p-0 text-blue-600 dark:text-blue-400"
                   @click="$emit('cell-click', { key: column.key, item })"
                 >
                   {{ item[column.key] }}
@@ -111,7 +80,7 @@
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    class="text-gray-400 hover:text-gray-600"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     @click="$emit('action-click', item)"
                   >
                     <component :is="column.icon || Eye" class="w-4 h-4" />
@@ -128,7 +97,7 @@
     </Table>
 
     <!-- Pagination -->
-    <div class="flex items-center justify-center py-3 mt-4 border-t">
+    <div class="flex items-center justify-center py-3 mt-4 border-t dark:border-gray-700">
       <Pagination
         v-model="currentPage"
         :total="filteredData.length"
@@ -143,18 +112,9 @@ import { computed, ref, watch } from 'vue'
 import type { DateRange } from 'radix-vue'
 import { Eye, Search, FileSpreadsheet, Calendar as CalendarIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { RangeCalendar } from '@/components/ui/range-calendar'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import CustomInput from './CustomInput.vue'
+import DateRangeInput from './DateRangeInput.vue'
+import CustomSelect from './CustomSelect.vue'
 import {
   Table,
   TableBody,
@@ -179,6 +139,7 @@ interface Filter {
   placeholder: string
   options: { value: string, label: string }[]
   icon: any
+  triggerClass?: string
 }
 
 interface Props {

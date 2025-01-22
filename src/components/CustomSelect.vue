@@ -7,7 +7,9 @@
     <SelectTrigger :class="triggerClass" class="bg-white border-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-700">
       <SelectValue :placeholder="placeholder">
         <div class="flex flex-row-reverse items-center gap-2">
-          <slot name="icon"></slot>
+          <slot name="icon">
+            <component v-if="icon" :is="icon" class="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          </slot>
           <template v-if="isStatusSelect && modelValue">
             <StatusBadge :status="modelValue" :label="selectedLabel" />
           </template>
@@ -19,14 +21,14 @@
         </div>
       </SelectValue>
     </SelectTrigger>
-    <SelectContent>
-      <SelectGroup class="bg-gray-800 dark:bg-gray-800">
+    <SelectContent class="bg-white border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white" >
+      <SelectGroup >
         <SelectLabel v-if="label">{{ label }}</SelectLabel>
         <SelectItem 
           v-for="option in options" 
           :key="option.value" 
           :value="option.value"
-          class="flex items-center justify-end gap-2 hover:bg-gray-700 dark:hover:bg-gray-700"
+          class="flex items-center justify-end gap-2 border-gray-200 dark:border-gray-700 hover:bg-gray-500 dark:hover:bg-gray-700"
         >
           <template v-if="isStatusSelect">
             <StatusBadge :status="option.value" :label="option.label" />
@@ -80,6 +82,10 @@ const props = defineProps({
   triggerClass: {
     type: String,
     default: ''
+  },
+  icon: {
+    type: [Object, Function],
+    default: null
   }
 })
 

@@ -1,42 +1,42 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-200">
+    <main class="p-6 bg-gray-200 dark:bg-gray-900">
       <!-- Header -->
       <div class="flex items-center justify-start gap-2 mb-6">
-        <Button
-          variant="link"
+        <PrimaryButton
+          variant="ghost"
           @click="$router.push('/contracts')"
-          class="flex items-center text-blue-600"
+          class="flex items-center gap-2"
         >
           <ArrowRight class="w-4 h-4" />
           رجوع
-        </Button>
+        </PrimaryButton>
         <h1 class="text-xl font-medium">صفحة تفاصيل العقد</h1>
       </div>
 
       <!-- Contract Details Card -->
-      <div class="bg-white rounded-lg">
+      <div class="bg-white rounded-lg dark:bg-gray-800 dark:border dark:border-gray-700">
         <!-- Basic Info -->
-        <div class="border-b">
+        <div class="border-b dark:border-gray-700">
           <div class="p-6">
             <div class="grid grid-cols-[auto_1fr] gap-x-12 gap-y-4 text-right">
-              <div class="text-gray-500">اسم المشروع</div>
-              <div class="mr-4 text-gray-900">مشروع A</div>
+              <div class="text-gray-500 dark:text-gray-400">اسم المشروع</div>
+              <div class="mr-4">{{ contract.projectName }}</div>
 
-              <div class="text-gray-500">الجهة المنفذة للعقد</div>
-              <div class="mr-4 text-gray-900">شركة المتحدة للبرامجيات</div>
+              <div class="text-gray-500 dark:text-gray-400">الجهة المنفذة للعقد</div>
+              <div class="mr-4">{{ contract.company }}</div>
 
-              <div class="text-gray-500">كلفة العقد</div>
-              <div class="mr-4 text-gray-900">125487 دينار عراقي</div>
+              <div class="text-gray-500 dark:text-gray-400">كلفة العقد</div>
+              <div class="mr-4">{{ contract.amount }} دينار عراقي</div>
 
-              <div class="text-gray-500">تاريخ الاحالة</div>
-              <div class="mr-4 text-gray-900">15.01.2025</div>
+              <div class="text-gray-500 dark:text-gray-400">تاريخ الاحالة</div>
+              <div class="mr-4">{{ contract.referralDate }}</div>
 
-              <div class="text-gray-500">تاريخ توقيع العقد</div>
-              <div class="mr-4 text-gray-900">25.02.2025</div>
+              <div class="text-gray-500 dark:text-gray-400">تاريخ توقيع العقد</div>
+              <div class="mr-4">{{ contract.signDate }}</div>
 
-              <div class="text-gray-500">رقم العقد</div>
-              <div class="mr-4 text-gray-900">152 / و / ي</div>
+              <div class="text-gray-500 dark:text-gray-400">رقم العقد</div>
+              <div class="mr-4">{{ contract.number }}</div>
             </div>
           </div>
         </div>
@@ -45,13 +45,22 @@
         <div class="p-6">
           <div class="flex justify-between mb-4">
             <h2 class="text-lg font-medium">الاجراءات التنفيذية (٥)</h2>
-            <Tooltip delayDuration={0}>
+            <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" class="w-8 h-8" @click="openAddModal">
+                <PrimaryButton 
+                  variant="ghost" 
+                  size="icon" 
+                  class="w-8 h-8" 
+                  @click="openAddModal"
+                >
                   <FilePlus class="w-4 h-4" />
-                </Button>
+                </PrimaryButton>
               </TooltipTrigger>
-              <TooltipContent side="top" align="center" class="bg-white">
+              <TooltipContent 
+                side="top" 
+                align="center" 
+                class="bg-white dark:bg-gray-800 dark:border dark:border-gray-700"
+              >
                 <p>اضافة اجراء جديد</p>
               </TooltipContent>
             </Tooltip>
@@ -84,103 +93,103 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Button } from '@/components/ui/button';
-  import { ArrowRight, FilePlus } from 'lucide-vue-next';
-  import ExecutionProcedure from '@/components/ExecutionProcedure.vue';
-  import EditProcedureModal from '@/components/EditProcedureModal.vue';
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-  } from '@/components/ui/tooltip';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import { ArrowRight, FilePlus } from 'lucide-vue-next';
+import ExecutionProcedure from '@/components/ExecutionProcedure.vue';
+import EditProcedureModal from '@/components/EditProcedureModal.vue';
+import PrimaryButton from '@/components/PrimaryButton.vue';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-  const route = useRoute();
-  const contractId = route.params.id;
+const route = useRoute();
+const contractId = route.params.id;
 
-  // Mock data - replace with actual API call
-  const contract = ref({
-    projectName: 'مشروع A',
-    company: 'شركة المتحدة للبرامجيات',
-    amount: '125487',
-    referralDate: '15.01.2025',
-    signDate: '25.02.2025',
-    number: '152 / و / ي',
-  });
+// Mock data - replace with actual API call
+const contract = ref({
+  projectName: 'مشروع A',
+  company: 'شركة المتحدة للبرامجيات',
+  amount: '125487',
+  referralDate: '15.01.2025',
+  signDate: '25.02.2025',
+  number: '152 / و / ي',
+});
 
-  const executionProcedures = ref([
-    {
-      id: 1,
-      name: 'عملية التنصيب',
-      weight: 27,
-      duration: 67,
-      startDate: '25.02.2025',
-      plannedTechnicalProgress: 68,
-      actualTechnicalProgress: 57,
-      technicalDeviation: 33,
-      plannedFinancialProgress: 68,
-      actualFinancialProgress: 98,
-    },
-    {
-      id: 2,
-      name: 'التدريب خارج العراق',
-      weight: 27,
-      duration: 67,
-      startDate: '25.02.2025',
-      plannedTechnicalProgress: 68,
-      actualTechnicalProgress: 57,
-      technicalDeviation: 33,
-      plannedFinancialProgress: 68,
-      actualFinancialProgress: 98,
-    },
-  ]);
+const executionProcedures = ref([
+  {
+    id: 1,
+    name: 'عملية التنصيب',
+    weight: 27,
+    duration: 67,
+    startDate: '25.02.2025',
+    plannedTechnicalProgress: 68,
+    actualTechnicalProgress: 57,
+    technicalDeviation: 33,
+    plannedFinancialProgress: 68,
+    actualFinancialProgress: 98,
+  },
+  {
+    id: 2,
+    name: 'التدريب خارج العراق',
+    weight: 27,
+    duration: 67,
+    startDate: '25.02.2025',
+    plannedTechnicalProgress: 68,
+    actualTechnicalProgress: 57,
+    technicalDeviation: 33,
+    plannedFinancialProgress: 68,
+    actualFinancialProgress: 98,
+  },
+]);
 
-  const getTitle = (index) => {
-    const titles = [
-      'الاجراء الاول',
-      'الاجراء الثاني',
-      'الاجراء الثالث',
-      'الاجراء الرابع',
-      'الاجراء الخامس',
-    ];
-    return titles[index - 1];
-  };
+const getTitle = (index) => {
+  const titles = [
+    'الاجراء الاول',
+    'الاجراء الثاني',
+    'الاجراء الثالث',
+    'الاجراء الرابع',
+    'الاجراء الخامس',
+  ];
+  return titles[index - 1];
+};
 
-  const isModalOpen = ref(false);
-  const selectedProcedure = ref(null);
+const isModalOpen = ref(false);
+const selectedProcedure = ref(null);
 
-  const openAddModal = () => {
-    selectedProcedure.value = null;
-    isModalOpen.value = true;
-  };
+const openAddModal = () => {
+  selectedProcedure.value = null;
+  isModalOpen.value = true;
+};
 
-  const openEditModal = (procedure) => {
-    selectedProcedure.value = procedure;
-    isModalOpen.value = true;
-  };
+const openEditModal = (procedure) => {
+  selectedProcedure.value = procedure;
+  isModalOpen.value = true;
+};
 
-  const handleSave = (formData) => {
-    if (selectedProcedure.value) {
-      // Edit existing procedure
-      const index = executionProcedures.value.findIndex(p => p.id === selectedProcedure.value.id);
-      if (index !== -1) {
-        executionProcedures.value[index] = {
-          ...executionProcedures.value[index],
-          ...formData
-        };
-      }
-    } else {
-      // Add new procedure
-      executionProcedures.value.push({
-        id: Date.now(),
-        ...formData,
-        plannedTechnicalProgress: 0,
-        technicalDeviation: 0,
-        plannedFinancialProgress: 0,
-        actualFinancialProgress: 0
-      });
+const handleSave = (formData) => {
+  if (selectedProcedure.value) {
+    // Edit existing procedure
+    const index = executionProcedures.value.findIndex(p => p.id === selectedProcedure.value.id);
+    if (index !== -1) {
+      executionProcedures.value[index] = {
+        ...executionProcedures.value[index],
+        ...formData
+      };
     }
-  };
+  } else {
+    // Add new procedure
+    executionProcedures.value.push({
+      id: Date.now(),
+      ...formData,
+      plannedTechnicalProgress: 0,
+      technicalDeviation: 0,
+      plannedFinancialProgress: 0,
+      actualFinancialProgress: 0
+    });
+  }
+};
 </script>

@@ -3,15 +3,24 @@
     <PopoverTrigger asChild>
       <Button
         variant="outline"
-        class="justify-between w-full text-right"
-        :class="!modelValue && 'text-muted-foreground'"
+        class="justify-between w-full text-right dark:bg-gray-800 dark:border-gray-700"
+        :class="[
+          !modelValue && 'text-muted-foreground dark:text-gray-400',
+          modelValue && 'dark:text-gray-100'
+        ]"
       >
         <span>{{ modelValue ? formatDate(modelValue) : placeholder }}</span>
-        <CalendarIcon class="w-4 h-4" />
+        <CalendarIcon class="w-4 h-4 dark:text-gray-400" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-0" align="start">
-      <Calendar mode="single" :value="modelValue" @update:model-value="$emit('update:modelValue', $event)" initialFocus />
+    <PopoverContent class="w-auto p-0 dark:bg-gray-800 dark:border-gray-700" align="start">
+      <Calendar 
+        mode="single" 
+        :value="modelValue" 
+        @update:model-value="$emit('update:modelValue', $event)" 
+        initialFocus
+        class="dark:bg-gray-800 dark:text-gray-100"
+      />
     </PopoverContent>
   </Popover>
 </template>

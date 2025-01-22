@@ -1,21 +1,15 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-gray-200">
+    <main class="min-h-screen p-6 bg-gray-200 dark:bg-darkmode">
       <div>
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-6">
-              <PrimaryButton
-                variant="link"
-                @click="$router.back()"
-              >
-                <ArrowRight class="w-4 h-4" />
-                الرئيسية
-              </PrimaryButton>
-              <h1 class="text-xl font-bold">الاجراءات الادارية</h1>
+              <BackToMainButton />
+              <h1 class="text-xl font-bold dark:text-white">الاجراءات الادارية</h1>
             </div>
           </div>
       </div>
-      <div class="bg-white rounded-lg shadow-sm ">
+      <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800">
         <div class="p-6">
           <div class="w-full">
             <CustomTable
@@ -37,7 +31,8 @@
                     { value: 'all', label: 'الكل' },
                     { value: '1', label: 'اسم المشروع' }
                   ],
-                  icon: Folder
+                  icon: Folder,
+                  triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700'
                 },
                 {
                   key: 'employee',
@@ -46,7 +41,8 @@
                     { value: 'all', label: 'الكل' },
                     { value: '1', label: 'محمد انور' }
                   ],
-                  icon: UserCircle
+                  icon: UserCircle,
+                  triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700'
                 }
               ]"
               :data="tableData"
@@ -110,6 +106,7 @@
   import { ref, computed } from 'vue';
   import type { DateRange } from 'radix-vue';
   import { useRoute, useRouter } from 'vue-router';
+  import BackToMainButton from '@/components/BackToMainButton.vue';
   import {
     UserCircle,
     Folder,
@@ -131,7 +128,6 @@
   import CustomTable from '@/components/CustomTable.vue'
   import PrimaryButton from '@/components/PrimaryButton.vue'
   import { Button } from '@/components/ui/button'
-  import { Popover, PopoverTrigger } from '@/components/ui/popover'
 
   const route = useRoute();
   const router = useRouter();
@@ -172,7 +168,67 @@
       field: 'السعر',
       oldValue: '1100$',
       newValue: '5214582$'
-    }
+    },
+    {
+      id: 1,
+      employee: 'محمد انور',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
+    {
+      id: 2,
+      employee: 'دعاء الشيخلي',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
+    {
+      id: 1,
+      employee: 'محمد انور',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
+    {
+      id: 2,
+      employee: 'دعاء الشيخلي',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
+    {
+      id: 1,
+      employee: 'محمد انور',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
+    {
+      id: 2,
+      employee: 'دعاء الشيخلي',
+      project: 'تجهيز أجهزة ومعدات مراقبة المياه',
+      modificationDate: '2024/10/25',
+      modificationTime: '10:33 ص',
+      field: 'السعر',
+      oldValue: '1100$',
+      newValue: '5214582$'
+    },
   ])
 
   const handleCellClick = ({ key, item }) => {

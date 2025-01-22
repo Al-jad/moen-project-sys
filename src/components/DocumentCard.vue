@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full overflow-hidden transition-shadow bg-white border border-dashed rounded-lg hover:shadow-md">
+  <div class="w-full overflow-hidden transition-shadow bg-white border border-gray-300 border-dashed rounded-lg dark:bg-gray-800 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 dark:border-gray-600">
     <div class="relative mt-4 w-[80%] mx-auto rounded-xl aspect-[4/3]">
       <img 
         :src="imageUrl || defaultImage" 

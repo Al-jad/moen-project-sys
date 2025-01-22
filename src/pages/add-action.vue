@@ -1,194 +1,42 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-gray-200 max-w-screen">
+    <main class="min-h-screen p-6 bg-gray-200 dark:bg-gray-900 max-w-screen">
       <div>
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-6">
-            <Button
-              variant="link"
-              @click="$router.back()"
-              class="flex items-center text-blue-600"
-            >
-              <ArrowRight class="w-4 h-4" />
-              رجوع
-            </Button>
-            <h1 class="text-xl font-bold"> 
+            <BackToMainButton />
+            <h1 class="text-xl font-bold dark:text-white"> 
               الاجراءات التنفيذية
             </h1>
           </div>
           <div class="flex items-center gap-6">
-            <Button 
-              class="gap-2 px-8 py-4 text-white bg-slate-700 hover:bg-slate-800"
+            <PrimaryButton 
               @click="showEditModal = true"
             >
               <CirclePlus class="w-4 h-4" />
               اضافة إجراء تنفيذي
-            </Button>
+            </PrimaryButton>
           </div>
         </div>
       </div>
-      <div class="mb-4 bg-white rounded-lg shadow-sm">
+      <div class="mb-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div class="p-6">
-          <div class="flex items-center justify-between gap-4 mb-8">
-            <div class="flex items-center gap-6">
-              <Button variant="outline" class="px-2">
-                <FileSpreadsheet class="w-4 h-4 ml-2" />
-                تصدير Excel
-              </Button>
-
-              <Popover>
-                <PopoverTrigger>
-                  <Button variant="outline" class="flex justify-start w-56 text-black">
-                    <CalendarIcon class="w-4 h-4 ml-2 text-gray-400" />
-                    {{ date?.start ? dateRangeText : 'من تاريخ الى' }}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0">
-                  <RangeCalendar v-model="date" :number-of-months="2" />
-                </PopoverContent>
-              </Popover>
-
-              <div class="min-w-[200px]">
-                <Select v-model="selectedProject">
-                  <SelectTrigger class="flex flex-row-reverse w-full">
-                    <SelectValue placeholder="اختر المشروع" dir="rtl">
-                      <div class="flex items-center gap-2">
-                        <Folder class="w-4 h-4 text-gray-400" />
-                        <span>{{
-                          selectedProject === 'all' ? 'اختر المشروع' : 'اسم المشروع'
-                        }}</span>
-                      </div>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">الكل</SelectItem>
-                    <SelectItem value="1">اسم المشروع</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div class="min-w-[200px]">
-                <Select v-model="selectedEmployee">
-                  <SelectTrigger class="flex flex-row-reverse w-full">
-                    <SelectValue placeholder="اختر العقد" dir="rtl">
-                      <div class="flex items-center gap-2">
-                        <FileText class="w-4 h-4 text-gray-400" />
-                        <span>{{ selectedEmployee === 'all' ? 'اختر العقد' : 'العقد 1' }}</span>
-                      </div>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">الكل</SelectItem>
-                    <SelectItem value="1">العقد 1</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="relative min-w-[240px]">
-                <Input type="text" placeholder="بحث سريع" class="pr-10 border-gray-200 focus:border-gray-200 placeholder:text-gray-400" />
-                <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
-                  <Search class="text-gray-400 size-6" />
-                </span>
-              </div>
-              
-            </div>
-          </div>
           <div class="w-full overflow-x-auto">
-            <Table class="overflow-hidden border rounded-xl">
-              <TableHeader class="text-right">
-                <TableRow class="bg-gray-100">
-                  <TableHead class="text-right text-gray-900 first:rounded-tr-xl">اسم الاجراء</TableHead>
-                  <TableHead class="text-right text-gray-900">
-                    المشروع 
-                  </TableHead>
-                  <TableHead class="text-right text-gray-900">
-                    العقد 
-                  </TableHead>
-                  <TableHead class="text-right text-gray-900">وزن الاجراء</TableHead>
-                  <TableHead class="text-right text-gray-900">مدة الاجراء يوم</TableHead>
-                  <TableHead class="text-right text-gray-900">تاريخ بداية تنفيذ</TableHead>
-                  <TableHead class="text-right text-gray-900">نسبة الانجاز الفني المخطط</TableHead>
-                  <TableHead class="text-right text-gray-900">نسبة الانجاز الفني الفعلي</TableHead>
-                  <TableHead class="text-right text-gray-900">نسبة الانحراف الفني</TableHead>
-                  <TableHead class="text-right text-gray-900">نسبة الانجاز المالي المخطط</TableHead>
-                  <TableHead class="text-right text-gray-900">نسبة الانجاز المالي الفعلي</TableHead>
-                  <TableHead class="w-10 last:rounded-tl-xl"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow 
-                  v-for="(n, index) in 9" 
-                  :key="n" 
-                  class="hover:bg-gray-50/50"
-                  :class="{ 
-                    'last:[&>td:first-child]:rounded-br-xl last:[&>td:last-child]:rounded-bl-xl': index === 8
-                  }"
-                >
-                  <TableCell>
-                    <Button variant="link" class="h-auto p-0 text-blue-600">
-                      {{ n % 2 === 0 ? 'التنصيب' : 'التشغيل' }}
-                    </Button>
-                  </TableCell>
-                  <TableCell>{{ n % 2 === 0 ? 'مشروع A' : 'مشروع B' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? 'عقد رقم 2023/157' : 'عقد رقم 2023/158' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '25' : '54' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '30' : '20' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '20.03.2025' : '15.03.2025' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '50%' : '75%' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '45%' : '70%' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '5%' : '5%' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '40%' : '60%' }}</TableCell>
-                  <TableCell>{{ n % 2 === 0 ? '35%' : '55%' }}</TableCell>
-                  <TableCell>
-                    <div class="flex items-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        class="text-gray-400 hover:text-gray-600" 
-                        @click="handleViewAction({
-                          name: n % 2 === 0 ? 'التنصيب' : 'التشغيل',
-                          projectName: n % 2 === 0 ? 'مشروع A' : 'مشروع B',
-                          contractNumber: n % 2 === 0 ? 'عقد رقم 2023/157' : 'عقد رقم 2023/158',
-                          weight: n % 2 === 0 ? 25 : 54,
-                          duration: n % 2 === 0 ? 30 : 20,
-                          startDate: n % 2 === 0 ? '20.03.2025' : '15.03.2025',
-                          plannedTechnicalProgress: n % 2 === 0 ? '50%' : '75%',
-                          actualTechnicalProgress: n % 2 === 0 ? '45%' : '70%',
-                          technicalDeviation: n % 2 === 0 ? '5%' : '5%',
-                          plannedFinancialProgress: n % 2 === 0 ? '40%' : '60%',
-                          actualFinancialProgress: n % 2 === 0 ? '35%' : '55%'
-                        })"
-                      >
-                        <Eye class="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        class="text-gray-400 hover:text-gray-600"
-                        @click="handleEditAction({
-                          name: n % 2 === 0 ? 'التنصيب' : 'التشغيل',
-                          projectName: n % 2 === 0 ? 'مشروع A' : 'مشروع B',
-                          contractNumber: n % 2 === 0 ? 'عقد رقم 2023/157' : 'عقد رقم 2023/158',
-                          weight: n % 2 === 0 ? 25 : 54,
-                          duration: n % 2 === 0 ? 30 : 20,
-                          startDate: n % 2 === 0 ? '20.03.2025' : '15.03.2025',
-                          plannedTechnicalProgress: n % 2 === 0 ? '50%' : '75%',
-                          actualTechnicalProgress: n % 2 === 0 ? '45%' : '70%',
-                          technicalDeviation: n % 2 === 0 ? '5%' : '5%',
-                          plannedFinancialProgress: n % 2 === 0 ? '40%' : '60%',
-                          actualFinancialProgress: n % 2 === 0 ? '35%' : '55%'
-                        })"
-                      >
-                        <Pencil class="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <CustomTable
+              :columns="columns"
+              :data="actions"
+              :filters="filters"
+              @export="exportToExcel"
+              @action-click="handleViewAction"
+            >
+              <template #name="{ value }">
+                <PrimaryButton variant="ghost" class="h-auto p-0">
+                  {{ value }}
+                </PrimaryButton>
+              </template>
+            </CustomTable>
           </div>
-          <div class="flex items-center justify-center py-3 mt-4 border-t">
+          <div class="flex items-center justify-center py-3 mt-4 border-t dark:border-gray-700">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -244,23 +92,11 @@ import {
   Pencil,
 } from 'lucide-vue-next';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import BackToMainButton from '@/components/BackToMainButton.vue';
+import PrimaryButton from '@/components/PrimaryButton.vue';
+import CustomInput from '@/components/CustomInput.vue';
+import CustomSelect from '@/components/CustomSelect.vue';
+import CustomTable from '@/components/CustomTable.vue';
 import {
   Pagination,
   PaginationContent,
@@ -321,6 +157,72 @@ const handleEditAction = (action) => {
 const handleSubmitAction = (formData) => {
   console.log('Form submitted:', formData);
   // Handle form submission here
+};
+
+// Table configuration
+interface Column {
+  key: string;
+  label: string;
+  type?: 'button' | 'action' | 'text';
+  icon?: any;
+}
+
+const columns: Column[] = [
+  { key: 'name', label: 'اسم الاجراء', type: 'button' },
+  { key: 'projectName', label: 'المشروع', type: 'text' },
+  { key: 'contractNumber', label: 'العقد', type: 'text' },
+  { key: 'weight', label: 'وزن الاجراء', type: 'text' },
+  { key: 'duration', label: 'مدة الاجراء يوم', type: 'text' },
+  { key: 'startDate', label: 'تاريخ بداية تنفيذ', type: 'text' },
+  { key: 'plannedTechnicalProgress', label: 'نسبة الانجاز الفني المخطط', type: 'text' },
+  { key: 'actualTechnicalProgress', label: 'نسبة الانجاز الفني الفعلي', type: 'text' },
+  { key: 'technicalDeviation', label: 'نسبة الانحراف الفني', type: 'text' },
+  { key: 'plannedFinancialProgress', label: 'نسبة الانجاز المالي المخطط', type: 'text' },
+  { key: 'actualFinancialProgress', label: 'نسبة الانجاز المالي الفعلي', type: 'text' },
+  { key: 'actions', label: '', type: 'action', icon: Eye }
+];
+
+const filters = [
+  {
+    key: 'projectName',
+    placeholder: 'اختر المشروع',
+    options: [
+      { value: 'all', label: 'الكل' },
+      { value: '1', label: 'اسم المشروع' }
+    ],
+    icon: Folder,
+    triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
+  },
+  {
+    key: 'contractNumber',
+    placeholder: 'اختر العقد',
+    options: [
+      { value: 'all', label: 'الكل' },
+      { value: '1', label: 'العقد 1' }
+    ],
+    icon: FileText,
+    triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
+  }
+];
+
+// Mock data
+const actions = ref(Array(9).fill(null).map((_, index) => ({
+  id: index + 1,
+  name: index % 2 === 0 ? 'التنصيب' : 'التشغيل',
+  projectName: index % 2 === 0 ? 'مشروع A' : 'مشروع B',
+  contractNumber: index % 2 === 0 ? 'عقد رقم 2023/157' : 'عقد رقم 2023/158',
+  weight: index % 2 === 0 ? '25' : '54',
+  duration: index % 2 === 0 ? '30' : '20',
+  startDate: index % 2 === 0 ? '20.03.2025' : '15.03.2025',
+  plannedTechnicalProgress: index % 2 === 0 ? '50%' : '75%',
+  actualTechnicalProgress: index % 2 === 0 ? '45%' : '70%',
+  technicalDeviation: index % 2 === 0 ? '5%' : '5%',
+  plannedFinancialProgress: index % 2 === 0 ? '40%' : '60%',
+  actualFinancialProgress: index % 2 === 0 ? '35%' : '55%'
+})));
+
+const exportToExcel = () => {
+  // Implement export to Excel functionality
 };
 </script>
 

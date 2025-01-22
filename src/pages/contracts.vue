@@ -3,14 +3,7 @@
     <main class="p-6 bg-gray-50 dark:bg-darkmode">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-6">
-          <Button
-            variant="link"
-            @click="$router.push('/')"
-            class="flex items-center text-blue-600 dark:text-blue-400"
-          >
-            <ArrowRight class="w-4 h-4" />
-            الرئيسية
-          </Button>
+          <BackToMainButton />
           <h1 class="text-xl font-bold text-gray-900 dark:text-white">العقود</h1>
         </div>
       </div>
@@ -91,8 +84,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ArrowRight } from 'lucide-vue-next';
-  import DateInput from '@/components/DateInput.vue';
+  import BackToMainButton from '@/components/BackToMainButton.vue';
+import DateInput from '@/components/DateInput.vue';
   import { ref, computed } from 'vue';
   import { format } from 'date-fns';
   import { ar } from 'date-fns/locale';

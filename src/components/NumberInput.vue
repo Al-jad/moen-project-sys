@@ -8,9 +8,9 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly"
-      class="w-full"
+      class="w-full dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
     />
-    <span class="absolute text-sm text-gray-500 -translate-y-1/2 left-2 top-1/2">{{ unit }}</span>
+    <span class="absolute text-sm text-gray-500 dark:text-gray-400 -translate-y-1/2 left-2 top-1/2">{{ unit }}</span>
   </div>
 </template>
 

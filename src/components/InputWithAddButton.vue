@@ -5,19 +5,31 @@
         v-model="inputValue"
         :dir="dir"
         :placeholder="placeholder"
-        class="flex-1"
+        class="flex-1 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
         @keyup.enter="handleAdd"
       />
-      <Button @click="handleAdd" type="button">{{ buttonText }}</Button>
+      <Button 
+        @click="handleAdd" 
+        type="button"
+        class="dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+      >
+        {{ buttonText }}
+      </Button>
     </div>
-    <div v-if="modelValue.length > 0" class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50">
+    <div 
+      v-if="modelValue.length > 0" 
+      class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50 dark:bg-gray-800/50"
+    >
       <div
         v-for="(item, index) in modelValue"
         :key="index"
-        class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm"
+        class="flex items-center gap-1 px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 rounded-md shadow-sm dark:shadow-gray-900/10"
       >
         <span>{{ item }}</span>
-        <button @click="handleRemove(index)" class="text-gray-500 hover:text-red-500">
+        <button 
+          @click="handleRemove(index)" 
+          class="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
+        >
           <X class="w-3 h-3" />
         </button>
       </div>

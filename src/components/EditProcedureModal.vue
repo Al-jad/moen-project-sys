@@ -1,54 +1,58 @@
 <template>
   <Dialog :open="isOpen" @update:open="$emit('update:isOpen', $event)">
-    <DialogContent>
+    <DialogContent class="dark:bg-gray-800">
       <DialogHeader>
         <DialogTitle class="text-right">{{ isEdit ? 'تعديل الاجراء التنفيذي' : 'اضافة اجراء تنفيذي' }}</DialogTitle>
       </DialogHeader>
 
       <!-- Non-editable fields -->
-      <div class="grid gap-4 py-4 border-b">
+      <div class="grid gap-4 py-4 border-b dark:border-gray-700">
         <div class="grid items-center gap-4">
-          <Label class="text-right text-gray-500">العقد</Label>
-          <div class="text-right text-gray-900">عقد تجهيز محطات المراقبة 25 لسنة 2025</div>
+          <Label class="text-right text-gray-500 dark:text-gray-400">العقد</Label>
+          <div class="text-right">{{ contractInfo.name }}</div>
         </div>
         <div class="grid items-center gap-4">
-          <Label class="text-right text-gray-500">المشروع</Label>
-          <div class="text-right text-gray-900">مشروع A</div>
+          <Label class="text-right text-gray-500 dark:text-gray-400">المشروع</Label>
+          <div class="text-right">{{ contractInfo.project }}</div>
         </div>
       </div>
 
       <!-- Editable fields -->
       <div class="grid gap-4 py-4">
-        <div class="grid items-center gap-4">
-          <Label class="text-right">اسم الاجراء</Label>
-          <Input v-model="form.name" dir="rtl" />
-        </div>
-        <div class="grid items-center gap-4">
-          <Label class="text-right">مدة الاجراء</Label>
+        <FormField label="اسم الاجراء">
+          <CustomInput v-model="form.name" dir="rtl" />
+        </FormField>
+        <FormField label="مدة الاجراء">
           <div class="flex items-center gap-2">
-            <Input v-model="form.duration" type="number" dir="rtl" />
-            <span>يوم</span>
+            <CustomInput v-model="form.duration" type="number" dir="rtl" />
+            <span class="dark:text-gray-400">يوم</span>
           </div>
-        </div>
-        <div class="grid items-center gap-4">
-          <Label class="text-right">تاريخ البداية</Label>
-          <Input v-model="form.startDate" type="date" dir="rtl" />
-        </div>
-        <div class="grid items-center gap-4">
-          <Label class="text-right">نسبة الانجاز الفعلي</Label>
+        </FormField>
+        <FormField label="تاريخ البداية">
+          <CustomInput v-model="form.startDate" type="date" dir="rtl" />
+        </FormField>
+        <FormField label="نسبة الانجاز الفعلي">
           <div class="flex items-center gap-2">
-            <Input v-model="form.actualProgress" type="number" dir="rtl" />
-            <span>%</span>
+            <CustomInput v-model="form.actualProgress" type="number" dir="rtl" />
+            <span class="dark:text-gray-400">%</span>
           </div>
-        </div>
+        </FormField>
       </div>
 
       <DialogFooter class="flex justify-between">
-        <Button variant="outline" @click="$emit('update:isOpen', false)">الغاء</Button>
-        <Button type="submit" @click="handleSubmit">
-          <Check class="w-4 h-4" />
+        <PrimaryButton 
+          variant="outline" 
+          @click="$emit('update:isOpen', false)"
+        >
+          الغاء
+        </PrimaryButton>
+        <PrimaryButton 
+          type="submit" 
+          @click="handleSubmit"
+        >
+          <Check class="w-4 h-4 ml-2" />
           إرسال إلى المراجعة
-        </Button>
+        </PrimaryButton>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -57,10 +61,11 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Check } from 'lucide-vue-next'
+import PrimaryButton from '@/components/PrimaryButton.vue'
+import FormField from '@/components/FormField.vue'
+import CustomInput from '@/components/CustomInput.vue'
 
 const props = defineProps({
   isOpen: {
