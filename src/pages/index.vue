@@ -14,22 +14,26 @@
           <ProjectStatCard
             title="كل المشاريع"
             :count="1582"
-            :icon="AllProjectsIcon"
+            :icon="Folder"
+            color="blue"
           />
           <ProjectStatCard
             title="المنجزة"
             :count="982"
-            :icon="DoneProjectsIcon"
+            :icon="FolderCheck"
+            color="green"
           />
           <ProjectStatCard
             title="قيد التنفيذ"
             :count="382"
-            :icon="PendingProjectsIcon"
+            :icon="FolderSymlink"
+            color="yellow"
           />
           <ProjectStatCard
             title="المتلكئة"
             :count="245"
-            :icon="UndoneProjectsIcon"
+            :icon="FolderX"
+            color="red"
           />
         </div>
         <h1 class="mb-4 text-2xl font-bold text-right">
@@ -117,7 +121,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, computed, defineComponent, h } from 'vue'
-import { Users, LineChart, Package, MapPin } from 'lucide-vue-next'
+import { Users, LineChart, Package, MapPin, FolderCheck, FolderX, Folder, FolderSymlink,  } from 'lucide-vue-next'
 import { 
   Select,
   SelectContent,
@@ -142,34 +146,7 @@ import ProjectStatCard from '@/components/ProjectStatCard.vue'
 import CustomSelect from '@/components/CustomSelect.vue'
 import ShortcutCard from '@/components/ShortcutCard.vue'
 
-// Replace the direct SVG imports with component imports
-const AllProjectsIcon = defineComponent({
-  name: 'AllProjectsIcon',
-  render() {
-    return h('img', { src: '/img/icons/all-projects.svg', class: 'w-12 h-12' })
-  }
-})
 
-const DoneProjectsIcon = defineComponent({
-  name: 'DoneProjectsIcon',
-  render() {
-    return h('img', { src: '/img/icons/done-projects.svg', class: 'w-12 h-12' })
-  }
-})
-
-const PendingProjectsIcon = defineComponent({
-  name: 'PendingProjectsIcon',
-  render() {
-    return h('img', { src: '/img/icons/pending-projects.svg', class: 'w-12 h-12' })
-  }
-})
-
-const UndoneProjectsIcon = defineComponent({
-  name: 'UndoneProjectsIcon',
-  render() {
-    return h('img', { src: '/img/icons/undone-projects.svg', class: 'w-12 h-12' })
-  }
-})
 
 const selectedYear = ref('2024 - 2025')
 const router = useRouter();
