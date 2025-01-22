@@ -51,7 +51,7 @@
               </CustomSelect>
             </div>
 
-            <DateInput v-model="date" placeholder="اختر التاريخ" />
+            <DateInput class="flex-ro-w " v-model="date" placeholder="اختر التاريخ" />
           </div>
 
           <!-- Search -->
