@@ -14,10 +14,10 @@
       >
         <div class="flex items-center justify-between gap-4 mb-6">
           <div class="flex items-center gap-6">
-            <Button variant="outline" class="px-2">
+            <PrimaryButton size="lg" class="px-2">
               <FileSpreadsheet class="w-4 h-4 ml-2" />
               تصدير Excel
-            </Button>
+            </PrimaryButton>
 
             <div class="min-w-[200px]">
               <CustomSelect
@@ -91,7 +91,7 @@ import DateInput from '@/components/DateInput.vue';
   import { ar } from 'date-fns/locale';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Button } from '@/components/ui/button';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import FormField from '@/components/FormField.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import ContractCard from '@/components/ContractCard.vue';

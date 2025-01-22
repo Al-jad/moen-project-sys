@@ -3,7 +3,7 @@
     <PrimaryButton
       variant="link"
       @click="$router.push('/')"
-      class="flex items-center text-blue-600 dark:text-blue-400"
+      class=""
     >
       <ArrowRight class="w-4 h-4" />
       الرئيسية

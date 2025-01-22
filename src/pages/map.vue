@@ -10,19 +10,19 @@
         </div>
         <div class="p-4 rounded-lg shadow-sm">
           <div class="flex items-center gap-6 p-4 mb-4">
-            <PrimaryButton >
+            <PrimaryButton size="lg" :variant="selected === 'all' ? 'primary' : 'outline'">
               عرض الكل ( 400 )
             </PrimaryButton>
-            <PrimaryButton variant="outline" >
+            <PrimaryButton size="lg" :variant="selected === 'completed' ? 'primary' : 'outline'">
               المنجزة (100)
             </PrimaryButton>
-            <PrimaryButton variant="outline" >
+            <PrimaryButton size="lg" :variant="selected === 'inProgress' ? 'primary' : 'outline'">
               قيد التنفيذ (100)
             </PrimaryButton>
-            <PrimaryButton variant="outline">
+            <PrimaryButton size="lg" :variant="selected === 'delayed' ? 'primary' : 'outline'">
               المتلكئة ( 100 )
             </PrimaryButton>
-            <PrimaryButton variant="outline">
+            <PrimaryButton size="lg" :variant="selected === 'cancelled' ? 'primary' : 'outline'">
               الملغاة ( 100 )
             </PrimaryButton>
           </div>
@@ -38,4 +38,7 @@
   import PrimaryButton from '@/components/PrimaryButton.vue'
   import Map from '@/components/Map.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { ref } from 'vue';
+
+  const selected = ref('all');
 </script>
