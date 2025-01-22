@@ -10,7 +10,7 @@
         ]"
       >
         <CalendarIcon class="w-4 h-4 dark:text-gray-400" />
-        <span>{{ modelValue ? formatDate(modelValue) : placeholder }}</span>
+        <span class="text-right text-white ">{{ modelValue ? formatDate(modelValue) : placeholder }}</span>
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 dark:border-gray-700 dark:bg-gray-800" align="start">

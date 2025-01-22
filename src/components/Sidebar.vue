@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="fixed top-0 right-0 z-50 flex flex-col h-screen shadow-lg bg-white dark:bg-gray-900 group"
+    class="fixed top-0 right-0 z-50 flex flex-col h-screen bg-white shadow-lg dark:bg-gray-900 group"
     @mouseenter="isAnyItemHovered = true"
     @mouseleave="isAnyItemHovered = false"
   >
@@ -9,7 +9,7 @@
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/')"
     >
-      <div class="absolute inset-0 transition-opacity duration-300 bg-gray-50 dark:bg-gray-800 opacity-0 group-hover:opacity-100"/>
+      <div class="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"/>
       <div class="relative flex items-center justify-center w-full h-full px-3">
         <img 
           src="/public/img/Logo.png" 
@@ -65,7 +65,7 @@
                 }"
               />
               <span 
-                class="text-sm font-medium text-gray-700 dark:text-gray-200 transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                class="text-sm font-medium text-gray-700 transition-all duration-300 transform translate-x-1 opacity-0 dark:text-gray-200 group-hover:opacity-100 group-hover:translate-x-0"
                 :class="{'text-primary dark:text-primary': isActive(item.path)}"
               >
                 {{ item.label }}
@@ -83,7 +83,7 @@
 
     <!-- User Profile Section -->
     <div 
-      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t border-gray-200 cursor-pointer dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800"
       :class="{'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered}"
       @click="router.push('/profile')"
     >
