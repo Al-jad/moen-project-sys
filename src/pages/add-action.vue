@@ -36,30 +36,6 @@
               </template>
             </CustomTable>
           </div>
-          <div class="flex items-center justify-center py-3 mt-4 border-t dark:border-gray-700">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious @click="page > 1 && (page--)">السابق</PaginationPrevious>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink :value="page" isActive>1</PaginationLink>
-                </PaginationItem> 
-                <PaginationItem>
-                  <PaginationLink :value="page">2</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink :value="page">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext @click="page < totalPages && (page++)">التالي <ArrowRight class="w-4 h-4" /></PaginationNext>
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
         </div>
       </div>
     </main>
@@ -94,26 +70,8 @@ import {
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import BackToMainButton from '@/components/BackToMainButton.vue';
 import PrimaryButton from '@/components/PrimaryButton.vue';
-import CustomInput from '@/components/CustomInput.vue';
-import CustomSelect from '@/components/CustomSelect.vue';
 import CustomTable from '@/components/CustomTable.vue';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  RangeCalendar,
-} from '@/components/ui/range-calendar';
+import Pagination from '@/components/Pagination.vue';
 import ViewActionModal from '@/components/ViewActionModal.vue';
 import AddEditActionModal from '@/components/AddEditActionModal.vue';
 
