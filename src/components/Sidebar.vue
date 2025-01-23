@@ -50,7 +50,7 @@
               size="icon"
               class="relative flex items-center justify-start w-full gap-3 px-3 py-2 transition-all duration-200 ease-in-out rounded-md whitespace-nowrap"
               :class="{ 
-                'bg-primary/10 text-white bg-primary/20': isActive(item.path),
+                'bg-primary/40 text-white': isActive(item.path),
                 'hover:bg-gray-800': !isActive(item.path),
                 'scale-[1.01]': hoveredItem === index && !isActive(item.path)
               }"
@@ -58,21 +58,25 @@
             >
               <component 
                 :is="item.icon" 
-                class="w-5 h-5 min-w-[20px] text-gray-400 transition-transform duration-200"
+                class="w-5 h-5 min-w-[20px] transition-all duration-200"
                 :class="{
                   'scale-105': hoveredItem === index,
-                  'text-primary': isActive(item.path)
+                  'text-white': isActive(item.path),
+                  'text-gray-400': !isActive(item.path)
                 }"
               />
               <span 
-                class="text-sm font-medium text-gray-200 transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
-                :class="{'text-primary': isActive(item.path)}"
+                class="text-sm font-medium transition-all duration-300 transform translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                :class="{
+                  'text-white font-bold': isActive(item.path),
+                  'text-gray-200': !isActive(item.path)
+                }"
               >
                 {{ item.label }}
               </span>
               <div 
                 v-if="isActive(item.path)"
-                class="absolute right-0 w-0.5 h-full transition-transform duration-200 bg-primary"
+                class="absolute right-0 w-1.5 h-full transition-transform duration-200 bg-primary"
                 :class="{'scale-95': hoveredItem === index}"
               />
             </Button>
