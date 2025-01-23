@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <Card class="bg-white rounded-none dark:bg-gray-900 dark:border-gray-800 ">
+    <Card class="bg-gray-900 border-gray-800 rounded-none">
       <CardContent class="container max-w-6xl py-16">
         <div class="grid grid-cols-3 gap-16">
           <!-- About Section -->
@@ -8,8 +8,8 @@
             <div class="flex flex-col items-center gap-4 text-center">
               <img src="/img/Logo.png" alt="Ministry Logo" class="w-16 h-16" />
               <div class="space-y-1">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">نظام إدارة المشاريع</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">وزارة البيئة - جمهورية العراق</p>
+                <h3 class="text-xl font-bold text-white">نظام إدارة المشاريع</h3>
+                <p class="text-sm text-gray-400">وزارة البيئة - جمهورية العراق</p>
               </div>
             </div>
             <!-- <p class="text-sm leading-7 text-center text-gray-300">
@@ -39,8 +39,8 @@
             <div class="flex flex-col items-center gap-4 text-center">
               <img src="/img/MinisterLogo.png" alt="Ministry Logo" class="w-16 h-16" />
               <div class="space-y-1">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">رئاسة الوزراء</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">  جمهورية العراق</p>
+                <h3 class="text-xl font-bold text-white">رئاسة الوزراء</h3>
+                <p class="text-sm text-gray-400">جمهورية العراق</p>
               </div>
             </div>
             <!-- <p class="text-sm leading-7 text-center text-gray-300">
@@ -70,8 +70,8 @@
             <div class="flex flex-col items-center gap-4 text-center">
               <img src="/img/WhatsApp.jpg" alt="Ministry Logo" class="w-16 h-16 rounded-full" />
               <div class="space-y-1">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">مركز البيانات الوطني</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400"> الأمانة العامة لمجلس الوزراء</p>
+                <h3 class="text-xl font-bold text-white">مركز البيانات الوطني</h3>
+                <p class="text-sm text-gray-400">الأمانة العامة لمجلس الوزراء</p>
               </div>
             </div>
             <!-- <p class="text-sm leading-7 text-center text-gray-300">
@@ -184,9 +184,9 @@
     </Card>
 
     <!-- Bottom Bar -->
-    <div class="w-full border-t border-gray-800 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+    <div class="w-full bg-gray-900 border-t border-gray-700">
       <div class="container flex flex-col items-center justify-between max-w-6xl py-6 space-y-4 text-xs md:flex-row md:space-y-0">
-        <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 group">
+        <div class="flex items-center gap-2 text-xs text-gray-300 group">
           <span>تم التطوير بواسطة</span>
           <a href="https://www.alfakharcompany.com/" target="_blank" class="flex items-center gap-2 transition-all duration-200 hover:text-white">
             شركة الجاد للحلول البرمجية  
@@ -195,11 +195,11 @@
         </div>
         
         <div class="flex items-center gap-8 text-sm">
-          <RouterLink class="text-gray-600 transition-all duration-200 hover:text-gray-900 dark:hover:text-white hover:translate-x-0.5" to="/privacy">سياسة الخصوصية</RouterLink>
-          <RouterLink class="text-gray-600 transition-all  duration-200 hover:text-gray-900 dark:hover:text-white hover:translate-x-0.5" to="/terms">شروط الاستخدام</RouterLink>
+          <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/privacy">سياسة الخصوصية</RouterLink>
+          <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/terms">شروط الاستخدام</RouterLink>
         </div>
         
-        <p class="text-xs font-medium text-gray-600 dark:text-gray-300">جميع الحقوق محفوظة © {{ new Date().getFullYear() }}</p>
+        <p class="text-xs font-medium text-gray-300">جميع الحقوق محفوظة © {{ new Date().getFullYear() }}</p>
       </div>
     </div>
   </footer>
