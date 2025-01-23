@@ -18,7 +18,7 @@
           :class="{'opacity-100 scale-100': !isAnyItemHovered, 'opacity-0 scale-95': isAnyItemHovered}"
         />
         <img 
-          src="/public/img/logo-white-text.png" 
+          src="/public/img/logo-text.png" 
           alt="Logo with Text" 
           class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
           :class="{'opacity-0 scale-95': !isAnyItemHovered, 'opacity-100 scale-100': isAnyItemHovered}"
@@ -111,9 +111,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Button } from '@/components/ui/button';
+import useTheme from '@/composables/useTheme';
 import { 
   LayoutGrid, 
   Inbox, 
@@ -135,6 +136,7 @@ const route = useRoute();
 const router = useRouter();
 const hoveredItem = ref(null);
 const isAnyItemHovered = ref(false);
+const { theme } = useTheme();
 
 const menuItems = [
   { path: '/', icon: LayoutGrid, label: 'لوحة التحكم' },
