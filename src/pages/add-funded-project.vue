@@ -9,7 +9,7 @@
         <FormSection title="التفاصيل العامة للمشروع" class="dark:border-gray-700">
           <FormField label="اسم المشروع" class="md:col-span-2">
             <CustomInput
-              v-model="form.projectName"
+              v-model="store.form.projectName"
               dir="rtl"
               placeholder="خطة التكييف المحلية LAPS"
             />
@@ -17,7 +17,7 @@
 
           <FormField label="الدائرة المنفذة">
             <CustomInput
-              v-model="form.executingDepartment"
+              v-model="store.form.executingDepartment"
               dir="rtl"
               placeholder="الدائرة المنفذة"
             />
@@ -25,7 +25,7 @@
 
           <FormField label="الجهة المنفذة">
             <CustomInput
-              v-model="form.executingEntity"
+              v-model="store.form.executingEntity"
               dir="rtl"
               placeholder="برنامج الاغذية العالمي World Food Program"
             />
@@ -33,23 +33,28 @@
 
           <FormField label="الجهات المستفيدة من المشروع" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.beneficiaries"
+              v-model="store.form.beneficiaries"
               dir="rtl"
               placeholder="ادخل اسم الجهة المستفيدة"
             />
           </FormField>
 
           <FormField label="نوع التمويل">
-            <CustomInput v-model="form.fundingType" value="دولي" dir="rtl" placeholder="دولي" />
+            <CustomInput
+              v-model="store.form.fundingType"
+              value="دولي"
+              dir="rtl"
+              placeholder="دولي"
+            />
           </FormField>
 
           <FormField label="كلفة المشروع بالدولار">
-            <NumberInput v-model="form.totalCost" placeholder="165,000" unit="$" />
+            <NumberInput v-model="store.form.totalCost" placeholder="165,000" unit="$" />
           </FormField>
 
           <FormField label="الهدف من المشروع" class="md:col-span-2">
             <Textarea
-              v-model="form.projectGoal"
+              v-model="store.form.projectGoal"
               dir="rtl"
               placeholder="اعداد وثائق خطة التكييف المحلية LAPs لستة من المحافظات العراقية وهي (البصرة، ميسان، المثنى، ديالى، صلاح الدين، نينوى) الاكثر هشاشة لتجاه التغيرات المناخية"
               class="min-h-[100px] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -61,10 +66,14 @@
           <FormField label="مدة التنفيذ" class="md:col-span-2">
             <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <div class="w-full sm:w-48">
-                <NumberInput v-model="form.duration" placeholder="ادخل المدة" class="w-full" />
+                <NumberInput
+                  v-model="store.form.duration"
+                  placeholder="ادخل المدة"
+                  class="w-full"
+                />
               </div>
               <RadioGroup
-                v-model="form.durationType"
+                v-model="store.form.durationType"
                 class="flex gap-6 rounded-lg border p-2 dark:border-gray-700"
               >
                 <div class="flex items-center gap-3">
@@ -93,7 +102,7 @@
                 class="flex items-center justify-between rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
               >
                 <div class="flex items-center gap-3">
-                  <RadioGroup v-model="form.periodType" class="flex gap-6">
+                  <RadioGroup v-model="store.form.periodType" class="flex gap-6">
                     <div class="flex items-center gap-2">
                       <RadioGroupItem
                         value="weekly"
@@ -122,13 +131,13 @@
                 </div>
                 <div class="text-sm text-gray-500 dark:text-gray-400">
                   {{
-                    form.periodType === 'weekly'
-                      ? form.durationType === 'weeks'
-                        ? `عدد الاسابيع: ${form.duration || 0}`
-                        : `عدد الاسابيع: ${(form.duration || 0) * 4}`
-                      : form.durationType === 'months'
-                        ? `عدد الاشهر: ${form.duration || 0}`
-                        : `عدد الاشهر: ${Math.ceil((form.duration || 0) / 4)}`
+                    store.form.periodType === 'weekly'
+                      ? store.form.durationType === 'weeks'
+                        ? `عدد الاسابيع: ${store.form.duration || 0}`
+                        : `عدد الاسابيع: ${(store.form.duration || 0) * 4}`
+                      : store.form.durationType === 'months'
+                        ? `عدد الاشهر: ${store.form.duration || 0}`
+                        : `عدد الاشهر: ${Math.ceil((store.form.duration || 0) / 4)}`
                   }}
                 </div>
               </div>
@@ -136,7 +145,7 @@
                 class="rounded-lg border bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
               >
                 {{
-                  form.periodType === 'weekly'
+                  store.form.periodType === 'weekly'
                     ? 'سيتم تقسيم مدة المشروع الى اسابيع لتحديد فترة كل فعالية'
                     : 'سيتم تقسيم مدة المشروع الى اشهر لتحديد فترة كل فعالية'
                 }}
@@ -148,15 +157,15 @@
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-4">
                 <DateInput
-                  v-model="form.actualStartDate"
+                  v-model="store.form.actualStartDate"
                   class="flex-1"
                   :min="new Date().toISOString().split('T')[0]"
                 />
                 <button
-                  v-if="form.actualStartDate"
+                  v-if="store.form.actualStartDate"
                   type="button"
                   class="flex h-10 items-center gap-2 rounded-md border border-gray-200 bg-white px-4 text-sm text-gray-500 transition-colors hover:bg-gray-50 hover:text-red-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
-                  @click="form.actualStartDate = null"
+                  @click="store.form.actualStartDate = null"
                 >
                   <X class="h-4 w-4" />
                   مسح التاريخ
@@ -168,21 +177,27 @@
               >
                 <div class="flex items-center gap-2">
                   <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                    {{ form.actualStartDate ? 'تاريخ البدء:' : 'لم يتم تحديد تاريخ البدء' }}
+                    {{ store.form.actualStartDate ? 'تاريخ البدء:' : 'لم يتم تحديد تاريخ البدء' }}
                   </span>
                   <span
-                    v-if="form.actualStartDate"
+                    v-if="store.form.actualStartDate"
                     class="text-sm text-gray-900 dark:text-gray-100"
                   >
-                    {{ formatDate(form.actualStartDate) }}
+                    {{ formatDate(store.form.actualStartDate) }}
                   </span>
                 </div>
                 <div
-                  v-if="form.actualStartDate && form.duration"
+                  v-if="store.form.actualStartDate && store.form.duration"
                   class="text-sm text-gray-500 dark:text-gray-400"
                 >
                   تاريخ الانتهاء المتوقع:
-                  {{ calculateEndDate(form.actualStartDate, form.duration, form.durationType) }}
+                  {{
+                    calculateEndDate(
+                      store.form.actualStartDate,
+                      store.form.duration,
+                      store.form.durationType
+                    )
+                  }}
                 </div>
               </div>
             </div>
@@ -194,12 +209,12 @@
             <span
               class="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
             >
-              {{ form.components.length }} مكون
+              {{ store.form.components.length }} مكون
             </span>
           </div>
           <div class="space-y-6 md:col-span-2">
             <div
-              v-for="(component, componentIndex) in form.components"
+              v-for="(component, componentIndex) in store.form.components"
               :key="componentIndex"
               class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
@@ -288,7 +303,7 @@
                             >
                               <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 {{
-                                  form.periodType === 'weekly'
+                                  store.form.periodType === 'weekly'
                                     ? `اختر الاسابيع (${activity.weeks?.length || 0} من ${totalPeriods})`
                                     : `اختر الاشهر (${activity.weeks?.length || 0} من ${totalPeriods})`
                                 }}
@@ -319,7 +334,9 @@
                                 <span
                                   class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
                                 >
-                                  {{ form.periodType === 'weekly' ? `${period}` : `${period}` }}
+                                  {{
+                                    store.form.periodType === 'weekly' ? `${period}` : `${period}`
+                                  }}
                                 </span>
                                 <button
                                   type="button"
@@ -339,7 +356,7 @@
                                         : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
                                     ]"
                                   >
-                                    {{ form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                                    {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
                                   </span>
                                 </button>
                               </div>
@@ -388,25 +405,25 @@
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">اسم المشروع</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ form.projectName || 'لم يتم تحديد اسم المشروع' }}
+                      {{ store.form.projectName || 'لم يتم تحديد اسم المشروع' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">الدائرة المنفذة</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ form.executingDepartment || 'لم يتم تحديد الدائرة' }}
+                      {{ store.form.executingDepartment || 'لم يتم تحديد الدائرة' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">الجهة المنفذة</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ form.executingEntity || 'لم يتم تحديد الجهة' }}
+                      {{ store.form.executingEntity || 'لم يتم تحديد الجهة' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">الجهات المستفيدة</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ form.beneficiaries || 'لم يتم تحديد الجهات المستفيدة' }}
+                      {{ store.form.beneficiaries || 'لم يتم تحديد الجهات المستفيدة' }}
                     </div>
                   </div>
                 </div>
@@ -415,7 +432,7 @@
                 <div class="p-4">
                   <div class="text-sm text-gray-500 dark:text-gray-400">الهدف من المشروع</div>
                   <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ form.projectGoal || 'لم يتم تحديد الهدف' }}
+                    {{ store.form.projectGoal || 'لم يتم تحديد الهدف' }}
                   </div>
                 </div>
 
@@ -424,14 +441,16 @@
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">نوع التمويل</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ form.fundingType || 'لم يتم تحديد نوع التمويل' }}
+                      {{ store.form.fundingType || 'لم يتم تحديد نوع التمويل' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">التمويل الدولي</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                       {{
-                        form.totalCost ? `$${formatCost(form.totalCost)}` : 'لم يتم تحديد المبلغ'
+                        store.form.totalCost
+                          ? `$${formatCost(store.form.totalCost)}`
+                          : 'لم يتم تحديد المبلغ'
                       }}
                     </div>
                   </div>
@@ -443,8 +462,8 @@
                     <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ البدء</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                       {{
-                        form.actualStartDate
-                          ? formatDate(form.actualStartDate)
+                        store.form.actualStartDate
+                          ? formatDate(store.form.actualStartDate)
                           : 'لم يتم تحديد تاريخ البدء'
                       }}
                     </div>
@@ -455,8 +474,12 @@
                     >
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                       {{
-                        form.actualStartDate && form.duration
-                          ? calculateEndDate(form.actualStartDate, form.duration, form.durationType)
+                        store.form.actualStartDate && store.form.duration
+                          ? calculateEndDate(
+                              store.form.actualStartDate,
+                              store.form.duration,
+                              store.form.durationType
+                            )
                           : 'لم يتم تحديد تاريخ الانتهاء'
                       }}
                     </div>
@@ -470,19 +493,21 @@
               <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">
-                  {{ totalPeriods }} {{ form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                  {{ totalPeriods }} {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
                 </div>
               </div>
               <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">{{
-                  form.components.length
+                  store.form.components.length
                 }}</div>
               </div>
               <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">
-                  {{ form.components.reduce((total, comp) => total + comp.activities.length, 0) }}
+                  {{
+                    store.form.components.reduce((total, comp) => total + comp.activities.length, 0)
+                  }}
                 </div>
               </div>
             </div>
@@ -495,7 +520,7 @@
                     >المخطط الزمني للمشروع</h4
                   >
                   <div class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ form.periodType === 'weekly' ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
+                    {{ store.form.periodType === 'weekly' ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
                   </div>
                 </div>
               </div>
@@ -522,7 +547,7 @@
                       <!-- Component Names -->
                       <div class="divide-y dark:divide-gray-700">
                         <template
-                          v-for="(component, componentIndex) in form.components"
+                          v-for="(component, componentIndex) in store.form.components"
                           :key="componentIndex"
                         >
                           <!-- Component Row -->
@@ -590,14 +615,14 @@
                             :key="period"
                             class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
                           >
-                            {{ form.periodType === 'weekly' ? `${period}` : `${period}` }}
+                            {{ store.form.periodType === 'weekly' ? `${period}` : `${period}` }}
                           </div>
                         </div>
 
                         <!-- Grid Content -->
                         <div class="divide-y dark:divide-gray-700">
                           <template
-                            v-for="(component, componentIndex) in form.components"
+                            v-for="(component, componentIndex) in store.form.components"
                             :key="componentIndex"
                           >
                             <!-- Component Grid Row -->
@@ -662,7 +687,7 @@
               </div>
               <div class="divide-y dark:divide-gray-700">
                 <template
-                  v-for="(component, componentIndex) in form.components"
+                  v-for="(component, componentIndex) in store.form.components"
                   :key="componentIndex"
                 >
                   <!-- Component Section -->
@@ -712,7 +737,7 @@
                               >
                               <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
                                 {{ activity.weeks?.length || 0 }}
-                                {{ form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                                {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
                                 <span class="text-xs text-gray-500">
                                   ({{ activity.weeks?.join(', ') || 'لم يتم التحديد' }})
                                 </span>
@@ -747,11 +772,11 @@
             <Button
               @click="saveProject"
               class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
-              :disabled="isSaving"
+              :disabled="store.isSaving"
             >
-              <Loader2 v-if="isSaving" class="ml-2 h-4 w-4 animate-spin" />
+              <Loader2 v-if="store.isSaving" class="ml-2 h-4 w-4 animate-spin" />
               <Plus v-else class="ml-2 h-4 w-4" />
-              {{ isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
+              {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
         </div>
@@ -779,102 +804,86 @@
     TooltipTrigger,
   } from '@/components/ui/tooltip';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Loader2, Plus, X } from 'lucide-vue-next';
-  import { computed, ref, watch } from 'vue';
+  import { computed, onMounted, onUnmounted, watch } from 'vue';
+  import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
 
-  const form = ref({
-    projectName: '',
-    executingDepartment: '',
-    climateChangeDepartment: '',
-    executingEntity: '',
-    totalCost: '',
-    beneficiaries: '',
-    fundingType: '',
-    internationalFunding: '',
-    duration: '',
-    durationType: 'months',
-    periodType: 'weekly',
-    actualStartDate: null,
-    projectGoal: '',
-    components: [
-      {
-        name: '',
-        totalTarget: '',
-        activities: [
-          {
-            name: '',
-            totalTarget: '',
-            weeks: [],
-            notes: '',
-          },
-        ],
-      },
-    ],
+  const store = useFundedProjectStore();
+  const router = useRouter();
+
+  onMounted(() => {
+    store.initializeForm();
+    window.addEventListener('beforeunload', handleBeforeUnload);
   });
 
-  const isSaving = ref(false);
+  onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  });
 
-  const totalPeriods = computed(() => {
-    if (!form.value.duration) return 0;
-
-    if (form.value.durationType === 'weeks') {
-      return form.value.periodType === 'weekly'
-        ? parseInt(form.value.duration)
-        : Math.ceil(parseInt(form.value.duration) / 4);
-    } else if (form.value.durationType === 'months') {
-      return form.value.periodType === 'weekly'
-        ? parseInt(form.value.duration) * 4
-        : parseInt(form.value.duration);
+  const handleBeforeUnload = (e) => {
+    if (store.hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = '';
     }
-    return 0;
-  });
+  };
+
+  const totalPeriods = computed(() => store.totalPeriods);
 
   const saveProject = async () => {
-    try {
-      isSaving.value = true;
-      if (!form.value.projectName) {
-        toast.error('يرجى ادخال اسم المشروع', {
-          description: 'الرجاء ملء جميع الحقول المطلوبة',
-        });
-        return;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (!store.form.projectName) {
+      toast.error('يرجى ادخال اسم المشروع', {
+        description: 'الرجاء ملء جميع الحقول المطلوبة',
+      });
+      return;
+    }
+
+    const result = await store.saveProject();
+
+    if (result.success) {
       toast.success('تم حفظ المشروع بنجاح', {
         description: 'تم حفظ جميع بيانات المشروع',
       });
-    } catch (error) {
+      router.push('/projects');
+    } else {
       toast.error('حدث خطأ اثناء الحفظ', {
         description: 'لم يتم حفظ المشروع، يرجى المحاولة مرة أخرى',
       });
-    } finally {
-      isSaving.value = false;
     }
   };
 
   const addComponent = () => {
-    form.value.components.push({
+    const newForm = { ...store.form };
+    newForm.components.push({
       name: '',
       totalTarget: '',
       activities: [],
     });
+    store.updateForm(newForm);
   };
 
   const removeComponent = (componentIndex) => {
-    form.value.components.splice(componentIndex, 1);
+    const newForm = { ...store.form };
+    newForm.components.splice(componentIndex, 1);
+    store.updateForm(newForm);
   };
 
   const addActivity = (componentIndex) => {
-    form.value.components[componentIndex].activities.push({
+    const newForm = { ...store.form };
+    newForm.components[componentIndex].activities.push({
       name: '',
       totalTarget: '',
       weeks: [],
       notes: '',
     });
+    store.updateForm(newForm);
   };
 
   const removeActivity = (componentIndex, activityIndex) => {
-    form.value.components[componentIndex].activities.splice(activityIndex, 1);
+    const newForm = { ...store.form };
+    newForm.components[componentIndex].activities.splice(activityIndex, 1);
+    store.updateForm(newForm);
   };
 
   const toggleActivityWeek = (activity, period) => {
@@ -882,8 +891,7 @@
       activity.weeks = [];
     }
 
-    // Don't allow selecting periods beyond project duration
-    if (period > totalPeriods.value) return;
+    if (period > store.totalPeriods) return;
 
     const index = activity.weeks.indexOf(period);
     if (index === -1) {
@@ -892,17 +900,17 @@
     } else {
       activity.weeks.splice(index, 1);
     }
+
+    store.updateForm({ ...store.form });
   };
 
-  // Add watcher for duration changes
-  watch([() => form.value.duration, () => form.value.durationType], () => {
-    // Clear all activities' weeks when duration changes
-    form.value.components.forEach((component) => {
-      component.activities.forEach((activity) => {
-        activity.weeks = activity.weeks.filter((week) => week <= totalPeriods.value);
-      });
-    });
-  });
+  watch(
+    () => store.form,
+    () => {
+      store.updateForm({ ...store.form });
+    },
+    { deep: true }
+  );
 
   const formatDate = (date) => {
     if (!date) return '';
