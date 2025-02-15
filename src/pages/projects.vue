@@ -2,10 +2,10 @@
   <DefaultLayout>
     <div class="flex flex-1">
       <ProjectsFilter />
-      
-      <div class="flex-1 p-6 bg-gray-50 dark:bg-darkmode">
+
+      <div class="flex-1 bg-gray-50 p-6 dark:bg-darkmode">
         <!-- Projects Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="mb-6 flex items-center justify-between">
           <div class="space-y-1">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">قائمة المشاريع</h1>
             <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -18,65 +18,81 @@
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <PrimaryButton variant="outline" buttonClass="flex items-center gap-2">
-                    <AlignLeft class="w-4 h-4" />
+                    <AlignLeft class="h-4 w-4" />
                     ترتيب
                   </PrimaryButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent class="w-[250px] p-0 bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700" align="end">
-                  <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                    <h3 class="text-base font-medium text-right text-gray-900 dark:text-white">ترتيب</h3>
+                <DropdownMenuContent
+                  class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
+                  align="end"
+                >
+                  <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
+                    <h3 class="text-right text-base font-medium text-gray-900 dark:text-white"
+                      >ترتيب</h3
+                    >
                   </div>
                   <div class="flex flex-col">
                     <DropdownMenuItem
                       v-for="option in sortOptions"
                       :key="option.id"
-                      class="flex items-center justify-between w-full px-4 py-2.5 text-sm text-right transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b last:border-b-0 focus:bg-gray-50 dark:focus:bg-gray-700/50 dark:border-gray-700"
+                      class="flex w-full items-center justify-between border-b px-4 py-2.5 text-right text-sm transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/50 dark:focus:bg-gray-700/50"
                       :class="{ 'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id }"
                       @click="handleSort(option.id)"
                     >
-                      <component 
-                        :is="option.icon" 
-                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                      <component
+                        :is="option.icon"
+                        class="h-4 w-4 text-gray-500 dark:text-gray-400"
                       />
                       <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <div 
-                v-if="selectedSort" 
-                class="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200"
+              <div
+                v-if="selectedSort"
+                class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
               >
                 <span>{{ getSelectedSortLabel }}</span>
-                <button 
-                  class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                <button
+                  class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
                   @click="clearSort"
                 >
-                  <X class="w-3 h-3" />
+                  <X class="h-3 w-3" />
                 </button>
               </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <PrimaryButton
-                  variant="primary"
-                  buttonClass="flex items-center gap-2 p-4"
-                >
-                  <Plus class="w-4 h-4" />
+                <PrimaryButton variant="primary" buttonClass="flex items-center gap-2 p-4">
+                  <Plus class="h-4 w-4" />
                   اضافة مشروع جديد
                 </PrimaryButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent class="w-[200px] bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
-                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=funded')">
+              <DropdownMenuContent
+                class="w-[200px] border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
+              >
+                <DropdownMenuItem
+                  class="dark:focus:bg-gray-700/50"
+                  @click="$router.push('/add-funded-project')"
+                >
                   مشروع ممول
                 </DropdownMenuItem>
-                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-devlopment-project')">
+                <DropdownMenuItem
+                  class="dark:focus:bg-gray-700/50"
+                  @click="$router.push('/add-devlopment-project')"
+                >
                   مشروع تنمية الاقاليم
                 </DropdownMenuItem>
-                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=investment')">
+                <DropdownMenuItem
+                  class="dark:focus:bg-gray-700/50"
+                  @click="$router.push('/add-project?type=investment')"
+                >
                   مشروع استثمارية
                 </DropdownMenuItem>
-                <DropdownMenuItem class="dark:focus:bg-gray-700/50" @click="$router.push('/add-project?type=operational')">
+                <DropdownMenuItem
+                  class="dark:focus:bg-gray-700/50"
+                  @click="$router.push('/add-project?type=operational')"
+                >
                   مشروع تشغيلية
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -91,19 +107,26 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
-  import { Plus, AlignLeft, ArrowDown01, ArrowUp01, X, ArrowUpNarrowWide, ArrowDownNarrowWide } from 'lucide-vue-next';
-  import ProjectsList from '@/components/ProjectsList.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import ProjectsFilter from '@/components/ProjectsFilter.vue';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Button } from '@/components/ui/button';
+  import ProjectsList from '@/components/ProjectsList.vue';
   import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
-  import PrimaryButton from '@/components/PrimaryButton.vue'
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import {
+    AlignLeft,
+    ArrowDown01,
+    ArrowDownNarrowWide,
+    ArrowUp01,
+    ArrowUpNarrowWide,
+    Plus,
+    X,
+  } from 'lucide-vue-next';
+  import { computed, ref } from 'vue';
 
   const mockProjects = [
     {
@@ -394,7 +417,7 @@
   };
 
   const getSelectedSortLabel = computed(() => {
-    const option = sortOptions.find(option => option.id === selectedSort.value);
+    const option = sortOptions.find((option) => option.id === selectedSort.value);
     return option?.label;
   });
 

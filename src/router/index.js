@@ -1,105 +1,106 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/pages/index.vue'
-import Projects from '@/pages/projects.vue'
-import Users from '@/pages/users.vue'
-import Login from '@/pages/login.vue'
-import ProjectDetails from '@/pages/project-details.vue'
-import ProjectModifications from '@/pages/project-modifications.vue'
-import Map from '@/pages/map.vue'
-import Settings from '@/pages/settings.vue'
-import Attachment from '@/pages/attachment.vue'
-import AddAction from '@/pages/add-action.vue'
-import HistoryLog from '@/pages/history-log.vue'
-import Tasks from '@/pages/tasks.vue'
-import Contracts from '@/pages/contracts.vue'
-import Beneficiaries from '@/pages/beneficiaries.vue'
-import ContractDetails from '@/pages/contract-details.vue'
-import UserDetails from '@/pages/user-details.vue'
-import AddProject from '@/pages/add-project.vue'
-import Reports from '@/pages/reports.vue'
-import AddDevlopmentProject from '@/pages/add-devlopment-project.vue'
+import AddAction from '@/pages/add-action.vue';
+import AddDevlopmentProject from '@/pages/add-devlopment-project.vue';
+import AddFundedProject from '@/pages/add-funded-project.vue';
+import AddProject from '@/pages/add-project.vue';
+import Attachment from '@/pages/attachment.vue';
+import Beneficiaries from '@/pages/beneficiaries.vue';
+import ContractDetails from '@/pages/contract-details.vue';
+import Contracts from '@/pages/contracts.vue';
+import HistoryLog from '@/pages/history-log.vue';
+import Home from '@/pages/index.vue';
+import Login from '@/pages/login.vue';
+import Map from '@/pages/map.vue';
+import ProjectDetails from '@/pages/project-details.vue';
+import ProjectModifications from '@/pages/project-modifications.vue';
+import Projects from '@/pages/projects.vue';
+import Reports from '@/pages/reports.vue';
+import Settings from '@/pages/settings.vue';
+import Tasks from '@/pages/tasks.vue';
+import UserDetails from '@/pages/user-details.vue';
+import Users from '@/pages/users.vue';
+import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
     },
     {
       path: '/projects',
       name: 'projects',
-      component: Projects
+      component: Projects,
     },
     {
       path: '/projects/:id',
       name: 'project-details',
-      component: ProjectDetails
+      component: ProjectDetails,
     },
     {
       path: '/modifications/:id?',
       name: 'modifications',
-      component: ProjectModifications
+      component: ProjectModifications,
     },
     {
       path: '/map',
       name: 'map',
-      component: Map
+      component: Map,
     },
     {
       path: '/users',
       name: 'users',
-      component: Users
+      component: Users,
     },
     {
       path: '/users/:id',
       name: 'user-details',
-      component: UserDetails
+      component: UserDetails,
     },
     {
       path: '/settings',
       name: 'settings',
-      component: Settings
+      component: Settings,
     },
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
     },
     {
       path: '/attachments',
       name: 'attachments',
-      component: Attachment
+      component: Attachment,
     },
     {
       path: '/add-action',
       name: 'add-action',
-      component: AddAction
+      component: AddAction,
     },
     {
       path: '/history-log',
       name: 'history-log',
-      component: HistoryLog
+      component: HistoryLog,
     },
     {
       path: '/tasks',
       name: 'tasks',
-      component: Tasks
+      component: Tasks,
     },
     {
       path: '/beneficiaries',
       name: 'beneficiaries',
-      component: Beneficiaries
+      component: Beneficiaries,
     },
     {
       path: '/contracts',
       name: 'contracts',
-      component: Contracts
+      component: Contracts,
     },
     {
       path: '/contracts/:id',
       name: 'contract-details',
-      component: ContractDetails
+      component: ContractDetails,
     },
     {
       path: '/reports',
@@ -107,8 +108,8 @@ const router = createRouter({
       component: Reports,
       meta: {
         requiresAuth: true,
-        title: 'التقارير'
-      }
+        title: 'التقارير',
+      },
     },
     {
       path: '/add-project',
@@ -118,9 +119,14 @@ const router = createRouter({
     {
       path: '/add-devlopment-project',
       name: 'add-devlopment-project',
-      component: AddDevlopmentProject
-    }
-  ]
-})
+      component: AddDevlopmentProject,
+    },
+    {
+      path: '/add-funded-project',
+      name: 'add-funded-project',
+      component: AddFundedProject,
+    },
+  ],
+});
 
-export default router
+export default router;

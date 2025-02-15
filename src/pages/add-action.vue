@@ -5,12 +5,12 @@
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-6">
             <BackToMainButton />
-            <h1 class="text-xl font-bold dark:text-white"> 
+            <h1 class="text-xl font-bold dark:text-white">
               الاجراءات التنفيذية
             </h1>
           </div>
           <div class="flex items-center gap-6">
-            <PrimaryButton 
+            <PrimaryButton
               @click="showEditModal = true"
             >
               <CirclePlus class="w-4 h-4" />
@@ -39,7 +39,7 @@
         </div>
       </div>
     </main>
-    <ViewActionModal 
+    <ViewActionModal
       v-model:open="showViewModal"
       :action="selectedAction"
       @submit="handleSubmitAction"
@@ -52,28 +52,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import type { DateRange } from 'radix-vue';
+import AddEditActionModal from '@/components/AddEditActionModal.vue';
+import BackToMainButton from '@/components/BackToMainButton.vue';
+import CustomTable from '@/components/CustomTable.vue';
+import PrimaryButton from '@/components/PrimaryButton.vue';
+import ViewActionModal from '@/components/ViewActionModal.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
 import {
-  Eye,
-  ArrowRight,
-  Folder,
-  FileSpreadsheet,
-  CalendarIcon,
-  FileText,
-  Search,
   CirclePlus,
-  Pencil,
+  Eye,
+  FileText,
+  Folder
 } from 'lucide-vue-next';
-import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import BackToMainButton from '@/components/BackToMainButton.vue';
-import PrimaryButton from '@/components/PrimaryButton.vue';
-import CustomTable from '@/components/CustomTable.vue';
-import Pagination from '@/components/Pagination.vue';
-import ViewActionModal from '@/components/ViewActionModal.vue';
-import AddEditActionModal from '@/components/AddEditActionModal.vue';
+import type { DateRange } from 'radix-vue';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
