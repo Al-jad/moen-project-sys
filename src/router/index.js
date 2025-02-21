@@ -126,6 +126,11 @@ const router = createRouter({
       name: 'add-funded-project',
       component: AddFundedProject,
     },
+    {
+      path: '/demo',
+      name: 'demo',
+      component: () => import('@/pages/demo.vue'),
+    },
   ],
 });
 

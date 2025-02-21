@@ -12,6 +12,7 @@
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/core": "^12.4.0",
     "apexcharts": "^4.3.0",
+    "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
