@@ -9,38 +9,26 @@ const deepClone = (obj) => {
 };
 
 const defaultForm = {
-  projectName: '',
+  name: '',
   executingDepartment: '',
-  executingEntity: '',
-  beneficiaries: [],
-  fundingType: '',
-  totalCost: '',
-  duration: '',
-  durationType: 'months',
-  periodType: 'weekly',
+  implementingEntity: '',
+  beneficiaryEntities: '',
+  grantingEntity: '',
+  fundingType: 1,
+  cost: null,
   actualStartDate: null,
-  projectGoal: '',
-  components: [
-    {
-      name: '',
-      totalTarget: '',
-      activities: [
-        {
-          name: '',
-          totalTarget: '',
-          weeks: [],
-          notes: '',
-        },
-      ],
-    },
-  ],
+  projectObjectives: '',
+  duration: 0,
+  durationType: 'weeks',
+  periodType: 1,
+  components: [],
+  isSaving: false,
+  hasUnsavedChanges: false,
 };
 
 export const useFundedProjectStore = defineStore('fundedProject', {
   state: () => ({
     form: deepClone(defaultForm),
-    isSaving: false,
-    hasUnsavedChanges: false,
   }),
 
   getters: {
@@ -50,9 +38,9 @@ export const useFundedProjectStore = defineStore('fundedProject', {
       const duration = parseInt(state.form.duration) || 0;
 
       if (state.form.durationType === 'weeks') {
-        return state.form.periodType === 'weekly' ? duration : Math.ceil(duration / 4);
+        return state.form.periodType === 1 ? duration : Math.ceil(duration / 4);
       } else if (state.form.durationType === 'months') {
-        return state.form.periodType === 'weekly' ? duration * 4 : duration;
+        return state.form.periodType === 1 ? duration * 4 : duration;
       }
       return 0;
     },
@@ -60,9 +48,7 @@ export const useFundedProjectStore = defineStore('fundedProject', {
 
   actions: {
     initializeForm() {
-      if (Object.keys(this.form).length === 0) {
-        this.form = deepClone(defaultForm);
-      }
+      this.form = deepClone(defaultForm);
     },
 
     updateForm(newForm) {
@@ -70,7 +56,6 @@ export const useFundedProjectStore = defineStore('fundedProject', {
       this.form = deepClone(newForm);
       this.hasUnsavedChanges = true;
 
-      // Only update weeks if total periods has changed
       if (oldTotalPeriods !== this.totalPeriods) {
         this.updateActivityPeriods();
       }
@@ -88,6 +73,9 @@ export const useFundedProjectStore = defineStore('fundedProject', {
     },
 
     addComponent() {
+      if (!this.form.components) {
+        this.form.components = [];
+      }
       this.form.components.push({
         name: '',
         totalTarget: '',
@@ -144,83 +132,36 @@ export const useFundedProjectStore = defineStore('fundedProject', {
     async saveProject() {
       this.isSaving = true;
       try {
+        const formattedDate = this.form.actualStartDate
+          ? new Date(this.form.actualStartDate).toISOString()
+          : null;
+
         const projectData = {
-          name: this.form.projectName,
+          name: this.form.name,
           executingDepartment: this.form.executingDepartment,
-          executingEntity: this.form.executingEntity,
-          beneficiaries: this.form.beneficiaries,
-          fundingType: this.form.fundingType,
-          totalCost: parseFloat(this.form.totalCost) || 0,
-          actualStartDate: this.form.actualStartDate,
-          projectGoal: this.form.projectGoal,
-          duration: parseInt(this.form.duration) || 0,
+          implementingEntity: this.form.implementingEntity,
+          beneficiaryEntities: this.form.beneficiaryEntities || '',
+          grantingEntity: this.form.grantingEntity,
+          fundingType: Number(this.form.fundingType),
+          cost: Number(this.form.cost),
+          actualStartDate: formattedDate,
+          projectObjectives: this.form.projectObjectives,
+          duration: Number(this.form.duration),
           durationType: this.form.durationType,
-          periodType: this.form.periodType,
+          periodType: Number(this.form.periodType),
         };
 
-        const projectResponse = await axiosInstance.post('/project', projectData);
-        const components = [];
-        for (const component of this.form.components) {
-          const componentData = {
-            projectId: projectResponse.data.id,
-            name: component.name,
-            targetPercentage: parseFloat(component.totalTarget) || 0,
-          };
-          const componentResponse = await axiosInstance.post('/component', componentData);
-          components.push({
-            ...componentResponse.data,
-            activities: component.activities,
-          });
-        }
+        console.log('Final payload being sent:', JSON.stringify(projectData, null, 2));
 
-        // 3. Create activities for each component
-        for (const component of components) {
-          for (const activity of component.activities) {
-            try {
-              const activityData = {
-                componentId: component.id,
-                name: activity.name,
-                targetPercentage: parseFloat(activity.totalTarget) || 0,
-                notes: activity.notes || '',
-                selectedPeriods: activity.weeks || [],
-              };
+        const response = await axiosInstance.post('/project', projectData);
 
-              console.log('Creating activity...', activityData);
-              const activityResponse = await axiosInstance.post('/activity', activityData);
-              console.log('Activity created:', activityResponse.data);
-            } catch (activityError) {
-              console.error('Error creating activity:', {
-                activity: activity.name,
-                error: activityError.response?.data || activityError.message,
-              });
-              throw new Error(
-                `Failed to create activity "${activity.name}": ${activityError.message}`
-              );
-            }
-          }
-        }
+        console.log('API Response:', response.data);
 
-        this.clearForm();
-        return {
-          success: true,
-          message: 'Project created successfully',
-        };
+        this.hasUnsavedChanges = false;
+        return { success: true, data: response.data };
       } catch (error) {
-        console.error('Error details:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          url: error.config?.url,
-        });
-
-        // If we have a project created but components/activities failed, we should handle cleanup
-        // TODO: Implement rollback mechanism if needed
-
-        return {
-          success: false,
-          error: error.response?.data?.message || error.message || 'An error occurred while saving',
-          details: error.response?.data,
-        };
+        console.error('Error saving project:', error);
+        throw error;
       } finally {
         this.isSaving = false;
       }

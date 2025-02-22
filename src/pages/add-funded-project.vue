@@ -1,14 +1,14 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-col gap-4 p-6 min-h-screen bg-gray-200 dark:bg-gray-900">
+    <div class="flex min-h-screen flex-col gap-4 bg-gray-200 p-6 dark:bg-gray-900">
       <div class="mx-auto w-full max-w-6xl">
-        <h1 class="py-4 pb-6 text-2xl font-bold text-right text-gray-900 dark:text-gray-100"
+        <h1 class="py-4 pb-6 text-right text-2xl font-bold text-gray-900 dark:text-gray-100"
           >اضافة مشروع - ممول</h1
         >
         <FormSection title="التفاصيل العامة للمشروع" class="dark:border-gray-700">
           <FormField label="اسم المشروع" class="md:col-span-2">
             <CustomInput
-              v-model="store.form.projectName"
+              v-model="store.form.name"
               dir="rtl"
               placeholder="خطة التكييف المحلية LAPS"
             />
@@ -22,51 +22,39 @@
           </FormField>
           <FormField label="الجهة المنفذة">
             <CustomInput
-              v-model="store.form.executingEntity"
+              v-model="store.form.implementingEntity"
               dir="rtl"
               placeholder="برنامج الاغذية العالمي World Food Program"
             />
           </FormField>
           <FormField label="الجهات المستفيدة من المشروع" class="md:col-span-2">
-            <div class="space-y-2">
-              <div
-                v-for="(beneficiary, index) in store.form.beneficiaries"
-                :key="index"
-                class="flex gap-2 items-center"
-              >
-                <CustomInput
-                  v-model="store.form.beneficiaries[index]"
-                  dir="rtl"
-                  placeholder="ادخل اسم الجهة المستفيدة"
-                  class="flex-1"
-                />
-                <button
-                  type="button"
-                  class="text-red-500 hover:text-red-600"
-                  @click="removeBeneficiary(index)"
-                >
-                  <X class="w-4 h-4" />
-                </button>
-              </div>
-              <PrimaryButton variant="outline" @click="addBeneficiary" size="sm">
-                اضافة جهة مستفيدة
-              </PrimaryButton>
-            </div>
-          </FormField>
-          <FormField label="نوع التمويل">
             <CustomInput
-              v-model="store.form.fundingType"
-              value="دولي"
+              v-model="store.form.beneficiaryEntities"
               dir="rtl"
-              placeholder="دولي"
+              placeholder="ادخل اسم الجهة المستفيدة"
+              class="flex-1"
             />
           </FormField>
+          <FormField label="الجهة المانحة" class="md:col-span-2">
+            <CustomInput
+              v-model="store.form.grantingEntity"
+              dir="rtl"
+              placeholder="ادخل اسم الجهة المانحة"
+            />
+          </FormField>
+          <FormField label="نوع التمويل">
+            <div
+              class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+            >
+              مشروع ممول
+            </div>
+          </FormField>
           <FormField label="كلفة المشروع بالدولار">
-            <NumberInput v-model="store.form.totalCost" placeholder="165,000" unit="$" />
+            <NumberInput v-model="store.form.cost" placeholder="165,000" unit="$" />
           </FormField>
           <FormField label="الهدف من المشروع" class="md:col-span-2">
             <Textarea
-              v-model="store.form.projectGoal"
+              v-model="store.form.projectObjectives"
               dir="rtl"
               placeholder="اعداد وثائق خطة التكييف المحلية LAPs لستة من المحافظات العراقية وهي (البصرة، ميسان، المثنى، ديالى، صلاح الدين، نينوى) الاكثر هشاشة لتجاه التغيرات المناخية"
               class="min-h-[100px] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -75,7 +63,7 @@
         </FormSection>
         <FormSection title="المدة والفترة الزمنية">
           <FormField label="مدة التنفيذ" class="md:col-span-2">
-            <div class="flex flex-col gap-4 items-start sm:flex-row sm:items-center">
+            <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <div class="w-full sm:w-48">
                 <NumberInput
                   v-model="store.form.duration"
@@ -85,15 +73,15 @@
               </div>
               <RadioGroup
                 v-model="store.form.durationType"
-                class="flex gap-6 p-2 rounded-lg border dark:border-gray-700"
+                class="flex gap-6 rounded-lg border p-2 dark:border-gray-700"
               >
-                <div class="flex gap-3 items-center">
+                <div class="flex items-center gap-3">
                   <RadioGroupItem value="weeks" id="duration-weeks" class="dark:border-gray-700" />
                   <Label for="duration-weeks" class="text-sm font-medium dark:text-gray-300"
                     >اسبوع</Label
                   >
                 </div>
-                <div class="flex gap-3 items-center">
+                <div class="flex items-center gap-3">
                   <RadioGroupItem
                     value="months"
                     id="duration-months"
@@ -109,28 +97,20 @@
           <FormField label="نوع الفترة الزمنية للفعاليات" class="md:col-span-2">
             <div class="flex flex-col gap-4">
               <div
-                class="flex justify-between items-center p-4 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                class="flex items-center justify-between rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
               >
-                <div class="flex gap-3 items-center">
+                <div class="flex items-center gap-3">
                   <RadioGroup v-model="store.form.periodType" class="flex gap-6">
-                    <div class="flex gap-2 items-center">
-                      <RadioGroupItem
-                        value="weekly"
-                        id="period-weekly"
-                        class="dark:border-gray-700"
-                      />
+                    <div class="flex items-center gap-2">
+                      <RadioGroupItem value="1" id="period-weekly" class="dark:border-gray-700" />
                       <div class="flex flex-col">
                         <Label for="period-weekly" class="font-medium dark:text-gray-300"
                           >اسبوعي</Label
                         >
                       </div>
                     </div>
-                    <div class="flex gap-2 items-center">
-                      <RadioGroupItem
-                        value="monthly"
-                        id="period-monthly"
-                        class="dark:border-gray-700"
-                      />
+                    <div class="flex items-center gap-2">
+                      <RadioGroupItem value="2" id="period-monthly" class="dark:border-gray-700" />
                       <div class="flex flex-col">
                         <Label for="period-monthly" class="font-medium dark:text-gray-300"
                           >شهري</Label
@@ -152,7 +132,7 @@
                 </div>
               </div>
               <div
-                class="p-3 text-sm text-gray-500 bg-gray-50 rounded-lg border dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
+                class="rounded-lg border bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
               >
                 {{
                   store.form.periodType === 'weekly'
@@ -164,26 +144,27 @@
           </FormField>
           <FormField label="التاريخ الفعلي لبدء المشروع" class="md:col-span-2">
             <div class="flex flex-col gap-4">
-              <div class="flex gap-4 items-center">
+              <div class="flex items-center gap-4">
                 <DateInput
                   v-model="store.form.actualStartDate"
                   class="flex-1"
+                  type="datetime-local"
                   :min="new Date().toISOString().split('T')[0]"
                 />
                 <button
                   v-if="store.form.actualStartDate"
                   type="button"
-                  class="flex gap-2 items-center px-4 h-10 text-sm text-gray-500 bg-white rounded-md border border-gray-200 transition-colors hover:bg-gray-50 hover:text-red-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                  class="flex h-10 items-center gap-2 rounded-md border border-gray-200 bg-white px-4 text-sm text-gray-500 transition-colors hover:bg-gray-50 hover:text-red-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
                   @click="store.form.actualStartDate = null"
                 >
-                  <X class="w-4 h-4" />
+                  <X class="h-4 w-4" />
                   مسح التاريخ
                 </button>
               </div>
               <div
-                class="flex justify-between items-center px-4 py-2 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                class="flex items-center justify-between rounded-lg border bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-800"
               >
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                   <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                     {{ store.form.actualStartDate ? 'تاريخ البدء:' : 'لم يتم تحديد تاريخ البدء' }}
                   </span>
@@ -212,9 +193,9 @@
           </FormField>
         </FormSection>
         <FormSection title="مكونات المشروع">
-          <div class="flex justify-between items-center mb-4">
+          <div class="mb-4 flex items-center justify-between">
             <span
-              class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"
+              class="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
             >
               {{ store.form.components.length }} مكون
             </span>
@@ -223,19 +204,19 @@
             <div
               v-for="(component, componentIndex) in store.form.components"
               :key="componentIndex"
-              class="p-4 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+              class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
-              <div class="flex justify-between items-center mb-4">
-                <div class="flex gap-4 items-center">
+              <div class="mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
                   <h3 class="text-lg font-medium dark:text-gray-100">
                     المكون رقم {{ componentIndex + 1 }}
                   </h3>
                 </div>
                 <Button variant="destructive" size="sm" @click="removeComponent(componentIndex)">
-                  <X class="w-4 h-4" />
+                  <X class="h-4 w-4" />
                 </Button>
               </div>
-              <div class="grid grid-cols-1 gap-y-4 gap-x-6 md:grid-cols-2">
+              <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
                 <FormField label="اسم المكون">
                   <CustomInput v-model="component.name" dir="rtl" placeholder="ادخل اسم المكون" />
                 </FormField>
@@ -248,8 +229,8 @@
                 </FormField>
               </div>
               <div class="mt-6">
-                <div class="flex justify-between items-center mb-4">
-                  <div class="flex gap-4 items-center">
+                <div class="mb-4 flex items-center justify-between">
+                  <div class="flex items-center gap-4">
                     <h4 class="font-medium dark:text-gray-100">الفعاليات</h4>
                     <span
                       v-if="component.activities.length > 0"
@@ -258,7 +239,7 @@
                       ({{ component.activities.length }} من الفعاليات)
                     </span>
                   </div>
-                  <div class="flex gap-2 items-center">
+                  <div class="flex items-center gap-2">
                     <PrimaryButton variant="outline" @click="addActivity(componentIndex)" size="sm">
                       اضافة فعالية
                     </PrimaryButton>
@@ -268,19 +249,19 @@
                   <div
                     v-for="(activity, activityIndex) in component.activities"
                     :key="activityIndex"
-                    class="p-4 bg-gray-50 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                    class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
                   >
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="mb-4 flex items-center justify-between">
                       <h5 class="font-medium">الفعالية رقم {{ activityIndex + 1 }}</h5>
                       <Button
                         variant="destructive"
                         size="sm"
                         @click="removeActivity(componentIndex, activityIndex)"
                       >
-                        <X class="w-4 h-4" />
+                        <X class="h-4 w-4" />
                       </Button>
                     </div>
-                    <div class="grid grid-cols-1 gap-y-4 gap-x-6 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
                       <FormField label="اسم الفعالية">
                         <CustomInput
                           v-model="activity.name"
@@ -299,7 +280,7 @@
                         <FormField label="الفترة الزمنية للفعالية">
                           <div v-if="totalPeriods > 0" class="space-y-4">
                             <div
-                              class="flex justify-between items-center px-4 py-2 rounded-lg border bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50"
+                              class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
                             >
                               <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 {{
@@ -318,7 +299,7 @@
                               </button>
                             </div>
                             <div
-                              class="grid gap-2 p-4 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                              class="grid gap-2 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
                               :class="{
                                 'grid-cols-4': totalPeriods <= 4,
                                 'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
@@ -339,7 +320,7 @@
                                 </span>
                                 <button
                                   type="button"
-                                  class="relative w-full h-12 rounded-md border transition-all duration-200 cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
+                                  class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
                                   :class="[
                                     activity.weeks?.includes(period)
                                       ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
@@ -348,7 +329,7 @@
                                   @click.prevent="toggleActivityWeek(activity, period)"
                                 >
                                   <span
-                                    class="flex absolute inset-0 justify-center items-center text-xs font-medium"
+                                    class="absolute inset-0 flex items-center justify-center text-xs font-medium"
                                     :class="[
                                       activity.weeks?.includes(period)
                                         ? 'text-white'
@@ -363,7 +344,7 @@
                           </div>
                           <div
                             v-else
-                            class="flex justify-center items-center p-6 text-center text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                            class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                           >
                             <div class="space-y-1">
                               <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
@@ -392,8 +373,8 @@
         </FormSection>
         <FormSection title="معاينة المشروع">
           <div class="space-y-6 md:col-span-2">
-            <div class="bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
-              <div class="p-4 border-b dark:border-gray-700">
+            <div class="rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+              <div class="border-b p-4 dark:border-gray-700">
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
               </div>
               <div class="divide-y dark:divide-gray-700">
@@ -401,7 +382,7 @@
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">اسم المشروع</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ store.form.projectName || 'لم يتم تحديد اسم المشروع' }}
+                      {{ store.form.name || 'لم يتم تحديد اسم المشروع' }}
                     </div>
                   </div>
                   <div>
@@ -413,36 +394,34 @@
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">الجهة المنفذة</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ store.form.executingEntity || 'لم يتم تحديد الجهة' }}
+                      {{ store.form.implementingEntity || 'لم يتم تحديد الجهة' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">الجهات المستفيدة</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ store.form.beneficiaries || 'لم يتم تحديد الجهات المستفيدة' }}
+                      {{ store.form.beneficiaryEntities || 'لم يتم تحديد الجهات المستفيدة' }}
                     </div>
                   </div>
                 </div>
                 <div class="p-4">
                   <div class="text-sm text-gray-500 dark:text-gray-400">الهدف من المشروع</div>
                   <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ store.form.projectGoal || 'لم يتم تحديد الهدف' }}
+                    {{ store.form.projectObjectives || 'لم يتم تحديد الهدف' }}
                   </div>
                 </div>
                 <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">نوع التمويل</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ store.form.fundingType || 'لم يتم تحديد نوع التمويل' }}
+                      {{ store.form.fundingType === 1 ? 'مشروع ممول' : 'مشروع غير ممول' }}
                     </div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">التمويل الدولي</div>
                     <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                       {{
-                        store.form.totalCost
-                          ? `$${formatCost(store.form.totalCost)}`
-                          : 'لم يتم تحديد المبلغ'
+                        store.form.cost ? `$${formatCost(store.form.cost)}` : 'لم يتم تحديد المبلغ'
                       }}
                     </div>
                   </div>
@@ -478,19 +457,19 @@
               </div>
             </div>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div class="p-4 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
+              <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">
                   {{ totalPeriods }} {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
                 </div>
               </div>
-              <div class="p-4 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
+              <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">{{
                   store.form.components.length
                 }}</div>
               </div>
-              <div class="p-4 bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
+              <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">
                   {{
@@ -499,9 +478,9 @@
                 </div>
               </div>
             </div>
-            <div class="bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
-              <div class="p-4 border-b dark:border-gray-700">
-                <div class="flex justify-between items-center">
+            <div class="rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+              <div class="border-b p-4 dark:border-gray-700">
+                <div class="flex items-center justify-between">
                   <h4 class="font-medium text-gray-900 dark:text-gray-100"
                     >المخطط الزمني للمشروع</h4
                   >
@@ -513,7 +492,7 @@
               <div class="relative p-4">
                 <div
                   v-if="totalPeriods > 0"
-                  class="isolate overflow-hidden relative bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                  class="relative isolate overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
                 >
                   <div class="flex">
                     <div
@@ -532,9 +511,9 @@
                           <div
                             class="h-[4rem] border-b p-4 font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200"
                           >
-                            <div class="flex gap-2 items-center">
+                            <div class="flex items-center gap-2">
                               <div
-                                class="w-3 h-3 rounded-full shrink-0"
+                                class="h-3 w-3 shrink-0 rounded-full"
                                 :style="{ backgroundColor: getComponentColor(componentIndex) }"
                               ></div>
                               <TooltipProvider>
@@ -544,7 +523,7 @@
                                       {{ component.name || `المكون ${componentIndex + 1}` }}
                                     </div>
                                   </TooltipTrigger>
-                                  <TooltipContent class="text-white bg-gray-900 dark:bg-gray-800">
+                                  <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
                                     <p>{{ component.name || `المكون ${componentIndex + 1}` }}</p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -556,9 +535,9 @@
                             :key="activityIndex"
                             class="h-[4rem] border-b bg-gray-50/50 p-4 pr-8 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/30 dark:text-gray-300"
                           >
-                            <div class="flex gap-2 items-center">
+                            <div class="flex items-center gap-2">
                               <div
-                                class="w-2 h-2 rounded-full shrink-0"
+                                class="h-2 w-2 shrink-0 rounded-full"
                                 :style="{ backgroundColor: getComponentColor(componentIndex) }"
                               ></div>
                               <TooltipProvider>
@@ -568,7 +547,7 @@
                                       {{ activity.name || `الفعالية ${activityIndex + 1}` }}
                                     </div>
                                   </TooltipTrigger>
-                                  <TooltipContent class="text-white bg-gray-900 dark:bg-gray-800">
+                                  <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
                                     <p>{{ activity.name || `الفعالية ${activityIndex + 1}` }}</p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -578,7 +557,7 @@
                         </template>
                       </div>
                     </div>
-                    <div class="overflow-x-auto relative custom-scrollbar">
+                    <div class="custom-scrollbar relative overflow-x-auto">
                       <div class="inline-block min-w-[800px]">
                         <div
                           class="sticky top-0 z-[10] flex h-[4rem] border-b bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -586,7 +565,7 @@
                           <div
                             v-for="period in totalPeriods"
                             :key="period"
-                            class="flex justify-center items-center p-4 w-16 h-full text-sm font-medium text-center text-gray-600 border-l shrink-0 dark:border-gray-700 dark:text-gray-300"
+                            class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
                           >
                             {{ store.form.periodType === 'weekly' ? `${period}` : `${period}` }}
                           </div>
@@ -602,7 +581,7 @@
                               <div
                                 v-for="period in totalPeriods"
                                 :key="period"
-                                class="w-16 border-l shrink-0 dark:border-gray-700"
+                                class="w-16 shrink-0 border-l dark:border-gray-700"
                               >
                               </div>
                             </div>
@@ -614,7 +593,7 @@
                               <div
                                 v-for="period in totalPeriods"
                                 :key="period"
-                                class="relative w-16 border-l shrink-0 dark:border-gray-700"
+                                class="relative w-16 shrink-0 border-l dark:border-gray-700"
                               >
                                 <div
                                   v-if="activity.weeks?.includes(period)"
@@ -634,7 +613,7 @@
                 </div>
                 <div
                   v-else
-                  class="flex justify-center items-center p-8 text-center text-gray-500 bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <div class="space-y-2">
                     <div class="text-sm font-medium">لا يمكن عرض المخطط الزمني</div>
@@ -643,8 +622,8 @@
                 </div>
               </div>
             </div>
-            <div class="bg-white rounded-lg border dark:border-gray-700 dark:bg-gray-800">
-              <div class="p-4 border-b dark:border-gray-700">
+            <div class="rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+              <div class="border-b p-4 dark:border-gray-700">
                 <h4 class="font-medium text-gray-900 dark:text-gray-100"
                   >تفاصيل المكونات والفعاليات</h4
                 >
@@ -655,10 +634,10 @@
                   :key="componentIndex"
                 >
                   <div class="p-4">
-                    <div class="flex justify-between items-center mb-4">
-                      <div class="flex gap-3 items-center">
+                    <div class="mb-4 flex items-center justify-between">
+                      <div class="flex items-center gap-3">
                         <div
-                          class="w-3 h-3 rounded-full"
+                          class="h-3 w-3 rounded-full"
                           :style="{ backgroundColor: getComponentColor(componentIndex) }"
                         ></div>
                         <h5 class="font-medium text-gray-900 dark:text-gray-100">
@@ -669,16 +648,16 @@
                         المستهدف: {{ component.totalTarget || 0 }}%
                       </div>
                     </div>
-                    <div class="pl-6 space-y-3">
+                    <div class="space-y-3 pl-6">
                       <template
                         v-for="(activity, activityIndex) in component.activities"
                         :key="activityIndex"
                       >
-                        <div class="p-3 bg-gray-50 rounded-lg dark:bg-gray-800/50">
-                          <div class="flex justify-between items-center mb-2">
-                            <div class="flex gap-2 items-center">
+                        <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
+                          <div class="mb-2 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
                               <div
-                                class="w-2 h-2 rounded-full"
+                                class="h-2 w-2 rounded-full"
                                 :style="{ backgroundColor: getComponentColor(componentIndex) }"
                               ></div>
                               <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -713,7 +692,7 @@
                       </template>
                       <div
                         v-if="component.activities.length === 0"
-                        class="p-3 text-sm text-center text-gray-500 rounded-lg border border-gray-200 border-dashed dark:border-gray-700 dark:text-gray-400"
+                        class="rounded-lg border border-dashed border-gray-200 p-3 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
                       >
                         لا توجد فعاليات لهذا المكون
                       </div>
@@ -724,15 +703,15 @@
             </div>
           </div>
         </FormSection>
-        <div class="sticky right-0 left-0 bottom-6 mt-6">
-          <div class="px-6 mx-auto max-w-6xl">
+        <div class="sticky bottom-6 left-0 right-0 mt-6">
+          <div class="mx-auto max-w-6xl px-6">
             <Button
               @click="saveProject"
-              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="store.isSaving"
             >
-              <Loader2 v-if="store.isSaving" class="ml-2 w-4 h-4 animate-spin" />
-              <Plus v-else class="ml-2 w-4 h-4" />
+              <Loader2 v-if="store.isSaving" class="ml-2 h-4 w-4 animate-spin" />
+              <Plus v-else class="ml-2 h-4 w-4" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -766,8 +745,31 @@
   import { toast } from 'vue-sonner';
   const store = useFundedProjectStore();
   const router = useRouter();
+  if (!Array.isArray(store.form.beneficiaryEntities)) {
+    store.form.beneficiaryEntities = [];
+  }
   onMounted(() => {
-    store.initializeForm();
+    store.form = {
+      name: '',
+      executingDepartment: '',
+      implementingEntity: '',
+      beneficiaryEntities: [''],
+      grantingEntity: '',
+      fundingType: 1,
+      cost: null,
+      projectObjectives: '',
+      duration: 0,
+      periodType: 1,
+      durationType: 'weeks',
+      actualStartDate: null,
+      components: [],
+      isSaving: false,
+      hasUnsavedChanges: false,
+    };
+
+    localStorage.removeItem('fundedProject');
+    sessionStorage.removeItem('fundedProject');
+
     window.addEventListener('beforeunload', handleBeforeUnload);
   });
   onUnmounted(() => {
@@ -781,95 +783,35 @@
   };
   const totalPeriods = computed(() => store.totalPeriods);
   const saveProject = async () => {
-    if (!store.form.projectName) {
-      toast.error('يرجى ادخال اسم المشروع', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+    if (!store.form.name) {
+      toast.error('يرجى ادخال اسم المشروع');
       return;
     }
     if (!store.form.executingDepartment) {
-      toast.error('يرجى اختيار الدائرة المنفذة', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+      toast.error('يرجى اختيار الدائرة المنفذة');
       return;
     }
-    if (!store.form.executingEntity) {
-      toast.error('يرجى ادخال الجهة المنفذة', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+    if (!store.form.implementingEntity) {
+      toast.error('يرجى ادخال الجهة المنفذة');
       return;
     }
-    if (!store.form.totalCost) {
-      toast.error('يرجى ادخال كلفة المشروع', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+    if (!store.form.grantingEntity) {
+      toast.error('يرجى ادخال الجهة المانحة');
       return;
     }
-    if (!store.form.duration || !store.form.durationType) {
-      toast.error('يرجى تحديد مدة المشروع', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+    if (!store.form.cost) {
+      toast.error('يرجى ادخال كلفة المشروع');
+      return;
+    }
+    if (!store.form.duration) {
+      toast.error('يرجى تحديد مدة المشروع');
       return;
     }
     if (!store.form.actualStartDate) {
-      toast.error('يرجى تحديد تاريخ بدء المشروع', {
-        description: 'الرجاء ملء جميع الحقول المطلوبة',
-      });
+      toast.error('يرجى تحديد تاريخ بدء المشروع');
       return;
     }
-    if (store.form.components.length === 0) {
-      toast.error('يرجى اضافة مكون واحد على الأقل', {
-        description: 'المشروع يجب أن يحتوي على مكون واحد على الأقل',
-      });
-      return;
-    }
-    for (const [componentIndex, component] of store.form.components.entries()) {
-      if (!component.name) {
-        toast.error(`يرجى ادخال اسم المكون رقم ${componentIndex + 1}`, {
-          description: 'الرجاء ملء جميع الحقول المطلوبة',
-        });
-        return;
-      }
-      if (!component.totalTarget) {
-        toast.error(`يرجى ادخال المستهدف الكلي للمكون رقم ${componentIndex + 1}`, {
-          description: 'الرجاء ملء جميع الحقول المطلوبة',
-        });
-        return;
-      }
-      for (const [activityIndex, activity] of component.activities.entries()) {
-        if (!activity.name) {
-          toast.error(
-            `يرجى ادخال اسم الفعالية رقم ${activityIndex + 1} في المكون رقم ${componentIndex + 1}`,
-            {
-              description: 'الرجاء ملء جميع الحقول المطلوبة',
-            }
-          );
-          return;
-        }
-        if (!activity.totalTarget) {
-          toast.error(
-            `يرجى ادخال المستهدف الكلي للفعالية رقم ${activityIndex + 1} في المكون رقم ${
-              componentIndex + 1
-            }`,
-            {
-              description: 'الرجاء ملء جميع الحقول المطلوبة',
-            }
-          );
-          return;
-        }
-        if (!activity.weeks || activity.weeks.length === 0) {
-          toast.error(
-            `يرجى تحديد الفترة الزمنية للفعالية رقم ${activityIndex + 1} في المكون رقم ${
-              componentIndex + 1
-            }`,
-            {
-              description: 'الرجاء ملء جميع الحقول المطلوبة',
-            }
-          );
-          return;
-        }
-      }
-    }
+
     try {
       const response = await store.saveProject();
       if (response.success) {
@@ -877,6 +819,7 @@
         router.push('/projects');
       }
     } catch (error) {
+      console.error('API Error:', error);
       toast.error('حدث خطأ أثناء الحفظ', {
         description: error.response?.data?.message || 'يرجى المحاولة مرة أخرى',
       });
@@ -905,17 +848,18 @@
     if (activityIndex === -1) return;
     store.toggleActivityWeek(componentIndex, activityIndex, period);
   };
-  const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('ar-EG', {
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
   };
-  const calculateEndDate = (startDate, duration, durationType) => {
-    if (!startDate || !duration) return '';
-    const start = new Date(startDate);
+  const calculateEndDate = (startDateString, duration, durationType) => {
+    if (!startDateString || !duration) return '';
+    const start = new Date(startDateString);
     const durationNum = parseInt(duration);
     if (durationType === 'weeks') {
       start.setDate(start.getDate() + durationNum * 7);
@@ -943,12 +887,6 @@
   const formatCost = (value) => {
     if (!value) return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
-  const addBeneficiary = () => {
-    store.form.beneficiaries.push('');
-  };
-  const removeBeneficiary = (index) => {
-    store.form.beneficiaries.splice(index, 1);
   };
 </script>
 <style scoped>

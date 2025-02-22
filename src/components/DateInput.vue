@@ -3,21 +3,32 @@
     <PopoverTrigger asChild>
       <Button
         variant="outline"
-        class="justify-between w-full text-right dark:border-gray-700 dark:bg-gray-800"
+        class="w-full justify-between text-right dark:border-gray-700 dark:bg-gray-800"
         :class="[
           !modelValue && 'text-muted-foreground dark:text-gray-400',
           modelValue && 'dark:text-gray-100',
         ]"
       >
-        <CalendarIcon class="w-4 h-4 dark:text-gray-400" />
-        <span class="text-right text-white ">{{ modelValue ? formatDate(modelValue) : placeholder }}</span>
+        <CalendarIcon class="h-4 w-4 dark:text-gray-400" />
+        <span class="text-right text-white">{{
+          modelValue ? formatDate(modelValue) : placeholder
+        }}</span>
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 dark:border-gray-700 dark:bg-gray-800" align="start">
       <Calendar
         mode="single"
-        :value="modelValue"
-        @update:model-value="$emit('update:modelValue', $event)"
+        :value="modelValue ? new Date(modelValue) : null"
+        @update:model-value="
+          (calendarObj) => {
+            if (!calendarObj) {
+              $emit('update:modelValue', null);
+              return;
+            }
+            const dateStr = `${calendarObj.year}-${String(calendarObj.month).padStart(2, '0')}-${String(calendarObj.day).padStart(2, '0')}`;
+            $emit('update:modelValue', dateStr);
+          }
+        "
         initialFocus
         class="dark:bg-gray-800 dark:text-gray-100"
       />
@@ -33,7 +44,7 @@
 
   const props = defineProps({
     modelValue: {
-      type: Date,
+      type: String,
       default: null,
     },
     placeholder: {
@@ -44,11 +55,12 @@
 
   defineEmits(['update:modelValue']);
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('ar-US', {
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG', {
       year: 'numeric',
-      month: 'numeric',
+      month: 'long',
       day: 'numeric',
     });
   };
