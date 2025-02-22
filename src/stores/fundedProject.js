@@ -77,15 +77,16 @@ export const useFundedProjectStore = defineStore('fundedProject', {
       this.hasUnsavedChanges = true;
     },
     addActivity(componentIndex) {
+      const newActivity = {
+        name: '',
+        totalTarget: null,
+        notes: '',
+        weeks: [],
+      };
       if (!this.form.components[componentIndex].activities) {
         this.form.components[componentIndex].activities = [];
       }
-      this.form.components[componentIndex].activities.push({
-        name: '',
-        totalTarget: 0,
-        weeks: [],
-        notes: '',
-      });
+      this.form.components[componentIndex].activities.push(newActivity);
       this.hasUnsavedChanges = true;
     },
     removeActivity(componentIndex, activityIndex) {
@@ -131,7 +132,20 @@ export const useFundedProjectStore = defineStore('fundedProject', {
           periodType: Number(this.form.periodType),
         };
         console.log('Project data to save:', projectData);
-        const projectResponse = await axiosInstance.post('/project', projectData);
+        const transformedActivities = this.form.components.map((component) => ({
+          name: component.name,
+          targetPercentage: component.totalTarget,
+          activities: component.activities.map((activity) => ({
+            name: activity.name,
+            targetPercentage: activity.totalTarget,
+            notes: activity.notes || '',
+            selectedPeriods: activity.weeks || [],
+          })),
+        }));
+        const projectResponse = await axiosInstance.post('/project', {
+          ...projectData,
+          activities: transformedActivities,
+        });
         console.log('Project saved successfully:', projectResponse.data);
         console.log('Number of components:', this.form.components.length);
         if (this.form.components.length > 0 && projectResponse.data?.id) {
@@ -159,7 +173,7 @@ export const useFundedProjectStore = defineStore('fundedProject', {
                   componentId: componentResponse.id,
                   name: activity.name || '',
                   targetPercentage: Number(activity.totalTarget) || 0,
-                  notes: activity.notes || '',
+                  notes: activity.notes === null ? '' : activity.notes,
                   selectedPeriods: activity.weeks || [],
                 };
                 console.log('Creating activity:', activityData);

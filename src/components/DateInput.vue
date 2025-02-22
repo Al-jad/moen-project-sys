@@ -5,14 +5,14 @@
         variant="outline"
         class="w-full justify-between text-right dark:border-gray-700 dark:bg-gray-800"
         :class="[
-          !modelValue && 'text-muted-foreground dark:text-gray-400',
-          modelValue && 'dark:text-gray-100',
+          !modelValue && 'text-gray-500 dark:text-gray-400',
+          modelValue && 'text-gray-900 dark:text-gray-100',
         ]"
       >
         <CalendarIcon class="h-4 w-4 dark:text-gray-400" />
-        <span class="text-right text-white">{{
-          modelValue ? formatDate(modelValue) : placeholder
-        }}</span>
+        <span class="text-right text-gray-900 dark:text-white">
+          {{ modelValue ? formatDate(modelValue) : placeholder }}
+        </span>
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 dark:border-gray-700 dark:bg-gray-800" align="start">

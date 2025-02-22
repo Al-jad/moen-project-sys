@@ -6,6 +6,7 @@ import Attachment from '@/pages/attachment.vue';
 import Beneficiaries from '@/pages/beneficiaries.vue';
 import ContractDetails from '@/pages/contract-details.vue';
 import Contracts from '@/pages/contracts.vue';
+import FundedProjects from '@/pages/funded-projects.vue';
 import HistoryLog from '@/pages/history-log.vue';
 import Home from '@/pages/index.vue';
 import Login from '@/pages/login.vue';
@@ -130,6 +131,11 @@ const router = createRouter({
       path: '/demo',
       name: 'demo',
       component: () => import('@/pages/demo.vue'),
+    },
+    {
+      path: '/funded-projects',
+      name: 'funded-projects',
+      component: FundedProjects,
     },
   ],
 });
