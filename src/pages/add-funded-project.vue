@@ -102,7 +102,7 @@
                 <div class="flex items-center gap-3">
                   <RadioGroup v-model="store.form.periodType" class="flex gap-6">
                     <div class="flex items-center gap-2">
-                      <RadioGroupItem value="1" id="period-weekly" class="dark:border-gray-700" />
+                      <RadioGroupItem :value="1" id="period-weekly" class="dark:border-gray-700" />
                       <div class="flex flex-col">
                         <Label for="period-weekly" class="font-medium dark:text-gray-300"
                           >اسبوعي</Label
@@ -110,7 +110,7 @@
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
-                      <RadioGroupItem value="2" id="period-monthly" class="dark:border-gray-700" />
+                      <RadioGroupItem :value="2" id="period-monthly" class="dark:border-gray-700" />
                       <div class="flex flex-col">
                         <Label for="period-monthly" class="font-medium dark:text-gray-300"
                           >شهري</Label
@@ -121,7 +121,7 @@
                 </div>
                 <div class="text-sm text-gray-500 dark:text-gray-400">
                   {{
-                    store.form.periodType === 'weekly'
+                    store.form.periodType === 1
                       ? store.form.durationType === 'weeks'
                         ? `عدد الاسابيع: ${store.form.duration || 0}`
                         : `عدد الاسابيع: ${(store.form.duration || 0) * 4}`
@@ -135,7 +135,7 @@
                 class="rounded-lg border bg-gray-50 p-3 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
               >
                 {{
-                  store.form.periodType === 'weekly'
+                  store.form.periodType === 1
                     ? 'سيتم تقسيم مدة المشروع الى اسابيع لتحديد فترة كل فعالية'
                     : 'سيتم تقسيم مدة المشروع الى اشهر لتحديد فترة كل فعالية'
                 }}
@@ -284,7 +284,7 @@
                             >
                               <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 {{
-                                  store.form.periodType === 'weekly'
+                                  store.form.periodType === 1
                                     ? `اختر الاسابيع (${activity.weeks?.length || 0} من ${totalPeriods})`
                                     : `اختر الاشهر (${activity.weeks?.length || 0} من ${totalPeriods})`
                                 }}
@@ -314,9 +314,7 @@
                                 <span
                                   class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
                                 >
-                                  {{
-                                    store.form.periodType === 'weekly' ? `${period}` : `${period}`
-                                  }}
+                                  {{ store.form.periodType === 1 ? `${period}` : `${period}` }}
                                 </span>
                                 <button
                                   type="button"
@@ -336,7 +334,7 @@
                                         : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
                                     ]"
                                   >
-                                    {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                                    {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
                                   </span>
                                 </button>
                               </div>
@@ -460,7 +458,7 @@
               <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
                 <div class="text-2xl font-semibold dark:text-gray-100">
-                  {{ totalPeriods }} {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                  {{ totalPeriods }} {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
                 </div>
               </div>
               <div class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
@@ -485,7 +483,7 @@
                     >المخطط الزمني للمشروع</h4
                   >
                   <div class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ store.form.periodType === 'weekly' ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
+                    {{ store.form.periodType === 1 ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
                   </div>
                 </div>
               </div>
@@ -567,7 +565,7 @@
                             :key="period"
                             class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
                           >
-                            {{ store.form.periodType === 'weekly' ? `${period}` : `${period}` }}
+                            {{ store.form.periodType === 1 ? `${period}` : `${period}` }}
                           </div>
                         </div>
                         <div class="divide-y dark:divide-gray-700">
@@ -675,7 +673,7 @@
                               >
                               <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
                                 {{ activity.weeks?.length || 0 }}
-                                {{ store.form.periodType === 'weekly' ? 'اسبوع' : 'شهر' }}
+                                {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
                                 <span class="text-xs text-gray-500">
                                   ({{ activity.weeks?.join(', ') || 'لم يتم التحديد' }})
                                 </span>
