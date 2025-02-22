@@ -764,10 +764,8 @@
       isSaving: false,
       hasUnsavedChanges: false,
     };
-
     localStorage.removeItem('fundedProject');
     sessionStorage.removeItem('fundedProject');
-
     window.addEventListener('beforeunload', handleBeforeUnload);
   });
   onUnmounted(() => {
@@ -809,7 +807,6 @@
       toast.error('يرجى تحديد تاريخ بدء المشروع');
       return;
     }
-
     try {
       const response = await store.saveProject();
       if (response.success) {
@@ -836,15 +833,7 @@
     store.removeActivity(componentIndex, activityIndex);
   };
   const toggleActivityWeek = (activity, period) => {
-    const componentIndex = store.form.components.findIndex((comp) =>
-      comp.activities.some((act) => act === activity)
-    );
-    if (componentIndex === -1) return;
-    const activityIndex = store.form.components[componentIndex].activities.findIndex(
-      (act) => act === activity
-    );
-    if (activityIndex === -1) return;
-    store.toggleActivityWeek(componentIndex, activityIndex, period);
+    store.toggleActivityWeek(activity, period);
   };
   const formatDate = (dateString) => {
     if (!dateString) return '';
