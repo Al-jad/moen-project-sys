@@ -59,13 +59,19 @@
 
           <!-- Project Details -->
           <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="border-b p-4 dark:border-gray-700">
+            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
                 <Info class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
               </div>
+              <Button @click="toggleEditDetails" variant="ghost" size="sm">
+                <Edit v-if="!isEditingDetails" class="h-4 w-4" />
+                <Check v-else class="h-4 w-4" />
+              </Button>
             </div>
-            <div class="divide-y dark:divide-gray-700">
+
+            <!-- View Mode -->
+            <div v-if="!isEditingDetails" class="divide-y dark:divide-gray-700">
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
                   <div class="text-sm text-gray-500 dark:text-gray-400">الجهة المنفذة</div>
@@ -99,17 +105,39 @@
                 </div>
               </div>
             </div>
+
+            <!-- Edit Mode -->
+            <div v-else class="p-4">
+              <ProjectDetails :project="editForm" @update:project="updateProjectDetails" />
+              <div class="mt-4 flex justify-end gap-2">
+                <Button @click="cancelEditDetails" variant="outline"> الغاء </Button>
+                <Button
+                  @click="saveProjectDetails"
+                  :disabled="isSaving"
+                  class="bg-slate-700 hover:bg-slate-800"
+                >
+                  <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+                  حفظ التغييرات
+                </Button>
+              </div>
+            </div>
           </div>
 
           <!-- Components and Activities -->
           <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="border-b p-4 dark:border-gray-700">
+            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
                 <Target class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">المكونات والفعاليات</h4>
               </div>
+              <Button @click="toggleEditComponents" variant="ghost" size="sm">
+                <Edit v-if="!isEditingComponents" class="h-4 w-4" />
+                <Check v-else class="h-4 w-4" />
+              </Button>
             </div>
-            <div class="divide-y dark:divide-gray-700">
+
+            <!-- View Mode -->
+            <div v-if="!isEditingComponents" class="divide-y dark:divide-gray-700">
               <template v-for="(component, index) in project?.components" :key="index">
                 <div class="p-4">
                   <div class="mb-4 flex items-center gap-3">
@@ -180,6 +208,22 @@
                 </div>
               </template>
             </div>
+
+            <!-- Edit Mode -->
+            <div v-else class="p-4">
+              <ProjectComponents :project="editForm" @update:components="updateComponents" />
+              <div class="mt-4 flex justify-end gap-2">
+                <Button @click="cancelEditComponents" variant="outline"> الغاء </Button>
+                <Button
+                  @click="saveComponents"
+                  :disabled="isSaving"
+                  class="bg-slate-700 hover:bg-slate-800"
+                >
+                  <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+                  حفظ التغييرات
+                </Button>
+              </div>
+            </div>
           </div>
         </template>
       </div>
@@ -188,18 +232,40 @@
 </template>
 
 <script setup>
+  import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
+  import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
   import { Badge } from '@/components/ui/badge';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
-  import { AlertCircle, Info, RefreshCw, Target } from 'lucide-vue-next';
-  import { onMounted, ref } from 'vue';
+  import { AlertCircle, Check, Edit, Info, Loader2, RefreshCw, Target } from 'lucide-vue-next';
+  import { onMounted, reactive, ref } from 'vue';
   import { useRoute } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const route = useRoute();
   const project = ref(null);
   const isLoading = ref(true);
   const error = ref(null);
+  const isEditingDetails = ref(false);
+  const isEditingComponents = ref(false);
+  const isSaving = ref(false);
+
+  // Initialize empty editForm
+  const editForm = reactive({
+    name: '',
+    executingDepartment: '',
+    implementingEntity: '',
+    beneficiaryEntities: [''],
+    grantingEntity: '',
+    fundingType: 1,
+    cost: null,
+    actualStartDate: null,
+    projectObjectives: '',
+    components: [],
+    duration: 0,
+    periodType: 1,
+  });
 
   const fetchProject = async () => {
     isLoading.value = true;
@@ -210,6 +276,22 @@
       const response = await axiosInstance.get(`/Project/${route.params.id}`);
       console.log('API Response:', response);
       project.value = response.data;
+
+      // Initialize editForm with current project data
+      Object.assign(editForm, {
+        name: response.data.name,
+        executingDepartment: response.data.executingDepartment,
+        implementingEntity: response.data.implementingEntity,
+        beneficiaryEntities: response.data.beneficiaryEntities || [''],
+        grantingEntity: response.data.grantingEntity,
+        fundingType: response.data.fundingType,
+        cost: response.data.cost,
+        actualStartDate: response.data.actualStartDate,
+        projectObjectives: response.data.projectObjectives,
+        components: [...(response.data.components || [])], // Deep clone components
+        duration: response.data.duration,
+        periodType: response.data.periodType,
+      });
     } catch (err) {
       console.error('Error fetching project:', err);
       error.value = err.response?.data?.message || 'حدث خطأ في تحميل بيانات المشروع';
@@ -247,5 +329,163 @@
   const formatCost = (value) => {
     if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // Project Details Section
+  const toggleEditDetails = () => {
+    if (isEditingDetails.value) {
+      cancelEditDetails();
+    } else {
+      isEditingDetails.value = true;
+    }
+  };
+
+  const cancelEditDetails = () => {
+    isEditingDetails.value = false;
+    // Reset form to current project values
+    Object.assign(editForm, {
+      name: project.value.name,
+      executingDepartment: project.value.executingDepartment,
+      implementingEntity: project.value.implementingEntity,
+      beneficiaryEntities: project.value.beneficiaryEntities,
+      grantingEntity: project.value.grantingEntity,
+      fundingType: project.value.fundingType,
+      cost: project.value.cost,
+      actualStartDate: project.value.actualStartDate,
+      projectObjectives: project.value.projectObjectives,
+    });
+  };
+
+  const saveProjectDetails = async () => {
+    // Validation checks
+    if (!editForm.name) {
+      toast.error('يرجى ادخال اسم المشروع');
+      return;
+    }
+    if (!editForm.executingDepartment) {
+      toast.error('يرجى اختيار الدائرة المنفذة');
+      return;
+    }
+    if (!editForm.implementingEntity) {
+      toast.error('يرجى ادخال الجهة المنفذة');
+      return;
+    }
+    if (!editForm.grantingEntity) {
+      toast.error('يرجى ادخال الجهة المانحة');
+      return;
+    }
+    if (!editForm.cost) {
+      toast.error('يرجى ادخال كلفة المشروع');
+      return;
+    }
+    if (!editForm.actualStartDate) {
+      toast.error('يرجى تحديد تاريخ بدء المشروع');
+      return;
+    }
+
+    isSaving.value = true;
+    try {
+      const response = await axiosInstance.put(`/Project/${project.value.id}`, {
+        ...editForm,
+        duration: project.value.duration,
+        periodType: project.value.periodType,
+        beneficiaryEntities: Array.isArray(editForm.beneficiaryEntities)
+          ? editForm.beneficiaryEntities
+          : [editForm.beneficiaryEntities],
+      });
+
+      if (response.data) {
+        project.value = response.data;
+        isEditingDetails.value = false;
+        toast.success('تم حفظ التغييرات بنجاح');
+      }
+    } catch (error) {
+      console.error('Error saving project details:', error);
+      toast.error('حدث خطأ أثناء الحفظ', {
+        description: error.response?.data?.message || 'يرجى المحاولة مرة أخرى',
+      });
+    } finally {
+      isSaving.value = false;
+    }
+  };
+
+  // Components Section
+  const toggleEditComponents = () => {
+    if (isEditingComponents.value) {
+      cancelEditComponents();
+    } else {
+      isEditingComponents.value = true;
+    }
+  };
+
+  const cancelEditComponents = () => {
+    isEditingComponents.value = false;
+    // Deep clone components to avoid reference issues
+    editForm.components = JSON.parse(JSON.stringify(project.value.components));
+  };
+
+  const saveComponents = async () => {
+    // Validate components
+    for (const component of editForm.components) {
+      if (!component.name) {
+        toast.error('يرجى ادخال اسم المكون');
+        return;
+      }
+      if (!component.targetPercentage) {
+        toast.error('يرجى تحديد النسبة المستهدفة للمكون');
+        return;
+      }
+
+      // Validate activities
+      for (const activity of component.activities || []) {
+        if (!activity.name) {
+          toast.error('يرجى ادخال اسم الفعالية');
+          return;
+        }
+        if (!activity.targetPercentage) {
+          toast.error('يرجى تحديد النسبة المستهدفة للفعالية');
+          return;
+        }
+        if (!activity.selectedPeriods?.length) {
+          toast.error('يرجى تحديد الفترات للفعالية');
+          return;
+        }
+      }
+    }
+
+    isSaving.value = true;
+    try {
+      // Save each component
+      for (const component of editForm.components) {
+        await axiosInstance.put(`/Component/${component.id}`, {
+          ...component,
+          activities: component.activities.map((activity) => ({
+            ...activity,
+            componentId: component.id,
+          })),
+        });
+      }
+
+      // Refresh project data
+      const response = await axiosInstance.get(`/Project/${project.value.id}`);
+      project.value = response.data;
+      isEditingComponents.value = false;
+      toast.success('تم حفظ التغييرات بنجاح');
+    } catch (error) {
+      console.error('Error saving components:', error);
+      toast.error('حدث خطأ أثناء الحفظ', {
+        description: error.response?.data?.message || 'يرجى المحاولة مرة أخرى',
+      });
+    } finally {
+      isSaving.value = false;
+    }
+  };
+
+  const updateProjectDetails = (updatedProject) => {
+    Object.assign(editForm, updatedProject);
+  };
+
+  const updateComponents = (updatedComponents) => {
+    editForm.components = updatedComponents;
   };
 </script>

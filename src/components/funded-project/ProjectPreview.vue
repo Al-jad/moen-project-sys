@@ -288,6 +288,7 @@
             <div
               class="p-4 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
             >
+              <!--! calculations of component precentage -->
               <div class="mb-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div

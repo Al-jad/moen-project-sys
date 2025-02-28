@@ -52,12 +52,6 @@
               type="datetime-local"
               :min="new Date().toISOString().split('T')[0]"
             />
-            <DateDisplay
-              :date="store.form.actualStartDate"
-              :format-fn="formatDate"
-              empty-text="لم يتم تحديد تاريخ البدء بعد"
-              prefix="تم تحديد تاريخ البدء:"
-            />
           </FormField>
 
           <FormField label="تاريخ الانتهاء المتوقع">
@@ -164,7 +158,7 @@
           {
             class: [
               'rounded-lg bg-white p-4 text-sm',
-              'border border-gray-200 dark:border-gray-600 dark:bg-gray-700/50',
+              'dark:border-gray-600 dark:bg-gray-700/50',
               'text-gray-600 dark:text-gray-300',
             ],
           },
