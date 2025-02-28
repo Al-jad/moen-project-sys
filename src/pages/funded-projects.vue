@@ -79,7 +79,7 @@
 
           <div class="p-6">
             <!-- Projects Grid -->
-            <div v-if="!isLoading" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div v-if="!isLoading" class="grid grid-cols-1 gap-6">
               <div
                 v-for="project in projects"
                 :key="project.id"
@@ -155,7 +155,12 @@
                 <div
                   class="absolute inset-x-0 bottom-0 flex items-center justify-end gap-2 border-t bg-white/80 p-3 opacity-0 backdrop-blur transition-all group-hover:opacity-100 dark:border-gray-700 dark:bg-gray-800/80"
                 >
-                  <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
+                  <Button
+                    variant="ghost"
+                    @click="viewProject(project.id)"
+                    size="sm"
+                    class="h-8 w-8 p-0"
+                  >
                     <Eye class="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
@@ -226,10 +231,18 @@
     Trash,
   } from 'lucide-vue-next';
   import { onMounted, ref } from 'vue';
-  import { RouterLink } from 'vue-router';
+  import { RouterLink, useRouter } from 'vue-router';
 
   const projects = ref([]);
   const isLoading = ref(true);
+  const router = useRouter();
+
+  const viewProject = (projectId) => {
+    router.push({
+      name: 'funded-projects-details',
+      params: { id: projectId },
+    });
+  };
 
   onMounted(async () => {
     try {

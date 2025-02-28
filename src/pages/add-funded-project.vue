@@ -115,11 +115,17 @@
       toast.error('يرجى تحديد تاريخ بدء المشروع');
       return;
     }
+
     try {
       const response = await store.saveProject();
       if (response.success) {
-        toast.success('تم حفظ المشروع بنجاح');
-        router.push('/projects');
+        router.push({
+          name: 'done',
+          params: {
+            id: response.data.id,
+            name: store.form.name,
+          },
+        });
       }
     } catch (error) {
       console.error('API Error:', error);
