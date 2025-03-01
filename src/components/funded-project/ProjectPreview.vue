@@ -122,258 +122,42 @@
         </div>
       </div>
 
-      <!-- Timeline Preview -->
-      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div class="border-b p-4 dark:border-gray-700">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Icon icon="lucide:calendar" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <h4 class="font-medium text-gray-900 dark:text-gray-100">المخطط الزمني للمشروع</h4>
-            </div>
-            <div
-              class="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-            >
-              <Icon icon="lucide:calendar" class="h-4 w-4" />
-              {{ store.form.periodType === 1 ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
-            </div>
-          </div>
-        </div>
-        <div class="relative p-4">
-          <div
-            v-if="totalPeriods > 0"
-            class="relative isolate overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
-          >
-            <div class="flex">
-              <!-- Fixed Left Column -->
-              <div
-                class="sticky left-0 z-[15] w-48 shrink-0 border-l bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <div
-                  class="sticky top-0 z-[15] h-[4rem] border-b bg-white p-4 font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                >
-                  المكون / الفعالية
-                </div>
-                <div class="divide-y dark:divide-gray-700">
-                  <template
-                    v-for="(component, componentIndex) in store.form.components"
-                    :key="componentIndex"
-                  >
-                    <div
-                      class="h-[4rem] border-b p-4 font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200"
-                    >
-                      <div class="flex items-center gap-2">
-                        <div
-                          class="h-3 w-3 shrink-0 rounded-full"
-                          :style="{ backgroundColor: getComponentColor(componentIndex) }"
-                        ></div>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div class="truncate">{{
-                                component.name || `المكون ${componentIndex + 1}`
-                              }}</div>
-                            </TooltipTrigger>
-                            <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
-                              <p>{{ component.name || `المكون ${componentIndex + 1}` }}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-                    <div
-                      v-for="(activity, activityIndex) in component.activities"
-                      :key="activityIndex"
-                      class="h-[4rem] border-b bg-gray-50/50 p-4 pr-8 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/30 dark:text-gray-300"
-                    >
-                      <div class="flex items-center gap-2">
-                        <div
-                          class="h-2 w-2 shrink-0 rounded-full"
-                          :style="{ backgroundColor: getComponentColor(componentIndex) }"
-                        ></div>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div class="truncate">{{
-                                activity.name || `الفعالية ${activityIndex + 1}`
-                              }}</div>
-                            </TooltipTrigger>
-                            <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
-                              <p>{{ activity.name || `الفعالية ${activityIndex + 1}` }}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <!-- Scrollable Timeline Grid -->
-              <div class="custom-scrollbar relative overflow-x-auto">
-                <div class="inline-block min-w-[800px]">
-                  <div
-                    class="sticky top-0 z-[10] flex h-[4rem] border-b bg-white dark:border-gray-700 dark:bg-gray-800"
-                  >
-                    <div
-                      v-for="period in totalPeriods"
-                      :key="period"
-                      class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
-                    >
-                      {{ store.form.periodType === 1 ? `${period}` : `${period}` }}
-                    </div>
-                  </div>
-                  <div class="divide-y dark:divide-gray-700">
-                    <template
-                      v-for="(component, componentIndex) in store.form.components"
-                      :key="componentIndex"
-                    >
-                      <div
-                        class="flex h-[4rem] border-b transition-colors duration-150 hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-gray-800/50"
-                      >
-                        <div
-                          v-for="period in totalPeriods"
-                          :key="period"
-                          class="w-16 shrink-0 border-l dark:border-gray-700"
-                        ></div>
-                      </div>
-                      <div
-                        v-for="(activity, activityIndex) in component.activities"
-                        :key="activityIndex"
-                        class="flex h-[4rem] border-b bg-gray-50/50 transition-colors duration-150 hover:bg-gray-100/80 dark:border-gray-700 dark:bg-gray-800/30 dark:hover:bg-gray-800/50"
-                      >
-                        <div
-                          v-for="period in totalPeriods"
-                          :key="period"
-                          class="relative w-16 shrink-0 border-l dark:border-gray-700"
-                        >
-                          <div
-                            v-if="activity.weeks?.includes(period)"
-                            class="absolute inset-0 m-1 rounded-md transition-colors duration-150"
-                            :style="{ backgroundColor: getComponentColor(componentIndex, true) }"
-                          >
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
-          >
-            <div class="space-y-2">
-              <div class="text-sm font-medium">لا يمكن عرض المخطط الزمني</div>
-              <div class="text-xs">يرجى تحديد مدة المشروع ونوع الفترة الزمنية أولاً</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Timeline Preview - Replaced with SheduleTimeLine component -->
+      <ScheduleTimeLine
+        :components="store.form.components"
+        :duration="totalPeriods"
+        :periodType="store.form.periodType"
+      />
 
       <!-- Components and Activities Details - Enhanced with better visuals -->
-      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div class="border-b p-4 dark:border-gray-700">
-          <div class="flex items-center gap-2">
-            <Icon icon="lucide:layers" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المكونات والفعاليات</h4>
-          </div>
-        </div>
-        <div class="divide-y dark:divide-gray-700">
-          <template
-            v-for="(component, componentIndex) in store.form.components"
-            :key="componentIndex"
-          >
-            <div
-              class="p-4 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-            >
-              <!--! calculations of component precentage -->
-              <div class="mb-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="h-3 w-3 rounded-full"
-                    :style="{ backgroundColor: getComponentColor(componentIndex) }"
-                  ></div>
-                  <h5 class="font-medium text-gray-900 dark:text-gray-100">
-                    {{ component.name || `المكون ${componentIndex + 1}` }}
-                  </h5>
-                </div>
-                <div
-                  class="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                >
-                  المستهدف: {{ component.totalTarget || 0 }}%
-                </div>
-              </div>
-              <div class="space-y-3 pl-6">
-                <template
-                  v-for="(activity, activityIndex) in component.activities"
-                  :key="activityIndex"
-                >
-                  <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-                    <div class="mb-2 flex items-center justify-between">
-                      <div class="flex items-center gap-2">
-                        <div
-                          class="h-2 w-2 rounded-full"
-                          :style="{ backgroundColor: getComponentColor(componentIndex) }"
-                        ></div>
-                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {{ activity.name || `الفعالية ${activityIndex + 1}` }}
-                        </span>
-                      </div>
-                      <span class="text-sm text-gray-500 dark:text-gray-400">
-                        المستهدف: {{ activity.totalTarget || 0 }}%
-                      </span>
-                    </div>
-                    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                      <div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">الفترات المحددة</div>
-                        <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                          {{ activity.weeks?.length || 0 }}
-                          {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
-                          <span class="text-xs text-gray-500">
-                            ({{ activity.weeks?.join(', ') || 'لم يتم التحديد' }})
-                          </span>
-                        </div>
-                      </div>
-                      <div v-if="activity.notes">
-                        <div class="text-xs text-gray-500 dark:text-gray-400">ملاحظات</div>
-                        <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                          {{ activity.notes }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </template>
-                <div
-                  v-if="component.activities.length === 0"
-                  class="rounded-lg border border-dashed border-gray-200 p-3 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
-                >
-                  لا توجد فعاليات لهذا المكون
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+      <ComponentsActivitiesDetails
+        :components="reversedComponents"
+        :periodType="store.form.periodType"
+        :useExternalSorting="true"
+      />
     </div>
   </FormSection>
 </template>
 
 <script setup>
+  import ComponentsActivitiesDetails from '@/components/ComponentsActivitiesDetails.vue';
   import FormSection from '@/components/FormSection.vue';
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-  } from '@/components/ui/tooltip';
+  import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
   import { computed } from 'vue';
 
   const store = useFundedProjectStore();
   const totalPeriods = computed(() => store.totalPeriods);
+
+  // Add sorting functions to match ComponentsActivitiesDetails.vue
+  const reversedComponents = computed(() => {
+    return [...store.form.components].reverse();
+  });
+
+  const sortedActivities = (activities) => {
+    return [...activities].reverse();
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return '';

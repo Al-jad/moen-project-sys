@@ -55,20 +55,23 @@
           </FormField>
 
           <FormField label="تاريخ الانتهاء المتوقع">
-            <div class="flex h-[3.75rem] items-center">
-              <!-- Match DateInput height -->
-              <DateDisplay
-                :show-date="!!(store.form.actualStartDate && store.form.duration)"
-                :date="
-                  calculateEndDate(
-                    store.form.actualStartDate,
-                    store.form.duration,
-                    store.form.durationType
-                  )
-                "
-                empty-text="سيظهر بعد تحديد تاريخ البدء والمدة"
-                prefix="تاريخ الانتهاء:"
-              />
+            <div class="flex h-[2.5rem] items-center">
+              <div
+                class="flex h-10 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800"
+              >
+                <DateDisplay
+                  :show-date="!!(store.form.actualStartDate && store.form.duration)"
+                  :date="
+                    calculateEndDate(
+                      store.form.actualStartDate,
+                      store.form.duration,
+                      store.form.durationType
+                    )
+                  "
+                  empty-text="سيظهر بعد تحديد تاريخ البدء والمدة"
+                  prefix="تاريخ الانتهاء:"
+                />
+              </div>
             </div>
           </FormField>
         </div>
@@ -85,6 +88,7 @@
   import { Label } from '@/components/ui/label';
   import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
   import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { Icon } from '@iconify/vue';
   import { defineComponent, h } from 'vue';
   const store = useFundedProjectStore();
   const formatDate = (dateString) => {
@@ -157,14 +161,23 @@
           'div',
           {
             class: [
-              'rounded-lg bg-white p-4 text-sm',
-              'dark:border-gray-600 dark:bg-gray-700/50',
-              'text-gray-600 dark:text-gray-300',
+              'w-full text-sm flex items-center gap-2',
+              'text-gray-900 disabled:text-gray-500 opacity-90 dark:text-gray-100',
             ],
           },
-          props.showDate !== false && props.date
-            ? `${props.prefix} ${props.formatFn ? props.formatFn(props.date) : props.date}`
-            : props.emptyText
+          [
+            h(Icon, {
+              icon: 'lucide:calendar',
+              class: 'h-4 w-4 text-gray-500 dark:text-gray-400',
+            }),
+            h(
+              'span',
+              {},
+              props.showDate !== false && props.date
+                ? `${props.prefix} ${props.formatFn ? props.formatFn(props.date) : props.date}`
+                : props.emptyText
+            ),
+          ]
         );
     },
   });
