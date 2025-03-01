@@ -66,14 +66,21 @@
                 <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">المشاريع الممولة</h1>
                 <Badge variant="outline" class="px-3">{{ projects.length }} مشروع</Badge>
               </div>
-              <RouterLink to="/add-funded-project">
-                <Button
-                  class="bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  <Plus class="ml-2 h-4 w-4" />
-                  اضافة مشروع جديد
-                </Button>
-              </RouterLink>
+
+              <div class="flex flex-row items-center gap-6">
+                <PrimaryButton>
+                  <Icon icon="material-symbols-light:print-outline" />
+                  طباعة
+                </PrimaryButton>
+                <RouterLink to="/add-funded-project">
+                  <Button
+                    class="bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
+                  >
+                    <Plus class="ml-2 h-4 w-4" />
+                    اضافة مشروع جديد
+                  </Button>
+                </RouterLink>
+              </div>
             </div>
           </div>
 
@@ -83,96 +90,123 @@
               <div
                 v-for="project in projects"
                 :key="project.id"
-                class="group relative overflow-hidden rounded-lg border bg-gray-50/50 transition-all hover:border-blue-500/20 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/50"
+                @click="router.push(`/funded-projects/${project.id}`)"
+                class="overflow-hidden rounded-lg border bg-white transition-all hover:cursor-pointer hover:border-blue-500/20 hover:bg-gray-50 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
               >
                 <!-- Project Header -->
-                <div class="relative border-b p-4 dark:border-gray-700">
-                  <div class="mb-3 flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-                      <div
-                        class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
-                      >
-                        {{ project.id }}
+                <div class="border-b p-4 dark:border-gray-700">
+                  <div class="flex items-center justify-between">
+                    <!-- Project Identity -->
+                    <div class="flex items-center gap-4">
+                      <div class="h-12 w-12 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                        <div
+                          class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
+                        >
+                          {{ project.id }}
+                        </div>
+                      </div>
+                      <div>
+                        <h3 class="font-medium text-gray-900 dark:text-gray-100">
+                          {{ project.name }}
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                          {{ project.executingDepartment }}
+                        </p>
                       </div>
                     </div>
-                    <div>
-                      <h3 class="font-medium text-gray-900 dark:text-gray-100">{{
-                        project.name
-                      }}</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">
-                        {{ project.executingDepartment }}
-                      </p>
+
+                    <!-- Progress Indicators -->
+                    <div class="flex items-center gap-6">
+                      <!-- Financial Progress -->
+                      <div class="text-center">
+                        <div class="mb-1 flex items-center gap-2">
+                          <DollarSign class="h-4 w-4 text-amber-500" />
+                          <span class="text-sm text-gray-600 dark:text-gray-300"
+                            >الانجاز المالي</span
+                          >
+                        </div>
+                        <div
+                          class="relative h-2 w-24 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700"
+                        >
+                          <div
+                            class="absolute inset-y-0 left-0 bg-amber-500 transition-all"
+                            :style="{ width: '24%' }"
+                          ></div>
+                        </div>
+                        <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100"
+                          >24%</div
+                        >
+                      </div>
+
+                      <!-- Technical Progress -->
+                      <div class="text-center">
+                        <div class="mb-1 flex items-center gap-2">
+                          <Target class="h-4 w-4 text-blue-500" />
+                          <span class="text-sm text-gray-600 dark:text-gray-300"
+                            >الانجاز الفني</span
+                          >
+                        </div>
+                        <div
+                          class="relative h-2 w-24 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700"
+                        >
+                          <div
+                            class="absolute inset-y-0 left-0 bg-blue-500 transition-all"
+                            :style="{ width: '24%' }"
+                          ></div>
+                        </div>
+                        <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100"
+                          >24%</div
+                        >
+                      </div>
                     </div>
                   </div>
-                  <Badge
-                    :class="[
-                      project.fundingType === 1
-                        ? 'bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400'
-                        : 'bg-gray-500/10 text-gray-600 dark:bg-gray-500/20 dark:text-gray-400',
-                    ]"
-                    variant="secondary"
-                  >
-                    {{ project.fundingType === 1 ? 'ممول' : 'غير ممول' }}
-                  </Badge>
                 </div>
 
                 <!-- Project Stats -->
-                <div class="space-y-4 p-4">
-                  <div class="grid grid-cols-2 gap-4">
-                    <div class="rounded-lg bg-gray-100/80 p-3 dark:bg-gray-700/50">
-                      <div class="text-sm text-gray-500 dark:text-gray-400">المكونات</div>
-                      <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {{ project.components?.length || 0 }}
-                      </div>
+                <div class="grid grid-cols-4 divide-x divide-gray-100 dark:divide-gray-700">
+                  <!-- Components -->
+                  <div class="p-4 text-center">
+                    <div class="mb-1 flex items-center justify-center gap-2">
+                      <Layers class="h-4 w-4 text-gray-400" />
+                      <span class="text-sm text-gray-500 dark:text-gray-400">المكونات</span>
                     </div>
-                    <div class="rounded-lg bg-gray-100/80 p-3 dark:bg-gray-700/50">
-                      <div class="text-sm text-gray-500 dark:text-gray-400">الفعاليات</div>
-                      <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {{ getTotalActivities(project) }}
-                      </div>
+                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {{ project.components?.length || 0 }}
                     </div>
                   </div>
 
-                  <div
-                    class="flex items-center justify-between rounded-lg bg-gray-100/80 p-3 dark:bg-gray-700/50"
-                  >
-                    <div>
-                      <div class="text-sm text-gray-500 dark:text-gray-400">التكلفة</div>
-                      <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        ${{ formatCost(project.cost) }}
-                      </div>
+                  <!-- Activities -->
+                  <div class="p-4 text-center">
+                    <div class="mb-1 flex items-center justify-center gap-2">
+                      <ListTodo class="h-4 w-4 text-gray-400" />
+                      <span class="text-sm text-gray-500 dark:text-gray-400">الفعاليات</span>
                     </div>
-                    <div class="text-left">
-                      <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ البدء</div>
-                      <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {{ formatDate(project.actualStartDate) }}
-                      </div>
+                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {{ getTotalActivities(project) }}
                     </div>
                   </div>
-                </div>
 
-                <!-- Hover Actions -->
-                <div
-                  class="absolute inset-x-0 bottom-0 flex items-center justify-end gap-2 border-t bg-white/80 p-3 opacity-0 backdrop-blur transition-all group-hover:opacity-100 dark:border-gray-700 dark:bg-gray-800/80"
-                >
-                  <Button
-                    variant="ghost"
-                    @click="viewProject(project.id)"
-                    size="sm"
-                    class="h-8 w-8 p-0"
-                  >
-                    <Eye class="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
-                    <Edit class="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    class="h-8 w-8 p-0 text-red-500 hover:text-red-600 dark:text-red-400"
-                  >
-                    <Trash class="h-4 w-4" />
-                  </Button>
+                  <!-- Cost -->
+
+                  <!-- Start Date -->
+                  <div class="p-4 text-center">
+                    <div class="mb-1 flex items-center justify-center gap-2">
+                      <Calendar class="h-4 w-4 text-gray-400" />
+                      <span class="text-sm text-gray-500 dark:text-gray-400">تاريخ البدء</span>
+                    </div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {{ formatDate(project.actualStartDate) }}
+                    </div>
+                  </div>
+                  <div class="p-4 text-center">
+                    <div class="mb-1 flex items-center justify-center gap-2">
+                      <DollarSign class="h-4 w-4 text-gray-400" />
+                      <span class="text-sm text-gray-500 dark:text-gray-400">مبلغ التمويل</span>
+                    </div>
+                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      ${{ formatCost(project.cost) }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,20 +249,21 @@
 </template>
 
 <script setup>
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
+  import { Icon } from '@iconify/vue';
   import {
+    Calendar,
     DollarSign,
-    Edit,
-    Eye,
     FolderOpen,
     Folders,
+    Layers,
     ListTodo,
     Plus,
     Target,
-    Trash,
   } from 'lucide-vue-next';
   import { onMounted, ref } from 'vue';
   import { RouterLink, useRouter } from 'vue-router';

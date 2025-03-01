@@ -15,7 +15,7 @@
           class="rounded-xl border border-red-200 bg-white p-6 text-center dark:border-red-800 dark:bg-gray-800"
         >
           <div class="mb-3 inline-block rounded-full bg-red-100 p-3 dark:bg-red-900/30">
-            <AlertCircle class="h-6 w-6 text-red-600 dark:text-red-400" />
+            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-red-600 dark:text-red-400" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
             حدث خطأ في تحميل المشروع
@@ -24,7 +24,7 @@
             {{ error }}
           </p>
           <Button @click="fetchProject" variant="outline" class="mt-4">
-            <RefreshCw class="mr-2 h-4 w-4" />
+            <Icon icon="lucide:refresh-cw" class="mr-2 h-4 w-4" />
             إعادة المحاولة
           </Button>
         </div>
@@ -51,9 +51,10 @@
                   </p>
                 </div>
               </div>
-              <Badge :variant="project?.fundingType === 1 ? 'default' : 'outline'">
-                {{ project?.fundingType === 1 ? 'ممول' : 'غير ممول' }}
-              </Badge>
+              <PrimaryButton icon="material-symbols-light:print-outline">
+                <Icon icon="material-symbols-light:print-outline" />
+                طباعة
+              </PrimaryButton>
             </div>
           </div>
 
@@ -61,12 +62,12 @@
           <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Info class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:info" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
               </div>
               <Button @click="toggleEditDetails" variant="ghost" size="sm">
-                <Edit v-if="!isEditingDetails" class="h-4 w-4" />
-                <Check v-else class="h-4 w-4" />
+                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
+                <Icon v-else icon="lucide:check" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -116,9 +117,118 @@
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
                 </Button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add this section after the project details section -->
+          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+              <div class="flex items-center gap-2">
+                <Icon icon="lucide:clock" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <h4 class="font-medium text-gray-900 dark:text-gray-100">المخطط الزمني</h4>
+              </div>
+            </div>
+
+            <div class="p-4">
+              <div v-if="project?.duration && project?.periodType" class="space-y-6">
+                <!-- Timeline Header -->
+                <div class="flex items-center gap-4">
+                  <div class="w-48 shrink-0">
+                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                      >المكونات والفعاليات</div
+                    >
+                  </div>
+                  <div class="flex-1 overflow-x-auto">
+                    <div class="flex">
+                      <div
+                        v-for="period in totalPeriods"
+                        :key="period"
+                        class="w-16 shrink-0 border-l text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                      >
+                        {{ period }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Timeline Content -->
+                <div class="space-y-6">
+                  <template
+                    v-for="(component, componentIndex) in project.components"
+                    :key="componentIndex"
+                  >
+                    <!-- Component Row -->
+                    <div>
+                      <div class="mb-2 flex items-center gap-3">
+                        <div
+                          class="h-3 w-3 rounded-full"
+                          :style="{ backgroundColor: getComponentColor(componentIndex) }"
+                        ></div>
+                        <h5 class="font-medium text-gray-900 dark:text-gray-100">
+                          {{ component.name }}
+                        </h5>
+                      </div>
+
+                      <!-- Timeline Grid -->
+                      <div class="relative flex">
+                        <div class="w-48 shrink-0 pr-4">
+                          <div class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ component.activities?.length || 0 }} فعالية
+                          </div>
+                        </div>
+
+                        <div class="flex-1 overflow-x-auto">
+                          <div class="relative">
+                            <!-- Period Columns -->
+                            <div class="flex border-y dark:border-gray-700">
+                              <div
+                                v-for="period in totalPeriods"
+                                :key="period"
+                                class="w-16 shrink-0 border-l dark:border-gray-700"
+                              ></div>
+                            </div>
+
+                            <!-- Activities -->
+                            <div
+                              v-for="(activity, activityIndex) in component.activities"
+                              :key="activityIndex"
+                              class="flex h-[4rem] border-b bg-gray-50/50 transition-colors duration-150 hover:bg-gray-100/80 dark:border-gray-700 dark:bg-gray-800/30 dark:hover:bg-gray-800/50"
+                            >
+                              <div
+                                v-for="period in totalPeriods"
+                                :key="period"
+                                class="relative w-16 shrink-0 border-l dark:border-gray-700"
+                              >
+                                <div
+                                  v-if="activity.selectedPeriods?.includes(period)"
+                                  class="absolute inset-0 m-1 rounded-md transition-colors duration-150"
+                                  :style="{
+                                    backgroundColor: getComponentColor(componentIndex, true),
+                                  }"
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- No Timeline Data State -->
+              <div
+                v-else
+                class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+              >
+                <div class="space-y-2">
+                  <div class="text-sm font-medium">لا يمكن عرض المخطط الزمني</div>
+                  <div class="text-xs">يرجى تحديد مدة المشروع ونوع الفترة الزمنية أولاً</div>
+                </div>
               </div>
             </div>
           </div>
@@ -127,12 +237,12 @@
           <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Target class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:target" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">المكونات والفعاليات</h4>
               </div>
               <Button @click="toggleEditComponents" variant="ghost" size="sm">
-                <Edit v-if="!isEditingComponents" class="h-4 w-4" />
-                <Check v-else class="h-4 w-4" />
+                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
+                <Icon v-else icon="lucide:check" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -219,13 +329,19 @@
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
                 </Button>
               </div>
             </div>
           </div>
         </template>
+        <div class="flex justify-end">
+          <Button variant="destructive" class="">
+            <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
+            حذف المشروع
+          </Button>
+        </div>
       </div>
     </div>
   </DefaultLayout>
@@ -234,12 +350,12 @@
 <script setup>
   import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
-  import { Badge } from '@/components/ui/badge';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
-  import { AlertCircle, Check, Edit, Info, Loader2, RefreshCw, Target } from 'lucide-vue-next';
-  import { onMounted, reactive, ref } from 'vue';
+  import { Icon } from '@iconify/vue';
+  import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { toast } from 'vue-sonner';
 
@@ -304,12 +420,18 @@
     fetchProject();
   });
 
+  const totalPeriods = computed(() => {
+    if (!project.value?.duration) return 0;
+    return project.value.duration;
+  });
+
   const componentColors = [
-    { base: '#3B82F6', light: '#EFF6FF' }, // Blue
-    { base: '#10B981', light: '#ECFDF5' }, // Green
-    { base: '#F59E0B', light: '#FFFBEB' }, // Yellow
-    { base: '#8B5CF6', light: '#F5F3FF' }, // Purple
-    { base: '#EC4899', light: '#FDF2F8' }, // Pink
+    { base: '#3B82F6', light: 'rgba(59, 130, 246, 0.2)' },
+    { base: '#10B981', light: 'rgba(16, 185, 129, 0.2)' },
+    { base: '#F59E0B', light: 'rgba(245, 158, 11, 0.2)' },
+    { base: '#EF4444', light: 'rgba(239, 68, 68, 0.2)' },
+    { base: '#8B5CF6', light: 'rgba(139, 92, 246, 0.2)' },
+    { base: '#EC4899', light: 'rgba(236, 72, 153, 0.2)' },
   ];
 
   const getComponentColor = (index, isLight = false) => {
