@@ -9,6 +9,10 @@
           </div>
         </div>
       </div>
+
+      <!-- Notification Banner -->
+      <Premium />
+
       <div class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
         <div class="p-6">
           <div class="w-full">
@@ -90,6 +94,7 @@
   import type { DateRange } from 'radix-vue';
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import Premium from '@/components/Premium.vue';
 
   interface Column {
     key: string;

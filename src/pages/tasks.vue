@@ -17,6 +17,9 @@
         </div>
       </div>
 
+      <!-- Notification Banner -->
+      <Premium />
+
       <!-- Tasks Grid -->
       <div class="space-y-8">
         <!-- This Week's Tasks -->
@@ -60,10 +63,10 @@
 <script setup>
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
+  import Premium from '@/components/Premium.vue';
   import TaskCard from '@/components/TaskCard.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { computed, ref } from 'vue';
-
   const selectedProject = ref('all');
 
   // Project options with icons

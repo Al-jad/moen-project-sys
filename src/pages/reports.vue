@@ -6,6 +6,9 @@
           <BackToMainButton />
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">التقارير</h1>
         </div>
+
+        <!-- Notification Banner -->
+
         <div class="flex items-center gap-2">
           <CustomSelect
             v-model="selectedYear"
@@ -16,6 +19,7 @@
           />
         </div>
       </div>
+      <Premium />
 
       <!-- Project Progress Report -->
       <Card class="border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
@@ -361,6 +365,7 @@
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
+  import Premium from '@/components/Premium.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import RadialProgress from '@/components/RadialProgress.vue';
   import { Badge } from '@/components/ui/badge';
