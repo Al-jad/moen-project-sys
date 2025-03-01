@@ -2,7 +2,7 @@
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
     <DialogContent class="sm:max-w-[500px]">
       <DialogHeader>
-        <DialogTitle class="text-xl font-semibold text-right">
+        <DialogTitle class="text-right text-xl font-semibold">
           {{ isEditing ? 'تعديل الجهة المستفيدة' : 'اضافة جهة مستفيدة' }}
         </DialogTitle>
       </DialogHeader>
@@ -12,7 +12,7 @@
           <!-- Entity Name -->
           <div class="space-y-2">
             <Label class="text-right">اسم الجهة</Label>
-            <Input 
+            <Input
               v-model="formData.name"
               dir="rtl"
               placeholder="مديرية بلدية بابل"
@@ -23,7 +23,7 @@
           <!-- Reference -->
           <div class="space-y-2">
             <Label class="text-right">المرجعية</Label>
-            <Input 
+            <Input
               v-model="formData.reference"
               dir="rtl"
               placeholder="دائرة حماية وتحسين البيئة في منطقة الوسط"
@@ -34,7 +34,7 @@
           <!-- Address -->
           <div class="space-y-2">
             <Label class="text-right">العنوان</Label>
-            <Input 
+            <Input
               v-model="formData.address"
               dir="rtl"
               placeholder="الحلة شارع 0000"
@@ -43,18 +43,18 @@
           </div>
         </div>
 
-        <div class="flex flex-row-reverse gap-2 mt-6">
+        <div class="mt-6 flex flex-row-reverse gap-2">
           <Button type="submit" class="w-2/4">
-            <Check class="w-4 h-4 ml-2" />
+            <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
             {{ isEditing ? 'حفظ التعديلات' : 'حفظ' }}
           </Button>
-          <Button 
+          <Button
             type="button"
-            variant="outline" 
+            variant="outline"
             class="w-1/4"
             @click="$emit('update:open', false)"
           >
-            <X class="w-4 h-4 ml-2" />
+            <Icon icon="lucide:x" class="ml-2 h-4 w-4" />
             الغاء
           </Button>
         </div>
@@ -64,62 +64,61 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Check, X } from 'lucide-vue-next'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  import { Button } from '@/components/ui/button';
+  import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+  import { Input } from '@/components/ui/input';
+  import { Label } from '@/components/ui/label';
+  import { Icon } from '@iconify/vue';
+  import { computed, ref, watch } from 'vue';
 
-const props = defineProps({
-  open: {
-    type: Boolean,
-    required: true
-  },
-  editData: {
-    type: Object,
-    default: null
-  }
-})
+  const props = defineProps({
+    open: {
+      type: Boolean,
+      required: true,
+    },
+    editData: {
+      type: Object,
+      default: null,
+    },
+  });
 
-const emit = defineEmits(['update:open', 'save'])
+  const emit = defineEmits(['update:open', 'save']);
 
-const formData = ref({
-  name: '',
-  reference: '',
-  address: ''
-})
+  const formData = ref({
+    name: '',
+    reference: '',
+    address: '',
+  });
 
-const isEditing = computed(() => !!props.editData)
+  const isEditing = computed(() => !!props.editData);
 
-// Watch for editData changes to populate form
-watch(() => props.editData, (newData) => {
-  if (newData) {
-    formData.value = { ...newData }
-  } else {
+  // Watch for editData changes to populate form
+  watch(
+    () => props.editData,
+    (newData) => {
+      if (newData) {
+        formData.value = { ...newData };
+      } else {
+        formData.value = {
+          name: '',
+          reference: '',
+          address: '',
+        };
+      }
+    },
+    { immediate: true }
+  );
+
+  const save = () => {
+    emit('save', {
+      ...formData.value,
+      id: props.editData?.id,
+    });
+    emit('update:open', false);
     formData.value = {
       name: '',
       reference: '',
-      address: ''
-    }
-  }
-}, { immediate: true })
-
-const save = () => {
-  emit('save', {
-    ...formData.value,
-    id: props.editData?.id
-  })
-  emit('update:open', false)
-  formData.value = {
-    name: '',
-    reference: '',
-    address: ''
-  }
-}
-</script> 
+      address: '',
+    };
+  };
+</script>

@@ -17,19 +17,19 @@
             </p> -->
             <!-- Social Links -->
             <!-- <div class="flex justify-center gap-3">
-              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
+              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Facebook class="w-4 h-4" />
               </a>
-              <a href="https://www.instagram.com/moen.gov.iq" target="_blank" 
+              <a href="https://www.instagram.com/moen.gov.iq" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Instagram class="w-4 h-4" />
               </a>
-              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank" 
+              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Youtube class="w-4 h-4" />
               </a>
-              <a href="https://x.com" target="_blank" 
+              <a href="https://x.com" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Twitter class="w-4 h-4" />
               </a>
@@ -48,19 +48,19 @@
             </p> -->
             <!-- Social Links -->
             <!-- <div class="flex justify-center gap-3">
-              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
+              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Facebook class="w-4 h-4" />
               </a>
-              <a href="https://www.instagram.com/moen.gov.iq" target="_blank" 
+              <a href="https://www.instagram.com/moen.gov.iq" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Instagram class="w-4 h-4" />
               </a>
-              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank" 
+              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Youtube class="w-4 h-4" />
               </a>
-              <a href="https://x.com" target="_blank" 
+              <a href="https://x.com" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Twitter class="w-4 h-4" />
               </a>
@@ -79,19 +79,19 @@
             </p> -->
             <!-- Social Links -->
             <!-- <div class="flex justify-center gap-3">
-              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank" 
+              <a href="https://www.facebook.com/profile.php?id=100068257788511" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Facebook class="w-4 h-4" />
               </a>
-              <a href="https://www.instagram.com/moen.gov.iq" target="_blank" 
+              <a href="https://www.instagram.com/moen.gov.iq" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Instagram class="w-4 h-4" />
               </a>
-              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank" 
+              <a href="https://youtube.com/@user-zo6lr7ez4q" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Youtube class="w-4 h-4" />
               </a>
-              <a href="https://x.com" target="_blank" 
+              <a href="https://x.com" target="_blank"
                 class="p-2.5 text-gray-400 transition-all rounded-lg bg-gray-800/50 hover:bg-gray-800 hover:text-white">
                 <Twitter class="w-4 h-4" />
               </a>
@@ -189,16 +189,16 @@
         <div class="flex items-center gap-2 text-xs text-gray-300 group">
           <span>تم التطوير بواسطة</span>
           <a href="https://www.alfakharcompany.com/" target="_blank" class="flex items-center gap-2 transition-all duration-200 hover:text-white">
-            شركة الجاد للحلول البرمجية  
+            شركة الجاد للحلول البرمجية
             <img src="/img/jad.jpeg" class="w-5 h-5 transition-opacity duration-200 opacity-75 group-hover:opacity-100" alt="Fakhar co. logo" />
           </a>
         </div>
-        
+
         <div class="flex items-center gap-8 text-sm">
           <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/privacy">سياسة الخصوصية</RouterLink>
           <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/terms">شروط الاستخدام</RouterLink>
         </div>
-        
+
         <p class="text-xs font-medium text-gray-300">جميع الحقوق محفوظة © {{ new Date().getFullYear() }}</p>
       </div>
     </div>
@@ -209,19 +209,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RouterLink } from 'vue-router'
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Globe, 
-  Clock, 
-  Smartphone,
-  Facebook,
-  Instagram,
-  Youtube,
-  Twitter,
-  ChevronLeft
-} from 'lucide-vue-next'
+import { Icon } from '@iconify/vue';
 </script>
 
 <style scoped>

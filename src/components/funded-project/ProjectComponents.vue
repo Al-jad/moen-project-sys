@@ -29,7 +29,7 @@
             size="sm"
             class="text-red-500 hover:text-red-600 dark:text-red-400"
           >
-            <Trash2 class="h-4 w-4" />
+            <Icon icon="lucide:trash" class="h-4 w-4" />
           </Button>
         </div>
 
@@ -67,7 +67,7 @@
                   color: getComponentColor(index),
                 }"
               >
-                <Plus class="ml-2 h-4 w-4" />
+                <Icon icon="lucide:plus" class="h-4 w-4" />
                 اضافة فعالية
               </Button>
             </div>
@@ -95,7 +95,7 @@
                     size="sm"
                     class="text-red-500 hover:text-red-600 dark:text-red-400"
                   >
-                    <X class="h-4 w-4" />
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -230,7 +230,7 @@
   import { Button } from '@/components/ui/button';
   import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
-  import { Plus, Trash2, X } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
   import { computed, watch } from 'vue';
   const store = useFundedProjectStore();
   const totalPeriods = computed(() => store.totalPeriods);

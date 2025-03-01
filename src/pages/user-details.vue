@@ -1,36 +1,42 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-200 dark:bg-gray-900">
-      <div class="flex items-center justify-between mb-6">
+    <main class="bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mb-6 flex items-center justify-between">
         <BackButton />
       </div>
       <div class="flex gap-6">
-        <div class="flex flex-col items-center justify-center p-6 mb-6 bg-white rounded-lg dark:bg-gray-800 w-fit">
+        <!-- User Profile Card -->
+        <div class="w-fit flex-col rounded-lg bg-white p-6 dark:bg-gray-800">
           <img
             src="/img/avatar.png"
             alt="User Avatar"
-            class="object-cover w-20 h-20 mb-3 rounded-full"
+            class="mb-3 h-20 w-20 rounded-full object-cover"
           />
           <h1 class="mb-1 text-lg font-medium dark:text-gray-100">أ. دعاء الشيخلي</h1>
-          <div class="flex flex-col items-center mb-2 text-sm text-gray-500 dark:text-gray-400">
+          <div class="mb-2 flex flex-col items-center text-sm text-gray-500 dark:text-gray-400">
             <span>شعبة المشاريع - قسم المشاريع - دائرة التخطيط</span>
             <span>وزارة البيئة</span>
           </div>
-          <PrimaryButton variant="outline" class="rounded-full">مدير مشروع</PrimaryButton>
+          <PrimaryButton variant="outline" icon="lucide:briefcase" class="rounded-full">
+            مدير مشروع
+          </PrimaryButton>
         </div>
 
-        <div class="flex-1 p-6 mb-6 bg-white rounded-lg dark:bg-gray-800">
+        <!-- Events Timeline Card -->
+        <div class="flex-1 rounded-lg bg-white p-6 dark:bg-gray-800">
           <div class="flex items-center justify-between">
             <h2 class="mb-4 text-xl font-bold dark:text-gray-100">سجل الاحداث</h2>
-            <PrimaryButton variant="ghost">عرض سجل التعديلات</PrimaryButton>
+            <PrimaryButton icon="lucide:history"> عرض سجل التعديلات </PrimaryButton>
           </div>
           <Timeline :events="events" />
         </div>
       </div>
-      <div class="p-6 mb-6 bg-white rounded-lg dark:bg-gray-800">
+
+      <!-- Projects Card -->
+      <div class="mt-12 rounded-lg bg-white p-6 dark:bg-gray-800">
         <div class="flex items-center justify-between">
           <h2 class="mb-4 text-xl font-bold dark:text-gray-100">المشاريع</h2>
-          <PrimaryButton variant="ghost">عرض كل المشاريع</PrimaryButton>
+          <PrimaryButton variant="ghost" icon="lucide:layout-grid"> عرض كل المشاريع </PrimaryButton>
         </div>
         <div class="grid grid-cols-3 gap-4">
           <ProjectCard
@@ -57,12 +63,15 @@
     </main>
   </DefaultLayout>
 </template>
+
 <script setup>
-  import { ref } from 'vue';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import BackButton from '@/components/BackButton.vue';
-  import Timeline from '@/components/Timeline.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import ProjectCard from '@/components/ProjectCard.vue';
+  import Timeline from '@/components/Timeline.vue';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { ref } from 'vue';
+
   const events = ref([
     {
       id: 1,
@@ -84,6 +93,7 @@
       description: 'تعديل / اضافة / مشروع تجهيز اجهزة وعدات لمحطة الهواء في محافظة كربلاء العراق',
     },
   ]);
+
   const projects = ref([
     {
       id: 1,

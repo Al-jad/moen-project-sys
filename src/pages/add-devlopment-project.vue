@@ -1,9 +1,11 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200 dark:bg-gray-900">
-      <div class="w-full max-w-6xl mx-auto">
-        <h1 class="py-4 pb-6 text-2xl font-bold text-right text-gray-900 dark:text-gray-100">اضافة مشروع - تنمية الأقاليم </h1>
-        
+    <div class="flex min-h-screen flex-col gap-4 bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-6xl">
+        <h1 class="py-4 pb-6 text-right text-2xl font-bold text-gray-900 dark:text-gray-100"
+          >اضافة مشروع - تنمية الأقاليم
+        </h1>
+
         <FormSection title="التفاصيل العامة للمشروع" class="dark:border-gray-700">
           <FormField label="اسم المشروع">
             <CustomInput v-model="form.projectName" dir="rtl" placeholder="ادخل اسم المشروع" />
@@ -37,7 +39,12 @@
 
           <FormField label="العنوان">
             <div class="flex gap-2">
-              <CustomInput v-model="form.address" dir="rtl" placeholder="ادخل العنوان" class="flex-1" />
+              <CustomInput
+                v-model="form.address"
+                dir="rtl"
+                placeholder="ادخل العنوان"
+                class="flex-1"
+              />
             </div>
           </FormField>
 
@@ -54,7 +61,7 @@
                 variant="outline"
                 class="flex items-center gap-2 dark:border-gray-700 dark:text-gray-100"
               >
-                <MapPin class="w-4 h-4" />
+                <Icon icon="lucide:map-pin" class="h-4 w-4" />
                 اختر على الخريطة
               </Button>
             </div>
@@ -69,17 +76,18 @@
 
           <FormField label="الفترة الزمنية لتنفيذ المشروع" class="md:col-span-2">
             <div class="flex items-center gap-4">
-              <NumberInput
-                v-model="form.duration"
-                placeholder="ادخل المدة"
-              />
+              <NumberInput v-model="form.duration" placeholder="ادخل المدة" />
               <RadioGroup v-model="form.durationType" class="flex gap-4">
                 <div class="flex items-center gap-2">
                   <RadioGroupItem value="days" id="duration-days" class="dark:border-gray-700" />
                   <Label for="duration-days" class="text-sm dark:text-gray-300">يوم</Label>
                 </div>
                 <div class="flex items-center gap-2">
-                  <RadioGroupItem value="months" id="duration-months" class="dark:border-gray-700" />
+                  <RadioGroupItem
+                    value="months"
+                    id="duration-months"
+                    class="dark:border-gray-700"
+                  />
                   <Label for="duration-months" class="text-sm dark:text-gray-300">شهر</Label>
                 </div>
                 <div class="flex items-center gap-2">
@@ -115,15 +123,17 @@
             <div
               v-for="(contract, contractIndex) in form.contracts"
               :key="contractIndex"
-              class="p-4 border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+              class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium dark:text-gray-100">عقد رقم {{ contractIndex + 1 }}</h3>
+              <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-medium dark:text-gray-100"
+                  >عقد رقم {{ contractIndex + 1 }}</h3
+                >
                 <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
-                  <X class="w-4 h-4" />
+                  <Icon icon="lucide:x" class="h-4 w-4" />
                 </Button>
               </div>
-              
+
               <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
                 <FormField label="اسم الجهة المنفذة \ الشركة">
                   <CustomInput
@@ -134,11 +144,7 @@
                 </FormField>
 
                 <FormField label="كلفة العقد">
-                  <NumberInput
-                    v-model="contract.cost"
-                    placeholder="ادخل كلفة العقد"
-                    unit="د.ع"
-                  />
+                  <NumberInput v-model="contract.cost" placeholder="ادخل كلفة العقد" unit="د.ع" />
                 </FormField>
 
                 <FormField label="تاريخ الاحالة">
@@ -150,26 +156,22 @@
                 </FormField>
 
                 <FormField label="رقم العقد">
-                  <CustomInput 
-                    v-model="contract.number" 
-                    dir="rtl" 
-                    placeholder="ادخل رقم العقد"
-                  />
+                  <CustomInput v-model="contract.number" dir="rtl" placeholder="ادخل رقم العقد" />
                 </FormField>
 
                 <FormField label="عدد الاجراءات التنفيذية">
-                  <NumberInput
-                    v-model="contract.executionProcedures.length"
-                    readonly
-                    disabled
-                  />
+                  <NumberInput v-model="contract.executionProcedures.length" readonly disabled />
                 </FormField>
               </div>
 
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-4">
+                <div class="mb-4 flex items-center justify-between">
                   <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
-                  <PrimaryButton variant="outline" @click="addExecutionProcedure(contractIndex)" size="sm">
+                  <PrimaryButton
+                    variant="outline"
+                    @click="addExecutionProcedure(contractIndex)"
+                    size="sm"
+                  >
                     اضافة اجراء تنفيذي
                   </PrimaryButton>
                 </div>
@@ -178,16 +180,16 @@
                   <div
                     v-for="(procedure, procedureIndex) in contract.executionProcedures"
                     :key="procedureIndex"
-                    class="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+                    class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
                   >
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="mb-4 flex items-center justify-between">
                       <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
                       <Button
                         variant="destructive"
                         size="sm"
                         @click="removeExecutionProcedure(contractIndex, procedureIndex)"
                       >
-                        <X class="w-4 h-4" />
+                        <Icon icon="lucide:x" class="h-4 w-4" />
                       </Button>
                     </div>
 
@@ -260,11 +262,23 @@
                 </div>
               </div>
             </div>
-            <PrimaryButton @click="addContract" variant="outline" class="w-full">اضافة عقد جديد</PrimaryButton>
+            <PrimaryButton @click="addContract" variant="outline" class="w-full"
+              >اضافة عقد جديد</PrimaryButton
+            >
           </div>
         </FormSection>
         <FormSection title="تفاصيل الموقف المالي">
-          <FormField :label="'كلفة الاجراءات التنفيذية المخطط لها لغاية تاريخ اليوم (' + new Date().toLocaleDateString('ar-US', { year: 'numeric', month: 'numeric', day: 'numeric', }) + ')'">
+          <FormField
+            :label="
+              'كلفة الاجراءات التنفيذية المخطط لها لغاية تاريخ اليوم (' +
+              new Date().toLocaleDateString('ar-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+              }) +
+              ')'
+            "
+          >
             <NumberInput
               v-model="form.financials.plannedCost"
               placeholder="ادخل الكلفة"
@@ -280,7 +294,17 @@
             />
           </FormField>
 
-          <FormField :label="'قيمة العمل المنجز الفعلي للجراءات التنفيذية لغاية تاريخ اليوم (' + new Date().toLocaleDateString('ar-US', { year: 'numeric', month: 'numeric', day: 'numeric', }) + ')'">
+          <FormField
+            :label="
+              'قيمة العمل المنجز الفعلي للجراءات التنفيذية لغاية تاريخ اليوم (' +
+              new Date().toLocaleDateString('ar-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+              }) +
+              ')'
+            "
+          >
             <NumberInput
               v-model="form.financials.actualWorkValue"
               placeholder="ادخل قيمة العمل المنجز"
@@ -338,19 +362,19 @@
             />
             <div
               v-if="form.executionDetails.deviationReasons.length > 0"
-              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50 dark:bg-gray-800 dark:text-gray-100"
+              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800 dark:text-gray-100"
             >
               <div
                 v-for="(reason, index) in form.executionDetails.deviationReasons"
                 :key="index"
-                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
               >
                 <span>{{ reason }}</span>
                 <button
                   @click="removeDeviationReason(index)"
                   class="text-gray-500 hover:text-red-500"
                 >
-                  <X class="w-3 h-3" />
+                  <Icon icon="lucide:x" class="h-3 w-3" />
                 </button>
               </div>
             </div>
@@ -364,19 +388,19 @@
             />
             <div
               v-if="form.executionDetails.stoppagePeriods.length > 0"
-              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50 dark:bg-gray-800"
+              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
             >
               <div
                 v-for="(period, index) in form.executionDetails.stoppagePeriods"
                 :key="index"
-                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
               >
                 <span>{{ period }}</span>
                 <button
                   @click="removeStoppagePeriod(index)"
                   class="text-gray-500 hover:text-red-500"
                 >
-                  <X class="w-3 h-3" />
+                  <Icon icon="lucide:x" class="h-3 w-3" />
                 </button>
               </div>
             </div>
@@ -390,19 +414,16 @@
             />
             <div
               v-if="form.executionDetails.changeOrders.length > 0"
-              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50 dark:bg-gray-800"
+              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
             >
               <div
                 v-for="(order, index) in form.executionDetails.changeOrders"
                 :key="index"
-                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
               >
                 <span>{{ order }}</span>
-                <button
-                  @click="removeChangeOrder(index)"
-                  class="text-gray-500 hover:text-red-500"
-                >
-                  <X class="w-3 h-3" />
+                <button @click="removeChangeOrder(index)" class="text-gray-500 hover:text-red-500">
+                  <Icon icon="lucide:x" class="h-3 w-3" />
                 </button>
               </div>
             </div>
@@ -416,19 +437,19 @@
             />
             <div
               v-if="form.executionDetails.additionalPeriods.length > 0"
-              class="flex flex-wrap gap-2 p-2 mt-2 rounded-md bg-gray-50 dark:bg-gray-800"
+              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
             >
               <div
                 v-for="(period, index) in form.executionDetails.additionalPeriods"
                 :key="index"
-                class="flex items-center gap-1 px-2 py-1 text-sm bg-white rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
               >
                 <span>{{ period }}</span>
                 <button
                   @click="removeAdditionalPeriod(index)"
                   class="text-gray-500 hover:text-red-500"
                 >
-                  <X class="w-3 h-3" />
+                  <Icon icon="lucide:x" class="h-3 w-3" />
                 </button>
               </div>
             </div>
@@ -439,19 +460,19 @@
               v-model="form.executionDetails.notes"
               dir="rtl"
               placeholder="ادخل الملاحظات"
-              class="min-h-[100px] dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
+              class="min-h-[100px] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
             />
           </FormField>
         </FormSection>
-        <div class="sticky left-0 right-0 mt-6 bottom-6">
-          <div class="max-w-6xl px-6 mx-auto">
+        <div class="sticky bottom-6 left-0 right-0 mt-6">
+          <div class="mx-auto max-w-6xl px-6">
             <Button
               @click="saveProject"
-              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700 dark:text-white"
+              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="isSaving"
             >
-              <Loader2 v-if="isSaving" class="w-4 h-4 ml-2 animate-spin" />
-              <Plus v-else class="w-4 h-4 ml-2" />
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="ml-2 h-4 w-4 animate-spin" />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -466,24 +487,24 @@
   </DefaultLayout>
 </template>
 <script setup>
-  import { ref } from 'vue';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Label } from '@/components/ui/label';
-  import { Button } from '@/components/ui/button';
-  import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-  import CustomSelect from '@/components/CustomSelect.vue';
-  import { X, Calendar as CalendarIcon, Plus, Loader2, MapPin } from 'lucide-vue-next';
-  import { Textarea } from '@/components/ui/textarea';
-  import { toast } from 'vue-sonner';
+  import CustomInput from '@/components/CustomInput.vue';
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
-  import LocationPicker from '@/components/LocationPicker.vue';
-  import InputWithAddButton from '@/components/InputWithAddButton.vue';
-  import FormSection from '@/components/FormSection.vue';
-  import FormField from '@/components/FormField.vue';
+  import CustomSelect from '@/components/CustomSelect.vue';
   import DateInput from '@/components/DateInput.vue';
+  import FormField from '@/components/FormField.vue';
+  import FormSection from '@/components/FormSection.vue';
+  import InputWithAddButton from '@/components/InputWithAddButton.vue';
+  import LocationPicker from '@/components/LocationPicker.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
-  import CustomInput from '@/components/CustomInput.vue';
+  import { Button } from '@/components/ui/button';
+  import { Label } from '@/components/ui/label';
+  import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+  import { Textarea } from '@/components/ui/textarea';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  import { toast } from 'vue-sonner';
   const form = ref({
     projectName: '',
     plan: '',

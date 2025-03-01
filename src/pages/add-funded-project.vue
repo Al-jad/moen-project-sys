@@ -20,8 +20,12 @@
               class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="store.isSaving"
             >
-              <Loader2 v-if="store.isSaving" class="ml-2 h-4 w-4 animate-spin" />
-              <Plus v-else class="ml-2 h-4 w-4" />
+              <Icon
+                v-if="store.isSaving"
+                icon="lucide:loader-2"
+                class="ml-2 h-4 w-4 animate-spin"
+              />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -39,7 +43,7 @@
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
-  import { Loader2, Plus } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';

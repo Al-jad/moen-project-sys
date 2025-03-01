@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-50 dark:bg-darkmode">
-      <div class="flex items-center justify-between mb-6">
+    <main class="bg-gray-50 p-6 dark:bg-darkmode">
+      <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-6">
           <BackToMainButton />
           <h1 class="text-xl font-bold text-gray-900 dark:text-white">العقود</h1>
@@ -10,12 +10,12 @@
 
       <!-- Controls Container -->
       <div
-        class="p-6 bg-white border border-gray-100 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
+        class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
       >
-        <div class="flex items-center justify-between gap-4 mb-6">
+        <div class="mb-6 flex items-center justify-between gap-4">
           <div class="flex items-center gap-6">
             <PrimaryButton size="lg" class="px-2">
-              <FileSpreadsheet class="w-4 h-4 ml-2" />
+              <Icon icon="lucide:file-spreadsheet" class="ml-2 h-4 w-4" />
               تصدير Excel
             </PrimaryButton>
 
@@ -28,11 +28,8 @@
                 ]"
                 placeholder="اختر المشروع"
                 :triggerClass="'flex flex-row-reverse w-full'"
-              >
-                <template #icon>
-                  <Folder class="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                </template>
-              </CustomSelect>
+                icon="lucide:folder"
+              />
             </div>
 
             <div class="min-w-[200px]">
@@ -44,21 +41,18 @@
                 ]"
                 placeholder="اختر العقد"
                 :triggerClass="'flex flex-row-reverse w-full'"
-              >
-                <template #icon>
-                  <FileText class="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                </template>
-              </CustomSelect>
+                icon="lucide:file-text"
+              />
             </div>
 
-            <DateInput class="flex-ro-w " v-model="date" placeholder="اختر التاريخ" />
+            <DateInput class="flex-row" v-model="date" placeholder="اختر التاريخ" />
           </div>
 
           <!-- Search -->
           <div class="relative min-w-[240px]">
             <FormField>
               <div class="relative">
-                <CustomInput v-model="searchQuery" placeholder="بحث سريع" :icon="Search" />
+                <CustomInput v-model="searchQuery" placeholder="بحث سريع" icon="lucide:search" />
               </div>
             </FormField>
           </div>
@@ -75,7 +69,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex items-center justify-center mt-6">
+        <div class="mt-6 flex items-center justify-center">
           <Pagination :totalPages="totalPages" :currentPage="currentPage" />
         </div>
       </div>
@@ -85,27 +79,19 @@
 
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
-import DateInput from '@/components/DateInput.vue';
-  import { ref, computed } from 'vue';
+  import ContractCard from '@/components/ContractCard.vue';
+  import CustomInput from '@/components/CustomInput.vue';
+  import CustomSelect from '@/components/CustomSelect.vue';
+  import DateInput from '@/components/DateInput.vue';
+  import FormField from '@/components/FormField.vue';
+  import Pagination from '@/components/Pagination.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
+  import { DateFormatter } from '@internationalized/date';
   import { format } from 'date-fns';
   import { ar } from 'date-fns/locale';
-  import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
-  import FormField from '@/components/FormField.vue';
-  import CustomInput from '@/components/CustomInput.vue';
-  import ContractCard from '@/components/ContractCard.vue';
-  import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-  import { RangeCalendar } from '@/components/ui/range-calendar';
-  import Pagination from '@/components/Pagination.vue';
-  import {
-    Search,
-    FileText,
-    Calendar as CalendarIcon,
-    FileSpreadsheet,
-    Folder,
-  } from 'lucide-vue-next';
-  import CustomSelect from '@/components/CustomSelect.vue';
+  import { computed, ref } from 'vue';
 
   interface Project {
     id: string;
@@ -132,14 +118,14 @@ import DateInput from '@/components/DateInput.vue';
   const currentPage = ref(1);
   const selectedProject = ref<string>('all');
   const selectedContract = ref<string>('all');
-  const date = ref<Date | null>(null);
+  const date = ref<string | null>(null);
   const itemsPerPage = 7;
 
   const df = new DateFormatter('ar', { dateStyle: 'medium' });
 
   const dateRangeText = computed(() => {
     if (!date.value) return '';
-    return df.format(date.value);
+    return df.format(new Date(date.value));
   });
 
   // Mock data for dropdowns
@@ -190,9 +176,9 @@ import DateInput from '@/components/DateInput.vue';
   ]);
 
   // Methods
-  const formatDate = (date) => {
-    if (!date) return '';
-    return format(date, 'dd/MM/yyyy', { locale: ar });
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '';
+    return format(new Date(dateString), 'dd/MM/yyyy', { locale: ar });
   };
 
   const getProjectName = (id) => {
@@ -227,10 +213,10 @@ import DateInput from '@/components/DateInput.vue';
     }
 
     if (date.value) {
-      const selectedDate = date.value;
+      const selectedDate = new Date(date.value).toISOString().split('T')[0];
       filtered = filtered.filter((contract) => {
-        const contractDate = new Date(contract.signDate);
-        return contractDate.toDateString() === selectedDate.toDateString();
+        const contractDate = new Date(contract.signDate).toISOString().split('T')[0];
+        return contractDate === selectedDate;
       });
     }
 

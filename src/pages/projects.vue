@@ -17,19 +17,16 @@
             <div class="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <PrimaryButton variant="outline" buttonClass="flex items-center gap-2">
-                    <AlignLeft class="h-4 w-4" />
-                    ترتيب
-                  </PrimaryButton>
+                  <PrimaryButton variant="outline" icon="lucide:align-left"> ترتيب </PrimaryButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
                   align="end"
                 >
                   <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                    <h3 class="text-right text-base font-medium text-gray-900 dark:text-white"
-                      >ترتيب</h3
-                    >
+                    <h3 class="text-right text-base font-medium text-gray-900 dark:text-white">
+                      ترتيب
+                    </h3>
                   </div>
                   <div class="flex flex-col">
                     <DropdownMenuItem
@@ -39,10 +36,7 @@
                       :class="{ 'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id }"
                       @click="handleSort(option.id)"
                     >
-                      <component
-                        :is="option.icon"
-                        class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                      />
+                      <Icon :icon="option.icon" class="h-4 w-4 text-gray-500 dark:text-gray-400" />
                       <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
                     </DropdownMenuItem>
                   </div>
@@ -57,14 +51,13 @@
                   class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
                   @click="clearSort"
                 >
-                  <X class="h-3 w-3" />
+                  <Icon icon="lucide:x" class="h-3 w-3" />
                 </button>
               </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <PrimaryButton variant="primary" buttonClass="flex items-center gap-2 p-4">
-                  <Plus class="h-4 w-4" />
+                <PrimaryButton variant="primary" icon="lucide:plus">
                   اضافة مشروع جديد
                 </PrimaryButton>
               </DropdownMenuTrigger>
@@ -106,7 +99,7 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ProjectsFilter from '@/components/ProjectsFilter.vue';
   import ProjectsList from '@/components/ProjectsList.vue';
@@ -117,16 +110,24 @@
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import {
-    AlignLeft,
-    ArrowDown01,
-    ArrowDownNarrowWide,
-    ArrowUp01,
-    ArrowUpNarrowWide,
-    Plus,
-    X,
-  } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
+
+  interface SortOption {
+    id: string;
+    label: string;
+    icon: string;
+  }
+
+  // Sort Options Configuration
+  const sortOptions: SortOption[] = [
+    { id: 'price-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-0-1' },
+    { id: 'price-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-0-1' },
+    { id: 'period-high', label: 'من الفترة الاعلى', icon: 'lucide:arrow-down-narrow-wide' },
+    { id: 'period-low', label: 'من الفترة الادنى', icon: 'lucide:arrow-up-narrow-wide' },
+    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-down-0-1' },
+    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-up-0-1' },
+  ];
 
   const mockProjects = [
     {
@@ -400,18 +401,9 @@
   const totalProjects = computed(() => allProjects.value.length);
   const paginatedCount = computed(() => Math.min(10, totalProjects.value));
 
-  const sortOptions = [
-    { id: 'price-low', label: 'من السعر الادنى', icon: ArrowDown01 },
-    { id: 'price-high', label: 'من السعر الاعلى', icon: ArrowUp01 },
-    { id: 'period-high', label: 'من الفترة الاعلى', icon: ArrowDownNarrowWide },
-    { id: 'period-low', label: 'من الفترة الادنى', icon: ArrowUpNarrowWide },
-    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: ArrowDown01 },
-    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: ArrowUp01 },
-  ];
-
   const selectedSort = ref('');
 
-  const handleSort = (sortId) => {
+  const handleSort = (sortId: string) => {
     selectedSort.value = sortId;
     // Add sorting logic here
   };

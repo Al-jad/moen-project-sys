@@ -1,8 +1,10 @@
 <template>
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
     <DialogContent class="sm:max-w-[800px]">
-      <DialogHeader class="flex flex-col gap-4 mb-2">
-        <DialogTitle class="text-right">{{ action ? 'تعديل  الإجراء التنفيذي' : 'اضافة إجراء تنفيذي' }}</DialogTitle>
+      <DialogHeader class="mb-2 flex flex-col gap-4">
+        <DialogTitle class="text-right">{{
+          action ? 'تعديل  الإجراء التنفيذي' : 'اضافة إجراء تنفيذي'
+        }}</DialogTitle>
       </DialogHeader>
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div class="grid grid-cols-2 gap-6" dir="rtl">
@@ -71,7 +73,7 @@
                     class="w-full justify-start text-right"
                     :class="!date && 'text-muted-foreground'"
                   >
-                    <CalendarIcon class="ml-2 h-4 w-4" />
+                    <Icon icon="lucide:calendar" class="ml-2 h-4 w-4" />
                     {{ date ? formatDate(date) : 'اختر التاريخ' }}
                   </Button>
                 </PopoverTrigger>
@@ -119,7 +121,7 @@
           </Button>
           <Button type="submit">
             {{ action ? 'تعديل' : 'اضافة' }}
-            <Check class="w-4 h-4 mr-2" />
+            <Icon icon="lucide:check" class="mr-2 h-4 w-4" />
           </Button>
         </DialogFooter>
       </form>
@@ -128,113 +130,113 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
-import { Check, CalendarIcon } from 'lucide-vue-next';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+  import { Button } from '@/components/ui/button';
+  import { Calendar } from '@/components/ui/calendar';
+  import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+  } from '@/components/ui/dialog';
+  import { Input } from '@/components/ui/input';
+  import { Label } from '@/components/ui/label';
+  import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+  import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from '@/components/ui/select';
+  import { Icon } from '@iconify/vue';
+  import { format } from 'date-fns';
+  import { ar } from 'date-fns/locale';
+  import { ref, watch } from 'vue';
 
-const props = defineProps<{
-  open: boolean;
-  action?: {
-    name?: string;
-    weight?: number;
-    duration?: number;
-    startDate?: string;
-    plannedTechnicalProgress?: string;
-    actualTechnicalProgress?: string;
-    technicalDeviation?: string;
-    plannedFinancialProgress?: string;
-    actualFinancialProgress?: string;
-    projectName?: string;
-    contractNumber?: string;
-  }
-}>();
-
-const emit = defineEmits<{
-  'update:open': [value: boolean];
-  'submit': [value: any];
-}>();
-
-const emptyForm = {
-  name: '',
-  weight: '',
-  duration: '',
-  startDate: '',
-  plannedTechnicalProgress: '',
-  actualTechnicalProgress: '',
-  technicalDeviation: '',
-  plannedFinancialProgress: '',
-  actualFinancialProgress: '',
-  projectName: '',
-  contractNumber: ''
-};
-
-const form = ref({ ...emptyForm });
-const date = ref<Date | null>(null);
-
-watch(() => props.action, (newAction) => {
-  if (newAction) {
-    form.value = {
-      name: newAction.name || '',
-      weight: newAction.weight?.toString() || '',
-      duration: newAction.duration?.toString() || '',
-      startDate: newAction.startDate || '',
-      plannedTechnicalProgress: newAction.plannedTechnicalProgress || '',
-      actualTechnicalProgress: newAction.actualTechnicalProgress || '',
-      technicalDeviation: newAction.technicalDeviation || '',
-      plannedFinancialProgress: newAction.plannedFinancialProgress || '',
-      actualFinancialProgress: newAction.actualFinancialProgress || '',
-      projectName: newAction.projectName || '',
-      contractNumber: newAction.contractNumber || ''
+  const props = defineProps<{
+    open: boolean;
+    action?: {
+      name?: string;
+      weight?: number;
+      duration?: number;
+      startDate?: string;
+      plannedTechnicalProgress?: string;
+      actualTechnicalProgress?: string;
+      technicalDeviation?: string;
+      plannedFinancialProgress?: string;
+      actualFinancialProgress?: string;
+      projectName?: string;
+      contractNumber?: string;
     };
-    date.value = newAction.startDate ? new Date(newAction.startDate) : null;
-  } else {
-    form.value = { ...emptyForm };
-    date.value = null;
-  }
-}, { immediate: true });
+  }>();
 
-const formatDate = (date: Date) => {
-  return format(date, 'PPP', { locale: ar });
-};
+  const emit = defineEmits<{
+    'update:open': [value: boolean];
+    submit: [value: any];
+  }>();
 
-const handleDateSelect = (newDate: Date | null) => {
-  if (newDate) {
-    form.value.startDate = format(newDate, 'yyyy-MM-dd');
-  } else {
-    form.value.startDate = '';
-  }
-};
+  const emptyForm = {
+    name: '',
+    weight: '',
+    duration: '',
+    startDate: '',
+    plannedTechnicalProgress: '',
+    actualTechnicalProgress: '',
+    technicalDeviation: '',
+    plannedFinancialProgress: '',
+    actualFinancialProgress: '',
+    projectName: '',
+    contractNumber: '',
+  };
 
-const handleSubmit = () => {
-  emit('submit', {
-    ...form.value,
-    weight: form.value.weight ? Number(form.value.weight) : undefined,
-    duration: form.value.duration ? Number(form.value.duration) : undefined
-  });
-  emit('update:open', false);
-};
+  const form = ref({ ...emptyForm });
+  const date = ref<Date | null>(null);
+
+  watch(
+    () => props.action,
+    (newAction) => {
+      if (newAction) {
+        form.value = {
+          name: newAction.name || '',
+          weight: newAction.weight?.toString() || '',
+          duration: newAction.duration?.toString() || '',
+          startDate: newAction.startDate || '',
+          plannedTechnicalProgress: newAction.plannedTechnicalProgress || '',
+          actualTechnicalProgress: newAction.actualTechnicalProgress || '',
+          technicalDeviation: newAction.technicalDeviation || '',
+          plannedFinancialProgress: newAction.plannedFinancialProgress || '',
+          actualFinancialProgress: newAction.actualFinancialProgress || '',
+          projectName: newAction.projectName || '',
+          contractNumber: newAction.contractNumber || '',
+        };
+        date.value = newAction.startDate ? new Date(newAction.startDate) : null;
+      } else {
+        form.value = { ...emptyForm };
+        date.value = null;
+      }
+    },
+    { immediate: true }
+  );
+
+  const formatDate = (date: Date) => {
+    return format(date, 'PPP', { locale: ar });
+  };
+
+  const handleDateSelect = (newDate: Date | null) => {
+    if (newDate) {
+      form.value.startDate = format(newDate, 'yyyy-MM-dd');
+    } else {
+      form.value.startDate = '';
+    }
+  };
+
+  const handleSubmit = () => {
+    emit('submit', {
+      ...form.value,
+      weight: form.value.weight ? Number(form.value.weight) : undefined,
+      duration: form.value.duration ? Number(form.value.duration) : undefined,
+    });
+    emit('update:open', false);
+  };
 </script>

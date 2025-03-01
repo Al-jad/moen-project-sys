@@ -2,9 +2,7 @@
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
     <DialogContent class="min-w-[400px]">
       <DialogHeader>
-        <DialogTitle class="text-xl font-semibold text-right">
-          حالة المهمة
-        </DialogTitle>
+        <DialogTitle class="text-right text-xl font-semibold"> حالة المهمة </DialogTitle>
       </DialogHeader>
 
       <div class="py-6">
@@ -23,7 +21,7 @@
 
           <div class="mt-4">
             <Label class="text-right">ملاحظات</Label>
-            <Textarea 
+            <Textarea
               v-model="notes"
               dir="rtl"
               class="mt-2"
@@ -33,13 +31,13 @@
         </div>
       </div>
 
-      <DialogFooter class="flex flex-row-reverse w-full gap-2">
-        <Button @click="$emit('update:open', false)" variant="outline" class="w-1/4 ">
-          <X class="w-4 h-4" />
+      <DialogFooter class="flex w-full flex-row-reverse gap-2">
+        <Button @click="$emit('update:open', false)" variant="outline" class="w-1/4">
+          <Icon icon="lucide:x" class="h-4 w-4" />
           الغاء
         </Button>
         <Button @click="save" class="w-2/4">
-          <Check class="w-4 h-4" />
+          <Icon icon="lucide:check" class="h-4 w-4" />
           تأكيد
         </Button>
       </DialogFooter>
@@ -48,47 +46,47 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  import { Button } from '@/components/ui/button';
+  import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+  } from '@/components/ui/dialog';
+  import { Label } from '@/components/ui/label';
+  import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from '@/components/ui/select';
+  import { Textarea } from '@/components/ui/textarea';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
 
-import { Check, X } from 'lucide-vue-next'
-const props = defineProps({
-  open: {
-    type: Boolean,
-    required: true
-  },
-  currentStatus: {
-    type: String,
-    required: true
-  }
-})
+  const props = defineProps({
+    open: {
+      type: Boolean,
+      required: true,
+    },
+    currentStatus: {
+      type: String,
+      required: true,
+    },
+  });
 
-const emit = defineEmits(['update:open', 'statusChanged'])
+  const emit = defineEmits(['update:open', 'statusChanged']);
 
-const selectedStatus = ref(props.currentStatus)
-const notes = ref('')
+  const selectedStatus = ref(props.currentStatus);
+  const notes = ref('');
 
-const save = () => {
-  emit('statusChanged', {
-    status: selectedStatus.value,
-    notes: notes.value
-  })
-  emit('update:open', false)
-}
-</script> 
+  const save = () => {
+    emit('statusChanged', {
+      status: selectedStatus.value,
+      notes: notes.value,
+    });
+    emit('update:open', false);
+  };
+</script>

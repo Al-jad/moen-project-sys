@@ -1,11 +1,7 @@
 <template>
   <div>
-    <PrimaryButton
-      variant="link"
-      @click="$router.push('/')"
-      class=""
-    >
-      <ArrowRight class="w-4 h-4" />
+    <PrimaryButton variant="link" @click="$router.push('/')" class="">
+      <Icon icon="lucide:arrow-right" class="h-4 w-4" />
       الرئيسية
     </PrimaryButton>
   </div>
@@ -13,5 +9,5 @@
 
 <script setup>
   import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { ArrowRight } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
 </script>

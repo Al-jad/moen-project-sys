@@ -1,12 +1,15 @@
 <template>
   <TooltipProvider>
     <RouterView />
-    <Footer />
+    <Footer v-if="!isLoginPage" />
   </TooltipProvider>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import Footer from '@/components/Footer.vue'
+  import Footer from '@/components/Footer.vue';
+  import { TooltipProvider } from '@/components/ui/tooltip';
+  import { computed } from 'vue';
+  import { RouterView, useRoute } from 'vue-router';
+  const route = useRoute();
+  const isLoginPage = computed(() => route.path === '/login');
 </script>

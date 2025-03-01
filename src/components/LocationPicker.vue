@@ -17,11 +17,11 @@
             @keyup.enter="searchLocation"
           />
           <Button @click="searchLocation" variant="secondary">
-            <Search class="w-4 h-4 ml-2" />
+            <Icon icon="lucide:search" class="h-4 w-4" />
             بحث
           </Button>
         </div>
-        <div class="h-[400px] relative rounded-lg overflow-hidden">
+        <div class="relative h-[400px] overflow-hidden rounded-lg">
           <LMap
             v-model:zoom="zoom"
             :center="[selectedLocation.lat, selectedLocation.lng]"
@@ -49,88 +49,97 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-vue-next';
-import { toast } from 'vue-sonner';
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
-import "leaflet/dist/leaflet.css";
+  import { Button } from '@/components/ui/button';
+  import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+  } from '@/components/ui/dialog';
+  import { Input } from '@/components/ui/input';
+  import { Icon } from '@iconify/vue';
+  import { LMap, LMarker, LTileLayer } from '@vue-leaflet/vue-leaflet';
+  import 'leaflet/dist/leaflet.css';
+  import { ref } from 'vue';
+  import { toast } from 'vue-sonner';
 
-const props = defineProps({
-  show: Boolean,
-  initialLocation: {
-    type: Object,
-    default: () => ({ lat: 33.3152, lng: 44.3661 }) // Baghdad coordinates as default
-  }
-});
+  const props = defineProps({
+    show: Boolean,
+    initialLocation: {
+      type: Object,
+      default: () => ({ lat: 33.3152, lng: 44.3661 }), // Baghdad coordinates as default
+    },
+  });
 
-const emit = defineEmits(['update:show', 'locationSelected']);
+  const emit = defineEmits(['update:show', 'locationSelected']);
 
-const searchQuery = ref('');
-const selectedLocation = ref({ ...props.initialLocation });
-const zoom = ref(13);
+  const searchQuery = ref('');
+  const selectedLocation = ref({ ...props.initialLocation });
+  const zoom = ref(13);
 
-const handleMapClick = (e) => {
-  selectedLocation.value = { lat: e.latlng.lat, lng: e.latlng.lng };
-};
+  const handleMapClick = (e) => {
+    selectedLocation.value = { lat: e.latlng.lat, lng: e.latlng.lng };
+  };
 
-const handleMarkerDrag = (e) => {
-  const { lat, lng } = e.target.getLatLng();
-  selectedLocation.value = { lat, lng };
-};
+  const handleMarkerDrag = (e) => {
+    const { lat, lng } = e.target.getLatLng();
+    selectedLocation.value = { lat, lng };
+  };
 
-const searchLocation = async () => {
-  if (!searchQuery.value) return;
+  const searchLocation = async () => {
+    if (!searchQuery.value) return;
 
-  try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery.value)}`);
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery.value)}`
+      );
+      const data = await response.json();
 
-    if (data && data.length > 0) {
-      const { lat, lon } = data[0];
-      selectedLocation.value = { lat: parseFloat(lat), lng: parseFloat(lon) };
-      zoom.value = 13;
-    } else {
-      toast.error('لم يتم العثور على الموقع');
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        selectedLocation.value = { lat: parseFloat(lat), lng: parseFloat(lon) };
+        zoom.value = 13;
+      } else {
+        toast.error('لم يتم العثور على الموقع');
+      }
+    } catch (error) {
+      toast.error('حدث خطأ اثناء البحث');
     }
-  } catch (error) {
-    toast.error('حدث خطأ اثناء البحث');
-  }
-};
+  };
 
-const confirmLocation = () => {
-  emit('locationSelected', selectedLocation.value);
-  emit('update:show', false);
-};
+  const confirmLocation = () => {
+    emit('locationSelected', selectedLocation.value);
+    emit('update:show', false);
+  };
 </script>
 
 <style>
-.leaflet-container {
-  width: 100%;
-  height: 100%;
-}
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+  }
 
-/* Custom cursor styles */
-.leaflet-grab {
-  cursor: grab;
-}
+  /* Custom cursor styles */
+  .leaflet-grab {
+    cursor: grab;
+  }
 
-.leaflet-dragging .leaflet-grab {
-  cursor: grabbing;
-}
+  .leaflet-dragging .leaflet-grab {
+    cursor: grabbing;
+  }
 
-.leaflet-marker-icon {
-  cursor: move; /* Fallback */
-  cursor: grab;
-}
+  .leaflet-marker-icon {
+    cursor: move; /* Fallback */
+    cursor: grab;
+  }
 
-.leaflet-marker-icon:active {
-  cursor: grabbing;
-}
+  .leaflet-marker-icon:active {
+    cursor: grabbing;
+  }
 
-.cursor-crosshair {
-  cursor: crosshair;
-}
-</style> 
+  .cursor-crosshair {
+    cursor: crosshair;
+  }
+</style>

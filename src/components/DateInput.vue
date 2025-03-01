@@ -9,7 +9,7 @@
           modelValue && 'text-gray-900 dark:text-gray-100',
         ]"
       >
-        <CalendarIcon class="h-4 w-4 dark:text-gray-400" />
+        <Icon icon="lucide:calendar" class="h-4 w-4 dark:text-gray-400" />
         <span class="text-right text-gray-900 dark:text-white">
           {{ modelValue ? formatDate(modelValue) : placeholder }}
         </span>
@@ -40,7 +40,7 @@
   import { Button } from '@/components/ui/button';
   import { Calendar } from '@/components/ui/calendar';
   import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-  import { CalendarIcon } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
 
   const props = defineProps({
     modelValue: {

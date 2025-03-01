@@ -2,11 +2,13 @@
   <Dialog :open="isOpen" @update:open="$emit('update:isOpen', $event)">
     <DialogContent class="dark:bg-gray-800">
       <DialogHeader>
-        <DialogTitle class="text-right">{{ isEdit ? 'تعديل الاجراء التنفيذي' : 'اضافة اجراء تنفيذي' }}</DialogTitle>
+        <DialogTitle class="text-right">{{
+          isEdit ? 'تعديل الاجراء التنفيذي' : 'اضافة اجراء تنفيذي'
+        }}</DialogTitle>
       </DialogHeader>
 
       <!-- Non-editable fields -->
-      <div class="grid gap-4 py-4 border-b dark:border-gray-700">
+      <div class="grid gap-4 border-b py-4 dark:border-gray-700">
         <div class="grid items-center gap-4">
           <Label class="text-right text-gray-500 dark:text-gray-400">العقد</Label>
           <div class="text-right">{{ contractInfo.name }}</div>
@@ -40,17 +42,11 @@
       </div>
 
       <DialogFooter class="flex justify-between">
-        <PrimaryButton 
-          variant="outline" 
-          @click="$emit('update:isOpen', false)"
-        >
+        <PrimaryButton variant="outline" @click="$emit('update:isOpen', false)">
           الغاء
         </PrimaryButton>
-        <PrimaryButton 
-          type="submit" 
-          @click="handleSubmit"
-        >
-          <Check class="w-4 h-4 ml-2" />
+        <PrimaryButton type="submit" @click="handleSubmit">
+          <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
           إرسال إلى المراجعة
         </PrimaryButton>
       </DialogFooter>
@@ -59,58 +55,67 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Check } from 'lucide-vue-next'
-import PrimaryButton from '@/components/PrimaryButton.vue'
-import FormField from '@/components/FormField.vue'
-import CustomInput from '@/components/CustomInput.vue'
+  import CustomInput from '@/components/CustomInput.vue';
+  import FormField from '@/components/FormField.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
+  import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+  } from '@/components/ui/dialog';
+  import { Label } from '@/components/ui/label';
+  import { ref, watch } from 'vue';
 
-const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
-  },
-  procedure: {
-    type: Object,
-    default: null
-  },
-  isEdit: {
-    type: Boolean,
-    default: false
-  },
-  contractInfo: {
-    type: Object,
-    default: () => ({
-      name: 'عقد تجهيز محطات المراقبة 25 لسنة 2025',
-      project: 'مشروع A'
-    })
-  }
-})
+  const props = defineProps({
+    isOpen: {
+      type: Boolean,
+      required: true,
+    },
+    procedure: {
+      type: Object,
+      default: null,
+    },
+    isEdit: {
+      type: Boolean,
+      default: false,
+    },
+    contractInfo: {
+      type: Object,
+      default: () => ({
+        name: 'عقد تجهيز محطات المراقبة 25 لسنة 2025',
+        project: 'مشروع A',
+      }),
+    },
+  });
 
-const emit = defineEmits(['update:isOpen', 'save'])
+  const emit = defineEmits(['update:isOpen', 'save']);
 
-const form = ref({
-  name: '',
-  duration: '',
-  startDate: '',
-  actualProgress: ''
-})
+  const form = ref({
+    name: '',
+    duration: '',
+    startDate: '',
+    actualProgress: '',
+  });
 
-watch(() => props.procedure, (newVal) => {
-  if (newVal) {
-    form.value = {
-      name: newVal.name,
-      duration: newVal.duration,
-      startDate: newVal.startDate,
-      actualProgress: newVal.actualTechnicalProgress
-    }
-  }
-}, { immediate: true })
+  watch(
+    () => props.procedure,
+    (newVal) => {
+      if (newVal) {
+        form.value = {
+          name: newVal.name,
+          duration: newVal.duration,
+          startDate: newVal.startDate,
+          actualProgress: newVal.actualTechnicalProgress,
+        };
+      }
+    },
+    { immediate: true }
+  );
 
-const handleSubmit = () => {
-  emit('save', form.value)
-  emit('update:isOpen', false)
-}
-</script> 
+  const handleSubmit = () => {
+    emit('save', form.value);
+    emit('update:isOpen', false);
+  };
+</script>

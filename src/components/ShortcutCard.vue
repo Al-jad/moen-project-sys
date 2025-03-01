@@ -1,50 +1,81 @@
 <template>
-  <div 
-    class="flex items-center justify-between p-8 bg-white dark:bg-gray-800/95 shadow dark:shadow-gray-900/50 rounded-xl transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-md hover:scale-[1.01] border border-gray-100 dark:border-gray-700/50"
+  <div
+    class="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-gray-50 hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:hover:bg-gray-800"
     :class="{ 'cursor-pointer': to }"
     @click="handleClick"
   >
     <span class="text-sm font-medium text-gray-700 dark:text-gray-100">{{ title }}</span>
     <div class="p-2">
-      <component 
-        :is="icon" 
-        class="w-12 h-12 p-2 rounded-full"
-        :class="[
-          `bg-${color}-100 dark:bg-${color}-500/20`, 
-          `text-${color}-600 dark:text-${color}-300`
-        ]"
+      <Icon
+        :icon="icon"
+        class="h-12 w-12 rounded-full p-2"
+        :class="[colorMap[color].bg, colorMap[color].icon]"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+  import { Icon } from '@iconify/vue';
+  import { useRouter } from 'vue-router';
 
-const router = useRouter();
+  const router = useRouter();
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  icon: {
-    type: Object,
-    required: true
-  },
-  to: {
-    type: String,
-    default: ''
-  },
-  color: {
-    type: String,
-    default: 'sky'
-  }
-});
+  const props = defineProps({
+    title: {
+      type: String,
+      required: true,
+    },
+    icon: {
+      type: String,
+      required: true,
+    },
+    to: {
+      type: String,
+      default: '',
+    },
+    color: {
+      type: String,
+      default: 'sky',
+      validator: (value) =>
+        ['sky', 'blue', 'green', 'yellow', 'red', 'purple', 'pink'].includes(value),
+    },
+  });
 
-const handleClick = () => {
-  if (props.to) {
-    router.push(props.to);
-  }
-};
-</script> 
+  const colorMap = {
+    sky: {
+      bg: 'bg-sky-100 dark:bg-sky-500/20',
+      icon: 'text-sky-600 dark:text-sky-300',
+    },
+    blue: {
+      bg: 'bg-blue-100 dark:bg-blue-500/20',
+      icon: 'text-blue-600 dark:text-blue-300',
+    },
+    green: {
+      bg: 'bg-green-100 dark:bg-green-500/20',
+      icon: 'text-green-600 dark:text-green-300',
+    },
+    yellow: {
+      bg: 'bg-yellow-100 dark:bg-yellow-500/20',
+      icon: 'text-yellow-600 dark:text-yellow-300',
+    },
+    red: {
+      bg: 'bg-red-100 dark:bg-red-500/20',
+      icon: 'text-red-600 dark:text-red-300',
+    },
+    purple: {
+      bg: 'bg-purple-100 dark:bg-purple-500/20',
+      icon: 'text-purple-600 dark:text-purple-300',
+    },
+    pink: {
+      bg: 'bg-pink-100 dark:bg-pink-500/20',
+      icon: 'text-pink-600 dark:text-pink-300',
+    },
+  };
+
+  const handleClick = () => {
+    if (props.to) {
+      router.push(props.to);
+    }
+  };
+</script>

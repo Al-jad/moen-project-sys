@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
-    <div class="p-6 space-y-6 bg-gray-200 dark:bg-darkmode">
-      <div class="flex items-center justify-between mb-2">
+    <div class="space-y-6 bg-gray-200 p-6 dark:bg-darkmode">
+      <div class="mb-2 flex items-center justify-between">
         <div class="flex items-center justify-between gap-2">
           <BackToMainButton />
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">التقارير</h1>
@@ -9,45 +9,31 @@
         <div class="flex items-center gap-2">
           <CustomSelect
             v-model="selectedYear"
-            :options="[
-              { value: '2024', label: '2024' },
-              { value: '2023', label: '2023' },
-              { value: '2022', label: '2022' },
-            ]"
+            :options="yearOptions"
             placeholder="اختر السنة"
             :triggerClass="'w-[200px]'"
-          >
-            <template #icon>
-              <CalendarIcon class="w-4 h-4 text-gray-400 dark:text-gray-500" />
-            </template>
-          </CustomSelect>
+            :TriggerIcon="'lucide:calendar'"
+          />
         </div>
       </div>
 
       <!-- Project Progress Report -->
-      <Card class="p-4 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+      <Card class="border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
         <CardHeader className="space-y-1">
-          <div class="flex items-center justify-between p-2 mb-4">
+          <div class="mb-4 flex items-center justify-between p-2">
             <CardTitle class="text-gray-900 dark:text-white">تقرير تقدم العمل للمشروع</CardTitle>
             <div class="flex items-center gap-2">
               <div class="min-w-[200px]">
                 <CustomSelect
                   v-model="selectedProject"
-                  :options="[
-                    { value: 'all', label: 'الكل' },
-                    { value: '1', label: 'مشروع تجهيز محطات الخمس' },
-                    { value: '2', label: 'مشروع تجهيز مضخات المياه' },
-                  ]"
+                  :options="projectOptions"
                   placeholder="اختر المشروع"
                   :triggerClass="'w-full'"
-                >
-                  <template #icon>
-                    <Folder class="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                  </template>
-                </CustomSelect>
+                  :TriggerIcon="'lucide:folder'"
+                />
               </div>
               <Button variant="outline" class="gap-2 dark:bg-gray-700 dark:hover:bg-gray-600">
-                <FileDown class="w-4 h-4" />
+                <Icon icon="lucide:file-down" class="h-4 w-4" />
                 تصدير
               </Button>
             </div>
@@ -63,11 +49,11 @@
               </CardHeader>
               <CardContent>
                 <div class="flex items-center gap-4">
-                  <div class="w-20 h-20">
+                  <div class="h-20 w-20">
                     <RadialProgress :progress="85" variant="success" />
                   </div>
                   <div class="space-y-1">
-                    <p class="text-2xl font-bold text-success">85%</p>
+                    <p class="text-success text-2xl font-bold">85%</p>
                     <p class="text-sm text-muted-foreground dark:text-gray-400"
                       >من إجمالي المشروع</p
                     >
@@ -82,8 +68,8 @@
               </CardHeader>
               <CardContent>
                 <div class="flex items-center gap-4">
-                  <div class="p-3 rounded-lg bg-primary/10 dark:bg-primary/5">
-                    <Clock class="w-8 h-8 text-primary dark:text-primary" />
+                  <div class="rounded-lg bg-primary/10 p-3 dark:bg-primary/5">
+                    <Icon icon="lucide:clock" class="h-8 w-8 text-primary dark:text-primary" />
                   </div>
                   <div class="space-y-1">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">45 يوم</p>
@@ -103,8 +89,8 @@
               </CardHeader>
               <CardContent>
                 <div class="flex items-center gap-4">
-                  <div class="p-3 rounded-lg bg-success/10 dark:bg-success/5">
-                    <DollarSign class="w-8 h-8 text-success" />
+                  <div class="bg-success/10 dark:bg-success/5 rounded-lg p-3">
+                    <Icon icon="lucide:dollar-sign" class="text-success h-8 w-8" />
                   </div>
                   <div class="space-y-1">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">65%</p>
@@ -120,38 +106,34 @@
       </Card>
 
       <!-- Financial Report -->
-      <Card class="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+      <Card class="border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <CardTitle class="text-gray-900 dark:text-white"
-                >التقرير المالي للسنة المالية {{ selectedYear || '2024' }}</CardTitle
-              >
-              <p class="text-sm text-muted-foreground dark:text-gray-400"
-                >تقرير شامل للمصروفات والميزانيات والتخصيصات المالية</p
-              >
+              <CardTitle class="text-gray-900 dark:text-white">
+                التقرير المالي للسنة المالية {{ selectedYear || '2024' }}
+              </CardTitle>
+              <p class="text-sm text-muted-foreground dark:text-gray-400">
+                تقرير شامل للمصروفات والميزانيات والتخصيصات المالية
+              </p>
             </div>
             <div class="flex items-center gap-2">
               <div class="min-w-[200px]">
                 <CustomSelect
                   v-model="selectedReportType"
-                  :options="[
-                    { value: 'detailed', label: 'تقرير تفصيلي' },
-                    { value: 'summary', label: 'تقرير ملخص' },
-                    { value: 'quarterly', label: 'تقرير ربع سنوي' },
-                  ]"
+                  :options="reportTypeOptions"
                   placeholder="نوع التقرير"
                   :triggerClass="'w-full'"
-                >
-                  <template #icon>
-                    <FileText class="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                  </template>
-                </CustomSelect>
+                  :TriggerIcon="'line-md:document-report'"
+                />
               </div>
-              <Button variant="outline" class="gap-2 dark:bg-gray-700 dark:hover:bg-gray-600">
-                <FileDown class="w-4 h-4" />
-                تصدير التقرير
-              </Button>
+              <PrimaryButton
+                variant="outline"
+                class="gap-2 dark:bg-gray-700 dark:hover:bg-gray-600"
+                icon="lucide:file-down"
+              >
+                تصدير
+              </PrimaryButton>
             </div>
           </div>
         </CardHeader>
@@ -159,7 +141,9 @@
           <div class="grid gap-6">
             <!-- Summary Cards -->
             <div class="grid grid-cols-4 gap-4">
-              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-primary/5 dark:bg-gray-800">
+              <Card
+                className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-primary/5 dark:bg-gray-800"
+              >
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
                     <span class="text-sm text-muted-foreground dark:text-gray-400"
@@ -172,29 +156,35 @@
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-success/5 dark:bg-gray-800">
+              <Card
+                className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-success/5 dark:bg-gray-800"
+              >
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
                     <span class="text-sm text-muted-foreground dark:text-gray-400"
                       >المبالغ المصروفة</span
                     >
-                    <span class="text-2xl font-bold text-success">8,567,890</span>
-                    <span class="text-sm text-success">56% من الميزانية</span>
+                    <span class="text-success text-2xl font-bold">8,567,890</span>
+                    <span class="text-success text-sm">56% من الميزانية</span>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-warning/5 dark:bg-gray-800">
+              <Card
+                className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-warning/5 dark:bg-gray-800"
+              >
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
                     <span class="text-sm text-muted-foreground dark:text-gray-400"
                       >المبالغ المتبقية</span
                     >
-                    <span class="text-2xl font-bold text-warning">6,666,677</span>
-                    <span class="text-sm text-warning">44% من الميزانية</span>
+                    <span class="text-warning text-2xl font-bold">6,666,677</span>
+                    <span class="text-warning text-sm">44% من الميزانية</span>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-destructive/5 dark:bg-gray-800">
+              <Card
+                className="border rounded-lg border-gray-200 dark:border-gray-700 shadow-sm bg-destructive/5 dark:bg-gray-800"
+              >
                 <CardContent className="p-6">
                   <div class="flex flex-col gap-2">
                     <span class="text-sm text-muted-foreground dark:text-gray-400"
@@ -209,7 +199,9 @@
 
             <!-- Detailed Stats -->
             <div class="grid grid-cols-2 gap-4">
-              <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
+              <Card
+                className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900"
+              >
                 <CardHeader>
                   <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
                     >تفاصيل المشاريع</CardTitle
@@ -225,7 +217,7 @@
                       <Badge variant="outline" class="h-6 dark:border-gray-600">12 مشروع</Badge>
                       <Badge
                         variant="outline"
-                        class="h-6 bg-success/10 text-success dark:bg-success/20"
+                        class="bg-success/10 text-success dark:bg-success/20 h-6"
                         >4,567,890 د.ع</Badge
                       >
                     </div>
@@ -241,7 +233,7 @@
                       <Badge variant="outline" class="h-6 dark:border-gray-600">8 مشاريع</Badge>
                       <Badge
                         variant="outline"
-                        class="h-6 bg-warning/10 text-warning dark:bg-warning/20"
+                        class="bg-warning/10 text-warning dark:bg-warning/20 h-6"
                         >3,890,450 د.ع</Badge
                       >
                     </div>
@@ -263,7 +255,9 @@
                 </CardContent>
               </Card>
 
-              <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
+              <Card
+                className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900"
+              >
                 <CardHeader>
                   <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
                     >التخصيصات المالية</CardTitle
@@ -279,7 +273,7 @@
                       <Badge variant="outline" class="h-6 dark:border-gray-600"
                         >15,234,567 د.ع</Badge
                       >
-                      <div class="text-xs text-left text-muted-foreground dark:text-gray-400"
+                      <div class="text-left text-xs text-muted-foreground dark:text-gray-400"
                         >تم تخصيصها في 15/1/2024</div
                       >
                     </div>
@@ -292,10 +286,10 @@
                     <div class="space-y-1">
                       <Badge
                         variant="outline"
-                        class="h-6 bg-success/10 text-success dark:bg-success/20"
+                        class="bg-success/10 text-success dark:bg-success/20 h-6"
                         >8,567,890 د.ع</Badge
                       >
-                      <div class="text-xs text-left text-success">56% من الميزانية الكلية</div>
+                      <div class="text-success text-left text-xs">56% من الميزانية الكلية</div>
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
@@ -309,7 +303,7 @@
                         class="h-6 bg-destructive/10 text-destructive dark:bg-destructive/20"
                         >123,456 د.ع</Badge
                       >
-                      <div class="text-xs text-left text-destructive">تم إرجاعها في 1/3/2024</div>
+                      <div class="text-left text-xs text-destructive">تم إرجاعها في 1/3/2024</div>
                     </div>
                   </div>
                 </CardContent>
@@ -317,7 +311,9 @@
             </div>
 
             <!-- Progress Indicators -->
-            <Card className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900">
+            <Card
+              className="border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900"
+            >
               <CardHeader>
                 <CardTitle class="text-base text-muted-foreground dark:text-gray-400"
                   >مؤشرات الأداء المالي</CardTitle
@@ -326,25 +322,25 @@
               <CardContent>
                 <div class="grid grid-cols-3 gap-8">
                   <div class="flex items-center gap-4">
-                    <div class="w-16 h-16">
+                    <div class="h-16 w-16">
                       <RadialProgress :progress="56" variant="success" />
                     </div>
                     <div class="space-y-1">
                       <p class="font-medium text-gray-900 dark:text-white">نسبة الصرف</p>
-                      <p class="text-sm text-success">8.5 مليار من 15.2 مليار</p>
+                      <p class="text-success text-sm">8.5 مليار من 15.2 مليار</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-4">
-                    <div class="w-16 h-16">
+                    <div class="h-16 w-16">
                       <RadialProgress :progress="44" variant="warning" />
                     </div>
                     <div class="space-y-1">
                       <p class="font-medium text-gray-900 dark:text-white">المبالغ المتبقية</p>
-                      <p class="text-sm text-warning">6.6 مليار متبقي</p>
+                      <p class="text-warning text-sm">6.6 مليار متبقي</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-4">
-                    <div class="w-16 h-16">
+                    <div class="h-16 w-16">
                       <RadialProgress :progress="85" variant="primary" />
                     </div>
                     <div class="space-y-1">
@@ -362,24 +358,41 @@
   </DefaultLayout>
 </template>
 
-<script setup>
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+<script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
-  import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
-  import { Button } from '@/components/ui/button';
-  import { Badge } from '@/components/ui/badge';
-  import RadialProgress from '@/components/RadialProgress.vue';
-  import { ref } from 'vue';
-  import {
-    FileDown,
-    Calendar as CalendarIcon,
-    Clock,
-    DollarSign,
-    ArrowRight,
-    Folder,
-    FileText,
-  } from 'lucide-vue-next';
   import CustomSelect from '@/components/CustomSelect.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
+  import RadialProgress from '@/components/RadialProgress.vue';
+  import { Badge } from '@/components/ui/badge';
+  import { Button } from '@/components/ui/button';
+  import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  interface SelectOption {
+    value: string;
+    label: string;
+    icon?: string;
+  }
+
+  // Select Options Configuration
+  const yearOptions: SelectOption[] = [
+    { value: '2024', label: '2024', icon: 'lucide:calendar' },
+    { value: '2023', label: '2023', icon: 'lucide:calendar' },
+    { value: '2022', label: '2022', icon: 'lucide:calendar' },
+  ];
+
+  const projectOptions: SelectOption[] = [
+    { value: 'all', label: 'الكل', icon: 'lucide:layout-grid' },
+    { value: '1', label: 'مشروع تجهيز محطات الخمس', icon: 'lucide:folder' },
+    { value: '2', label: 'مشروع تجهيز مضخات المياه', icon: 'lucide:folder' },
+  ];
+
+  const reportTypeOptions: SelectOption[] = [
+    { value: 'detailed', label: 'تقرير تفصيلي', icon: 'lucide:file-text' },
+    { value: 'summary', label: 'تقرير ملخص', icon: 'lucide:file-bar-chart' },
+    { value: 'quarterly', label: 'تقرير ربع سنوي', icon: 'lucide:calendar-range' },
+  ];
 
   const selectedYear = ref('');
   const selectedProject = ref('');

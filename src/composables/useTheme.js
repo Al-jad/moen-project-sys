@@ -1,26 +1,39 @@
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-const useTheme = () => {
-  const theme = ref('light')
+const theme = ref(localStorage.getItem('theme') || 'light');
 
+export function useTheme() {
   const toggleTheme = () => {
-    theme.value = theme.value === 'light' ? 'dark' : 'light'
-  }
+    theme.value = theme.value === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', theme.value);
+    updateTheme();
+  };
 
-  watch(theme, (newTheme) => {
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-    localStorage.setItem('theme', newTheme)
-  })
+  const updateTheme = () => {
+    if (theme.value === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
-  onMounted(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light'
-    theme.value = savedTheme
-  })
+  // Initialize theme
+  updateTheme();
+
+  // Watch for system theme changes
+  watch(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
+    (isDark) => {
+      if (!localStorage.getItem('theme')) {
+        theme.value = isDark ? 'dark' : 'light';
+        updateTheme();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     theme,
-    toggleTheme
-  }
+    toggleTheme,
+  };
 }
-
-export default useTheme 

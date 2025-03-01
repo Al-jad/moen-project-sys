@@ -38,17 +38,20 @@
       <div class="text-sm text-gray-500">حالة المهمة</div>
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-2">
-          <Check v-if="task.status === 'مكتملة'" class="w-4 h-4 font-bold text-green-500 border border-green-500 rounded-full" />
-          <p class="text-sm" :class="task.status === 'مكتملة' ? 'text-green-500 font-bold' : 'text-none'">
+          <Icon icon="lucide:check" class="h-4 w-4 text-green-500" />
+          <p
+            class="text-sm"
+            :class="task.status === 'مكتملة' ? 'font-bold text-green-500' : 'text-none'"
+          >
             {{ task.status }}
           </p>
         </div>
-        <Button 
-          variant="ghost" 
-          class="flex items-center gap-2 p-1 px-2 text-blue-600 border border-blue-600 rounded-lg"
+        <Button
+          variant="ghost"
+          class="flex items-center gap-2 rounded-lg border border-blue-600 p-1 px-2 text-blue-600"
           @click="showStatusModal = true"
         >
-          <RefreshCw class="w-4 h-4" />
+          <Icon icon="lucide:refresh-cw" class="h-4 w-4" />
           تغيير الحالة
         </Button>
       </div>
@@ -61,7 +64,7 @@
     </div>
 
     <!-- Status Change Modal -->
-    <ChangeStatusModal 
+    <ChangeStatusModal
       v-model:open="showStatusModal"
       :current-status="task.status"
       @status-changed="handleStatusChange"
@@ -70,27 +73,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Check, RefreshCw } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
-import ChangeStatusModal from './ChangeStatusModal.vue'
+  import { Button } from '@/components/ui/button';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  import ChangeStatusModal from './ChangeStatusModal.vue';
 
-const props = defineProps({
-  task: {
-    type: Object,
-    required: true
-  }
-})
+  const props = defineProps({
+    task: {
+      type: Object,
+      required: true,
+    },
+  });
 
-const emit = defineEmits(['update:task'])
+  const emit = defineEmits(['update:task']);
 
-const showStatusModal = ref(false)
+  const showStatusModal = ref(false);
 
-const handleStatusChange = ({ status, notes }) => {
-  emit('update:task', {
-    ...props.task,
-    status,
-    description: notes || props.task.description
-  })
-}
-</script> 
+  const handleStatusChange = ({ status, notes }) => {
+    emit('update:task', {
+      ...props.task,
+      status,
+      description: notes || props.task.description,
+    });
+  };
+</script>

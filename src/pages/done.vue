@@ -12,7 +12,10 @@
           <div class="border-b p-6 text-center dark:border-gray-700">
             <div class="mb-4 flex justify-center">
               <div class="rounded-full bg-green-100 p-3 dark:bg-green-900/30">
-                <CheckCircle class="h-8 w-8 text-green-600 dark:text-green-400" />
+                <Icon
+                  icon="lucide:check-circle"
+                  class="h-8 w-8 text-green-600 dark:text-green-400"
+                />
               </div>
             </div>
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -69,7 +72,7 @@
                 <Button
                   class="w-full bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
                 >
-                  <Eye class="ml-2 h-4 w-4" />
+                  <Icon icon="lucide:eye" class="ml-2 h-4 w-4" />
                   عرض تفاصيل المشروع
                 </Button>
               </RouterLink>
@@ -79,7 +82,7 @@
             <div v-else class="w-full">
               <RouterLink to="/funded-projects">
                 <Button variant="outline" class="w-full">
-                  <ArrowRight class="ml-2 h-4 w-4" />
+                  <Icon icon="lucide:arrow-right" class="ml-2 h-4 w-4" />
                   العودة للمشاريع
                 </Button>
               </RouterLink>
@@ -94,7 +97,7 @@
 <script setup>
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { ArrowRight, CheckCircle, Eye } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
   import { RouterLink, useRoute } from 'vue-router';
 
   const route = useRoute();

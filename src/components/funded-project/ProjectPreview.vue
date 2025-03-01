@@ -42,7 +42,7 @@
       <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
         <div class="border-b p-4 dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <ClipboardList class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
           </div>
         </div>
@@ -127,13 +127,13 @@
         <div class="border-b p-4 dark:border-gray-700">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Calendar class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <Icon icon="lucide:calendar" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
               <h4 class="font-medium text-gray-900 dark:text-gray-100">المخطط الزمني للمشروع</h4>
             </div>
             <div
               class="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300"
             >
-              <Clock class="h-4 w-4" />
+              <Icon icon="lucide:calendar" class="h-4 w-4" />
               {{ store.form.periodType === 1 ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
             </div>
           </div>
@@ -276,7 +276,7 @@
       <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
         <div class="border-b p-4 dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <Layers class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:layers" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المكونات والفعاليات</h4>
           </div>
         </div>
@@ -369,7 +369,7 @@
     TooltipTrigger,
   } from '@/components/ui/tooltip';
   import { useFundedProjectStore } from '@/stores/fundedProject';
-  import { Calendar, ClipboardList, Clock, Layers } from 'lucide-vue-next';
+  import { Icon } from '@iconify/vue';
   import { computed } from 'vue';
 
   const store = useFundedProjectStore();

@@ -1,21 +1,14 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-200 dark:bg-gray-900">
+    <main class="bg-gray-200 p-6 dark:bg-gray-900">
       <!-- Header -->
-      <div class="flex items-center justify-start gap-2 mb-6">
-        <PrimaryButton
-          variant="ghost"
-          @click="$router.push('/contracts')"
-          class="flex items-center gap-2"
-        >
-          <ArrowRight class="w-4 h-4" />
-          رجوع
-        </PrimaryButton>
+      <div class="mb-6 flex items-center justify-start gap-2">
+        <BackButton />
         <h1 class="text-xl font-medium">صفحة تفاصيل العقد</h1>
       </div>
 
       <!-- Contract Details Card -->
-      <div class="bg-white rounded-lg dark:bg-gray-800 dark:border dark:border-gray-700">
+      <div class="rounded-lg bg-white dark:border dark:border-gray-700 dark:bg-gray-800">
         <!-- Basic Info -->
         <div class="border-b dark:border-gray-700">
           <div class="p-6">
@@ -43,23 +36,18 @@
 
         <!-- Execution Procedures -->
         <div class="p-6">
-          <div class="flex justify-between mb-4">
+          <div class="mb-4 flex justify-between">
             <h2 class="text-lg font-medium">الاجراءات التنفيذية (٥)</h2>
             <Tooltip>
               <TooltipTrigger asChild>
-                <PrimaryButton 
-                  variant="ghost" 
-                  size="icon" 
-                  class="w-8 h-8" 
-                  @click="openAddModal"
-                >
-                  <FilePlus class="w-4 h-4" />
+                <PrimaryButton variant="ghost" size="icon" class="h-8 w-8" @click="openAddModal">
+                  <Icon icon="lucide:plus" class="h-4 w-4" />
                 </PrimaryButton>
               </TooltipTrigger>
-              <TooltipContent 
-                side="top" 
-                align="center" 
-                class="bg-white dark:bg-gray-800 dark:border dark:border-gray-700"
+              <TooltipContent
+                side="top"
+                align="center"
+                class="bg-white dark:border dark:border-gray-700 dark:bg-gray-800"
               >
                 <p>اضافة اجراء جديد</p>
               </TooltipContent>
@@ -85,7 +73,7 @@
       :isEdit="!!selectedProcedure"
       :contractInfo="{
         name: 'عقد تجهيز محطات المراقبة 25 لسنة 2025',
-        project: contract.projectName
+        project: contract.projectName,
       }"
       @save="handleSave"
     />
@@ -93,103 +81,100 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { ArrowRight, FilePlus } from 'lucide-vue-next';
-import ExecutionProcedure from '@/components/ExecutionProcedure.vue';
-import EditProcedureModal from '@/components/EditProcedureModal.vue';
-import PrimaryButton from '@/components/PrimaryButton.vue';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  import BackButton from '@/components/BackButton.vue';
+  import EditProcedureModal from '@/components/EditProcedureModal.vue';
+  import ExecutionProcedure from '@/components/ExecutionProcedure.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
+  import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
 
-const route = useRoute();
-const contractId = route.params.id;
+  const route = useRoute();
+  const contractId = route.params.id;
 
-// Mock data - replace with actual API call
-const contract = ref({
-  projectName: 'مشروع A',
-  company: 'شركة المتحدة للبرامجيات',
-  amount: '125487',
-  referralDate: '15.01.2025',
-  signDate: '25.02.2025',
-  number: '152 / و / ي',
-});
+  // Mock data - replace with actual API call
+  const contract = ref({
+    projectName: 'مشروع A',
+    company: 'شركة المتحدة للبرامجيات',
+    amount: '125487',
+    referralDate: '15.01.2025',
+    signDate: '25.02.2025',
+    number: '152 / و / ي',
+  });
 
-const executionProcedures = ref([
-  {
-    id: 1,
-    name: 'عملية التنصيب',
-    weight: 27,
-    duration: 67,
-    startDate: '25.02.2025',
-    plannedTechnicalProgress: 68,
-    actualTechnicalProgress: 57,
-    technicalDeviation: 33,
-    plannedFinancialProgress: 68,
-    actualFinancialProgress: 98,
-  },
-  {
-    id: 2,
-    name: 'التدريب خارج العراق',
-    weight: 27,
-    duration: 67,
-    startDate: '25.02.2025',
-    plannedTechnicalProgress: 68,
-    actualTechnicalProgress: 57,
-    technicalDeviation: 33,
-    plannedFinancialProgress: 68,
-    actualFinancialProgress: 98,
-  },
-]);
+  const executionProcedures = ref([
+    {
+      id: 1,
+      name: 'عملية التنصيب',
+      weight: 27,
+      duration: 67,
+      startDate: '25.02.2025',
+      plannedTechnicalProgress: 68,
+      actualTechnicalProgress: 57,
+      technicalDeviation: 33,
+      plannedFinancialProgress: 68,
+      actualFinancialProgress: 98,
+    },
+    {
+      id: 2,
+      name: 'التدريب خارج العراق',
+      weight: 27,
+      duration: 67,
+      startDate: '25.02.2025',
+      plannedTechnicalProgress: 68,
+      actualTechnicalProgress: 57,
+      technicalDeviation: 33,
+      plannedFinancialProgress: 68,
+      actualFinancialProgress: 98,
+    },
+  ]);
 
-const getTitle = (index) => {
-  const titles = [
-    'الاجراء الاول',
-    'الاجراء الثاني',
-    'الاجراء الثالث',
-    'الاجراء الرابع',
-    'الاجراء الخامس',
-  ];
-  return titles[index - 1];
-};
+  const getTitle = (index) => {
+    const titles = [
+      'الاجراء الاول',
+      'الاجراء الثاني',
+      'الاجراء الثالث',
+      'الاجراء الرابع',
+      'الاجراء الخامس',
+    ];
+    return titles[index - 1];
+  };
 
-const isModalOpen = ref(false);
-const selectedProcedure = ref(null);
+  const isModalOpen = ref(false);
+  const selectedProcedure = ref(null);
 
-const openAddModal = () => {
-  selectedProcedure.value = null;
-  isModalOpen.value = true;
-};
+  const openAddModal = () => {
+    selectedProcedure.value = null;
+    isModalOpen.value = true;
+  };
 
-const openEditModal = (procedure) => {
-  selectedProcedure.value = procedure;
-  isModalOpen.value = true;
-};
+  const openEditModal = (procedure) => {
+    selectedProcedure.value = procedure;
+    isModalOpen.value = true;
+  };
 
-const handleSave = (formData) => {
-  if (selectedProcedure.value) {
-    // Edit existing procedure
-    const index = executionProcedures.value.findIndex(p => p.id === selectedProcedure.value.id);
-    if (index !== -1) {
-      executionProcedures.value[index] = {
-        ...executionProcedures.value[index],
-        ...formData
-      };
+  const handleSave = (formData) => {
+    if (selectedProcedure.value) {
+      // Edit existing procedure
+      const index = executionProcedures.value.findIndex((p) => p.id === selectedProcedure.value.id);
+      if (index !== -1) {
+        executionProcedures.value[index] = {
+          ...executionProcedures.value[index],
+          ...formData,
+        };
+      }
+    } else {
+      // Add new procedure
+      executionProcedures.value.push({
+        id: Date.now(),
+        ...formData,
+        plannedTechnicalProgress: 0,
+        technicalDeviation: 0,
+        plannedFinancialProgress: 0,
+        actualFinancialProgress: 0,
+      });
     }
-  } else {
-    // Add new procedure
-    executionProcedures.value.push({
-      id: Date.now(),
-      ...formData,
-      plannedTechnicalProgress: 0,
-      technicalDeviation: 0,
-      plannedFinancialProgress: 0,
-      actualFinancialProgress: 0
-    });
-  }
-};
+  };
 </script>

@@ -1,50 +1,20 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-gray-200 dark:bg-darkmode">
+    <main class="min-h-screen bg-gray-200 p-6 dark:bg-darkmode">
       <div>
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-6">
-              <BackToMainButton />
-              <h1 class="text-xl font-bold dark:text-white">الاجراءات الادارية</h1>
-            </div>
+        <div class="mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-6">
+            <BackToMainButton />
+            <h1 class="text-xl font-bold dark:text-white">الاجراءات الادارية</h1>
           </div>
+        </div>
       </div>
-      <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800">
+      <div class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
         <div class="p-6">
           <div class="w-full">
             <CustomTable
-              :columns="[
-                { key: 'employee', label: 'اسم الموظف', type: 'button' },
-                { key: 'project', label: 'المشروع', type: 'button' },
-                { key: 'modificationDate', label: 'تاريخ التعديل' },
-                { key: 'modificationTime', label: 'وقت التعديل' },
-                { key: 'field', label: 'حقل التعديل' },
-                { key: 'oldValue', label: 'القيمة السابقة' },
-                { key: 'newValue', label: 'القيمة الجديدة' },
-                { key: 'actions', label: '', type: 'action' }
-              ]"
-              :filters="[
-                {
-                  key: 'project',
-                  placeholder: 'اختر المشروع',
-                  options: [
-                    { value: 'all', label: 'الكل' },
-                    { value: '1', label: 'اسم المشروع' }
-                  ],
-                  icon: Folder,
-                  triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700'
-                },
-                {
-                  key: 'employee',
-                  placeholder: 'اختر الموظف',
-                  options: [
-                    { value: 'all', label: 'الكل' },
-                    { value: '1', label: 'محمد انور' }
-                  ],
-                  icon: UserCircle,
-                  triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700'
-                }
-              ]"
+              :columns="columns"
+              :filters="filters"
               :data="tableData"
               @cell-click="handleCellClick"
               @action-click="showDetails"
@@ -57,7 +27,7 @@
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" class="text-gray-400 hover:text-gray-600">
-                      <Eye class="w-4 h-4" />
+                      <Icon icon="lucide:eye" class="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent class="sm:max-w-[600px]">
@@ -66,7 +36,7 @@
                         <p class="text-xl font-bold">اجراء اداري</p>
                       </DialogTitle>
                     </DialogHeader>
-                    <div class="grid py-4 gap-y-4">
+                    <div class="grid gap-y-4 py-4">
                       <div class="grid grid-cols-[120px_1fr] items-center gap-4">
                         <span class="text-right text-gray-500">تاريخ اخر تعديل</span>
                         <span>{{ item.modificationDate }} @ {{ item.modificationTime }}</span>
@@ -102,38 +72,80 @@
     </main>
   </DefaultLayout>
 </template>
+
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
-  import type { DateRange } from 'radix-vue';
-  import { useRoute, useRouter } from 'vue-router';
   import BackToMainButton from '@/components/BackToMainButton.vue';
-  import {
-    UserCircle,
-    Folder,
-    Calendar as CalendarIcon,
-    Eye,
-    ArrowRight,
-    FileSpreadsheet,
-  } from 'lucide-vue-next';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+  import CustomTable from '@/components/CustomTable.vue';
+  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from '@/components/ui/dialog'
-  import CustomTable from '@/components/CustomTable.vue'
-  import PrimaryButton from '@/components/PrimaryButton.vue'
-  import { Button } from '@/components/ui/button'
+  } from '@/components/ui/dialog';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
+  import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+  import type { DateRange } from 'radix-vue';
+  import { computed, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+
+  interface Column {
+    key: string;
+    label: string;
+    type?: 'button' | 'text' | 'action';
+  }
+
+  interface Filter {
+    key: string;
+    placeholder: string;
+    options: Array<{ value: string; label: string }>;
+    icon: string;
+    triggerClass: string;
+  }
 
   const route = useRoute();
   const router = useRouter();
   const projectId = computed(() => route.params.id);
   const selectedProject = ref('all');
   const selectedEmployee = ref('all');
+
+  // Table Columns Configuration
+  const columns: Column[] = [
+    { key: 'employee', label: 'اسم الموظف', type: 'button' },
+    { key: 'project', label: 'المشروع', type: 'button' },
+    { key: 'modificationDate', label: 'تاريخ التعديل' },
+    { key: 'modificationTime', label: 'وقت التعديل' },
+    { key: 'field', label: 'حقل التعديل' },
+    { key: 'oldValue', label: 'القيمة السابقة' },
+    { key: 'newValue', label: 'القيمة الجديدة' },
+    { key: 'actions', label: '', type: 'action' },
+  ];
+
+  // Table Filters Configuration
+  const filters: Filter[] = [
+    {
+      key: 'project',
+      placeholder: 'اختر المشروع',
+      options: [
+        { value: 'all', label: 'الكل' },
+        { value: '1', label: 'اسم المشروع' },
+      ],
+      icon: 'lucide:folder',
+      triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700',
+    },
+    {
+      key: 'employee',
+      placeholder: 'اختر الموظف',
+      options: [
+        { value: 'all', label: 'الكل' },
+        { value: '1', label: 'محمد انور' },
+      ],
+      icon: 'lucide:user-circle',
+      triggerClass: 'dark:bg-gray-800 flex-row-reverse dark:text-gray-300 dark:border-gray-700',
+    },
+  ];
 
   const df = new DateFormatter('ar', { dateStyle: 'medium' });
   const date = ref<DateRange>();
@@ -145,7 +157,9 @@
       return df.format(date.value.start.toDate(getLocalTimeZone()));
     }
 
-    return `${df.format(date.value.start.toDate(getLocalTimeZone()))} - ${df.format(date.value.end.toDate(getLocalTimeZone()))}`;
+    return `${df.format(date.value.start.toDate(getLocalTimeZone()))} - ${df.format(
+      date.value.end.toDate(getLocalTimeZone())
+    )}`;
   });
 
   const tableData = ref([
@@ -157,7 +171,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 2,
@@ -167,7 +181,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 1,
@@ -177,7 +191,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 2,
@@ -187,7 +201,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 1,
@@ -197,7 +211,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 2,
@@ -207,7 +221,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 1,
@@ -217,7 +231,7 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
     {
       id: 2,
@@ -227,38 +241,35 @@
       modificationTime: '10:33 ص',
       field: 'السعر',
       oldValue: '1100$',
-      newValue: '5214582$'
+      newValue: '5214582$',
     },
-  ])
+  ]);
 
   const handleCellClick = ({ key, item }) => {
     if (key === 'employee') {
-      // Handle employee click
-      console.log('Employee clicked:', item.employee)
+      console.log('Employee clicked:', item.employee);
     } else if (key === 'project') {
-      // Handle project click
-      console.log('Project clicked:', item.project)
+      console.log('Project clicked:', item.project);
     }
-  }
+  };
 
   const showDetails = (item) => {
-    // The dialog is now handled in the template through the slot
-    console.log('Details shown for:', item)
-  }
+    console.log('Details shown for:', item);
+  };
 
   const handleFilterChange = (filters) => {
-    console.log('Filters changed:', filters)
-  }
+    console.log('Filters changed:', filters);
+  };
 
   const handleSearchChange = (query) => {
-    console.log('Search query:', query)
-  }
+    console.log('Search query:', query);
+  };
 
   const handleDateChange = (date) => {
-    console.log('Date range:', date)
-  }
+    console.log('Date range:', date);
+  };
 
   const handleExport = () => {
-    console.log('Export clicked')
-  }
+    console.log('Export clicked');
+  };
 </script>

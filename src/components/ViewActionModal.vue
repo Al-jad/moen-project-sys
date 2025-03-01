@@ -68,7 +68,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Pencil, X } from 'lucide-vue-next';
 import {
   Dialog,
   DialogContent,

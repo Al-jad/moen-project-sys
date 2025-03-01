@@ -11,7 +11,7 @@
         "
       >
         <div class="flex items-center gap-2">
-          <CalendarIcon class="h-4 w-4 text-gray-400 dark:text-gray-400" />
+          <Icon icon="lucide:calendar" class="h-4 w-4 text-gray-400 dark:text-gray-400" />
           <span>{{ displayText }}</span>
         </div>
       </PrimaryButton>
@@ -30,8 +30,8 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
   import { RangeCalendar } from '@/components/ui/range-calendar';
+  import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
-  import { CalendarIcon } from 'lucide-vue-next';
   import type { DateRange } from 'radix-vue';
   import { computed } from 'vue';
 
