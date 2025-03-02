@@ -6,7 +6,6 @@
     DropdownMenuItemIndicator,
     useForwardPropsEmits,
   } from 'radix-vue';
-  import { computed } from 'vue';
 
   const props = defineProps({
     checked: { type: [Boolean, String], required: false },

@@ -84,7 +84,7 @@
   import CustomSelect from '@/components/CustomSelect.vue';
   import DateInput from '@/components/DateInput.vue';
   import FormField from '@/components/FormField.vue';
-  import Pagination from '@/components/Pagination.vue';
+  import Pagination from '@/components/CustomPagination.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';

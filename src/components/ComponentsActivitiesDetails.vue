@@ -149,15 +149,7 @@
   </div>
 </template>
 <script setup>
-  import { Badge } from '@/components/ui/badge';
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-  } from '@/components/ui/tooltip';
   import { Icon } from '@iconify/vue';
-  import { computed } from 'vue';
 
   const props = defineProps({
     components: {

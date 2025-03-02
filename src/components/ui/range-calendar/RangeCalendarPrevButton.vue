@@ -1,25 +1,24 @@
 <script setup>
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ChevronLeft } from 'lucide-vue-next';
-import { RangeCalendarPrev, useForwardProps } from 'radix-vue';
-import { computed } from 'vue';
+  import { buttonVariants } from '@/components/ui/button';
+  import { cn } from '@/lib/utils';
+  import { ChevronLeft } from 'lucide-vue-next';
+  import { RangeCalendarPrev, useForwardProps } from 'radix-vue';
 
-const props = defineProps({
-  step: { type: String, required: false },
-  prevPage: { type: Function, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
+  const props = defineProps({
+    step: { type: String, required: false },
+    prevPage: { type: Function, required: false },
+    asChild: { type: Boolean, required: false },
+    as: { type: null, required: false },
+    class: { type: null, required: false },
+  });
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
+  const delegatedProps = computed(() => {
+    const { class: _, ...delegated } = props;
 
-  return delegated;
-});
+    return delegated;
+  });
 
-const forwardedProps = useForwardProps(delegatedProps);
+  const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>
@@ -28,7 +27,7 @@ const forwardedProps = useForwardProps(delegatedProps);
       cn(
         buttonVariants({ variant: 'outline' }),
         'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
-        props.class,
+        props.class
       )
     "
     v-bind="forwardedProps"

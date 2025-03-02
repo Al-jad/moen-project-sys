@@ -1,23 +1,22 @@
 <script setup>
-import { cn } from '@/lib/utils';
-import { SelectGroup } from 'radix-vue';
-import { computed } from 'vue';
+  import { cn } from '@/lib/utils';
+  import { SelectGroup } from 'radix-vue';
 
-const props = defineProps({
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
+  const props = defineProps({
+    asChild: { type: Boolean, required: false },
+    as: { type: null, required: false },
+    class: { type: null, required: false },
+  });
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
+  const delegatedProps = computed(() => {
+    const { class: _, ...delegated } = props;
 
-  return delegated;
-});
+    return delegated;
+  });
 </script>
 
 <template>
-  <SelectGroup :class="cn('p-1 w-full', props.class)" v-bind="delegatedProps">
+  <SelectGroup :class="cn('w-full p-1', props.class)" v-bind="delegatedProps">
     <slot />
   </SelectGroup>
 </template>

@@ -39,7 +39,6 @@
   import CustomTable from '@/components/CustomTable.vue';
   import ViewLogModal from '@/components/ViewLogModal.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { ref } from 'vue';
 
   // State
   const showDetailsDialog = ref(false);

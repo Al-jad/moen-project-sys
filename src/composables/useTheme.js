@@ -1,5 +1,3 @@
-import { ref, watch } from 'vue';
-
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 export function useTheme() {

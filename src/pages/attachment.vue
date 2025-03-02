@@ -44,11 +44,9 @@
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
   import DocumentCard from '@/components/DocumentCard.vue';
-  import Pagination from '@/components/Pagination.vue';
+  import Pagination from '@/components/CustomPagination.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-
   const router = useRouter();
   const selectedProject = ref('all');
 

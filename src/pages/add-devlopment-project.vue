@@ -497,13 +497,12 @@
   import LocationPicker from '@/components/LocationPicker.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { Button } from '@/components/ui/button';
   import { Label } from '@/components/ui/label';
   import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
   import { Textarea } from '@/components/ui/textarea';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   import { toast } from 'vue-sonner';
   const form = ref({
     projectName: '',

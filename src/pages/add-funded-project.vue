@@ -40,12 +40,10 @@
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
   import ProjectDuration from '@/components/funded-project/ProjectDuration.vue';
   import ProjectPreview from '@/components/funded-project/ProjectPreview.vue';
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted } from 'vue';
-  import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
   const store = useFundedProjectStore();
   const router = useRouter();

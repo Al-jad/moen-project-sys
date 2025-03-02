@@ -1,34 +1,34 @@
 <template>
   <div class="min-h-[500px] w-full">
-    <div class="flex items-center justify-between my-6">
+    <div class="my-6 flex items-center justify-between">
       <div class="flex items-center gap-8">
         <div class="relative h-[400px] w-full">
           <Line :data="chartData" :options="chartOptions" style="width: 100%; height: 100%" />
         </div>
-        <div class="flex flex-col items-start gap-12">       
+        <div class="flex flex-col items-start gap-12">
           <div class="flex flex-col items-start">
-          <span class="text-3xl font-bold">40.00k</span>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-green-500">+2.45%</span>
-            <span class="text-sm text-gray-500">المنجز</span>
+            <span class="text-3xl font-bold">40.00k</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-green-500">+2.45%</span>
+              <span class="text-sm text-gray-500">المنجز</span>
+            </div>
           </div>
-        </div>
 
-        <div class="flex flex-col items-start">
-          <span class="text-3xl font-bold">37.5K</span>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-green-500">+2.45%</span>
-            <span class="text-sm text-gray-500">قيد الانجاز</span>
+          <div class="flex flex-col items-start">
+            <span class="text-3xl font-bold">37.5K</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-green-500">+2.45%</span>
+              <span class="text-sm text-gray-500">قيد الانجاز</span>
+            </div>
           </div>
-        </div>
 
-        <div class="flex flex-col items-start">
-          <span class="text-3xl font-bold">100</span>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-red-500">-2.45%</span>
-            <span class="text-sm text-gray-500">متلكئ</span>
+          <div class="flex flex-col items-start">
+            <span class="text-3xl font-bold">100</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-red-500">-2.45%</span>
+              <span class="text-sm text-gray-500">متلكئ</span>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
@@ -36,7 +36,6 @@
 </template>
 
 <script setup>
-  import { ref, computed, watch } from 'vue';
   import {
     Chart as ChartJS,
     CategoryScale,

@@ -70,7 +70,6 @@
   import ProjectCard from '@/components/ProjectCard.vue';
   import Timeline from '@/components/Timeline.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { ref } from 'vue';
 
   const events = ref([
     {

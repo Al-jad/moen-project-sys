@@ -73,9 +73,8 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   import ChangeStatusModal from './ChangeStatusModal.vue';
 
   const props = defineProps({

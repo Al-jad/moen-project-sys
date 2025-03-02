@@ -64,9 +64,7 @@
 </template>
 
 <script setup>
-  import { Checkbox } from '@/components/ui/checkbox';
   import { Icon } from '@iconify/vue';
-  import { computed, ref } from 'vue';
   const props = defineProps({
     modelValue: {
       type: Array,

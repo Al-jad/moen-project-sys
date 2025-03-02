@@ -156,7 +156,7 @@
     TooltipTrigger,
   } from '@/components/ui/tooltip';
   import { Icon } from '@iconify/vue';
-  import { computed } from 'vue';
+
   const props = defineProps({
     components: {
       type: Array,

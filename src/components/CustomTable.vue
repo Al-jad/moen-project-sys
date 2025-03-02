@@ -96,7 +96,6 @@
 </template>
 
 <script setup lang="ts">
-  import { Button } from '@/components/ui/button';
   import {
     Table,
     TableBody,
@@ -108,11 +107,11 @@
   import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
-  import { computed, ref, watch } from 'vue';
+
   import CustomInput from './CustomInput.vue';
   import CustomSelect from './CustomSelect.vue';
   import DateRangeInput from './DateRangeInput.vue';
-  import Pagination from './Pagination.vue';
+  import Pagination from './CustomPagination.vue';
 
   interface Column {
     key: string;

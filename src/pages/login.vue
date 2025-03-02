@@ -78,8 +78,6 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Card, CardContent, CardHeader } from '@/components/ui/card';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
 
   const router = useRouter();
   const email = ref('');

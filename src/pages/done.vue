@@ -95,7 +95,6 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
   import { RouterLink, useRoute } from 'vue-router';

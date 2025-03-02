@@ -1,33 +1,36 @@
 <template>
-  <div 
-    class="bg-white dark:bg-gray-800/95 hover:shadow-md hover:scale-[1.01] transition-all duration-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50" 
+  <div
+    class="cursor-pointer rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:scale-[1.01] hover:bg-gray-50 hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:hover:bg-gray-800"
     @click="$router.push(`/projects/${id}`)"
   >
     <div class="grid grid-cols-3 gap-3 p-6">
-      <div class="flex col-span-2">
+      <div class="col-span-2 flex">
         <div class="grid w-full grid-cols-2 gap-y-0">
           <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">اسم المشروع</h3>
           <p class="text-lg font-medium text-gray-900 dark:text-white">{{ title }}</p>
-          
+
           <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">فترة التنفيذ</h3>
           <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ duration }} شهر</p>
-          
+
           <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">تاريخ المباشرة</h3>
           <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ startDate }}</p>
-          
+
           <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">الجهة المستفيدة</h3>
           <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ department }}</p>
         </div>
       </div>
       <div class="flex flex-col items-center justify-center p-4 after:rounded-xl">
-        <div class="relative w-36 h-36">
-          <div class="flex items-center justify-center w-full h-full">
-            <div class="absolute w-full h-full">
-              <svg class="w-full h-full transform -rotate-90">
-                <circle cx="72" cy="72" r="66" 
+        <div class="relative h-36 w-36">
+          <div class="flex h-full w-full items-center justify-center">
+            <div class="absolute h-full w-full">
+              <svg class="h-full w-full -rotate-90 transform">
+                <circle
+                  cx="72"
+                  cy="72"
+                  r="66"
                   class="stroke-gray-100 dark:stroke-gray-700"
-                  stroke-width="10" 
-                  fill="none" 
+                  stroke-width="10"
+                  fill="none"
                 />
                 <circle
                   cx="72"
@@ -38,15 +41,14 @@
                   fill="none"
                   :stroke-dasharray="circumference"
                   :stroke-dashoffset="circumference"
-                  class="transition-all duration-[2500ms] ease-out hover:[stroke-dashoffset:0] animate-progress-fill"
+                  class="duration-[2500ms] animate-progress-fill transition-all ease-out hover:[stroke-dashoffset:0]"
                 />
               </svg>
             </div>
             <div class="flex flex-col items-center justify-center space-y-2 text-center">
-              <span class="text-4xl font-bold" :class="statusTextColor">
-                {{ progress }}%
-              </span>
-              <span class="px-3 py-1 text-sm font-medium rounded-full" 
+              <span class="text-4xl font-bold" :class="statusTextColor"> {{ progress }}% </span>
+              <span
+                class="rounded-full px-3 py-1 text-sm font-medium"
                 :class="[statusTextColor, statusBgColor]"
               >
                 {{ statusText }}
@@ -60,10 +62,6 @@
 </template>
 
 <script setup>
-  import { computed } from 'vue';
-  import { Button } from '@/components/ui/button';
-  import { useRouter } from 'vue-router';
-
   const props = defineProps({
     title: String,
     department: String,
@@ -79,8 +77,8 @@
     startDate: String,
     id: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   });
 
   const router = useRouter();
@@ -132,16 +130,16 @@
 </script>
 
 <style>
-@keyframes fillProgress {
-  from {
-    stroke-dashoffset: 414.72; /* circumference value */
+  @keyframes fillProgress {
+    from {
+      stroke-dashoffset: 414.72; /* circumference value */
+    }
+    to {
+      stroke-dashoffset: v-bind(dashOffset);
+    }
   }
-  to {
-    stroke-dashoffset: v-bind(dashOffset);
-  }
-}
 
-.animate-progress-fill {
-  animation: fillProgress 1s ease-out forwards;
-}
+  .animate-progress-fill {
+    animation: fillProgress 1s ease-out forwards;
+  }
 </style>

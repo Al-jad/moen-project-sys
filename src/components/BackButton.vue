@@ -8,6 +8,5 @@
 </template>
 
 <script setup>
-  import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Icon } from '@iconify/vue';
 </script>
