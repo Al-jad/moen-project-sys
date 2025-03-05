@@ -63,7 +63,6 @@
   import Map from '@/components/Map.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { ref } from 'vue';
 
   const selected = ref('all');
 </script>

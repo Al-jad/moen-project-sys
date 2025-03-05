@@ -297,7 +297,6 @@
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';

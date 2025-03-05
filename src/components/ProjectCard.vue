@@ -1,14 +1,19 @@
 <template>
-  <div 
+  <div
     :class="[
-      'rounded-xl bg-white dark:bg-gray-800/95 p-6 shadow-sm dark:shadow-gray-900/50 hover:shadow-md hover:scale-[1.01] transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700/50', 
-      containerClass
-    ]" 
+      'cursor-pointer rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50',
+      containerClass,
+    ]"
     @click="viewProject"
   >
     <div :class="['flex flex-col gap-4', contentClass]">
       <div class="flex flex-col gap-2">
-        <h3 :class="['line-clamp-2 text-right text-lg font-medium text-gray-900 dark:text-white', titleClass]">
+        <h3
+          :class="[
+            'line-clamp-2 text-right text-lg font-medium text-gray-900 dark:text-white',
+            titleClass,
+          ]"
+        >
           {{ title }}
         </h3>
       </div>
@@ -18,7 +23,7 @@
           <p class="text-sm text-gray-900 dark:text-white">{{ department }}</p>
         </div>
 
-        <div class="flex flex-col items-start gap-2 mb-2">
+        <div class="mb-2 flex flex-col items-start gap-2">
           <p class="text-sm text-gray-500 dark:text-gray-400">حالة المشروع</p>
           <Badge :variant="statusVariant" class="px-3 py-1">{{ status }}</Badge>
         </div>
@@ -43,9 +48,6 @@
 
 <script setup>
   import { Badge } from '@/components/ui/badge';
-  import { Button } from '@/components/ui/button';
-  import { useRouter } from 'vue-router';
-
   const router = useRouter();
   const props = defineProps({
     id: {

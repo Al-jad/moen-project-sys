@@ -96,8 +96,6 @@
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import UsersList from '@/components/UsersList.vue';
   import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
   const mockProjects = [

@@ -179,8 +179,6 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { defineAsyncComponent } from 'vue';
-  import { useRouter } from 'vue-router';
-
   const router = useRouter();
   const Map = defineAsyncComponent(() => import('@/components/Map.vue'));
 </script>

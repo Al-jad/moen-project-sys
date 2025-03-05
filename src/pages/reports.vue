@@ -369,11 +369,10 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import RadialProgress from '@/components/RadialProgress.vue';
   import { Badge } from '@/components/ui/badge';
-  import { Button } from '@/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   interface SelectOption {
     value: string;
     label: string;

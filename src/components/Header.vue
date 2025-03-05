@@ -50,11 +50,8 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import { useTheme } from '@/composables/useTheme';
   import { Icon } from '@iconify/vue';
-  import { useRouter } from 'vue-router';
-
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 </script>

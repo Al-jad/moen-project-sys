@@ -200,7 +200,6 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Slider } from '@/components/ui/slider';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
 
   const budgetRange = ref([100000, 9000000]);
 

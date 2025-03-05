@@ -80,7 +80,6 @@
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
-  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,

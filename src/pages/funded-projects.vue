@@ -255,7 +255,6 @@
 <script setup>
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';

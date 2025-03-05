@@ -49,7 +49,6 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
 
   // Table configuration
   const columns = [

@@ -4,6 +4,9 @@ import { fileURLToPath, URL } from 'node:url';
 import tailwind from 'tailwindcss';
 import { defineConfig } from 'vite';
 
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+
 // https://vite.dev/config/
 export default defineConfig({
   css: {
@@ -11,7 +14,15 @@ export default defineConfig({
       plugins: [tailwind(), autoprefixer()],
     },
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    AutoImport({
+      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
+      imports: ['vue', 'vue-router'],
+      dirs: ['./composables/**'],
+    }),
+    Components({}),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

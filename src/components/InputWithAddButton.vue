@@ -38,10 +38,9 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import { Input } from '@/components/ui/input';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   const props = defineProps({
     modelValue: {
       type: Array,

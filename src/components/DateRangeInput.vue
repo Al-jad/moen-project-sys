@@ -33,7 +33,6 @@
   import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
-  import { computed } from 'vue';
 
   const props = defineProps<{
     modelValue?: DateRange;

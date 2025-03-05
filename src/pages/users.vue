@@ -71,7 +71,6 @@
   import CustomTable from '@/components/CustomTable.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
-  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,
@@ -80,8 +79,6 @@
     DialogTitle,
   } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
 
   const router = useRouter();
 

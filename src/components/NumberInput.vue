@@ -20,7 +20,6 @@
 
 <script setup>
   import { Input } from '@/components/ui/input';
-  import { computed } from 'vue';
 
   const props = defineProps({
     modelValue: {

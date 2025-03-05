@@ -66,7 +66,6 @@
     DialogTitle,
   } from '@/components/ui/dialog';
   import { Label } from '@/components/ui/label';
-  import { ref, watch } from 'vue';
 
   const props = defineProps({
     isOpen: {

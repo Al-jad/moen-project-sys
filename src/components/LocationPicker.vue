@@ -49,7 +49,6 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,
@@ -62,7 +61,7 @@
   import { Icon } from '@iconify/vue';
   import { LMap, LMarker, LTileLayer } from '@vue-leaflet/vue-leaflet';
   import 'leaflet/dist/leaflet.css';
-  import { ref } from 'vue';
+
   import { toast } from 'vue-sonner';
 
   const props = defineProps({
