@@ -3,8 +3,6 @@ import autoprefixer from 'autoprefixer';
 import { fileURLToPath, URL } from 'node:url';
 import tailwind from 'tailwindcss';
 import { defineConfig } from 'vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
 
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
