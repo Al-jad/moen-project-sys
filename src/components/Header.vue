@@ -53,6 +53,9 @@
 <script setup>
   import { useTheme } from '@/composables/useTheme';
   import { Icon } from '@iconify/vue';
+  import { useRouter } from 'vue-router';
+  import { useAuthStore } from '@/stores/authStore';
+
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const authStore = useAuthStore();
