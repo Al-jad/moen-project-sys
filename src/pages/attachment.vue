@@ -1,5 +1,6 @@
 <template>
   <DefaultLayout>
+    <Toaster position="bottom-left" />
     <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
       <div class="rounded-lg bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="mb-6">
@@ -81,14 +82,28 @@
               </div>
             </template>
             <template #action="{ item }">
-              <a
-                :href="item.url"
-                target="_blank"
-                class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                <Icon icon="lucide:external-link" class="h-4 w-4" />
-                عرض الملف
-              </a>
+              <div class="flex items-center justify-center gap-4">
+                <a
+                  :href="item.url"
+                  target="_blank"
+                  class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  <Icon icon="lucide:external-link" class="h-4 w-4" />
+                </a>
+                <button
+                  @click="handleEdit(item)"
+                  class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                >
+                  <Icon icon="lucide:edit" class="h-4 w-4" />
+                </button>
+                <button
+                  @click="handleDelete(item)"
+                  :disabled="isDeleting"
+                  class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <Icon icon="lucide:trash" class="h-4 w-4" />
+                </button>
+              </div>
             </template>
           </CustomTable>
 
@@ -110,14 +125,45 @@
           </div>
         </div>
       </div>
+
+      <!-- Edit Modal -->
+      <AttachmentEditModal
+        v-model:open="isEditModalOpen"
+        :loading="isLoading"
+        :attachment="selectedAttachment"
+        @confirm="handleSaveEdit"
+        @cancel="selectedAttachment = null"
+      />
+
+      <DeleteModal
+        v-model:open="isDeleteModalOpen"
+        :loading="isDeleting"
+        title="حذف المرفق"
+        description="تأكيد حذف المرفق"
+        :message="
+          selectedAttachment?.title
+            ? 'هل أنت متأكد من حذف المرفق ' + selectedAttachment.title + '؟'
+            : ''
+        "
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+      />
     </main>
   </DefaultLayout>
 </template>
 
 <script setup>
+  import AttachmentEditModal from '@/components/AttachmentEditModal.vue';
+  import BackToMainButton from '@/components/BackToMainButton.vue';
+  import CustomSelect from '@/components/CustomSelect.vue';
+  import CustomTable from '@/components/CustomTable.vue';
+  import DeleteModal from '@/components/DeleteModal.vue';
+  import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
+  import { computed, ref } from 'vue';
+  import { toast } from 'vue-sonner';
 
   const selectedProject = ref('all');
   const attachments = ref([]);
@@ -125,6 +171,11 @@
   const projects = ref([]);
   const itemsPerPage = 8;
   const currentPage = ref(1);
+  const isEditModalOpen = ref(false);
+  const selectedAttachment = ref(null);
+  const isDeleting = ref(false);
+  const isDeleteModalOpen = ref(false);
+
   const fetchProjects = async () => {
     try {
       const response = await axiosInstance.get('/Project');
@@ -152,10 +203,10 @@
   const projectOptions = computed(() => {
     const options = [{ value: 'all', label: 'الكل' }];
     return options.concat(
-      projects.value.map((project) => ({
+      projects.value?.map((project) => ({
         value: project.id.toString(),
         label: project.name,
-      }))
+      })) || []
     );
   });
   const filteredAttachments = computed(() => {
@@ -317,5 +368,83 @@
     };
 
     return `${baseClasses} ${colorClasses[fileType.color] || colorClasses.gray}`;
+  };
+
+  const handleEdit = (attachment) => {
+    selectedAttachment.value = {
+      ...attachment,
+      projectName: getProjectName(attachment.projectId),
+    };
+    isEditModalOpen.value = true;
+  };
+
+  const handleDelete = (attachment) => {
+    selectedAttachment.value = attachment;
+    isDeleteModalOpen.value = true;
+  };
+
+  const confirmDelete = async () => {
+    try {
+      isDeleting.value = true;
+      await axiosInstance.delete(`/Attachment/${selectedAttachment.value.id}`);
+      toast('تم حذف المرفق', {
+        description: `تم حذف المرفق "${selectedAttachment.value.title}" بنجاح`,
+        type: 'success',
+      });
+      await fetchAttachments(selectedProject.value);
+      isDeleteModalOpen.value = false;
+    } catch (error) {
+      console.error('Error deleting attachment:', error);
+      toast('خطأ في حذف المرفق', {
+        description: 'حدث خطأ أثناء محاولة حذف المرفق',
+        type: 'error',
+      });
+    } finally {
+      isDeleting.value = false;
+      selectedAttachment.value = null;
+    }
+  };
+
+  const cancelDelete = () => {
+    isDeleteModalOpen.value = false;
+    selectedAttachment.value = null;
+  };
+
+  const handleSaveEdit = async (formData) => {
+    try {
+      isLoading.value = true;
+      const data = new FormData();
+      data.append('id', selectedAttachment.value.id);
+      data.append('title', formData.title);
+      data.append('description', formData.description);
+      data.append('projectId', selectedAttachment.value.projectId);
+
+      if (formData.file) {
+        data.append('file', formData.file);
+      } else {
+        data.append('url', selectedAttachment.value.url);
+      }
+
+      await axiosInstance.post('/Attachment', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      isEditModalOpen.value = false;
+      await fetchAttachments(selectedProject.value);
+      toast('تم تعديل المرفق', {
+        description: `تم تعديل المرفق "${formData.title}" بنجاح`,
+        type: 'success',
+      });
+    } catch (error) {
+      console.error('Error updating attachment:', error);
+      toast('خطأ في تعديل المرفق', {
+        description: 'حدث خطأ أثناء محاولة تعديل المرفق',
+        type: 'error',
+      });
+    } finally {
+      isLoading.value = false;
+    }
   };
 </script>
