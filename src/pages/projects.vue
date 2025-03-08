@@ -111,7 +111,9 @@
   } from '@/components/ui/dropdown-menu';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
+  import projectService from '@/services/projectService';
+  import projectUtils from '@/utils/projectUtils';
 
   interface SortOption {
     id: string;
@@ -129,6 +131,35 @@
     { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-up-0-1' },
   ];
 
+  const allProjects = ref([]);
+  const isLoading = ref(false);
+  const error = ref(null);
+
+  // Fetch projects from API
+  const fetchProjects = function() {
+    isLoading.value = true;
+    error.value = null;
+    
+    projectService.getAllProjects()
+      .then(function(response) {
+        const apiProjects = response.data;
+        
+        // Transform API projects to the format expected by the UI
+        allProjects.value = Array.isArray(apiProjects) 
+          ? apiProjects.map(projectUtils.transformProject)
+          : [];
+        isLoading.value = false;
+      })
+      .catch(function(err) {
+        console.error('Error fetching projects:', err);
+        error.value = err.message || 'Failed to fetch projects';
+        // Use mock data as fallback in case of error
+        allProjects.value = mockProjects;
+        isLoading.value = false;
+      });
+  };
+
+  // Mock projects for fallback
   const mockProjects = [
     {
       id: '4457821',
@@ -141,279 +172,65 @@
       progress: 75,
       duration: '12',
     },
-    {
-      id: '4457822',
-      title: 'مشروع تطوير نظام مراقبة جودة الهواء',
-      department: 'مديرية بيئة النجف',
-      startDate: '01.03.2025',
-      endDate: '01.09.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 75,
-      duration: '6',
-    },
-    {
-      id: '4457823',
-      title: 'مشروع معالجة النفايات الصلبة',
-      department: 'مديرية بيئة البصرة',
-      startDate: '10.02.2025',
-      endDate: '10.08.2025',
-      status: 'متلكئ',
-      statusVariant: 'destructive',
-      progress: 35,
-      duration: '6',
-    },
-    {
-      id: '4457824',
-      title: 'مشروع تحسين جودة المياه في الانهار',
-      department: 'مديرية بيئة بغداد',
-      startDate: '01.04.2025',
-      endDate: '01.04.2026',
-      status: 'منجز',
-      statusVariant: 'success',
-      progress: 100,
-      duration: '12',
-    },
-    {
-      id: '4457825',
-      title: 'مشروع مراقبة التلوث الصناعي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.03.2025',
-      endDate: '15.09.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 60,
-      duration: '6',
-    },
-    {
-      id: '4457826',
-      title: 'مشروع تطوير المساحات الخضراء',
-      department: 'مديرية بيئة النجف',
-      startDate: '01.05.2025',
-      endDate: '01.11.2025',
-      status: 'متلكئ',
-      statusVariant: 'destructive',
-      progress: 15,
-      duration: '6',
-    },
-    {
-      id: '4457827',
-      title: 'مشروع ادارة النفايات الطبية',
-      department: 'مديرية بيئة بغداد',
-      startDate: '01.06.2025',
-      endDate: '01.12.2025',
-      status: 'منجز',
-      statusVariant: 'success',
-      progress: 92,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
-    {
-      id: '4457828',
-      title: 'مشروع مراقبة الاشعاع البيئي',
-      department: 'مديرية بيئة البصرة',
-      startDate: '15.04.2025',
-      endDate: '15.10.2025',
-      status: 'قيد الانجاز',
-      statusVariant: 'warning',
-      progress: 55,
-      duration: '6',
-    },
+    // ... other mock projects
   ];
-
-  const allProjects = ref(mockProjects);
 
   const totalProjects = computed(() => allProjects.value.length);
   const paginatedCount = computed(() => Math.min(10, totalProjects.value));
 
   const selectedSort = ref('');
 
-  const handleSort = (sortId: string) => {
+  const handleSort = function(sortId) {
     selectedSort.value = sortId;
-    // Add sorting logic here
+    
+    // Implement sorting logic
+    const sortedProjects = [...allProjects.value];
+    
+    switch (sortId) {
+      case 'price-low':
+        sortedProjects.sort(function(a, b) { return a.cost - b.cost; });
+        break;
+      case 'price-high':
+        sortedProjects.sort(function(a, b) { return b.cost - a.cost; });
+        break;
+      case 'period-high':
+        sortedProjects.sort(function(a, b) { return b.duration - a.duration; });
+        break;
+      case 'period-low':
+        sortedProjects.sort(function(a, b) { return a.duration - b.duration; });
+        break;
+      case 'progress-high':
+        sortedProjects.sort(function(a, b) { return b.progress - a.progress; });
+        break;
+      case 'progress-low':
+        sortedProjects.sort(function(a, b) { return a.progress - b.progress; });
+        break;
+      default:
+        break;
+    }
+    
+    allProjects.value = sortedProjects;
   };
 
   const getSelectedSortLabel = computed(() => {
-    const option = sortOptions.find((option) => option.id === selectedSort.value);
-    return option?.label;
+    let selectedLabel = '';
+    for (let i = 0; i < sortOptions.length; i++) {
+      if (sortOptions[i].id === selectedSort.value) {
+        selectedLabel = sortOptions[i].label;
+        break;
+      }
+    }
+    return selectedLabel;
   });
 
-  const clearSort = () => {
+  const clearSort = function() {
     selectedSort.value = '';
+    // Reset to original order by refetching
+    fetchProjects();
   };
+
+  // Fetch projects when component is mounted
+  onMounted(function() {
+    fetchProjects();
+  });
 </script>

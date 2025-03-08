@@ -47,4 +47,12 @@
     const end = start + itemsPerPage;
     return props.projects.slice(start, end);
   });
+
+  function getProjectData(project) {
+    return projectUtils.transformProject(project);
+  }
+
+  onMounted(() => {
+    props.projects.forEach(getProjectData);
+  });
 </script>
