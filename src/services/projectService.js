@@ -23,10 +23,11 @@ export const projectService = {
 
   /**
    * Create a new project
-   * @param {Object} projectData - Project data
+   * @param {Object} projectData - Project data with projectForCreation wrapper
    * @returns {Promise} Promise with the created project data
    */
   createProject(projectData) {
+    console.log('Sending project data to API:', projectData);
     return axiosInstance.post('/api/project', projectData);
   },
 
