@@ -58,29 +58,99 @@ export const calculateProgress = (project) => {
  * @returns {Object} Transformed project for UI
  */
 export const transformProject = (project) => {
-  const statusInfo = statusMap[project.projectStatus] || { status: 'غير معروف', variant: 'default' };
-  
-  return {
-    id: project.id,
-    title: project.name,
-    department: project.executingDepartment,
-    startDate: formatDate(project.actualStartDate),
-    endDate: calculateEndDate(project.actualStartDate, project.duration),
-    status: statusInfo.status,
-    statusVariant: statusInfo.variant,
-    progress: calculateProgress(project),
-    duration: project.duration.toString(),
-    cost: project.cost,
-    attachments: Array.isArray(project.attachments) 
-      ? project.attachments.map(attachment => ({
-          id: attachment.id,
-          title: attachment.title || 'Untitled',
-          description: attachment.description || '',
-          url: attachment.url || '',
-          date: formatDate(attachment.createdAt) || formatDate(new Date()),
-        }))
-      : [],
+  if (!project) {
+    console.warn('Attempted to transform undefined project');
+    return null;
+  }
+
+  try {
+    // Create a base transformed project with default values
+    const transformedProject = {
+      id: project.id?.toString() || '',
+      title: project.name || '',
+      department: project.executingDepartment || '',
+      status: getProjectStatus(project.status) || 'قيد التنفيذ',
+      statusVariant: getStatusVariant(project.status) || 'warning',
+      progress: project.progress || 0,
+      duration: project.duration?.toString() || '0',
+      cost: project.cost || 0,
+      // Default values for dates
+      startDate: '',
+      endDate: '',
+      // Add other fields with safe defaults
+      implementingEntity: project.implementingEntity || '',
+      beneficiaryEntities: project.beneficiaryEntities || '',
+      grantingEntity: project.grantingEntity || '',
+      fundingType: project.fundingType || 1,
+      projectObjectives: project.projectObjectives || '',
+      latitude: project.latitude || null,
+      longitude: project.longitude || null,
+    };
+
+    // Safely format dates if they exist
+    if (project.actualStartDate) {
+      transformedProject.startDate = formatDate(new Date(project.actualStartDate));
+    }
+
+    if (project.actualEndDate) {
+      transformedProject.endDate = formatDate(new Date(project.actualEndDate));
+    } else if (project.actualStartDate && project.duration) {
+      // Calculate end date if not provided
+      const startDate = new Date(project.actualStartDate);
+      const endDate = calculateEndDate(startDate, project.duration, project.durationType || 'weeks');
+      transformedProject.endDate = formatDate(endDate);
+    }
+
+    return transformedProject;
+  } catch (error) {
+    console.error('Error transforming project:', error, project);
+    // Return a minimal valid object to prevent UI errors
+    return {
+      id: project?.id?.toString() || 'error',
+      title: project?.name || 'Error loading project',
+      department: '',
+      status: 'خطأ',
+      statusVariant: 'danger',
+      progress: 0,
+      duration: '0',
+      startDate: '',
+      endDate: '',
+    };
+  }
+};
+
+/**
+ * Maps project status to UI-friendly status text
+ * @param {number|string} status - Project status code
+ * @returns {string} UI-friendly status text
+ */
+const getProjectStatus = (status) => {
+  const statusMap = {
+    0: 'قيد الدراسة',
+    1: 'قيد التنفيذ',
+    2: 'متوقف',
+    3: 'منجز',
+    4: 'ملغي'
   };
+  
+  return statusMap[status] || 'قيد التنفيذ';
+};
+
+/**
+ * Maps project status to UI variant for styling
+ * @param {number|string} status - Project status code
+ * @returns {string} UI variant (primary, success, warning, danger, etc.)
+ */
+const getStatusVariant = (status) => {
+  const variantMap = {
+    0: 'info',
+    1: 'warning',
+    2: 'secondary',
+    3: 'success',
+    4: 'danger'
+  };
+  
+  return variantMap[status] || 'warning';
 };
 
 export default {
@@ -88,5 +158,7 @@ export default {
   formatDate,
   calculateEndDate,
   calculateProgress,
-  transformProject
+  transformProject,
+  getProjectStatus,
+  getStatusVariant
 }; 
