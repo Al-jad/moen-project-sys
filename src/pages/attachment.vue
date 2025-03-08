@@ -12,20 +12,20 @@
                 >
               </div>
             </div>
-            <div class="w-1/4">
+            <div class="flex w-full max-w-xs items-center">
               <CustomSelect
                 v-model="selectedProject"
                 :options="projectOptions"
                 placeholder="اختر المشروع"
                 icon="lucide:folder"
-                trigger-class="flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
+                trigger-class="w-full flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
                 @update:model-value="handleProjectChange"
               />
             </div>
           </div>
           <div
             v-if="selectedProject !== 'all' && !isLoading"
-            class="mt-4 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            class="mt-4 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800/50"
           >
             <div
               class="flex items-center gap-4 border-b border-gray-100 bg-gray-50/50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50"
@@ -53,32 +53,45 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="isLoading"
-          class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-        >
+
+        <div v-if="isLoading" class="flex items-center justify-center py-12">
           <div
-            v-for="n in 8"
-            :key="n"
-            class="h-[200px] animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800/50"
-          />
+            class="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+          ></div>
         </div>
+
         <div v-else>
-          <div
+          <CustomTable
             v-if="filteredAttachments.length > 0"
-            class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            :columns="tableColumns"
+            :data="transformedAttachments"
+            :items-per-page="itemsPerPage"
+            :show-export="false"
+            :show-date-filter="true"
+            :filters="[]"
           >
-            <DocumentCard
-              v-for="attachment in paginatedAttachments"
-              :key="attachment.id"
-              :title="attachment.title"
-              :description="attachment.description"
-              :date="formatDate(attachment.createdAt)"
-              :url="attachment.url"
-              :project-name="selectedProject === 'all' ? getProjectName(attachment.projectId) : ''"
-              class="dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-gray-600"
-            />
-          </div>
+            <template #fileType="{ item }">
+              <div class="flex items-center gap-2">
+                <div :class="getFileTypeContainerClass(item.fileType)">
+                  <Icon :icon="item.fileType.icon" :class="getFileTypeIconClass(item.fileType)" />
+                </div>
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                  item.fileType.type
+                }}</span>
+              </div>
+            </template>
+            <template #action="{ item }">
+              <a
+                :href="item.url"
+                target="_blank"
+                class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                <Icon icon="lucide:external-link" class="h-4 w-4" />
+                عرض الملف
+              </a>
+            </template>
+          </CustomTable>
+
           <div
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
@@ -95,32 +108,17 @@
               }}
             </p>
           </div>
-          <div
-            v-if="filteredAttachments.length > itemsPerPage"
-            class="mt-6 flex items-center justify-center"
-          >
-            <Pagination
-              v-model="currentPage"
-              :total="filteredAttachments.length"
-              :per-page="itemsPerPage"
-            />
-          </div>
         </div>
       </div>
     </main>
   </DefaultLayout>
 </template>
+
 <script setup>
-  import BackToMainButton from '@/components/BackToMainButton.vue';
-  import Pagination from '@/components/CustomPagination.vue';
-  import CustomSelect from '@/components/CustomSelect.vue';
-  import DocumentCard from '@/components/DocumentCard.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { computed, onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  const router = useRouter();
+
   const selectedProject = ref('all');
   const attachments = ref([]);
   const isLoading = ref(true);
@@ -187,4 +185,137 @@
   onMounted(async () => {
     await Promise.all([fetchProjects(), fetchAttachments()]);
   });
+
+  const getFileTypeInfo = (filename) => {
+    if (!filename) return { type: 'unknown', color: 'gray', icon: 'lucide:file' };
+
+    const extension = filename.split('.').pop()?.toLowerCase();
+
+    const typeMap = {
+      // Images
+      jpg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      jpeg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      png: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      gif: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      svg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+
+      // Documents
+      pdf: { type: 'PDF', color: 'red', icon: 'lucide:file-text' },
+      doc: { type: 'مستند', color: 'blue', icon: 'lucide:file-text' },
+      docx: { type: 'مستند', color: 'blue', icon: 'lucide:file-text' },
+      txt: { type: 'نص', color: 'gray', icon: 'lucide:file-text' },
+
+      // Spreadsheets
+      xls: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+      xlsx: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+      csv: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+
+      // Archives
+      zip: { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+      rar: { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+      '7z': { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+
+      // Code
+      js: { type: 'كود', color: 'amber', icon: 'lucide:code' },
+      ts: { type: 'كود', color: 'amber', icon: 'lucide:code' },
+      html: { type: 'كود', color: 'amber', icon: 'lucide:code' },
+      css: { type: 'كود', color: 'amber', icon: 'lucide:code' },
+
+      // Video
+      mp4: { type: 'فيديو', color: 'purple', icon: 'lucide:video' },
+      mov: { type: 'فيديو', color: 'purple', icon: 'lucide:video' },
+      avi: { type: 'فيديو', color: 'purple', icon: 'lucide:video' },
+
+      // Audio
+      mp3: { type: 'صوت', color: 'pink', icon: 'lucide:music' },
+      wav: { type: 'صوت', color: 'pink', icon: 'lucide:music' },
+      ogg: { type: 'صوت', color: 'pink', icon: 'lucide:music' },
+    };
+
+    return typeMap[extension] || { type: 'ملف', color: 'gray', icon: 'lucide:file' };
+  };
+
+  // Update table columns configuration
+  const tableColumns = [
+    {
+      key: 'fileType',
+      label: 'النوع',
+      type: 'custom',
+      width: '7rem',
+    },
+    {
+      key: 'title',
+      label: 'عنوان المرفق',
+      type: 'text',
+    },
+    {
+      key: 'description',
+      label: 'الوصف',
+      type: 'text',
+    },
+    {
+      key: 'projectName',
+      label: 'المشروع',
+      type: 'text',
+    },
+    {
+      key: 'createdAt',
+      label: 'تاريخ الإضافة',
+      type: 'text',
+    },
+    {
+      key: 'action',
+      label: 'الإجراءات',
+      type: 'action',
+      icon: 'lucide:external-link',
+    },
+  ];
+
+  // Update transformed attachments to include file type info
+  const transformedAttachments = computed(() => {
+    return filteredAttachments.value.map((attachment) => {
+      const fileInfo = getFileTypeInfo(attachment.url);
+      return {
+        ...attachment,
+        projectName: getProjectName(attachment.projectId),
+        createdAt: formatDate(attachment.createdAt),
+        fileType: fileInfo,
+      };
+    });
+  });
+
+  // Add these computed helpers for file type styling
+  const getFileTypeContainerClass = (fileType) => {
+    const baseClasses = 'flex h-8 w-8 items-center justify-center rounded-lg';
+    const colorClasses = {
+      emerald: 'bg-emerald-50 dark:bg-emerald-500/10',
+      red: 'bg-red-50 dark:bg-red-500/10',
+      blue: 'bg-blue-50 dark:bg-blue-500/10',
+      gray: 'bg-gray-50 dark:bg-gray-500/10',
+      green: 'bg-green-50 dark:bg-green-500/10',
+      yellow: 'bg-yellow-50 dark:bg-yellow-500/10',
+      amber: 'bg-amber-50 dark:bg-amber-500/10',
+      purple: 'bg-purple-50 dark:bg-purple-500/10',
+      pink: 'bg-pink-50 dark:bg-pink-500/10',
+    };
+
+    return `${baseClasses} ${colorClasses[fileType.color] || colorClasses.gray}`;
+  };
+
+  const getFileTypeIconClass = (fileType) => {
+    const baseClasses = 'h-4 w-4';
+    const colorClasses = {
+      emerald: 'text-emerald-500 dark:text-emerald-400',
+      red: 'text-red-500 dark:text-red-400',
+      blue: 'text-blue-500 dark:text-blue-400',
+      gray: 'text-gray-500 dark:text-gray-400',
+      green: 'text-green-500 dark:text-green-400',
+      yellow: 'text-yellow-500 dark:text-yellow-400',
+      amber: 'text-amber-500 dark:text-amber-400',
+      purple: 'text-purple-500 dark:text-purple-400',
+      pink: 'text-pink-500 dark:text-pink-400',
+    };
+
+    return `${baseClasses} ${colorClasses[fileType.color] || colorClasses.gray}`;
+  };
 </script>

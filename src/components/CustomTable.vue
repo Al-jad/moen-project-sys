@@ -1,9 +1,13 @@
 <template>
   <div>
     <!-- Filters Section -->
-    <div class="mb-8 flex items-center justify-between gap-4">
+    <div
+      v-if="showExport || showDateFilter || showSearch || filters.length > 0"
+      class="mb-8 flex items-center justify-between gap-4"
+    >
       <div class="flex items-center gap-6">
         <Button
+          v-if="showExport"
           variant="outline"
           class="px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
           @click="$emit('export')"
@@ -11,7 +15,7 @@
           <Icon icon="lucide:file-spreadsheet" class="ml-2 h-4 w-4" />
           تصدير Excel
         </Button>
-        <DateRangeInput v-model="dateRange" />
+        <DateRangeInput v-if="showDateFilter" v-model="dateRange" />
 
         <div v-for="filter in filters" :key="filter.key" class="min-w-[200px]">
           <CustomSelect
@@ -24,8 +28,8 @@
         </div>
       </div>
 
-      <div class="relative min-w-[240px]">
-        <CustomInput v-model="searchQuery" placeholder="بحث سريع" :TriggerIcon="'lucide:search'" />
+      <div v-if="showSearch" class="relative min-w-[240px]">
+        <CustomInput v-model="searchQuery" placeholder="بحث سريع" :icon="'lucide:search'" />
       </div>
     </div>
 
@@ -109,9 +113,9 @@
   import type { DateRange } from 'radix-vue';
 
   import CustomInput from './CustomInput.vue';
+  import Pagination from './CustomPagination.vue';
   import CustomSelect from './CustomSelect.vue';
   import DateRangeInput from './DateRangeInput.vue';
-  import Pagination from './CustomPagination.vue';
 
   interface Column {
     key: string;
@@ -140,11 +144,17 @@
     data: any[];
     itemsPerPage?: number;
     filters?: Filter[];
+    showExport?: boolean;
+    showDateFilter?: boolean;
+    showSearch?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
     itemsPerPage: 7,
     filters: () => [],
+    showExport: true,
+    showDateFilter: true,
+    showSearch: true,
   });
 
   const emit = defineEmits([
