@@ -117,11 +117,6 @@
 </template>
 
 <script setup>
-  import AttachmentEditModal from '@/components/AttachmentEditModal.vue';
-  import BackToMainButton from '@/components/BackToMainButton.vue';
-  import CustomTable from '@/components/CustomTable.vue';
-  import DeleteModal from '@/components/DeleteModal.vue';
-  import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import projectService from '@/services/projectService';
   import projectUtils from '@/utils/projectUtils';
