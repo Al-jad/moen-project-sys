@@ -76,16 +76,15 @@
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
           >
-            <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-              <Icon icon="lucide:file" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
-            </div>
-            <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
+            <Icon
+              icon="lucide:file"
+              class="mb-2 h-12 w-12 text-gray-300 dark:text-gray-600"
+            />
+            <h3 class="mb-1 text-lg font-medium text-gray-900 dark:text-white">
               لا توجد مرفقات
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{
-                selectedProject === 'all' ? 'لا توجد مرفقات متاحة' : 'لا توجد مرفقات لهذا المشروع'
-              }}
+            <p class="max-w-sm text-sm text-gray-500 dark:text-gray-400">
+              لم يتم العثور على أي مرفقات للمشروع المحدد.
             </p>
           </div>
         </div>
@@ -124,6 +123,8 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import projectService from '@/services/projectService';
+  import projectUtils from '@/utils/projectUtils';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
