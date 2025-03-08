@@ -27,7 +27,7 @@ export const projectService = {
    * @returns {Promise} Promise with the created project data
    */
   createProject(projectData) {
-    return axiosInstance.post('/project', projectData);
+    return axiosInstance.post('/api/project', projectData);
   },
 
   /**
@@ -37,7 +37,7 @@ export const projectService = {
    * @returns {Promise} Promise with the updated project data
    */
   updateProject(id, projectData) {
-    return axiosInstance.put(`/project/${id}`, projectData);
+    return axiosInstance.put(`/api/project/${id}`, projectData);
   },
 
   /**
@@ -46,7 +46,7 @@ export const projectService = {
    * @returns {Promise} Promise with the deletion result
    */
   deleteProject(id) {
-    return axiosInstance.delete(`/project/${id}`);
+    return axiosInstance.delete(`/api/project/${id}`);
   }
 };
 
