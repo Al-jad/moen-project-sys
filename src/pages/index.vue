@@ -236,6 +236,15 @@
       isActive: true,
     },
   ];
+
+  const userInfo = ref(null);
+
+
+  onMounted(async () => {
+    const response = await axiosInstance.get('/me');
+    console.log(response);
+    userInfo.value = response.data;
+  });
 </script>
 
 <style>

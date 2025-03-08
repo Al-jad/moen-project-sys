@@ -12,8 +12,13 @@
                   >المرفقات ({{ attachments.length }})</h1
                 >
               </div>
+              <input
+                type="text"
+                class="block w-full rounded-lg border border-gray-200 bg-white py-2.5 pr-10 text-right text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                placeholder="البحث عن مرفق..."
+              />
             </div>
-            <div class="flex w-full max-w-xs items-center">
+            <div class="w-full sm:w-48">
               <CustomSelect
                 v-model="selectedProject"
                 :options="projectOptions"
@@ -24,41 +29,32 @@
               />
             </div>
           </div>
-          <div
-            v-if="selectedProject !== 'all' && !isLoading"
-            class="mt-4 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800/50"
-          >
-            <div
-              class="flex items-center gap-4 border-b border-gray-100 bg-gray-50/50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50"
-            >
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-500/10"
-              >
-                <Icon icon="lucide:folder-open" class="h-5 w-5 text-blue-500 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 class="font-medium text-gray-900 dark:text-white">{{
-                  getProjectName(selectedProject)
-                }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ attachments.length }} مرفق{{ attachments.length !== 1 ? 'ات' : '' }}
-                </p>
-              </div>
-              <button
-                @click="selectedProject = 'all'"
-                class="mr-auto flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                <Icon icon="lucide:x" class="h-4 w-4" />
-                عرض الكل
-              </button>
-            </div>
+        </div>
+
+        <div
+          v-if="isLoading"
+          class="flex h-64 items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+        >
+          <div class="flex flex-col items-center gap-2">
+            <div class="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 dark:border-gray-700 dark:border-t-blue-400"></div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">جاري تحميل المرفقات...</p>
           </div>
         </div>
 
-        <div v-if="isLoading" class="flex items-center justify-center py-12">
+        <div
+          v-if="selectedProject !== 'all' && !isLoading"
+          class="mt-4 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800/50"
+        >
           <div
-            class="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
-          ></div>
+            class="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-800"
+          >
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+              {{ getProjectName(selectedProject) }}
+            </h3>
+            <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+              {{ filteredAttachments.length }} مرفق
+            </span>
+          </div>
         </div>
 
         <div v-else>
@@ -111,18 +107,25 @@
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
           >
-            <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-              <Icon icon="lucide:file" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
-            </div>
-            <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
+            <Icon
+              icon="lucide:file"
+              class="mb-2 h-12 w-12 text-gray-300 dark:text-gray-600"
+            />
+            <h3 class="mb-1 text-lg font-medium text-gray-900 dark:text-white">
               لا توجد مرفقات
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{
-                selectedProject === 'all' ? 'لا توجد مرفقات متاحة' : 'لا توجد مرفقات لهذا المشروع'
-              }}
+            <p class="max-w-sm text-sm text-gray-500 dark:text-gray-400">
+              لم يتم العثور على أي مرفقات للمشروع المحدد.
             </p>
           </div>
+        </div>
+
+        <div v-if="filteredAttachments.length > itemsPerPage" class="mt-6 flex justify-center">
+          <Pagination
+            v-model="currentPage"
+            :total="filteredAttachments.length"
+            :per-page="itemsPerPage"
+          />
         </div>
       </div>
 
@@ -160,6 +163,8 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import projectService from '@/services/projectService';
+  import projectUtils from '@/utils/projectUtils';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
@@ -201,6 +206,80 @@
     }
   };
   const projectOptions = computed(() => {
+  
+  const fetchProjects = function() {
+    isLoading.value = true;
+    
+    projectService.getAllProjects()
+      .then(function(response) {
+        const apiProjects = response.data;
+        
+        if (Array.isArray(apiProjects)) {
+          projects.value = apiProjects.map(function(project) {
+            return {
+              id: project.id,
+              name: project.name
+            };
+          });
+          
+          // Extract all attachments from all projects
+          const allAttachments = [];
+          apiProjects.forEach(function(project) {
+            if (Array.isArray(project.attachments)) {
+              project.attachments.forEach(function(attachment) {
+                allAttachments.push({
+                  id: attachment.id,
+                  title: attachment.title || 'Untitled',
+                  description: attachment.description || '',
+                  url: attachment.url || '',
+                  createdAt: attachment.createdAt,
+                  projectId: project.id
+                });
+              });
+            }
+          });
+          
+          attachments.value = allAttachments;
+        }
+        
+        isLoading.value = false;
+      })
+      .catch(function(err) {
+        console.error('Error fetching projects:', err);
+        isLoading.value = false;
+      });
+  };
+  
+  const getProjectName = function(projectId) {
+    const project = projects.value.find(function(p) { return p.id === projectId; });
+    return project ? project.name : '';
+  };
+  
+  const formatDate = function(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate().toString();
+    const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+  
+  const filteredAttachments = computed(function() {
+    if (selectedProject.value === 'all') {
+      return attachments.value;
+    }
+    return attachments.value.filter(function(attachment) {
+      return attachment.projectId === selectedProject.value;
+    });
+  });
+  
+  const paginatedAttachments = computed(function() {
+    const startIndex = (currentPage.value - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAttachments.value.slice(startIndex, endIndex);
+  });
+  
+  const projectOptions = computed(function() {
     const options = [{ value: 'all', label: 'الكل' }];
     return options.concat(
       projects.value?.map((project) => ({
