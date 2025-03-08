@@ -90,7 +90,10 @@
     errorMessage.value = '';
 
     try {
-      const response = await axiosInstance.post('/login?username=' + username.value + '&password=' + password.value);
+      const response = await axiosInstance.post('/login', {
+        username: username.value,
+        password: password.value
+      });
 
       if (response.status === 200 || response.status === 201) {
         const { user, tokens } = response.data;
