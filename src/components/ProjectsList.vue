@@ -28,11 +28,15 @@
   import ProjectCard from './ProjectCard.vue';
   import DetailedProjectCard from './DetailedProjectCard.vue';
   import CustomPagination from './CustomPagination.vue';
+  import { useRoute } from 'vue-router';
+  import { computed, ref, onMounted, watch } from 'vue';
+  import projectUtils from '@/utils/projectUtils';
+
   const props = defineProps({
     projects: {
       type: Array,
-      required: true,
-    },
+      default: () => []
+    }
   });
 
   const route = useRoute();
@@ -48,11 +52,43 @@
     return props.projects.slice(start, end);
   });
 
-  function getProjectData(project) {
-    return projectUtils.transformProject(project);
-  }
+  const projectsData = ref([]);
+
+  // Transform projects safely
+  const getProjectData = () => {
+    if (!Array.isArray(props.projects)) {
+      console.warn('Projects is not an array:', props.projects);
+      return [];
+    }
+    
+    return props.projects.map(project => {
+      try {
+        const transformedProject = projectUtils.transformProject(project);
+        return transformedProject || null;
+      } catch (error) {
+        console.error('Error transforming project:', error, project);
+        // Return a minimal valid object to prevent UI errors
+        return {
+          id: project?.id?.toString() || 'error',
+          title: project?.name || 'Error loading project',
+          department: '',
+          status: 'خطأ',
+          statusVariant: 'danger',
+          progress: 0,
+          duration: '0',
+          startDate: '',
+          endDate: '',
+        };
+      }
+    }).filter(project => project !== null);
+  };
+
+  // Update projects data when props change
+  watch(() => props.projects, () => {
+    projectsData.value = getProjectData();
+  }, { immediate: true });
 
   onMounted(() => {
-    props.projects.forEach(getProjectData);
+    projectsData.value = getProjectData();
   });
 </script>
