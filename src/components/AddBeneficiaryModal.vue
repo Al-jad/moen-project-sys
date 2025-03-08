@@ -64,12 +64,7 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
-  import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-  import { Input } from '@/components/ui/input';
-  import { Label } from '@/components/ui/label';
   import { Icon } from '@iconify/vue';
-  import { computed, ref, watch } from 'vue';
 
   const props = defineProps({
     open: {

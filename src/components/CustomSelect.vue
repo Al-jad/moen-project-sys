@@ -58,7 +58,7 @@
     SelectValue,
   } from '@/components/ui/select';
   import { Icon } from '@iconify/vue';
-  import { computed } from 'vue';
+
   import StatusBadge from './StatusBadge.vue';
 
   const props = defineProps({

@@ -1,24 +1,23 @@
 <script setup>
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { RangeCalendarCellTrigger, useForwardProps } from 'radix-vue';
-import { computed } from 'vue';
+  import { buttonVariants } from '@/components/ui/button';
+  import { cn } from '@/lib/utils';
+  import { RangeCalendarCellTrigger, useForwardProps } from 'radix-vue';
 
-const props = defineProps({
-  day: { type: null, required: true },
-  month: { type: null, required: true },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
+  const props = defineProps({
+    day: { type: null, required: true },
+    month: { type: null, required: true },
+    asChild: { type: Boolean, required: false },
+    as: { type: null, required: false },
+    class: { type: null, required: false },
+  });
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
+  const delegatedProps = computed(() => {
+    const { class: _, ...delegated } = props;
 
-  return delegated;
-});
+    return delegated;
+  });
 
-const forwardedProps = useForwardProps(delegatedProps);
+  const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>
@@ -38,7 +37,7 @@ const forwardedProps = useForwardProps(delegatedProps);
         'data-[disabled]:text-muted-foreground data-[disabled]:opacity-50',
         // Unavailable
         'data-[unavailable]:text-destructive-foreground data-[unavailable]:line-through',
-        props.class,
+        props.class
       )
     "
     v-bind="forwardedProps"

@@ -129,9 +129,8 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   import { useRoute, useRouter } from 'vue-router';
 
   const route = useRoute();
@@ -142,6 +141,7 @@
   const menuItems = [
     { path: '/', icon: 'lucide:layout-grid', label: 'لوحة التحكم' },
     { path: '/projects', icon: 'lucide:inbox', label: 'المشاريع' },
+    { path: '/funded-projects', icon: 'lucide:dollar-sign', label: 'المشاريع الممولة' },
     { path: '/contracts', icon: 'lucide:scroll-text', label: 'العقود' },
     { path: '/map', icon: 'lucide:map-pin', label: 'الخريطة' },
     { path: '/reports', icon: 'lucide:chart-line', label: 'التقارير و الاحصائيات' },

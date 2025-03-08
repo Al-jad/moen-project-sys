@@ -95,8 +95,9 @@
   import Sidebar from '@/components/Sidebar.vue';
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import UsersList from '@/components/UsersList.vue';
-  import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { computed, ref, onMounted } from 'vue';
+  import axiosInstance from '@/plugins/axios';
+  import { useAuthStore } from '@/stores/authStore';
 
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
@@ -175,6 +176,8 @@
     },
   ];
 
+  const authStore = useAuthStore();
+
   const allProjects = ref(mockProjects);
   const completedProjects = computed(() => mockProjects.filter((p) => p.status === 'منجز'));
   const inProgressProjects = computed(() => mockProjects.filter((p) => p.status === 'قيد الانجاز'));
@@ -238,6 +241,19 @@
       isActive: true,
     },
   ];
+
+  const userInfo = ref(null);
+
+
+  onMounted(async () => {
+    const response = await axiosInstance.get('/me', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    });
+    console.log(response);
+    userInfo.value = response.data;
+  });
 </script>
 
 <style>

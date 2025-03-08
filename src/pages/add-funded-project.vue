@@ -9,6 +9,7 @@
         <div class="space-y-8">
           <ProjectDetails />
           <ProjectDuration />
+          <ProjectLocation />
           <ProjectComponents />
           <ProjectPreview />
         </div>
@@ -39,19 +40,19 @@
   import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
   import ProjectDuration from '@/components/funded-project/ProjectDuration.vue';
+  import ProjectLocation from '@/components/funded-project/ProjectLocation.vue';
   import ProjectPreview from '@/components/funded-project/ProjectPreview.vue';
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted } from 'vue';
-  import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
   const store = useFundedProjectStore();
   const router = useRouter();
 
+  // Ensure beneficiaryEntities is always an array
   if (!Array.isArray(store.form.beneficiaryEntities)) {
-    store.form.beneficiaryEntities = [];
+    store.form.beneficiaryEntities = store.form.beneficiaryEntities ? [store.form.beneficiaryEntities] : [''];
   }
 
   onMounted(() => {
@@ -69,6 +70,8 @@
       durationType: 'weeks',
       actualStartDate: null,
       components: [],
+      latitude: '',
+      longitude: '',
       isSaving: false,
       hasUnsavedChanges: false,
     };
@@ -119,8 +122,36 @@
       toast.error('يرجى تحديد تاريخ بدء المشروع');
       return;
     }
+    if (!store.form.latitude || !store.form.longitude) {
+      toast.error('يرجى تحديد موقع المشروع على الخريطة');
+      return;
+    }
 
     try {
+      // Ensure data types are correct before saving
+      if (store.form.cost) {
+        store.form.cost = parseFloat(store.form.cost);
+      }
+      
+      if (store.form.duration) {
+        store.form.duration = parseInt(store.form.duration);
+      }
+      
+      if (store.form.latitude) {
+        store.form.latitude = parseFloat(store.form.latitude);
+      }
+      
+      if (store.form.longitude) {
+        store.form.longitude = parseFloat(store.form.longitude);
+      }
+      
+      // Convert date to ISO format if it's a Date object
+      if (store.form.actualStartDate instanceof Date) {
+        store.form.actualStartDate = store.form.actualStartDate.toISOString();
+      }
+      
+      console.log('Saving project with data:', store.form);
+      
       const response = await store.saveProject();
       if (response.success) {
         router.push({
@@ -133,8 +164,24 @@
       }
     } catch (error) {
       console.error('API Error:', error);
+      let errorMessage = 'يرجى المحاولة مرة أخرى';
+      
+      if (error.response) {
+        console.error('Error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+        
+        // Handle specific error codes
+        if (error.response.status === 400) {
+          errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
+        } else if (error.response.status === 401) {
+          errorMessage = 'غير مصرح لك بإضافة مشروع';
+        } else if (error.response.status === 500) {
+          errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
+        }
+      }
+      
       toast.error('حدث خطأ أثناء الحفظ', {
-        description: error.response?.data?.message || 'يرجى المحاولة مرة أخرى',
+        description: error.response?.data?.message || errorMessage,
       });
     }
   };

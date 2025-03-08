@@ -4,9 +4,12 @@
       <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-6">
           <BackToMainButton />
-          <h1 class="text-xl font-bold text-gray-900 dark:text-white">العقود</h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">العقود</h1>
         </div>
       </div>
+
+      <!-- Notification Banner -->
+      <Premium />
 
       <!-- Controls Container -->
       <div
@@ -84,7 +87,8 @@
   import CustomSelect from '@/components/CustomSelect.vue';
   import DateInput from '@/components/DateInput.vue';
   import FormField from '@/components/FormField.vue';
-  import Pagination from '@/components/Pagination.vue';
+  import Premium from '@/components/Premium.vue';
+  import Pagination from '@/components/CustomPagination.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';

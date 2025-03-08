@@ -17,8 +17,6 @@
 
 <script setup>
   import { Icon } from '@iconify/vue';
-  import { useRouter } from 'vue-router';
-
   const router = useRouter();
 
   const props = defineProps({

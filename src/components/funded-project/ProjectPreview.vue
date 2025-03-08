@@ -145,7 +145,6 @@
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
-  import { computed } from 'vue';
 
   const store = useFundedProjectStore();
   const totalPeriods = computed(() => store.totalPeriods);

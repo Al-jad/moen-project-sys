@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-  import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
 
   withDefaults(

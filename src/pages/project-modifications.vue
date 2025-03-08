@@ -9,6 +9,10 @@
           </div>
         </div>
       </div>
+
+      <!-- Notification Banner -->
+      <Premium />
+
       <div class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
         <div class="p-6">
           <div class="w-full">
@@ -76,7 +80,6 @@
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
-  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,
@@ -90,6 +93,7 @@
   import type { DateRange } from 'radix-vue';
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import Premium from '@/components/Premium.vue';
 
   interface Column {
     key: string;

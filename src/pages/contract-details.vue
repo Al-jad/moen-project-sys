@@ -88,7 +88,7 @@
   import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+
   import { useRoute } from 'vue-router';
 
   const route = useRoute();

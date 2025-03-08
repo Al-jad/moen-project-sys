@@ -227,7 +227,6 @@
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
   import NumberInput from '@/components/NumberInput.vue';
-  import { Button } from '@/components/ui/button';
   import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';

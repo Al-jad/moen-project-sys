@@ -127,11 +127,6 @@ const routes = [
     component: AddFundedProject,
   },
   {
-    path: '/demo',
-    name: 'demo',
-    component: () => import('@/pages/demo.vue'),
-  },
-  {
     path: '/funded-projects',
     name: 'funded-projects',
     component: FundedProjects,

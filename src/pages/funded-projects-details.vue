@@ -254,36 +254,66 @@
           </div>
         </template>
         <div class="flex justify-end">
-          <Button variant="destructive" class="">
-            <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
-            حذف المشروع
-          </Button>
+          <div class="flex items-center gap-2">
+            <Button variant="outline" class="hover:cursor-not-allowed">
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              توجيه المهام
+            </Button>
+            <Button variant="outline" class="hover:cursor-not-allowed">
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              عرض النسخة السابقة
+            </Button>
+            <Button variant="outline" class="hover:cursor-not-allowed">
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              تدقيق المشروع
+            </Button>
+            <Button variant="destructive" @click="showDeleteConfirmation">
+              <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
+              حذف المشروع
+            </Button>
+          </div>
         </div>
       </div>
     </div>
   </DefaultLayout>
+
+  <!-- Delete Confirmation Modal -->
+  <DeleteModal
+    :open="showDeleteModal"
+    @update:open="showDeleteModal = $event"
+    title="حذف المشروع"
+    description="تأكيد حذف المشروع"
+    :message="`هل أنت متأكد من حذف المشروع '${project?.name}'؟ لا يمكن التراجع عن هذا الإجراء.`"
+    :loading="isDeleting"
+    @confirm="confirmDeleteProject"
+    @cancel="showDeleteModal = false"
+  />
 </template>
 
 <script setup>
   import ComponentsActivitiesDetails from '@/components/ComponentsActivitiesDetails.vue';
+  import DeleteModal from '@/components/DeleteModal.vue';
   import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
-  import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, reactive, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
+
   const route = useRoute();
+  const router = useRouter();
   const project = ref(null);
   const isLoading = ref(true);
   const error = ref(null);
   const isEditingDetails = ref(false);
   const isEditingComponents = ref(false);
   const isSaving = ref(false);
+  const showDeleteModal = ref(false);
+  const isDeleting = ref(false);
 
   // Initialize empty editForm
   const editForm = reactive({
@@ -551,6 +581,25 @@
 
   const updateComponents = (updatedComponents) => {
     editForm.components = updatedComponents;
+  };
+
+  const confirmDeleteProject = async () => {
+    isDeleting.value = true;
+    try {
+      await axiosInstance.delete(`/Project/${project.value.id}`);
+      toast.success('تم حذف المشروع بنجاح');
+      router.push('/funded-projects');
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('حدث خطأ أثناء حذف المشروع');
+    } finally {
+      isDeleting.value = false;
+      showDeleteModal.value = false;
+    }
+  };
+
+  const showDeleteConfirmation = () => {
+    showDeleteModal.value = true;
   };
 </script>
 

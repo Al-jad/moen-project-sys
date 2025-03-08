@@ -2,7 +2,6 @@
   import { cn } from '@/lib/utils';
   import { Icon } from '@iconify/vue';
   import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'radix-vue';
-  import { computed } from 'vue';
 
   const props = defineProps({
     defaultChecked: { type: Boolean, required: false },

@@ -44,7 +44,6 @@
 
 <script setup>
 import 'leaflet/dist/leaflet.css';
-import { ref, onMounted, nextTick } from 'vue';
 import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 import L from 'leaflet';
 
