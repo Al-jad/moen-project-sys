@@ -194,19 +194,6 @@
     return filteredAttachments.value.slice(startIndex, endIndex);
   });
   
-  const projectOptions = computed(function() {
-    const options = [{ value: 'all', label: 'الكل' }];
-    
-    projects.value.forEach(function(project) {
-      options.push({
-        value: project.id,
-        label: project.name
-      });
-    });
-    
-    return options;
-  });
-  
   const handleProjectChange = function() {
     currentPage.value = 1;
   };
