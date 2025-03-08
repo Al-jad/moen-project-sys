@@ -100,16 +100,22 @@
           <hr class="my-4 mt-6 w-full border-dashed border-gray-300 dark:border-gray-600" />
           <div class="mb-6">
             <div class="flex items-center justify-between">
-              <h1 class="text-xl font-bold">المرفقات (251)</h1>
+              <h1 class="text-xl font-bold">المرفقات ({{ project?.attachments?.length || 0 }})</h1>
               <button class="text-blue-600 hover:underline dark:text-blue-400">الكل</button>
             </div>
           </div>
-          <div class="grid grid-cols-4 gap-4">
+          <div v-if="project?.attachments?.length > 0" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <DocumentCard
-              v-for="n in 8"
-              :key="n"
-              title="جدول الكميات والمواصفات العمل في مراحل المناقصة"
+              v-for="attachment in project.attachments"
+              :key="attachment.id"
+              :title="attachment.title"
+              :description="attachment.description"
+              :date="attachment.date"
+              :url="attachment.url"
             />
+          </div>
+          <div v-else class="rounded-lg border border-dashed border-gray-300 p-6 text-center dark:border-gray-700">
+            <p class="text-gray-500 dark:text-gray-400">لا توجد مرفقات لهذا المشروع</p>
           </div>
           <hr class="my-4 mt-6 w-full border-dashed border-gray-300 dark:border-gray-600" />
           <div class="mb-10">
@@ -178,7 +184,39 @@
   import DocumentCard from '@/components/DocumentCard.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { defineAsyncComponent } from 'vue';
+  import { defineAsyncComponent, ref, onMounted } from 'vue';
+  import projectService from '@/services/projectService';
+  import projectUtils from '@/utils/projectUtils';
+  
   const router = useRouter();
+  const route = useRoute();
   const Map = defineAsyncComponent(() => import('@/components/Map.vue'));
+  
+  const project = ref(null);
+  const isLoading = ref(false);
+  const error = ref(null);
+  
+  // Fetch project data
+  const fetchProject = function() {
+    const projectId = route.params.id;
+    if (!projectId) return;
+    
+    isLoading.value = true;
+    error.value = null;
+    
+    projectService.getProjectById(projectId)
+      .then(function(response) {
+        project.value = projectUtils.transformProject(response.data);
+        isLoading.value = false;
+      })
+      .catch(function(err) {
+        console.error('Error fetching project:', err);
+        error.value = err.message || 'Failed to fetch project';
+        isLoading.value = false;
+      });
+  };
+  
+  onMounted(function() {
+    fetchProject();
+  });
 </script>

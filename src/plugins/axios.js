@@ -2,12 +2,13 @@ import axios from 'axios';
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'https://pmsapi.alfakharco.com/api',
+  BASE_URL: 'https://pmsapi.alfakharco.com/',
 };
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://pmsapi.alfakharco.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://pmsapi.alfakharco.com/',
   timeout: 10000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
