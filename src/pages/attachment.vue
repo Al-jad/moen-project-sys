@@ -279,24 +279,7 @@
     return filteredAttachments.value.slice(startIndex, endIndex);
   });
   
-  const projectOptions = computed(function() {
-    const options = [{ value: 'all', label: 'الكل' }];
-    return options.concat(
-      projects.value?.map((project) => ({
-        value: project.id.toString(),
-        label: project.name,
-      })) || []
-    );
-  });
-  const filteredAttachments = computed(() => {
-    return attachments.value;
-  });
-  const paginatedAttachments = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAttachments.value.slice(start, end);
-  });
-  const handleProjectChange = () => {
+  const handleProjectChange = function() {
     currentPage.value = 1;
     fetchAttachments(selectedProject.value);
   };
