@@ -98,21 +98,19 @@
       @click="router.push('/profile')"
     >
       <div class="flex items-center gap-3 px-2 py-1.5">
-        <img
-          src="/public/img/avatar.png"
-          alt="User Avatar"
-          class="h-8 w-8 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
-        />
+        <div class="flex items-center justify-center">
+          <Icon icon="lucide:user" class="h-4 w-4 text-gray-400" />
+        </div>
         <div
           class="flex flex-col transition-all duration-300"
           :class="{ 'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered }"
         >
-          <span class="whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
-            >أ. دعاء الشيخلي</span
-          >
-          <span class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400"
-            >مدير المشروع</span
-          >
+          <span class="whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{
+            authStore.getUser?.name || 'User'
+          }}</span>
+          <span class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">{{
+            authStore.getUser?.role || 'Guest'
+          }}</span>
         </div>
         <Icon
           icon="lucide:log-out"
@@ -129,12 +127,13 @@
 </template>
 
 <script setup>
+  import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
-
   import { useRoute, useRouter } from 'vue-router';
 
   const route = useRoute();
   const router = useRouter();
+  const authStore = useAuthStore();
   const hoveredItem = ref(null);
   const isAnyItemHovered = ref(false);
 
@@ -161,8 +160,8 @@
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
-    console.log('Logging out...');
+    authStore.logout();
+    router.push('/login');
   };
 </script>
 
