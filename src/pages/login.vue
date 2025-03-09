@@ -28,9 +28,9 @@
                 <label
                   class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200"
                 >
-                  الايميل
+                  اسم المستخدم
                 </label>
-                <CustomInput type="email" v-model="email" placeholder="ادخل الايميل" required />
+                <CustomInput type="text" v-model="username" placeholder="ادخل اسم المستخدم" required />
               </div>
               <div class="space-y-2">
                 <label
@@ -74,17 +74,38 @@
 </template>
 
 <script setup>
-  import CustomInput from '@/components/CustomInput.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { Card, CardContent, CardHeader } from '@/components/ui/card';
   import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  import axiosInstance from '@/plugins/axios';
+  import { useAuthStore } from '@/stores/authStore';
 
   const router = useRouter();
-  const email = ref('');
+  const authStore = useAuthStore();
+  const username = ref('');
   const password = ref('');
   const showPassword = ref(false);
+  const errorMessage = ref('');
 
-  const handleLogin = () => {
-    router.push('/');
+  const handleLogin = async () => {
+    errorMessage.value = '';
+
+    try {
+      const response = await axiosInstance.post('/login', {
+        username: username.value,
+        password: password.value
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        const { user, tokens } = response.data;
+
+        authStore.setUser(user);
+        authStore.setToken(tokens.access);
+
+        router.push('/');
+      }
+    } catch (error) {
+      console.error('Login Error:', error);
+      errorMessage.value = 'خطأ في تسجيل الدخول. تحقق من اسم المستخدم أو كلمة المرور.';
+    }
   };
 </script>
