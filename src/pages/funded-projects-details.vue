@@ -1,21 +1,21 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-6xl space-y-8">
+    <div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
+      <div class="w-full max-w-6xl mx-auto space-y-8">
         <!-- Loading State -->
         <div v-if="isLoading" class="space-y-4">
-          <div class="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-48 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-96 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="h-24 bg-gray-200 animate-pulse rounded-xl dark:bg-gray-800"></div>
+          <div class="h-48 bg-gray-200 animate-pulse rounded-xl dark:bg-gray-800"></div>
+          <div class="bg-gray-200 h-96 animate-pulse rounded-xl dark:bg-gray-800"></div>
         </div>
 
         <!-- Error State -->
         <div
           v-else-if="error"
-          class="rounded-xl border border-red-200 bg-white p-6 text-center dark:border-red-800 dark:bg-gray-800"
+          class="p-6 text-center bg-white border border-red-200 rounded-xl dark:border-red-800 dark:bg-gray-800"
         >
-          <div class="mb-3 inline-block rounded-full bg-red-100 p-3 dark:bg-red-900/30">
-            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div class="inline-block p-3 mb-3 bg-red-100 rounded-full dark:bg-red-900/30">
+            <Icon icon="lucide:alert-circle" class="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
             حدث خطأ في تحميل المشروع
@@ -24,7 +24,7 @@
             {{ error }}
           </p>
           <Button @click="fetchProject" variant="outline" class="mt-4">
-            <Icon icon="lucide:refresh-cw" class="mr-2 h-4 w-4" />
+            <Icon icon="lucide:refresh-cw" class="w-4 h-4 mr-2" />
             إعادة المحاولة
           </Button>
         </div>
@@ -32,12 +32,12 @@
         <!-- Content -->
         <template v-else-if="project">
           <!-- Header -->
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
                   <div
-                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
+                    class="flex items-center justify-center w-full h-full text-lg font-semibold text-blue-600 dark:text-blue-400"
                   >
                     {{ project?.id }}
                   </div>
@@ -60,7 +60,7 @@
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
@@ -71,7 +71,7 @@
               <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/10 dark:bg-blue-400/10"></div>
             </div>
             <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
@@ -84,7 +84,7 @@
               ></div>
             </div>
             <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
@@ -104,15 +104,15 @@
           </div>
 
           <!-- Project Details -->
-          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+          <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 border-b dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:info" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:info" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
               </div>
               <Button @click="toggleEditDetails" variant="ghost" size="sm">
-                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:check" class="h-4 w-4" />
+                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="w-4 h-4" />
+                <Icon v-else icon="lucide:check" class="w-4 h-4" />
               </Button>
             </div>
 
@@ -195,14 +195,14 @@
             <!-- Edit Mode -->
             <div v-else class="p-4">
               <ProjectDetails :project="editForm" @update:project="updateProjectDetails" />
-              <div class="mt-4 flex justify-end gap-2">
+              <div class="flex justify-end gap-2 mt-4">
                 <Button @click="cancelEditDetails" variant="outline"> الغاء </Button>
                 <Button
                   @click="saveProjectDetails"
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
                   حفظ التغييرات
                 </Button>
               </div>
@@ -216,15 +216,15 @@
           />
 
           <!-- Components and Activities -->
-          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+          <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 border-b dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:target" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:target" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">المكونات والفعاليات</h4>
               </div>
               <Button @click="toggleEditComponents" variant="ghost" size="sm">
-                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:check" class="h-4 w-4" />
+                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="w-4 h-4" />
+                <Icon v-else icon="lucide:check" class="w-4 h-4" />
               </Button>
             </div>
 
@@ -239,14 +239,14 @@
             <!-- Edit Mode -->
             <div v-else class="p-4">
               <ProjectComponents :project="editForm" @update:components="updateComponents" />
-              <div class="mt-4 flex justify-end gap-2">
+              <div class="flex justify-end gap-2 mt-4">
                 <Button @click="cancelEditComponents" variant="outline"> الغاء </Button>
                 <Button
                   @click="saveComponents"
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
                   حفظ التغييرات
                 </Button>
               </div>
@@ -256,19 +256,19 @@
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
               توجيه المهام
             </Button>
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
               عرض النسخة السابقة
             </Button>
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
               تدقيق المشروع
             </Button>
             <Button variant="destructive" @click="showDeleteConfirmation">
-              <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
+              <Icon icon="material-symbols-light:delete-outline" class="w-4 h-4 mr-2" />
               حذف المشروع
             </Button>
           </div>
@@ -337,7 +337,7 @@
 
     try {
       console.log('Fetching project with ID:', route.params.id);
-      const response = await axiosInstance.get(`/Project/${route.params.id}`);
+      const response = await axiosInstance.get(`/api/Project/${route.params.id}`);
       console.log('API Response:', response);
       project.value = response.data;
 
@@ -551,7 +551,7 @@
     try {
       // Save each component
       for (const component of editForm.components) {
-        await axiosInstance.put(`/Component/${component.id}`, {
+        await axiosInstance.put(`/api/Component/${component.id}`, {
           ...component,
           activities: component.activities.map((activity) => ({
             ...activity,
@@ -561,7 +561,7 @@
       }
 
       // Refresh project data
-      const response = await axiosInstance.get(`/Project/${project.value.id}`);
+      const response = await axiosInstance.get(`/api/Project/${project.value.id}`);
       project.value = response.data;
       isEditingComponents.value = false;
       toast.success('تم حفظ التغييرات بنجاح');

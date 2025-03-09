@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
-    <main class="bg-gray-50 p-6 dark:bg-darkmode">
-      <div class="mb-6 flex items-center justify-between">
+    <main class="p-6 bg-gray-200 dark:bg-darkmode">
+      <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-6">
           <BackToMainButton />
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">العقود</h1>
@@ -13,12 +13,12 @@
 
       <!-- Controls Container -->
       <div
-        class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
+        class="p-6 bg-white border border-gray-100 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
       >
-        <div class="mb-6 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-between gap-4 mb-6">
           <div class="flex items-center gap-6">
             <PrimaryButton size="lg" class="px-2">
-              <Icon icon="lucide:file-spreadsheet" class="ml-2 h-4 w-4" />
+              <Icon icon="lucide:file-spreadsheet" class="w-4 h-4 ml-2" />
               تصدير Excel
             </PrimaryButton>
 
@@ -72,7 +72,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-6 flex items-center justify-center">
+        <div class="flex items-center justify-center mt-6">
           <Pagination :totalPages="totalPages" :currentPage="currentPage" />
         </div>
       </div>

@@ -142,7 +142,7 @@
   const fetchProjects = async () => {
     try {
       isLoading.value = true;
-      const response = await axiosInstance.get('/Project');
+      const response = await axiosInstance.get('api/Project');
       projects.value = response.data;
     } catch (error) {
       console.error('Error fetching projects:', error);
