@@ -30,8 +30,11 @@
             :items-per-page="itemsPerPage"
             :show-export="false"
             :show-date-filter="true"
+            :show-search="true"
             :filters="tableFilters"
+            :initial-filters="{ projectId: selectedProject || 'all' }"
             @filter-change="handleFilterChange"
+            @search-change="handleSearchChange"
           >
             <template #fileType="{ item }">
               <div class="flex items-center gap-2">
@@ -153,7 +156,9 @@
       if (projectId && projectId !== 'all') {
         url = `api/Attachment?projectId=${projectId}`;
       }
+      console.log('Fetching attachments from:', url);
       const response = await axiosInstance.get(url);
+      console.log('Attachments response:', response.data);
       attachments.value = response.data;
     } catch (error) {
       console.error('Error fetching attachments:', error);
@@ -171,6 +176,7 @@
     );
   });
   const filteredAttachments = computed(() => {
+    console.log('Filtering attachments:', attachments.value);
     return attachments.value;
   });
   const paginatedAttachments = computed(() => {
@@ -195,7 +201,10 @@
     return project ? project.name : '';
   };
   onMounted(async () => {
+    console.log('Component mounted, selectedProject:', selectedProject.value);
     await Promise.all([fetchProjects(), fetchAttachments()]);
+    selectedProject.value = 'all';
+    console.log('After initialization, selectedProject:', selectedProject.value);
   });
 
   const getFileTypeInfo = (filename) => {
@@ -285,7 +294,8 @@
 
   // Update transformed attachments to include file type info
   const transformedAttachments = computed(() => {
-    return filteredAttachments.value.map((attachment) => {
+    console.log('Transforming attachments:', filteredAttachments.value);
+    const transformed = filteredAttachments.value.map((attachment) => {
       const fileInfo = getFileTypeInfo(attachment.url);
       return {
         ...attachment,
@@ -294,6 +304,8 @@
         fileType: fileInfo,
       };
     });
+    console.log('Transformed attachments:', transformed);
+    return transformed;
   });
 
   // Add these computed helpers for file type styling
@@ -428,28 +440,42 @@
     }
   };
 
-  const tableFilters = computed(() => [
-    {
-      key: 'projectId',
-      placeholder: 'اختر المشروع',
-      options: [
-        { value: 'all', label: 'الكل' },
-        ...projects.value.map((project) => ({
-          value: project.id.toString(),
-          label: project.name,
-        })),
-      ],
-      icon: 'lucide:folder',
-      triggerClass:
-        'flex-row-reverse w-full dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
-    },
-  ]);
+  const tableFilters = computed(() => {
+    const filters = [
+      {
+        key: 'projectId',
+        placeholder: 'اختر المشروع',
+        options: [
+          { value: 'all', label: 'الكل' },
+          ...projects.value.map((project) => ({
+            value: project.id.toString(),
+            label: project.name,
+          })),
+        ],
+        icon: 'lucide:folder',
+        triggerClass:
+          'flex-row-reverse w-full dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
+      },
+    ];
+    console.log('Table filters:', filters);
+    return filters;
+  });
 
   const handleFilterChange = (filters) => {
+    console.log('Filter changed:', filters);
+    console.log('Before update, selectedProject:', selectedProject.value);
     if (filters.projectId && filters.projectId !== 'all') {
+      selectedProject.value = filters.projectId;
+      console.log('After update, selectedProject:', selectedProject.value);
       fetchAttachments(filters.projectId);
     } else {
+      selectedProject.value = 'all';
+      console.log('After update, selectedProject:', selectedProject.value);
       fetchAttachments('all');
     }
+  };
+
+  const handleSearchChange = () => {
+    // Handle search-change event
   };
 </script>

@@ -111,7 +111,7 @@
   import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
-  import { ref, computed, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import CustomInput from './CustomInput.vue';
   import Pagination from './CustomPagination.vue';
   import CustomSelect from './CustomSelect.vue';
@@ -147,6 +147,7 @@
     showExport?: boolean;
     showDateFilter?: boolean;
     showSearch?: boolean;
+    initialFilters?: Record<string, string>;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -155,6 +156,7 @@
     showExport: true,
     showDateFilter: true,
     showSearch: true,
+    initialFilters: () => ({}),
   });
 
   const emit = defineEmits([
@@ -169,7 +171,34 @@
   const currentPage = ref(1);
   const searchQuery = ref('');
   const dateRange = ref<DateRange>();
-  const selectedFilters = ref<Record<string, string>>({});
+
+  // Initialize selectedFilters with default values from props.filters
+  const selectedFilters = ref<Record<string, string>>(
+    props.filters.reduce(
+      (acc, filter) => {
+        acc[filter.key] = props.initialFilters[filter.key] || 'all';
+        return acc;
+      },
+      {} as Record<string, string>
+    )
+  );
+
+  console.log('Initial selectedFilters:', selectedFilters.value);
+
+  // Still keep the onMounted hook to ensure values are updated if props change
+  onMounted(() => {
+    console.log('CustomTable onMounted, props.filters:', props.filters);
+    console.log('CustomTable onMounted, props.initialFilters:', props.initialFilters);
+    props.filters.forEach((filter) => {
+      if (!selectedFilters.value[filter.key]) {
+        selectedFilters.value[filter.key] = props.initialFilters[filter.key] || 'all';
+      }
+    });
+    console.log(
+      'CustomTable onMounted, selectedFilters after initialization:',
+      selectedFilters.value
+    );
+  });
 
   // Date formatting
   const df = new DateFormatter('ar', { dateStyle: 'medium' });
@@ -187,16 +216,26 @@
   const filteredData = computed(() => {
     let result = [...props.data];
 
-    // Apply search filter
+    // Apply search filter - search across all fields
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
-      result = result.filter((item) =>
-        Object.values(item).some((val) => String(val).toLowerCase().includes(query))
-      );
+      result = result.filter((item) => {
+        // Check all properties of the item for a match
+        return Object.entries(item).some(([key, value]) => {
+          // Skip searching in objects or arrays
+          if (typeof value === 'object' && value !== null) return false;
+
+          // Convert value to string and check if it includes the query
+          return String(value).toLowerCase().includes(query);
+        });
+      });
     }
 
-    // Apply select filters
+    // Apply select filters - skip projectId as it's handled by the API
     Object.entries(selectedFilters.value).forEach(([key, value]) => {
+      // Skip projectId filtering as it's handled by the API
+      if (key === 'projectId') return;
+
       if (value && value !== 'all') {
         result = result.filter((item) => item[key] === value);
       }
@@ -220,18 +259,33 @@
 
   // Paginated data
   const paginatedData = computed(() => {
+    console.log('Computing paginatedData, filteredData:', filteredData.value);
     const start = (currentPage.value - 1) * props.itemsPerPage;
     const end = start + props.itemsPerPage;
-    return filteredData.value.slice(start, end);
+    const result = filteredData.value.slice(start, end);
+    console.log('Computing paginatedData, result:', result);
+    return result;
   });
 
   // Watch for filter changes
   watch(
     [searchQuery, selectedFilters, dateRange],
-    ([newSearch, newFilters, newDate]) => {
-      emit('search-change', newSearch);
-      emit('filter-change', newFilters);
-      emit('date-change', newDate);
+    ([newSearch, newFilters, newDate], [oldSearch, oldFilters, oldDate]) => {
+      // Only emit search-change, don't trigger filter-change for search
+      if (newSearch !== oldSearch) {
+        emit('search-change', newSearch);
+      }
+
+      // Only emit filter-change when filters change (not when search changes)
+      if (JSON.stringify(newFilters) !== JSON.stringify(oldFilters)) {
+        emit('filter-change', newFilters);
+      }
+
+      // Only emit date-change when date changes
+      if (JSON.stringify(newDate) !== JSON.stringify(oldDate)) {
+        emit('date-change', newDate);
+      }
+
       currentPage.value = 1; // Reset to first page when filters change
     },
     { deep: true }
