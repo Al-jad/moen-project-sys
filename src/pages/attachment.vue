@@ -413,23 +413,42 @@
   const handleSaveEdit = async (formData) => {
     try {
       isLoading.value = true;
-      const data = new FormData();
-      data.append('id', selectedAttachment.value.id);
-      data.append('title', formData.title);
-      data.append('description', formData.description);
-      data.append('projectId', selectedAttachment.value.projectId);
+      let requestData;
 
       if (formData.file) {
-        data.append('file', formData.file);
+        // If there's a new file, upload it first
+        const fileFormData = new FormData();
+        fileFormData.append('file', formData.file);
+
+        const uploadResponse = await axiosInstance.post(
+          'https://encode.ibaity.com/uploads/raw',
+          fileFormData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        requestData = {
+          id: selectedAttachment.value.id,
+          title: formData.title,
+          description: formData.description,
+          projectId: selectedAttachment.value.projectId,
+          url: uploadResponse.data.url,
+        };
       } else {
-        data.append('url', selectedAttachment.value.url);
+        // If no new file, just update the metadata
+        requestData = {
+          id: selectedAttachment.value.id,
+          title: formData.title,
+          description: formData.description,
+          projectId: selectedAttachment.value.projectId,
+          url: selectedAttachment.value.url,
+        };
       }
 
-      await axiosInstance.post('/Attachment', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axiosInstance.put(`/Attachment/${selectedAttachment.value.id}`, requestData);
 
       isEditModalOpen.value = false;
       await fetchAttachments(selectedProject.value);
