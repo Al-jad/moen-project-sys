@@ -153,7 +153,6 @@
     { type: 'separator' },
     { path: '/tasks', icon: 'lucide:bell', label: 'المهام' },
     { path: '/settings', icon: 'lucide:settings', label: 'الاعدادات' },
-    { path: '/info', icon: 'lucide:info', label: 'المعلومات' },
   ];
 
   const isActive = (path) => {

@@ -70,8 +70,8 @@
                 <Badge variant="outline" class="px-3">{{ projects.length }} مشروع</Badge>
               </div>
               <div class="flex flex-row items-center gap-6">
-                <PrimaryButton>
-                  <Icon icon="material-symbols-light:print-outline" />
+                <PrimaryButton class="cursor-not-allowed">
+                  <Icon icon="lucide:lock" />
                   طباعة
                 </PrimaryButton>
                 <RouterLink to="/add-funded-project">

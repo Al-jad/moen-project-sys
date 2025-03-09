@@ -2,6 +2,7 @@
   <DefaultLayout>
     <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
       <div class="mx-auto max-w-5xl space-y-6">
+        <Premium />
         <!-- Personal Information Card -->
         <div class="rounded-xl bg-white p-6 dark:border dark:border-gray-700 dark:bg-gray-800">
           <div class="mb-6">
