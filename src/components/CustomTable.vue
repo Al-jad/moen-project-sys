@@ -51,7 +51,27 @@
         </TableRow>
       </TableHeader>
       <TableBody>
+        <template v-if="loading">
+          <TableRow>
+            <TableCell :colspan="columns.length" class="py-10 text-center">
+              <div class="flex flex-col items-center justify-center">
+                <div
+                  class="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"
+                ></div>
+                <span class="text-sm text-gray-500 dark:text-gray-400">جاري التحميل...</span>
+              </div>
+            </TableCell>
+          </TableRow>
+        </template>
+        <template v-else-if="filteredData.length === 0">
+          <TableRow>
+            <TableCell :colspan="columns.length" class="py-10 text-center">
+              <span class="text-sm text-gray-500 dark:text-gray-400">لا توجد بيانات</span>
+            </TableCell>
+          </TableRow>
+        </template>
         <TableRow
+          v-else
           v-for="(item, index) in filteredData"
           :key="index"
           class="hover:bg-gray-50/50 dark:text-gray-300 dark:hover:bg-gray-700/50"
@@ -148,6 +168,7 @@
     showDateFilter?: boolean;
     showSearch?: boolean;
     initialFilters?: Record<string, string>;
+    loading?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -157,6 +178,7 @@
     showDateFilter: true,
     showSearch: true,
     initialFilters: () => ({}),
+    loading: false,
   });
 
   const emit = defineEmits([
