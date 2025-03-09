@@ -2,59 +2,20 @@
   <DefaultLayout>
     <Toaster position="bottom-left" />
     <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
-      <div class="rounded-lg bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <div class="mb-6">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <BackToMainButton />
-              <div>
-                <h1 class="text-2xl font-semibold dark:text-white"
-                  >المرفقات ({{ attachments.length }})</h1
-                >
-              </div>
-            </div>
-            <div class="flex w-full max-w-xs items-center">
-              <CustomSelect
-                v-model="selectedProject"
-                :options="projectOptions"
-                placeholder="اختر المشروع"
-                icon="lucide:folder"
-                trigger-class="w-full flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
-                @update:model-value="handleProjectChange"
-              />
-            </div>
-          </div>
-          <div
-            v-if="selectedProject !== 'all' && !isLoading"
-            class="mt-4 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800/50"
-          >
-            <div
-              class="flex items-center gap-4 border-b border-gray-100 bg-gray-50/50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50"
+      <div class="mb-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <BackToMainButton />
+          <div>
+            <h1 class="text-2xl font-semibold dark:text-white"
+              >المرفقات ({{ attachments.length }})</h1
             >
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-500/10"
-              >
-                <Icon icon="lucide:folder-open" class="h-5 w-5 text-blue-500 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 class="font-medium text-gray-900 dark:text-white">{{
-                  getProjectName(selectedProject)
-                }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ attachments.length }} مرفق{{ attachments.length !== 1 ? 'ات' : '' }}
-                </p>
-              </div>
-              <button
-                @click="selectedProject = 'all'"
-                class="mr-auto flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                <Icon icon="lucide:x" class="h-4 w-4" />
-                عرض الكل
-              </button>
-            </div>
           </div>
         </div>
+      </div>
 
+      <div
+        class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
+      >
         <div v-if="isLoading" class="flex items-center justify-center py-12">
           <div
             class="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
@@ -69,7 +30,8 @@
             :items-per-page="itemsPerPage"
             :show-export="false"
             :show-date-filter="true"
-            :filters="[]"
+            :filters="tableFilters"
+            @filter-change="handleFilterChange"
           >
             <template #fileType="{ item }">
               <div class="flex items-center gap-2">
@@ -155,7 +117,6 @@
 <script setup>
   import AttachmentEditModal from '@/components/AttachmentEditModal.vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
-  import CustomSelect from '@/components/CustomSelect.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
@@ -178,7 +139,7 @@
 
   const fetchProjects = async () => {
     try {
-      const response = await axiosInstance.get('/Project');
+      const response = await axiosInstance.get('/api/Project');
       projects.value = response.data;
       return response.data;
     } catch (error) {
@@ -188,9 +149,9 @@
   const fetchAttachments = async (projectId = null) => {
     try {
       isLoading.value = true;
-      let url = '/Attachment';
+      let url = 'api/Attachment';
       if (projectId && projectId !== 'all') {
-        url = `/Attachment?projectId=${projectId}`;
+        url = `api/Attachment?projectId=${projectId}`;
       }
       const response = await axiosInstance.get(url);
       attachments.value = response.data;
@@ -386,7 +347,7 @@
   const confirmDelete = async () => {
     try {
       isDeleting.value = true;
-      await axiosInstance.delete(`/Attachment/${selectedAttachment.value.id}`);
+      await axiosInstance.delete(`api/Attachment/${selectedAttachment.value.id}`);
       toast('تم حذف المرفق', {
         description: `تم حذف المرفق "${selectedAttachment.value.title}" بنجاح`,
         type: 'success',
@@ -448,7 +409,7 @@
         };
       }
 
-      await axiosInstance.put(`/Attachment/${selectedAttachment.value.id}`, requestData);
+      await axiosInstance.put(`api/Attachment/${selectedAttachment.value.id}`, requestData);
 
       isEditModalOpen.value = false;
       await fetchAttachments(selectedProject.value);
@@ -464,6 +425,31 @@
       });
     } finally {
       isLoading.value = false;
+    }
+  };
+
+  const tableFilters = computed(() => [
+    {
+      key: 'projectId',
+      placeholder: 'اختر المشروع',
+      options: [
+        { value: 'all', label: 'الكل' },
+        ...projects.value.map((project) => ({
+          value: project.id.toString(),
+          label: project.name,
+        })),
+      ],
+      icon: 'lucide:folder',
+      triggerClass:
+        'flex-row-reverse w-full dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
+    },
+  ]);
+
+  const handleFilterChange = (filters) => {
+    if (filters.projectId && filters.projectId !== 'all') {
+      fetchAttachments(filters.projectId);
+    } else {
+      fetchAttachments('all');
     }
   };
 </script>

@@ -21,8 +21,8 @@
             @export="exportToExcel"
             @action-click="viewDetails"
           >
-            <template #project="{ value }">
-              <span class="text-primary dark:text-primary-foreground">{{ value }}</span>
+            <template #tableName="{ value }">
+              <span class="text-primary dark:text-gray-300">{{ value || 'غير محدد' }}</span>
             </template>
           </CustomTable>
         </div>
@@ -35,106 +35,96 @@
 </template>
 
 <script setup>
+  import { ref, onMounted } from 'vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import ViewLogModal from '@/components/ViewLogModal.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import axiosInstance from '@/plugins/axios';
 
   // State
   const showDetailsDialog = ref(false);
   const selectedLog = ref(null);
+  const logs = ref([]);
+  const isLoading = ref(false);
 
   // Table configuration
   const columns = [
-    { key: 'employee_name', label: 'اسم الموظف' },
-    { key: 'project_name', label: 'المشروع' },
-    { key: 'date', label: 'تاريخ التعديل' },
-    { key: 'time', label: 'وقت التعديل' },
-    { key: 'field', label: 'حقل التعديل' },
-    { key: 'old_value', label: 'القيمة السابقة' },
-    { key: 'new_value', label: 'القيمة الجديدة' },
+    { key: 'id', label: 'رقم العملية' },
+    { key: 'tableName', label: 'اسم الجدول' },
+    { key: 'action', label: 'نوع العملية' },
+    { key: 'createdAt', label: 'تاريخ العملية' },
     { key: 'actions', label: '', type: 'action', icon: 'lucide:eye' },
   ];
 
   const filters = [
     {
-      key: 'project_name',
-      placeholder: 'اختر المشروع',
+      key: 'tableName',
+      placeholder: 'اختر الجدول',
       options: [
         { value: 'all', label: 'الكل' },
-        { value: '1', label: 'مشروع A' },
-        { value: '2', label: 'مشروع B' },
-        { value: '3', label: 'مشروع C' },
+        { value: 'Project', label: 'المشاريع' },
+        { value: 'Attachment', label: 'المرفقات' },
       ],
       icon: 'lucide:folder',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
     },
     {
-      key: 'employee_name',
-      placeholder: 'اختر الموظف',
+      key: 'action',
+      placeholder: 'نوع العملية',
       options: [
         { value: 'all', label: 'الكل' },
-        { value: '1', label: 'موظف 1' },
-        { value: '2', label: 'موظف 2' },
+        { value: 'create', label: 'إنشاء' },
+        { value: 'update', label: 'تعديل' },
+        { value: 'delete', label: 'حذف' },
       ],
-      icon: 'lucide:user',
+      icon: 'lucide:activity',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
     },
   ];
 
-  // Mock data - replace with actual API calls
-  const logs = ref([
-    {
-      id: 1,
-      employee_name: 'محمد انور',
-      project_name: 'اسم المشروع',
-      date: '2024/10/25',
-      time: '10:33 ص',
-      field: 'السعر',
-      old_value: '1100$',
-      new_value: '52145825',
-    },
-    {
-      id: 2,
-      employee_name: 'محمد انور',
-      project_name: 'اسم المشروع',
-      date: '2024/10/25',
-      time: '10:33 ص',
-      field: 'السعر',
-      old_value: '1100$',
-      new_value: '52145825',
-    },
-    {
-      id: 3,
-      employee_name: 'محمد انور',
-      project_name: 'اسم المشروع',
-      date: '2024/10/25',
-      time: '10:33 ص',
-      field: 'السعر',
-      old_value: '1100$',
-      new_value: '52145825',
-    },
-    {
-      id: 4,
-      employee_name: 'محمد انور',
-      project_name: 'اسم المشروع',
-      date: '2024/10/25',
-      time: '10:33 ص',
-      field: 'السعر',
-      old_value: '1100$',
-      new_value: '52145825',
-    },
-    {
-      id: 5,
-      employee_name: 'محمد انور',
-      project_name: 'اسم المشروع',
-      date: '2024/10/25',
-      time: '10:33 ص',
-      field: 'السعر',
-      old_value: '1100$',
-      new_value: '52145825',
-    },
-  ]);
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('ar', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }).format(date);
+  };
+
+  // Fetch logs from API
+  const fetchLogs = async () => {
+    try {
+      isLoading.value = true;
+      const response = await axiosInstance.get('/api/ActionAudit');
+      
+      // Process the data to format dates and prepare for display
+      logs.value = response.data.map(log => ({
+        ...log,
+        createdAt: formatDate(log.createdAt),
+        // Translate action types to Arabic
+        action: translateAction(log.action),
+      }));
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  // Translate action types to Arabic
+  const translateAction = (action) => {
+    const actionMap = {
+      'create': 'إنشاء',
+      'update': 'تعديل',
+      'delete': 'حذف'
+    };
+    return actionMap[action] || action;
+  };
 
   // Methods
   const exportToExcel = () => {
@@ -146,4 +136,9 @@
     selectedLog.value = log;
     showDetailsDialog.value = true;
   };
+
+  // Fetch logs on component mount
+  onMounted(() => {
+    fetchLogs();
+  });
 </script>

@@ -3,9 +3,9 @@
     <div class="flex flex-1">
       <ProjectsFilter />
 
-      <div class="flex-1 bg-gray-50 p-6 dark:bg-darkmode">
+      <div class="flex-1 p-6 bg-gray-200 dark:bg-darkmode">
         <!-- Projects Header -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="flex items-center justify-between mb-6">
           <div class="space-y-1">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">قائمة المشاريع</h1>
             <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -23,8 +23,8 @@
                   class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
                   align="end"
                 >
-                  <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                    <h3 class="text-right text-base font-medium text-gray-900 dark:text-white">
+                  <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                    <h3 class="text-base font-medium text-right text-gray-900 dark:text-white">
                       ترتيب
                     </h3>
                   </div>
@@ -36,7 +36,7 @@
                       :class="{ 'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id }"
                       @click="handleSort(option.id)"
                     >
-                      <Icon :icon="option.icon" class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                      <Icon :icon="option.icon" class="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
                     </DropdownMenuItem>
                   </div>
@@ -51,7 +51,7 @@
                   class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
                   @click="clearSort"
                 >
-                  <Icon icon="lucide:x" class="h-3 w-3" />
+                  <Icon icon="lucide:x" class="w-3 h-3" />
                 </button>
               </div>
             </div>

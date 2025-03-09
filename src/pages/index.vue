@@ -6,9 +6,9 @@
       <Header />
 
       <div class="mt-[6%] p-6">
-        <h1 class="mb-4 text-right text-2xl font-bold text-gray-900 dark:text-white"> المشاريع </h1>
+        <h1 class="mb-4 text-2xl font-bold text-right text-gray-900 dark:text-white"> المشاريع </h1>
         <!-- Stats Cards -->
-        <div class="mb-8 grid grid-cols-4 gap-4">
+        <div class="grid grid-cols-4 gap-4 mb-8">
           <ProjectStatCard title="كل المشاريع" :count="1582" icon="lucide:folder" color="blue" />
           <ProjectStatCard title="المنجزة" :count="982" icon="lucide:folder-check" color="green" />
           <ProjectStatCard
@@ -19,9 +19,9 @@
           />
           <ProjectStatCard title="المتلكئة" :count="245" icon="lucide:folder-x" color="red" />
         </div>
-        <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
+        <h1 class="mb-4 text-2xl font-bold text-right"> الاختصارات </h1>
         <!-- Shortcuts Cards -->
-        <div class="mb-8 grid grid-cols-4 gap-4">
+        <div class="grid grid-cols-4 gap-4 mb-8">
           <ShortcutCard title="البرنامج الحكومي" icon="lucide:users" color="sky" />
 
           <ShortcutCard title="المشاريع" icon="lucide:users" to="/projects" color="sky" />
@@ -33,9 +33,9 @@
 
         <!-- Chart Section -->
         <div
-          class="w-full rounded-lg border border-gray-100 bg-white p-6 shadow dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+          class="w-full p-6 bg-white border border-gray-100 rounded-lg shadow dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
         >
-          <div class="mb-4 flex items-center justify-between">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <CustomSelect
                 v-model="selectedYear"
@@ -57,7 +57,7 @@
         <div class="mt-8">
           <Tabs default-value="projects" class="w-full">
             <TabsList
-              class="w-full justify-end rounded-none border-b border-gray-200 bg-transparent p-0 dark:border-gray-700"
+              class="justify-end w-full p-0 bg-transparent border-b border-gray-200 rounded-none dark:border-gray-700"
             >
               <TabsTrigger
                 value="users"
@@ -95,7 +95,10 @@
   import Sidebar from '@/components/Sidebar.vue';
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import UsersList from '@/components/UsersList.vue';
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
+  import axiosInstance from '@/plugins/axios';
+  import { useAuthStore } from '@/stores/authStore';
+
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
   const mockProjects = [
@@ -173,6 +176,8 @@
     },
   ];
 
+  const authStore = useAuthStore();
+
   const allProjects = ref(mockProjects);
   const completedProjects = computed(() => mockProjects.filter((p) => p.status === 'منجز'));
   const inProgressProjects = computed(() => mockProjects.filter((p) => p.status === 'قيد الانجاز'));
@@ -236,6 +241,19 @@
       isActive: true,
     },
   ];
+
+  const userInfo = ref(null);
+
+
+  onMounted(async () => {
+    const response = await axiosInstance.get('/me', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    });
+    console.log(response);
+    userInfo.value = response.data;
+  });
 </script>
 
 <style>

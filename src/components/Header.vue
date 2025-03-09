@@ -13,14 +13,15 @@
       <div class="flex items-center gap-3">
         <div
           class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700"
+          @click="handleLogout"
         >
-          <Icon icon="lucide:user" class="h-6 w-6 text-gray-300" />
+          <Icon icon="lucide:log-out" class="h-6 w-6 text-gray-300" />
         </div>
         <div class="flex flex-col items-start">
           <span class="cursor-pointer font-medium text-white transition-colors hover:text-primary">
-            أ. دعاء الشيخلي
+            {{ authStore.getUser?.name || 'User' }}
           </span>
-          <span class="text-sm text-gray-400">مدير المشاريع</span>
+          <span class="text-sm text-gray-400">{{ authStore.getUser?.role || 'Guest' }}</span>
         </div>
         <div class="h-6 w-px bg-gray-700"></div>
       </div>
@@ -51,7 +52,16 @@
 
 <script setup>
   import { useTheme } from '@/composables/useTheme';
+  import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
+  import { useRouter } from 'vue-router';
+
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const authStore = useAuthStore();
+
+  const handleLogout = () => {
+    authStore.logout();
+    router.push('/login');
+  };
 </script>
