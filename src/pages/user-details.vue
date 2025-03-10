@@ -6,16 +6,16 @@
       </div>
       <div class="flex gap-6">
         <!-- User Profile Card -->
-        <div class="w-fit flex-col rounded-lg bg-white p-6 dark:bg-gray-800">
+        <div class="w-fit flex-col text-center rounded-lg bg-white p-6 dark:bg-gray-800">
           <img
             src="/img/avatar.png"
             alt="User Avatar"
-            class="mb-3 h-20 w-20 rounded-full object-cover"
+            class="mb-3 h-20 w-20 rounded-full object-cover mx-auto"
           />
-          <h1 class="mb-1 text-lg font-medium dark:text-gray-100">أ. دعاء الشيخلي</h1>
+          <h1 class="mb-1 text-lg font-medium dark:text-gray-100">{{ user.name }}</h1>
           <div class="mb-2 flex flex-col items-center text-sm text-gray-500 dark:text-gray-400">
-            <span>شعبة المشاريع - قسم المشاريع - دائرة التخطيط</span>
-            <span>وزارة البيئة</span>
+            <span>{{ user.email }}</span>
+            <span>{{ user.role }}</span>
           </div>
           <PrimaryButton variant="outline" icon="lucide:briefcase" class="rounded-full">
             مدير مشروع
@@ -70,6 +70,19 @@
   import ProjectCard from '@/components/ProjectCard.vue';
   import Timeline from '@/components/Timeline.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import axiosInstance from '@/plugins/axios';
+
+  const router = useRouter();
+
+  const user = ref({});
+
+  function getUser() {
+    if (router.currentRoute.value.params.id) {
+      axiosInstance.get(`/api/auth/users/${router.currentRoute.value.params.id}`).then((res) => {
+        user.value = res.data;
+      });
+    }
+  }
 
   const events = ref([
     {
@@ -123,4 +136,8 @@
       status: 'منجز',
     },
   ]);
+
+  onMounted(() => {
+    getUser();
+  });
 </script>
