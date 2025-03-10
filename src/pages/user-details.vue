@@ -74,11 +74,13 @@
 
   const router = useRouter();
 
+  const id = computed(() => router.currentRoute.value.params.id);
+
   const user = ref({});
 
   function getUser() {
-    if (router.currentRoute.value.params.id) {
-      axiosInstance.get(`/api/auth/users/${router.currentRoute.value.params.id}`).then((res) => {
+    if (id.value) {
+      axiosInstance.get(`/api/auth/users/${id.value}`).then((res) => {
         user.value = res.data;
       });
     }
