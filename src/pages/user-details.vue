@@ -14,11 +14,11 @@
           />
           <h1 class="mb-1 text-lg font-medium dark:text-gray-100">{{ user.name }}</h1>
           <div class="mb-2 flex flex-col items-center text-sm text-gray-500 dark:text-gray-400">
+            <span>{{ user.userName }}</span>
             <span>{{ user.email }}</span>
-            <span>{{ user.role }}</span>
           </div>
-          <PrimaryButton variant="outline" icon="lucide:briefcase" class="rounded-full">
-            مدير مشروع
+          <PrimaryButton variant="outline" icon="lucide:briefcase" class="rounded-full w-full text-center">
+            <span>{{ user.role === 'SUPERVISOR' ? 'مدير' : user.role === 'ADMIN' ? 'مشرف' : 'مدخل بيانات'}}</span>
           </PrimaryButton>
         </div>
 
