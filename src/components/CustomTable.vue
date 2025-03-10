@@ -6,15 +6,23 @@
       class="mb-8 flex items-center justify-between gap-4"
     >
       <div class="flex items-center gap-6">
-        <Button
-          v-if="showExport"
-          variant="outline"
-          class="px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-          @click="$emit('export')"
-        >
-          <Icon icon="lucide:file-spreadsheet" class="ml-2 h-4 w-4" />
-          تصدير Excel
+          <Button
+            v-if="showExport"
+            variant="outline"
+            class="px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+            :class="isExportPremium ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'"
+            :disabled="!isExportPremium"
+            @click="$emit('export')"
+          >
+
+            <Icon icon="lucide:file-spreadsheet" class="ml-2 h-4 w-4" :class="isExportPremium ? 'text-red-500' : ''"/>
+            <span :class="isExportPremium ? 'text-red-500' : ''">تصدير Excel</span>
+            <div v-if="isExportPremium" class="text-red-500 text-xs flex items-center gap-1">
+              <span> – هذه الميزة غير متوفرة حاليا</span>
+              <Icon icon="lucide:lock" class="h-4 w-4" />
+            </div>
         </Button>
+
         <DateRangeInput v-if="showDateFilter" v-model="dateRange" />
 
         <div v-for="filter in filters" :key="filter.key" class="min-w-[200px]">
@@ -169,6 +177,7 @@
     showSearch?: boolean;
     initialFilters?: Record<string, string>;
     loading?: boolean;
+    isExportPremium?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -179,6 +188,7 @@
     showSearch: true,
     initialFilters: () => ({}),
     loading: false,
+    isExportPremium: false,
   });
 
   const emit = defineEmits([
