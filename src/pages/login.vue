@@ -90,7 +90,7 @@
     errorMessage.value = '';
 
     try {
-      const response = await axiosInstance.post('/login', {
+      const response = await axiosInstance.post('/api/auth/login', {
         username: username.value,
         password: password.value
       });
