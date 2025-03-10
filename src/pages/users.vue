@@ -34,6 +34,18 @@
               </Button>
             </template>
 
+            <template #role="{ value }">
+              <Badge v-if="value === 'SUPERVISOR'" variant="success" class="w-fit font-medium text-white dark:bg-green-500/20">
+                مدير
+              </Badge>
+              <Badge v-else-if="value === 'ADMIN'" class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
+                مشرف
+              </Badge>
+              <Badge v-else class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
+                مدخل بيانات
+              </Badge>
+            </template>
+
             <template #createdAt="{ value }">
               <div>
                 {{ new Date(value).toLocaleDateString('ar', { year: 'numeric', month: '2-digit', day: '2-digit' }) }}
