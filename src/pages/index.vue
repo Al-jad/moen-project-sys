@@ -246,7 +246,7 @@
 
 
   onMounted(async () => {
-    const response = await axiosInstance.get('/me', {
+    const response = await axiosInstance.get('/api/auth/me', {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
