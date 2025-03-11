@@ -48,11 +48,17 @@
     return props.projects.slice(start, end);
   });
 
+  // Simple function to process project data if needed
   function getProjectData(project) {
-    return projectUtils.transformProject(project);
+    // Return the project as is for now
+    return project;
   }
 
+  // No need to process projects on mount since we're just displaying them as is
+  // If you need to process them later, you can uncomment this
+  /*
   onMounted(() => {
     props.projects.forEach(getProjectData);
   });
+  */
 </script>
