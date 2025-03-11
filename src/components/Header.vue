@@ -64,10 +64,4 @@
     authStore.logout();
     router.push('/login');
   };
-  const authStore = useAuthStore();
-
-  const handleLogout = () => {
-    authStore.logout();
-    router.push('/login');
-  };
 </script>
