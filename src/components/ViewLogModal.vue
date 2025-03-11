@@ -17,7 +17,9 @@
             <span class="text-gray-500 dark:text-gray-300">رقم العملية</span>
           </div>
           <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">{{ log?.tableName || 'غير متوفر' }}</span>
+            <span class="text-gray-900 dark:text-gray-300">
+              {{ translatedTableName }}
+            </span>
             <span class="text-gray-500 dark:text-gray-300">اسم الجدول</span>
           </div>
           <div class="flex items-center justify-between py-3 border-b border-gray-100">
@@ -96,7 +98,19 @@ const props = defineProps({
     required: false,
     default: () => ({})
   }
-})
+});
+
+// Ensure reactivity
+const translatedTableName = computed(() => {
+  return props.log?.tableName ? translations[props.log.tableName] || props.log.tableName : 'غير متوفر';
+});
+
+const translations = {
+  'AppUser': 'المستخدمين',
+  'Project': 'المشاريع',
+  'ProjectPhase': 'المراحل',
+  'ProjectActivity': 'الأنشطة'
+}
 
 defineEmits(['update:open'])
 </script> 

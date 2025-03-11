@@ -22,7 +22,7 @@
             @action-click="viewDetails"
           >
             <template #tableName="{ value }">
-              <span class="text-primary dark:text-gray-300">{{ value || 'غير محدد' }}</span>
+              <span class="text-primary dark:text-gray-300">{{ getTableName(value) }}</span>
             </template>
           </CustomTable>
         </div>
@@ -65,6 +65,7 @@
         { value: 'all', label: 'الكل' },
         { value: 'Project', label: 'المشاريع' },
         { value: 'Attachment', label: 'المرفقات' },
+        { value: 'AppUser', label: 'المستخدمين' },
       ],
       icon: 'lucide:folder',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -94,6 +95,17 @@
       hour: 'numeric',
       minute: 'numeric',
     }).format(date);
+  };
+
+  const getTableName = (tableName) => {
+    const translations = {
+      'AppUser': 'المستخدمين',
+      'Project': 'المشاريع',
+      'ProjectPhase': 'المراحل',
+      'ProjectActivity': 'الأنشطة',
+      'Attachment': 'المرفقات',
+    };
+    return translations[tableName] || tableName;
   };
 
   // Fetch logs from API
