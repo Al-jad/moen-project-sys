@@ -1,8 +1,8 @@
 <template>
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
-    <DialogContent class="max-w-[800px] overflow-y-auto max-h-[80vh] bg-gray-200 dark:bg-gray-800">
-      <DialogHeader class="flex flex-col gap-4 mt-4 mb-2">
-        <div class="flex items-center justify-end">
+    <DialogContent class="flex flex-col px-8 min-w-[800px] max-w-[800px] overflow-y-auto max-h-[80vh] bg-gray-200 dark:bg-gray-800">
+      <DialogHeader class="flex col gap-4 mt-4 mb-2">
+        <div class="flex items-center justify-start">
           <DialogTitle class="text-xl font-semibold">
             تفاصيل الحدث
           </DialogTitle>
@@ -12,29 +12,11 @@
 
       <div class="py-4">
         <div class="space-y-3">
-          <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">{{ log?.id || 'غير متوفر' }}</span>
-            <span class="text-gray-500 dark:text-gray-300">رقم العملية</span>
-          </div>
-          <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">
-              {{ translatedTableName }}
-            </span>
-            <span class="text-gray-500 dark:text-gray-300">اسم الجدول</span>
-          </div>
-          <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">{{ log?.tableRowId || 'غير متوفر' }}</span>
-            <span class="text-gray-500 dark:text-gray-300">معرف الصف</span>
-          </div>
-          <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">{{ log?.action }}</span>
-            <span class="text-gray-500 dark:text-gray-300">نوع العملية</span>
-          </div>
-          <div class="flex items-center justify-between py-3 border-b border-gray-100">
-            <span class="text-gray-900 dark:text-gray-300">{{ log?.createdAt }}</span>
-            <span class="text-gray-500 dark:text-gray-300">تاريخ العملية</span>
-          </div>
-          
+              <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700" v-for="(attribute, key) in tableNames" :key="key">
+                <span class="text-gray-500 dark:text-gray-300 font-semibold">{{ key }}</span>
+                <span class="text-gray-900 dark:text-gray-300">{{ log[attribute] || 'غير متوفر' }}</span>
+              </div>
+
           <!-- Details Section -->
           <div class="py-3 border-b border-gray-100">
             <div class="flex justify-between mb-2">
@@ -44,34 +26,36 @@
             
             <!-- Details Table -->
             <div v-if="log?.details && log.details.length > 0" class="mt-3 border rounded-md overflow-hidden">
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-300 dark:bg-gray-700">
-                  <tr>
-                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                      اسم الحقل
-                    </th>
-                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                      القيمة السابقة
-                    </th>
-                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                      القيمة الجديدة
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                  <tr v-for="(detail, index) in log.details" :key="index">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                      {{ detail.fieldName }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {{ detail.oldValue || 'لا يوجد' }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                      {{ detail.newValue || 'لا يوجد' }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="overflow-x-auto">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead class="bg-gray-300 dark:bg-gray-700">
+                    <tr>
+                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
+                        اسم الحقل
+                      </th>
+                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
+                        القيمة السابقة
+                      </th>
+                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
+                        القيمة الجديدة
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr v-for="(detail, index) in log.details" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {{ detail.fieldName }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {{ detail.oldValue || 'لا يوجد' }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
+                        {{ detail.newValue || 'لا يوجد' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div v-else class="text-center py-4 text-gray-500 dark:text-gray-300">
               لا توجد تفاصيل متاحة
@@ -111,6 +95,14 @@ const translations = {
   'ProjectPhase': 'المراحل',
   'ProjectActivity': 'الأنشطة',
   'Attachment': 'المرفقات',
+}
+
+const tableNames = {
+ 'رقم العملية': 'id',
+ 'اسم الجدول': 'tableName',
+ 'معرف الصف': 'tableRowId',
+ 'نوع العملية': 'action',
+ 'تاريخ العملية': 'createdAt',
 }
 
 defineEmits(['update:open'])
