@@ -1,6 +1,6 @@
 <template>
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
-    <DialogContent class="sm:max-w-[600px]">
+    <DialogContent class="max-w-[800px] overflow-y-auto max-h-[80vh] bg-gray-200 dark:bg-gray-800">
       <DialogHeader class="flex flex-col gap-4 mt-4 mb-2">
         <div class="flex items-center justify-end">
           <DialogTitle class="text-xl font-semibold">
@@ -44,21 +44,21 @@
             
             <!-- Details Table -->
             <div v-if="log?.details && log.details.length > 0" class="mt-3 border rounded-md overflow-hidden">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-300 dark:bg-gray-700">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
                       اسم الحقل
                     </th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
                       القيمة السابقة
                     </th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
                       القيمة الجديدة
                     </th>
                   </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                   <tr v-for="(detail, index) in log.details" :key="index">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                       {{ detail.fieldName }}
@@ -109,7 +109,8 @@ const translations = {
   'AppUser': 'المستخدمين',
   'Project': 'المشاريع',
   'ProjectPhase': 'المراحل',
-  'ProjectActivity': 'الأنشطة'
+  'ProjectActivity': 'الأنشطة',
+  'Attachment': 'المرفقات',
 }
 
 defineEmits(['update:open'])
