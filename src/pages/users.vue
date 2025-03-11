@@ -20,17 +20,36 @@
             :data="users"
             :filters="filters"
             @export="exportToExcel"
+            :is-export-premium="true"
             @cell-click="handleCellClick"
             @action-click="viewUserDetails"
           >
-            <template #name="{ value }">
+            <template #id="{ value }">
               <Button
                 variant="link"
                 class="h-auto p-0 text-blue-600 dark:text-blue-400"
-                @click="$router.push('/users/1')"
+                @click="$router.push(`/users/${value}`)"
               >
                 {{ value }}
               </Button>
+            </template>
+
+            <template #role="{ value }">
+              <Badge v-if="value === 'SUPERVISOR'" variant="success" class="w-fit font-medium text-white dark:bg-green-500/20">
+                مدير
+              </Badge>
+              <Badge v-else-if="value === 'ADMIN'" class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
+                مشرف
+              </Badge>
+              <Badge v-else class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
+                مدخل بيانات
+              </Badge>
+            </template>
+
+            <template #createdAt="{ value }">
+              <div>
+                {{ new Date(value).toLocaleDateString('ar', { year: 'numeric', month: '2-digit', day: '2-digit' }) }}
+              </div>
             </template>
           </CustomTable>
         </div>
@@ -79,6 +98,8 @@
     DialogTitle,
   } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import axiosInstance from '@/plugins/axios';
+import { onMounted } from 'vue';
 
   const router = useRouter();
 
@@ -93,12 +114,14 @@
 
   const columns: Column[] = [
     { key: 'name', label: 'اسم الموظف', type: 'button' },
-    { key: 'department', label: 'الدائرة' },
-    { key: 'section', label: 'القسم' },
-    { key: 'division', label: 'الشعبة' },
+    { key: 'email', label: 'الايميل' },
     { key: 'role', label: 'الصلاحية' },
-    { key: 'project', label: 'المشروع' },
-    { key: 'actions', label: '', type: 'action', icon: 'lucide:eye' },
+    { key: 'createdAt', label: 'تاريخ الاضافة' },
+    // { key: 'department', label: 'الدائرة' },
+    // { key: 'section', label: 'القسم' },
+    // { key: 'division', label: 'الشعبة' },
+    // { key: 'project', label: 'المشروع' },
+    // { key: 'actions', label: '', type: 'action', icon: 'lucide:eye' },
   ];
 
   interface Filter {
@@ -135,41 +158,19 @@
   interface User {
     id: number;
     name: string;
-    department: string;
-    section: string;
-    division: string;
+    email: string;
     role: string;
-    project: string;
-    addDate: string;
-    status: string;
+    createdAt: string;
   }
 
-  // Mock data
-  const users = ref<User[]>(
-    Array(7)
-      .fill(null)
-      .map((_, index) => ({
-        id: index + 1,
-        name: index % 2 === 0 ? 'محمد انور' : 'دعاء الشيخلي',
-        department: 'دائرة حماية وتحسين البيئة',
-        section: 'قسم المشاريع',
-        division: 'شعبة المتابعة',
-        role: 'مدير مشروع',
-        project: 'تجهيز وتنصيب وتشغيل محطات الأنواء الجوية',
-        addDate: '2024/10/25',
-        status: 'فعال',
-      }))
-  );
+  const users = ref([])
 
   // User details configuration
   const userDetailsFields = [
     { key: 'name', label: 'الاسم الكامل' },
-    { key: 'department', label: 'الدائرة' },
-    { key: 'section', label: 'القسم' },
-    { key: 'division', label: 'الشعبة' },
+    { key: 'email', label: 'الايميل' },
     { key: 'role', label: 'الصلاحية' },
-    { key: 'addDate', label: 'تاريخ الاضافة' },
-    { key: 'status', label: 'الحالة', type: 'badge' },
+    { key: 'createdAt', label: 'تاريخ الاضافة' },
   ];
 
   // State
@@ -181,6 +182,12 @@
     console.log('Exporting to Excel...');
   };
 
+  function getUsers() {
+    axiosInstance.get('/api/auth/users').then((res) => {
+      users.value = res.data;
+    });
+  }
+
   const handleCellClick = ({ key, item }: { key: string; item: User }) => {
     if (key === 'name') {
       router.push(`/users/${item.id}`);
@@ -191,4 +198,8 @@
     selectedUser.value = user;
     showDetailsDialog.value = true;
   };
+
+  onMounted(() => {
+    getUsers();
+  });
 </script>
