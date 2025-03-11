@@ -21,7 +21,7 @@
           <span class="cursor-pointer font-medium text-gray-800 dark:text-white transition-colors hover:text-primary dark:hover:text-primary">
             {{ authStore.getUser?.name || 'User' }}
           </span>
-          <span class="text-sm text-gray-600 dark:text-gray-400">{{ authStore.getUser?.role || 'Guest' }}</span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ userTranslations[authStore.getUser?.role] || 'Guest' }}</span>
         </div>
         <div class="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
       </div>
@@ -59,6 +59,12 @@
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const authStore = useAuthStore();
+
+  const userTranslations = {
+    ADMIN: 'مدير',
+    SUPERVISOR: 'مشرف',
+    DATA_ENTRY: 'مدخل بيانات',
+  };
 
   const handleLogout = () => {
     authStore.logout();
