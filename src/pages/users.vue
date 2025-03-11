@@ -1,18 +1,6 @@
 <template>
   <DefaultLayout>
     <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
-      <div>
-        <div class="mb-6 flex items-center justify-between">
-          <div class="flex items-center gap-6">
-            <BackToMainButton />
-            <h1 class="text-xl font-bold dark:text-white">قائمة المستخدمين</h1>
-          </div>
-          <PrimaryButton variant="primary" icon="lucide:user-plus">
-            اضافة مستخدم جديد
-          </PrimaryButton>
-        </div>
-      </div>
-
       <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="p-6">
           <CustomTable
