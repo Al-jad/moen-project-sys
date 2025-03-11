@@ -23,10 +23,10 @@
             </template>
 
             <template #role="{ value }">
-              <Badge v-if="value === 'SUPERVISOR'" variant="success" class="w-fit font-medium text-white bg-green-500 dark:bg-green-500/20">
+              <Badge v-if="value === 'ADMIN'" variant="success" class="w-fit font-medium text-white bg-green-500 dark:bg-green-500/20">
                 مدير
               </Badge>
-              <Badge v-else-if="value === 'ADMIN'" class="w-fit font-medium text-white bg-gray-500 dark:bg-gray-500/20 dark:text-gray-300">
+              <Badge v-else-if="value === 'SUPERVISOR'" class="w-fit font-medium text-white bg-gray-500 dark:bg-gray-500/20 dark:text-gray-300">
                 مشرف
               </Badge>
               <Badge v-else class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
