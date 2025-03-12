@@ -34,10 +34,11 @@
         <h3 class="mb-6 text-lg font-medium">الجهات المستفيدة والمانحة</h3>
         <div class="grid gap-6">
           <FormField label="الجهات المستفيدة من المشروع">
-            <CustomInput
+            <CustomMultiSelect
               v-model="store.form.beneficiaryEntities"
-              dir="rtl"
-              placeholder="ادخل اسم الجهة المستفيدة"
+              :options="beneficiaries"
+              placeholder="اختر الجهات المستفيدة"
+              :triggerClass="'flex flex-row-reverse w-full'"
             />
           </FormField>
           <FormField label="الجهة المانحة">
@@ -85,11 +86,27 @@
 
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
+  import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import { Textarea } from '@/components/ui/textarea';
+  import { beneficiaryService } from '@/services/beneficiaryService';
   import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { onMounted, ref } from 'vue';
 
   const store = useFundedProjectStore();
+  const beneficiaries = ref([]);
+
+  onMounted(async () => {
+    try {
+      const response = await beneficiaryService.getAllBeneficiaries();
+      beneficiaries.value = response.data.map((b) => ({
+        value: b.id,
+        label: b.name,
+      }));
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+    }
+  });
 </script>
