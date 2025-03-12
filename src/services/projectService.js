@@ -23,7 +23,7 @@ export const projectService = {
 
   /**
    * Create a new project
-   * @param {Object} projectData - Project data with projectForCreation wrapper
+   * @param {Object} projectData - Project data
    * @returns {Promise} Promise with the created project data
    */
   createProject(projectData) {
