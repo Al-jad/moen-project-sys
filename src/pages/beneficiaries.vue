@@ -29,11 +29,16 @@
                 <span class="dark:text-gray-300">{{ value }}</span>
               </div>
             </template>
-            <template #reference="{ value }">
+            <template #referenceEntity="{ value }">
               <span class="dark:text-gray-300">{{ value }}</span>
             </template>
-            <template #address="{ value }">
+            <template #location="{ value }">
               <span class="dark:text-gray-300">{{ value }}</span>
+            </template>
+            <template #createdAt="{ value }">
+              <span class="dark:text-gray-300">{{
+                new Date(value).toLocaleDateString('ar-SA')
+              }}</span>
             </template>
           </CustomTable>
         </div>
@@ -43,45 +48,6 @@
       <AddBeneficiaryModal v-model:open="showModal" :edit-data="editingEntity" @save="handleSave" />
 
       <!-- Quick Name Edit Modal -->
-      <Dialog v-model:open="showQuickNameModal">
-        <DialogContent class="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle class="text-right text-xl font-semibold">
-              تعديل اسم الجهة المستفيدة
-            </DialogTitle>
-          </DialogHeader>
-
-          <form @submit.prevent="saveQuickNameEdit" class="py-4">
-            <div class="space-y-4">
-              <div class="space-y-2">
-                <Label class="text-right">اسم الجهة</Label>
-                <Input
-                  v-model="quickEditName"
-                  dir="rtl"
-                  placeholder="اسم الجهة المستفيدة"
-                  class="border-gray-200"
-                />
-              </div>
-            </div>
-
-            <div class="mt-6 flex flex-row-reverse gap-2">
-              <Button type="submit" class="w-2/4">
-                <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
-                حفظ
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                class="w-1/4"
-                @click="showQuickNameModal = false"
-              >
-                <Icon icon="lucide:x" class="ml-2 h-4 w-4" />
-                الغاء
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
     </main>
   </DefaultLayout>
 </template>
@@ -91,10 +57,6 @@
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { Button } from '@/components/ui/button';
-  import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-  import { Input } from '@/components/ui/input';
-  import { Label } from '@/components/ui/label';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { beneficiaryService } from '@/services/beneficiaryService';
   import { Icon } from '@iconify/vue';
@@ -103,9 +65,10 @@
   // Table configuration
   const columns = [
     { key: 'name', label: 'اسم الجهة المستفيدة' },
-    { key: 'reference', label: 'اسم الجهة المرجعية' },
-    { key: 'address', label: 'العنوان' },
+    { key: 'referenceEntity', label: 'اسم الجهة المرجعية' },
+    { key: 'location', label: 'العنوان' },
     { key: 'actions', label: '', type: 'action', icon: 'lucide:pencil' },
+    { key: 'delete', label: '', type: 'delete', icon: 'lucide:trash' },
   ];
 
   // State
@@ -141,13 +104,19 @@
   // Methods
   const handleSave = async (data) => {
     try {
+      const payload = {
+        name: data.name,
+        referenceEntity: data.referenceEntity,
+        location: data.location,
+      };
+
       if (data.id) {
         // Edit existing entity
-        await beneficiaryService.updateBeneficiary(data.id, data);
+        await beneficiaryService.updateBeneficiary(data.id, payload);
         toast.success('تم تحديث الجهة المستفيدة بنجاح');
       } else {
         // Add new entity
-        await beneficiaryService.createBeneficiary(data);
+        await beneficiaryService.createBeneficiary(payload);
         toast.success('تمت إضافة الجهة المستفيدة بنجاح');
       }
       // Refresh the list
@@ -160,7 +129,12 @@
   };
 
   const handleEdit = (entity) => {
-    editingEntity.value = entity;
+    editingEntity.value = {
+      id: entity.id,
+      name: entity.name,
+      referenceEntity: entity.referenceEntity,
+      location: entity.location,
+    };
     showModal.value = true;
   };
 

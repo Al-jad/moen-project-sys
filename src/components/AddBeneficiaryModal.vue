@@ -20,22 +20,22 @@
             />
           </div>
 
-          <!-- Reference -->
+          <!-- Reference Entity -->
           <div class="space-y-2">
             <Label class="text-right">المرجعية</Label>
             <Input
-              v-model="formData.reference"
+              v-model="formData.referenceEntity"
               dir="rtl"
               placeholder="دائرة حماية وتحسين البيئة في منطقة الوسط"
               class="border-gray-200"
             />
           </div>
 
-          <!-- Address -->
+          <!-- Location -->
           <div class="space-y-2">
             <Label class="text-right">العنوان</Label>
             <Input
-              v-model="formData.address"
+              v-model="formData.location"
               dir="rtl"
               placeholder="الحلة شارع 0000"
               class="border-gray-200"
@@ -81,8 +81,8 @@
 
   const formData = ref({
     name: '',
-    reference: '',
-    address: '',
+    referenceEntity: '',
+    location: '',
   });
 
   const isEditing = computed(() => !!props.editData);
@@ -92,12 +92,16 @@
     () => props.editData,
     (newData) => {
       if (newData) {
-        formData.value = { ...newData };
+        formData.value = {
+          name: newData.name || '',
+          referenceEntity: newData.referenceEntity || '',
+          location: newData.location || '',
+        };
       } else {
         formData.value = {
           name: '',
-          reference: '',
-          address: '',
+          referenceEntity: '',
+          location: '',
         };
       }
     },
@@ -105,15 +109,17 @@
   );
 
   const save = () => {
-    emit('save', {
+    const dataToSave = {
       ...formData.value,
       id: props.editData?.id,
-    });
+    };
+
+    emit('save', dataToSave);
     emit('update:open', false);
     formData.value = {
       name: '',
-      reference: '',
-      address: '',
+      referenceEntity: '',
+      location: '',
     };
   };
 </script>
