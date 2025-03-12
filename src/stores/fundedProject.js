@@ -129,43 +129,28 @@ export const useFundedProjectStore = defineStore('fundedProject', () => {
     form.value.isSaving = true;
     
     try {
-      // Ensure beneficiaryEntities is properly formatted
-      let beneficiaryEntitiesString = '';
-      if (Array.isArray(form.value.beneficiaryEntities)) {
-        beneficiaryEntitiesString = form.value.beneficiaryEntities
-          .filter(entity => entity && entity.trim && entity.trim() !== '')
-          .join(', ');
-      } else if (form.value.beneficiaryEntities) {
-        beneficiaryEntitiesString = form.value.beneficiaryEntities.toString();
-      }
-      
-      // Format the data for API according to expected structure
-      const projectForCreation = {
+      const projectData = {
+        fundingType: form.value.fundingType,
+        periodType: form.value.periodType,
+        duration: parseInt(form.value.duration) || 0,
         name: form.value.name,
         executingDepartment: form.value.executingDepartment,
         implementingEntity: form.value.implementingEntity,
-        beneficiaryEntities: beneficiaryEntitiesString,
         grantingEntity: form.value.grantingEntity,
-        fundingType: form.value.fundingType,
+        lng: form.value.longitude ? parseFloat(form.value.longitude) : 0,
+        lat: form.value.latitude ? parseFloat(form.value.latitude) : 0,
+        beneficiaryEntities: Array.isArray(form.value.beneficiaryEntities) 
+          ? form.value.beneficiaryEntities.filter(entity => entity && entity.trim && entity.trim() !== '')
+          : [],
+        projectStatus: 1,
         cost: parseFloat(form.value.cost) || 0,
-        projectObjectives: form.value.projectObjectives || '',
-        duration: parseInt(form.value.duration) || 0,
-        periodType: form.value.periodType || 1,
-        durationType: form.value.durationType || 'weeks',
         actualStartDate: form.value.actualStartDate,
-        latitude: form.value.latitude ? parseFloat(form.value.latitude) : null,
-        longitude: form.value.longitude ? parseFloat(form.value.longitude) : null,
+        projectObjectives: form.value.projectObjectives || ''
       };
       
-      // If components exist, add them
-      if (Array.isArray(form.value.components) && form.value.components.length > 0) {
-        projectForCreation.components = form.value.components;
-      }
-
-      console.log('Sending projectForCreation:', projectForCreation);
+      console.log('Sending project data:', projectData);
       
-      // Use the projectService to make the API call to /api/project
-      const response = await projectService.createProject({ projectForCreation });
+      const response = await projectService.createProject(projectData);
       console.log('API response:', response);
       
       form.value.hasUnsavedChanges = false;

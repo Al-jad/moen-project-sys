@@ -52,7 +52,7 @@
 
   // Ensure beneficiaryEntities is always an array
   if (!Array.isArray(store.form.beneficiaryEntities)) {
-    store.form.beneficiaryEntities = store.form.beneficiaryEntities ? [store.form.beneficiaryEntities] : [''];
+    store.form.beneficiaryEntities = store.form.beneficiaryEntities ? [store.form.beneficiaryEntities] : [];
   }
 
   onMounted(() => {
@@ -60,7 +60,7 @@
       name: '',
       executingDepartment: '',
       implementingEntity: '',
-      beneficiaryEntities: [''],
+      beneficiaryEntities: [],
       grantingEntity: '',
       fundingType: 1,
       cost: null,
@@ -74,6 +74,7 @@
       longitude: '',
       isSaving: false,
       hasUnsavedChanges: false,
+      projectStatus: 1,
     };
     localStorage.removeItem('fundedProject');
     sessionStorage.removeItem('fundedProject');
@@ -145,9 +146,17 @@
         store.form.longitude = parseFloat(store.form.longitude);
       }
       
-      // Convert date to ISO format if it's a Date object
       if (store.form.actualStartDate instanceof Date) {
         store.form.actualStartDate = store.form.actualStartDate.toISOString();
+      }
+      
+      if (Array.isArray(store.form.beneficiaryEntities)) {
+        store.form.beneficiaryEntities = store.form.beneficiaryEntities
+          .filter(entity => entity && entity.toString().trim() !== '')
+          .map(entity => {
+            const parsed = parseInt(entity);
+            return !isNaN(parsed) ? parsed : entity;
+          });
       }
       
       console.log('Saving project with data:', store.form);
