@@ -1,33 +1,30 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
-      <div class="mb-6 flex items-center justify-between">
+    <main class="min-h-screen p-6 bg-gray-200 dark:bg-gray-900">
+      <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <BackToMainButton />
           <h1 class="text-xl font-bold dark:text-white">الجهات المستفيدة</h1>
         </div>
         <div class="flex items-center gap-4">
           <PrimaryButton @click="handleAdd">
-            <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
+            <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
             اضافة جهة مستفيدة
           </PrimaryButton>
         </div>
       </div>
 
       <!-- Table Card -->
-      <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="bg-white rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="p-6">
           <CustomTable
             :columns="columns"
             :data="entities"
             @export="exportToExcel"
-            @action-click="handleEdit"
             :loading="isLoading"
           >
-            <template #name="{ value, item }">
-              <div class="flex items-center gap-2">
-                <span class="dark:text-gray-300">{{ value }}</span>
-              </div>
+            <template #name="{ value }">
+              <span class="dark:text-gray-300">{{ value }}</span>
             </template>
             <template #referenceEntity="{ value }">
               <span class="dark:text-gray-300">{{ value }}</span>
@@ -40,14 +37,44 @@
                 new Date(value).toLocaleDateString('ar-SA')
               }}</span>
             </template>
+            <template #action="{ item }">
+              <div class="flex items-center justify-center gap-4">
+                <button
+                  @click="handleEdit(item)"
+                  class="inline-flex items-center gap-1 text-gray-600 text-nowrap hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                >
+                  <Icon icon="lucide:edit" class="w-4 h-4" />
+                </button>
+                <button
+                  @click="handleDelete(item)"
+                  :disabled="isDeleting"
+                  class="inline-flex items-center gap-1 text-red-600 text-nowrap hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <Icon icon="lucide:trash" class="w-4 h-4" />
+                </button>
+              </div>
+            </template>
           </CustomTable>
         </div>
       </div>
 
       <!-- Add/Edit Modal -->
-      <AddBeneficiaryModal v-model:open="showModal" :edit-data="editingEntity" @save="handleSave" />
+      <AddBeneficiaryModal v-model:open="showModal" :edit-data="editingEntity" @save="handleSave"  />
 
-      <!-- Quick Name Edit Modal -->
+      <!-- Delete Modal -->
+      <DeleteModal
+        v-model:open="isDeleteModalOpen"
+        :loading="isDeleting"
+        title="حذف الجهة المستفيدة"
+        description="تأكيد حذف الجهة المستفيدة"
+        :message="
+          selectedEntity?.name
+            ? 'هل أنت متأكد من حذف الجهة المستفيدة ' + selectedEntity.name + '؟'
+            : ''
+        "
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+      />
     </main>
   </DefaultLayout>
 </template>
@@ -56,6 +83,7 @@
   import AddBeneficiaryModal from '@/components/AddBeneficiaryModal.vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
+  import DeleteModal from '@/components/DeleteModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { beneficiaryService } from '@/services/beneficiaryService';
@@ -67,8 +95,7 @@
     { key: 'name', label: 'اسم الجهة المستفيدة' },
     { key: 'referenceEntity', label: 'اسم الجهة المرجعية' },
     { key: 'location', label: 'العنوان' },
-    { key: 'actions', label: '', type: 'action', icon: 'lucide:pencil' },
-    { key: 'delete', label: '', type: 'delete', icon: 'lucide:trash' },
+    { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
 
   // State
@@ -76,11 +103,9 @@
   const editingEntity = ref(null);
   const entities = ref([]);
   const isLoading = ref(true);
-
-  // Quick name edit state
-  const showQuickNameModal = ref(false);
-  const quickEditName = ref('');
-  const quickEditEntityId = ref(null);
+  const isDeleting = ref(false);
+  const isDeleteModalOpen = ref(false);
+  const selectedEntity = ref(null);
 
   // Fetch beneficiaries on component mount
   onMounted(async () => {
@@ -143,28 +168,36 @@
     showModal.value = true;
   };
 
-  // Quick name edit methods
-  const handleQuickNameEdit = (entity) => {
-    quickEditEntityId.value = entity.id;
-    quickEditName.value = entity.name;
-    showQuickNameModal.value = true;
+  const handleDelete = (entity) => {
+    selectedEntity.value = entity;
+    isDeleteModalOpen.value = true;
   };
 
-  const saveQuickNameEdit = async () => {
-    if (!quickEditName.value.trim()) {
-      toast.error('يرجى إدخال اسم الجهة المستفيدة');
-      return;
-    }
-
+  const confirmDelete = async () => {
     try {
-      await beneficiaryService.updateBeneficiaryName(quickEditEntityId.value, quickEditName.value);
-      toast.success('تم تحديث اسم الجهة المستفيدة بنجاح');
+      isDeleting.value = true;
+      await beneficiaryService.deleteBeneficiary(selectedEntity.value.id);
+      toast('تم حذف الجهة المستفيدة', {
+        description: `تم حذف الجهة المستفيدة "${selectedEntity.value.name}" بنجاح`,
+        type: 'success',
+      });
       await fetchBeneficiaries();
-      showQuickNameModal.value = false;
+      isDeleteModalOpen.value = false;
     } catch (error) {
-      console.error('Error updating beneficiary name:', error);
-      toast.error('حدث خطأ أثناء تحديث اسم الجهة المستفيدة');
+      console.error('Error deleting beneficiary:', error);
+      toast('خطأ في حذف الجهة المستفيدة', {
+        description: 'حدث خطأ أثناء محاولة حذف الجهة المستفيدة',
+        type: 'error',
+      });
+    } finally {
+      isDeleting.value = false;
+      selectedEntity.value = null;
     }
+  };
+
+  const cancelDelete = () => {
+    isDeleteModalOpen.value = false;
+    selectedEntity.value = null;
   };
 
   const exportToExcel = () => {

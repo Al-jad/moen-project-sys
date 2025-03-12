@@ -46,7 +46,7 @@
         <div class="mt-6 flex flex-row-reverse gap-2">
           <Button type="submit" class="w-2/4">
             <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
-            {{ isEditing ? 'حفظ التعديلات' : 'حفظ' }}
+            {{ isEditing ? 'حفظ التعديلات' : 'إضافة' }}
           </Button>
           <Button
             type="button"
