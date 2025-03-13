@@ -1,36 +1,63 @@
 <template>
-  <div class="grid grid-cols-4 gap-4">
-    <div v-for="user in users" :key="user.id" class="p-6 bg-white dark:bg-gray-800/95 shadow-sm dark:shadow-gray-900/50 rounded-xl cursor-pointer hover:scale-[1.01] transition-all duration-300 hover:shadow-md border border-gray-100 dark:border-gray-700/50" @click="$router.push(`/users/${user.id}`)">
-      <div class="flex flex-col items-center gap-4">
-        <div class="relative">
-          <img 
-            :src="user.avatar" 
-            alt="user avatar" 
-            class="object-cover w-16 h-16 rounded-full ring-2 ring-gray-100 dark:ring-gray-700"
-          />
-          <div class="absolute bottom-0 right-0 w-4 h-4 border-2 border-white rounded-full dark:border-gray-800" 
-            :class="user.isActive ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'"
-          />
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div
+      v-for="user in users"
+      :key="user.id"
+      class="group relative flex flex-col rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+      @click="$router.push(`/users/${user.id}`)"
+    >
+      <div class="mb-4 flex justify-end">
+        <Badge :class="getRoleBadgeClass(user.role)" class="px-3 py-1 text-xs font-medium">
+          {{ user.title }}
+        </Badge>
+      </div>
+      <div class="flex flex-1 flex-col justify-between">
+        <div class="space-y-2">
+          <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            {{ user.name }}
+          </h3>
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            {{ user.email }}
+          </p>
         </div>
-        <div class="flex flex-col items-center gap-1 text-center">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ user.name }}</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.title }}</p>
+        <div class="mt-4 text-xs font-medium text-gray-400 dark:text-gray-500">
+          انضم {{ formatDate(user.createdAt) }}
         </div>
-        <Button variant="outline" size="xs" class="w-1/3 py-2 text-xs rounded-full border-sky-500 text-sky-500 dark:border-sky-400 dark:text-sky-400 hover:bg-sky-50 dark:bg-gray-800 dark:hover:bg-sky-900/20">
-          مدير المشروع
-        </Button>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
-import { Button } from '@/components/ui/button'
-
-defineProps({
-  users: {
-    type: Array,
-    required: true
+  import { Badge } from '@/components/ui/badge';
+  defineProps({
+    users: {
+      type: Array,
+      required: true,
+    },
+  });
+  function getRoleBadgeClass(role) {
+    switch (role) {
+      case 'ADMIN':
+        return 'bg-primary/10 text-primary dark:bg-primary/20';
+      case 'SUPERVISOR':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-400';
+    }
   }
-})
-</script> 
+  function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays <= 30) {
+      return `منذ ${diffDays} يوم`;
+    }
+    return date.toLocaleDateString('ar-IQ', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
+</script>

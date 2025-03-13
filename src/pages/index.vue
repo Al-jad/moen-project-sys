@@ -102,7 +102,21 @@
               <ProjectsList :projects="allProjects" />
             </TabsContent>
             <TabsContent value="users" class="mt-4">
-              <UsersList :users="mockUsers" />
+              <div v-if="isLoadingUsers" class="flex items-center justify-center py-8">
+                <div class="flex flex-col items-center gap-4">
+                  <div
+                    class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
+                  ></div>
+                  <p class="text-gray-600 dark:text-gray-300">جاري تحميل المستخدمين...</p>
+                </div>
+              </div>
+              <div
+                v-else-if="userError"
+                class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
+              >
+                <p class="text-red-600 dark:text-red-400">{{ userError }}</p>
+              </div>
+              <UsersList v-else :users="users" />
             </TabsContent>
           </Tabs>
         </div>
@@ -128,8 +142,11 @@
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
   const allProjects = ref([]);
+  const users = ref([]);
   const isLoading = ref(true);
+  const isLoadingUsers = ref(true);
   const error = ref(null);
+  const userError = ref(null);
 
   const completedProjects = computed(() => allProjects.value.filter((p) => p.projectStatus === 2));
 
@@ -152,78 +169,58 @@
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      isLoadingUsers.value = true;
+      const response = await axiosInstance.get('/api/auth/users');
+      users.value = response.data.map((user) => ({
+        id: user.id,
+        name: user.name || user.email,
+        title: user.role === 'ADMIN' ? 'مدير' : user.role === 'SUPERVISOR' ? 'مشرف' : 'مدخل بيانات',
+        avatar: user.avatarUrl || '/img/avatar.png',
+        isActive: true,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+      }));
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      userError.value = err.response?.data?.message || 'حدث خطأ في تحميل المستخدمين';
+      // Fallback to mockup data if API fails
+      users.value = mockUsers;
+    } finally {
+      isLoadingUsers.value = false;
+    }
+  };
+
   const authStore = useAuthStore();
 
+  // Mockup users as fallback
   const mockUsers = [
     {
       id: 1,
       name: 'أ. دعاء الشيخلي',
-      title: ' دائرة التخطيط - قسم المشاريع',
+      title: 'مشرف',
+      email: 'doaa@example.com',
+      role: 'SUPERVISOR',
       avatar: '/img/avatar.png',
       isActive: true,
+      createdAt: new Date().toISOString(),
     },
     {
       id: 2,
-      name: 'أ.  محمد علي',
-      title: ' دائرة التخطيط - قسم المشاريع',
+      name: 'أ. محمد علي',
+      title: 'مدير',
+      email: 'mohammed@example.com',
+      role: 'ADMIN',
       avatar: '/img/avatar-2.png',
       isActive: true,
-    },
-    {
-      id: 1,
-      name: 'أ. دعاء الشيخلي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar.png',
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: 'أ.  محمد علي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar-2.png',
-      isActive: true,
-    },
-    {
-      id: 1,
-      name: 'أ. دعاء الشيخلي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar.png',
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: 'أ.  محمد علي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar-2.png',
-      isActive: true,
-    },
-    {
-      id: 1,
-      name: 'أ. دعاء الشيخلي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar.png',
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: 'أ.  محمد علي',
-      title: ' دائرة التخطيط - قسم المشاريع',
-      avatar: '/img/avatar-2.png',
-      isActive: true,
+      createdAt: new Date().toISOString(),
     },
   ];
 
-  const userInfo = ref(null);
-
   onMounted(async () => {
-    await fetchProjects();
-    const response = await axiosInstance.get('/api/auth/me', {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    });
-    console.log(response);
-    userInfo.value = response.data;
+    await Promise.all([fetchProjects(), fetchUsers()]);
   });
 </script>
 
