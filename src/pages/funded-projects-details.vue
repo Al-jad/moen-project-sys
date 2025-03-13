@@ -1,21 +1,21 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
-      <div class="w-full max-w-6xl mx-auto space-y-8">
+    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-6xl space-y-8">
         <!-- Loading State -->
         <div v-if="isLoading" class="space-y-4">
-          <div class="h-24 bg-gray-200 animate-pulse rounded-xl dark:bg-gray-800"></div>
-          <div class="h-48 bg-gray-200 animate-pulse rounded-xl dark:bg-gray-800"></div>
-          <div class="bg-gray-200 h-96 animate-pulse rounded-xl dark:bg-gray-800"></div>
+          <div class="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="h-48 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="h-96 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
         </div>
 
         <!-- Error State -->
         <div
           v-else-if="error"
-          class="p-6 text-center bg-white border border-red-200 rounded-xl dark:border-red-800 dark:bg-gray-800"
+          class="rounded-xl border border-red-200 bg-white p-6 text-center dark:border-red-800 dark:bg-gray-800"
         >
-          <div class="inline-block p-3 mb-3 bg-red-100 rounded-full dark:bg-red-900/30">
-            <Icon icon="lucide:alert-circle" class="w-6 h-6 text-red-600 dark:text-red-400" />
+          <div class="mb-3 inline-block rounded-full bg-red-100 p-3 dark:bg-red-900/30">
+            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-red-600 dark:text-red-400" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
             حدث خطأ في تحميل المشروع
@@ -24,7 +24,7 @@
             {{ error }}
           </p>
           <Button @click="fetchProject" variant="outline" class="mt-4">
-            <Icon icon="lucide:refresh-cw" class="w-4 h-4 mr-2" />
+            <Icon icon="lucide:refresh-cw" class="mr-2 h-4 w-4" />
             إعادة المحاولة
           </Button>
         </div>
@@ -32,12 +32,12 @@
         <!-- Content -->
         <template v-else-if="project">
           <!-- Header -->
-          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
                   <div
-                    class="flex items-center justify-center w-full h-full text-lg font-semibold text-blue-600 dark:text-blue-400"
+                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
                   >
                     {{ project?.id }}
                   </div>
@@ -60,7 +60,7 @@
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div
-              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
+              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
@@ -71,7 +71,7 @@
               <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/10 dark:bg-blue-400/10"></div>
             </div>
             <div
-              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
+              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
@@ -84,7 +84,7 @@
               ></div>
             </div>
             <div
-              class="relative p-4 overflow-hidden bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
+              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
@@ -104,15 +104,15 @@
           </div>
 
           <!-- Project Details -->
-          <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between p-4 border-b dark:border-gray-700">
+          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:info" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:info" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
               </div>
               <Button @click="toggleEditDetails" variant="ghost" size="sm">
-                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="w-4 h-4" />
-                <Icon v-else icon="lucide:check" class="w-4 h-4" />
+                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
+                <Icon v-else icon="lucide:check" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -140,7 +140,10 @@
                 <div>
                   <div class="text-sm text-gray-500 dark:text-gray-400">الجهات المستفيدة</div>
                   <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ project?.beneficiaryEntities || 'لم يتم تحديد الجهات المستفيدة' }}
+                    {{
+                      project?.beneficiaries.map((b) => b.name).join(', ') ||
+                      'لم يتم تحديد الجهات المستفيدة'
+                    }}
                   </div>
                 </div>
               </div>
@@ -194,15 +197,19 @@
 
             <!-- Edit Mode -->
             <div v-else class="p-4">
-              <ProjectDetails :project="editForm" @update:project="updateProjectDetails" />
-              <div class="flex justify-end gap-2 mt-4">
+              <ProjectDetails
+                :project="editForm"
+                :is-editing="isEditingDetails"
+                @update:project="updateProjectDetails"
+              />
+              <div class="mt-4 flex justify-end gap-2">
                 <Button @click="cancelEditDetails" variant="outline"> الغاء </Button>
                 <Button
                   @click="saveProjectDetails"
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
                 </Button>
               </div>
@@ -216,15 +223,15 @@
           />
 
           <!-- Components and Activities -->
-          <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between p-4 border-b dark:border-gray-700">
+          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:target" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                <Icon icon="lucide:target" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">المكونات والفعاليات</h4>
               </div>
               <Button @click="toggleEditComponents" variant="ghost" size="sm">
-                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="w-4 h-4" />
-                <Icon v-else icon="lucide:check" class="w-4 h-4" />
+                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
+                <Icon v-else icon="lucide:check" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -238,15 +245,20 @@
 
             <!-- Edit Mode -->
             <div v-else class="p-4">
-              <ProjectComponents :project="editForm" @update:components="updateComponents" />
-              <div class="flex justify-end gap-2 mt-4">
+              <ProjectComponents
+                :components="editForm.components"
+                :period-type="editForm.periodType"
+                :total-periods="totalPeriods"
+                @update:components="updateComponents"
+              />
+              <div class="mt-4 flex justify-end gap-2">
                 <Button @click="cancelEditComponents" variant="outline"> الغاء </Button>
                 <Button
                   @click="saveComponents"
                   :disabled="isSaving"
                   class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
+                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
                 </Button>
               </div>
@@ -256,19 +268,19 @@
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
               توجيه المهام
             </Button>
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
               عرض النسخة السابقة
             </Button>
             <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="w-4 h-4 mr-2" />
+              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
               تدقيق المشروع
             </Button>
             <Button variant="destructive" @click="showDeleteConfirmation">
-              <Icon icon="material-symbols-light:delete-outline" class="w-4 h-4 mr-2" />
+              <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
               حذف المشروع
             </Button>
           </div>
@@ -320,15 +332,15 @@
     name: '',
     executingDepartment: '',
     implementingEntity: '',
-    beneficiaryEntities: [''],
+    beneficiaryEntities: [],
     grantingEntity: '',
     fundingType: 1,
     cost: null,
     actualStartDate: null,
     projectObjectives: '',
-    components: [],
     duration: 0,
     periodType: 1,
+    components: [],
   });
 
   const fetchProject = async () => {
@@ -343,18 +355,22 @@
 
       // Initialize editForm with current project data
       Object.assign(editForm, {
-        name: response.data.name,
-        executingDepartment: response.data.executingDepartment,
-        implementingEntity: response.data.implementingEntity,
-        beneficiaryEntities: response.data.beneficiaryEntities || [''],
-        grantingEntity: response.data.grantingEntity,
-        fundingType: response.data.fundingType,
-        cost: response.data.cost,
-        actualStartDate: response.data.actualStartDate,
-        projectObjectives: response.data.projectObjectives,
-        components: [...(response.data.components || [])], // Deep clone components
-        duration: response.data.duration,
-        periodType: response.data.periodType,
+        name: response.data.name || '',
+        executingDepartment: response.data.executingDepartment || '',
+        implementingEntity: response.data.implementingEntity || '',
+        beneficiaryEntities: Array.isArray(response.data.beneficiaries)
+          ? response.data.beneficiaries.map((b) => b.id)
+          : [],
+        grantingEntity: response.data.grantingEntity || '',
+        fundingType: response.data.fundingType || 1,
+        cost: response.data.cost || null,
+        actualStartDate: response.data.actualStartDate || null,
+        projectObjectives: response.data.projectObjectives || '',
+        duration: response.data.duration || 0,
+        periodType: response.data.periodType || 1,
+        components: Array.isArray(response.data.components)
+          ? JSON.parse(JSON.stringify(response.data.components))
+          : [],
       });
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -370,7 +386,12 @@
 
   const totalPeriods = computed(() => {
     if (!project.value?.duration) return 0;
-    return project.value.duration;
+    const duration = parseInt(project.value.duration) || 0;
+    if (project.value.periodType === 1) {
+      return duration;
+    } else {
+      return duration * 4;
+    }
   });
 
   const componentColors = [
@@ -438,15 +459,17 @@
     isEditingDetails.value = false;
     // Reset form to current project values
     Object.assign(editForm, {
-      name: project.value.name,
-      executingDepartment: project.value.executingDepartment,
-      implementingEntity: project.value.implementingEntity,
-      beneficiaryEntities: project.value.beneficiaryEntities,
-      grantingEntity: project.value.grantingEntity,
-      fundingType: project.value.fundingType,
-      cost: project.value.cost,
-      actualStartDate: project.value.actualStartDate,
-      projectObjectives: project.value.projectObjectives,
+      name: project.value.name || '',
+      executingDepartment: project.value.executingDepartment || '',
+      implementingEntity: project.value.implementingEntity || '',
+      beneficiaryEntities: project.value.beneficiaryEntities || [],
+      grantingEntity: project.value.grantingEntity || '',
+      fundingType: project.value.fundingType || 1,
+      cost: project.value.cost || null,
+      actualStartDate: project.value.actualStartDate || null,
+      projectObjectives: project.value.projectObjectives || '',
+      duration: project.value.duration || 0,
+      periodType: project.value.periodType || 1,
     });
   };
 
@@ -472,26 +495,55 @@
       toast.error('يرجى ادخال كلفة المشروع');
       return;
     }
-    if (!editForm.actualStartDate) {
-      toast.error('يرجى تحديد تاريخ بدء المشروع');
-      return;
-    }
 
     isSaving.value = true;
     try {
-      const response = await axiosInstance.put(`/Project/${project.value.id}`, {
-        ...editForm,
-        duration: project.value.duration,
-        periodType: project.value.periodType,
-        beneficiaryEntities: Array.isArray(editForm.beneficiaryEntities)
-          ? editForm.beneficiaryEntities
-          : [editForm.beneficiaryEntities],
-      });
+      const projectData = {
+        name: editForm.name,
+        executingDepartment: editForm.executingDepartment,
+        implementingEntity: editForm.implementingEntity,
+        beneficiaryEntities: editForm.beneficiaryEntities || [],
+        grantingEntity: editForm.grantingEntity,
+        fundingType: editForm.fundingType || 1,
+        cost: parseInt(editForm.cost) || 0,
+        actualStartDate: editForm.actualStartDate || project.value.actualStartDate,
+        projectObjectives: editForm.projectObjectives,
+        duration: project.value.duration || 0,
+        periodType: project.value.periodType || 1,
+        projectStatus: project.value.projectStatus || 1,
+        lat: project.value.lat || 0,
+        lng: project.value.lng || 0,
+      };
 
-      if (response.data) {
-        project.value = response.data;
+      console.log('Sending project data:', projectData);
+
+      const response = await axiosInstance.put(`/api/Project/${project.value.id}`, projectData);
+
+      if (response.status === 200 || response.status === 204) {
+        // Update both project and editForm with new data
+        if (response.data) {
+          project.value = response.data;
+          // Re-sync editForm with new project data
+          Object.assign(editForm, {
+            name: response.data.name,
+            executingDepartment: response.data.executingDepartment,
+            implementingEntity: response.data.implementingEntity,
+            beneficiaryEntities: Array.isArray(response.data.beneficiaries)
+              ? response.data.beneficiaries.map((b) => b.id)
+              : [],
+            grantingEntity: response.data.grantingEntity,
+            fundingType: response.data.fundingType,
+            cost: response.data.cost,
+            actualStartDate: response.data.actualStartDate,
+            projectObjectives: response.data.projectObjectives,
+            duration: response.data.duration,
+            periodType: response.data.periodType,
+          });
+        }
         isEditingDetails.value = false;
         toast.success('تم حفظ التغييرات بنجاح');
+        // Refresh the project data
+        await fetchProject();
       }
     } catch (error) {
       console.error('Error saving project details:', error);
@@ -508,17 +560,35 @@
     if (isEditingComponents.value) {
       cancelEditComponents();
     } else {
+      // Deep clone components when starting to edit
+      console.log('Starting component edit with:', project.value.components);
+      editForm.components = JSON.parse(JSON.stringify(project.value.components || []));
+      // Ensure all components have the required properties
+      editForm.components = editForm.components.map((component) => ({
+        ...component,
+        targetPercentage: component.targetPercentage || 0,
+        activities: (component.activities || []).map((activity) => ({
+          ...activity,
+          targetPercentage: activity.targetPercentage || 0,
+          selectedPeriods: activity.selectedPeriods || [],
+        })),
+      }));
       isEditingComponents.value = true;
     }
   };
 
   const cancelEditComponents = () => {
     isEditingComponents.value = false;
-    // Deep clone components to avoid reference issues
-    editForm.components = JSON.parse(JSON.stringify(project.value.components));
+    // Reset components to current project values
+    editForm.components = JSON.parse(JSON.stringify(project.value.components || []));
   };
 
   const saveComponents = async () => {
+    if (!editForm.components || !Array.isArray(editForm.components)) {
+      toast.error('لا توجد مكونات للحفظ');
+      return;
+    }
+
     // Validate components
     for (const component of editForm.components) {
       if (!component.name) {
@@ -529,40 +599,47 @@
         toast.error('يرجى تحديد النسبة المستهدفة للمكون');
         return;
       }
-
-      // Validate activities
-      for (const activity of component.activities || []) {
-        if (!activity.name) {
-          toast.error('يرجى ادخال اسم الفعالية');
-          return;
-        }
-        if (!activity.targetPercentage) {
-          toast.error('يرجى تحديد النسبة المستهدفة للفعالية');
-          return;
-        }
-        if (!activity.selectedPeriods?.length) {
-          toast.error('يرجى تحديد الفترات للفعالية');
-          return;
-        }
-      }
     }
 
     isSaving.value = true;
     try {
       // Save each component
       for (const component of editForm.components) {
-        await axiosInstance.put(`/api/Component/${component.id}`, {
-          ...component,
-          activities: component.activities.map((activity) => ({
-            ...activity,
-            componentId: component.id,
-          })),
-        });
+        const componentData = {
+          projectId: project.value.id,
+          name: component.name,
+          targetPercentage: parseFloat(component.targetPercentage) || 0,
+        };
+
+        console.log('Saving component with data:', componentData);
+        const componentResponse = await axiosInstance.put(
+          `/api/Component/${component.id}`,
+          componentData
+        );
+        console.log('Component save response:', componentResponse);
+
+        // If component save was successful and there are activities, save them separately
+        if (Array.isArray(component.activities) && component.activities.length > 0) {
+          for (const activity of component.activities) {
+            const activityData = {
+              componentId: component.id,
+              name: activity.name,
+              targetPercentage: parseFloat(activity.targetPercentage) || 0,
+              selectedPeriods: activity.selectedPeriods || [],
+            };
+
+            console.log('Saving activity with data:', activityData);
+            const activityResponse = await axiosInstance.put(
+              `/api/Activity/${activity.id}`,
+              activityData
+            );
+            console.log('Activity save response:', activityResponse);
+          }
+        }
       }
 
       // Refresh project data
-      const response = await axiosInstance.get(`/api/Project/${project.value.id}`);
-      project.value = response.data;
+      await fetchProject();
       isEditingComponents.value = false;
       toast.success('تم حفظ التغييرات بنجاح');
     } catch (error) {
@@ -580,7 +657,9 @@
   };
 
   const updateComponents = (updatedComponents) => {
-    editForm.components = updatedComponents;
+    console.log('Received updated components:', updatedComponents);
+    // Deep clone the components to avoid reference issues
+    editForm.components = JSON.parse(JSON.stringify(updatedComponents));
   };
 
   const confirmDeleteProject = async () => {

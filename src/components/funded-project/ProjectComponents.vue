@@ -2,7 +2,7 @@
   <FormSection title="مكونات المشروع" full-width>
     <div class="space-y-6">
       <div
-        v-for="(component, index) in store.form.components"
+        v-for="(component, index) in components"
         :key="index"
         class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
       >
@@ -42,14 +42,16 @@
                 dir="rtl"
                 placeholder="ادخل اسم المكون"
                 class="bg-white dark:bg-gray-800"
+                @update:modelValue="updateComponent(index, 'name', $event)"
               />
             </FormField>
             <FormField label="المستهدف الكلي للمكون">
               <NumberInput
-                v-model="component.totalTarget"
+                v-model="component.targetPercentage"
                 placeholder="ادخل المستهدف الكلي"
                 unit="%"
                 class="bg-white dark:bg-gray-800"
+                @update:modelValue="updateComponent(index, 'targetPercentage', $event)"
               />
             </FormField>
           </div>
@@ -107,14 +109,18 @@
                       dir="rtl"
                       placeholder="ادخل اسم الفعالية"
                       class="bg-white dark:bg-gray-800"
+                      @update:modelValue="updateActivity(index, activityIndex, 'name', $event)"
                     />
                   </FormField>
                   <FormField label="المستهدف الكلي للفعالية">
                     <NumberInput
-                      v-model="activity.totalTarget"
+                      v-model="activity.targetPercentage"
                       placeholder="ادخل المستهدف الكلي"
                       unit="%"
                       class="bg-white dark:bg-gray-800"
+                      @update:modelValue="
+                        updateActivity(index, activityIndex, 'targetPercentage', $event)
+                      "
                     />
                   </FormField>
                   <FormField label="ملاحظات" class="md:col-span-2">
@@ -124,7 +130,9 @@
                       placeholder="ادخل الملاحظات"
                       class="min-h-[80px] bg-white dark:bg-gray-800"
                       :value="activity.notes ?? ''"
-                      @update:modelValue="(val) => (activity.notes = val || '')"
+                      @update:modelValue="
+                        updateActivity(index, activityIndex, 'notes', $event || '')
+                      "
                     />
                   </FormField>
                 </div>
@@ -138,16 +146,16 @@
                       >
                         <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                           {{
-                            store.form.periodType === 1
-                              ? `اختر الاسابيع (${activity.weeks?.length || 0} من ${totalPeriods})`
-                              : `اختر الاشهر (${activity.weeks?.length || 0} من ${totalPeriods})`
+                            periodType === 1
+                              ? `اختر الاسابيع (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
+                              : `اختر الاشهر (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
                           }}
                         </span>
                         <button
-                          v-if="activity.weeks?.length"
+                          v-if="activity.selectedPeriods?.length"
                           type="button"
                           class="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                          @click="activity.weeks = []"
+                          @click="clearActivityPeriods(index, activityIndex)"
                         >
                           مسح التحديد
                         </button>
@@ -166,27 +174,27 @@
                           class="flex flex-col items-center"
                         >
                           <span class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                            {{ store.form.periodType === 1 ? `${period}` : `${period}` }}
+                            {{ periodType === 1 ? `${period}` : `${period}` }}
                           </span>
                           <button
                             type="button"
                             class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
                             :class="[
-                              activity.weeks?.includes(period)
+                              activity.selectedPeriods?.includes(period)
                                 ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
                                 : 'border-gray-200 bg-white hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600',
                             ]"
-                            @click.prevent="toggleActivityWeek(activity, period)"
+                            @click.prevent="toggleActivityPeriod(index, activityIndex, period)"
                           >
                             <span
                               class="absolute inset-0 flex items-center justify-center text-xs font-medium"
                               :class="[
-                                activity.weeks?.includes(period)
+                                activity.selectedPeriods?.includes(period)
                                   ? 'text-white'
                                   : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
                               ]"
                             >
-                              {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
+                              {{ periodType === 1 ? 'اسبوع' : 'شهر' }}
                             </span>
                           </button>
                         </div>
@@ -228,11 +236,24 @@
   import FormSection from '@/components/FormSection.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import Textarea from '@/components/ui/textarea/Textarea.vue';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
-  import { computed, watch } from 'vue';
-  const store = useFundedProjectStore();
-  const totalPeriods = computed(() => store.totalPeriods);
+
+  const props = defineProps({
+    components: {
+      type: Array,
+      required: true,
+    },
+    periodType: {
+      type: Number,
+      required: true,
+    },
+    totalPeriods: {
+      type: Number,
+      required: true,
+    },
+  });
+
+  const emit = defineEmits(['update:components']);
 
   const componentColors = [
     { base: '#3B82F6', light: '#EFF6FF' }, // Blue
@@ -248,40 +269,79 @@
   };
 
   const addComponent = () => {
-    store.addComponent();
+    const newComponents = [...props.components];
+    newComponents.push({
+      name: '',
+      targetPercentage: 0,
+      activities: [],
+    });
+    emit('update:components', newComponents);
   };
 
-  const removeComponent = (componentIndex) => {
-    store.removeComponent(componentIndex);
+  const removeComponent = (index) => {
+    const newComponents = [...props.components];
+    newComponents.splice(index, 1);
+    emit('update:components', newComponents);
+  };
+
+  const updateComponent = (index, field, value) => {
+    const newComponents = [...props.components];
+    newComponents[index] = {
+      ...newComponents[index],
+      [field]: value,
+    };
+    emit('update:components', newComponents);
   };
 
   const addActivity = (componentIndex) => {
-    store.addActivity(componentIndex);
+    const newComponents = [...props.components];
+    if (!newComponents[componentIndex].activities) {
+      newComponents[componentIndex].activities = [];
+    }
+    newComponents[componentIndex].activities.push({
+      name: '',
+      targetPercentage: 0,
+      notes: '',
+      selectedPeriods: [],
+    });
+    emit('update:components', newComponents);
   };
-
-  watch(
-    () => store.form.components,
-    (newComponents) => {
-      newComponents.forEach((component) => {
-        if (!component.activities) {
-          component.activities = [];
-        }
-        component.activities.forEach((activity) => {
-          if (activity.notes === null || activity.notes === undefined) {
-            activity.notes = '';
-          }
-        });
-      });
-    },
-    { deep: true, immediate: true }
-  );
 
   const removeActivity = (componentIndex, activityIndex) => {
-    store.removeActivity(componentIndex, activityIndex);
+    const newComponents = [...props.components];
+    newComponents[componentIndex].activities.splice(activityIndex, 1);
+    emit('update:components', newComponents);
   };
 
-  const toggleActivityWeek = (activity, period) => {
-    store.toggleActivityWeek(activity, period);
+  const updateActivity = (componentIndex, activityIndex, field, value) => {
+    const newComponents = [...props.components];
+    newComponents[componentIndex].activities[activityIndex] = {
+      ...newComponents[componentIndex].activities[activityIndex],
+      [field]: value,
+    };
+    emit('update:components', newComponents);
+  };
+
+  const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
+    const newComponents = [...props.components];
+    const activity = newComponents[componentIndex].activities[activityIndex];
+    if (!activity.selectedPeriods) {
+      activity.selectedPeriods = [];
+    }
+    const periodIndex = activity.selectedPeriods.indexOf(period);
+    if (periodIndex === -1) {
+      activity.selectedPeriods.push(period);
+    } else {
+      activity.selectedPeriods.splice(periodIndex, 1);
+    }
+    activity.selectedPeriods.sort((a, b) => a - b);
+    emit('update:components', newComponents);
+  };
+
+  const clearActivityPeriods = (componentIndex, activityIndex) => {
+    const newComponents = [...props.components];
+    newComponents[componentIndex].activities[activityIndex].selectedPeriods = [];
+    emit('update:components', newComponents);
   };
 </script>
 
