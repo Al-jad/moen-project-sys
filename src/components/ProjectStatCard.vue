@@ -1,7 +1,7 @@
 <template>
   <div
     class="cursor-pointer rounded-xl border border-gray-100 bg-white p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-gray-50 hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:hover:bg-gray-800"
-    @click="router.push('/projects')"
+    @click="navigateToProjects"
   >
     <div class="flex items-center justify-between">
       <div class="flex flex-col gap-2 text-right">
@@ -17,6 +17,7 @@
 
 <script setup>
   import { Icon } from '@iconify/vue';
+  import { useRouter } from 'vue-router';
 
   const router = useRouter();
 
@@ -32,11 +33,15 @@
     color: {
       type: String,
       default: 'blue',
-      validator: (value) => ['blue', 'green', 'yellow', 'red'].includes(value),
+      validator: (value) => ['blue', 'green', 'yellow', 'red', 'gray'].includes(value),
     },
     icon: {
       type: String,
       required: true,
+    },
+    to: {
+      type: String,
+      default: '',
     },
   });
 
@@ -57,6 +62,10 @@
       bg: 'bg-red-100 dark:bg-red-900/20',
       icon: 'text-red-600 dark:text-red-400',
     },
+    gray: {
+      bg: 'bg-gray-100 dark:bg-gray-900/20',
+      icon: 'text-gray-600 dark:text-gray-400',
+    },
   };
 
   const backgroundColorClass = computed(() => {
@@ -66,4 +75,10 @@
   const iconColorClass = computed(() => {
     return colorMap[props.color].icon;
   });
+
+  const navigateToProjects = () => {
+    if (props.to) {
+      router.push(props.to);
+    }
+  };
 </script>
