@@ -1,3 +1,4 @@
+import About from '@/pages/about.vue';
 import AddAction from '@/pages/add-action.vue';
 import AddDevlopmentProject from '@/pages/add-devlopment-project.vue';
 import AddFundedProject from '@/pages/add-funded-project.vue';
@@ -19,7 +20,6 @@ import Settings from '@/pages/settings.vue';
 import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
-import About from '@/pages/about.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -148,6 +148,12 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
+    props: true,
+  },
+  {
+    path: '/demo-projects/:type',
+    name: 'demo-projects',
+    component: () => import('@/pages/demo-projects.vue'),
     props: true,
   },
 ];

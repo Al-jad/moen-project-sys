@@ -144,9 +144,13 @@
     { path: '/projects', icon: 'lucide:inbox', label: 'المشاريع' },
 
     { path: '/funded-projects', icon: 'lucide:dollar-sign', label: 'المشاريع الممولة' },
-    { path: '/investment-projects', icon: 'flowbite:chart-outline', label: 'المشاريع الإستثمارية' },
-    { path: '/operational-projects', icon: 'hugeicons:tools', label: 'المشاريع التشغيلية' },
-    { path: '/regional-projects', icon: 'oui:vis-map-region', label: 'مشاريع تنمية الأقاليم' },
+    {
+      path: '/demo-projects/investment',
+      icon: 'flowbite:chart-outline',
+      label: 'المشاريع الإستثمارية',
+    },
+    { path: '/demo-projects/operational', icon: 'hugeicons:tools', label: 'المشاريع التشغيلية' },
+    { path: '/demo-projects/regional', icon: 'oui:vis-map-region', label: 'مشاريع تنمية الأقاليم' },
 
     { type: 'separator' },
 

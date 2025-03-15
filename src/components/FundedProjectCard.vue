@@ -1,105 +1,130 @@
 <template>
   <div
     @click="router.push(`/funded-projects/${project.id}`)"
-    class="group overflow-hidden rounded-lg border bg-white transition-all hover:cursor-pointer hover:border-blue-500/20 hover:bg-gray-50 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+    class="group relative overflow-hidden rounded-lg border bg-white transition-all duration-300 hover:cursor-pointer hover:border-blue-500/20 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
   >
-    <div class="border-b p-4 dark:border-gray-700">
-      <div class="mb-4 flex items-start justify-between">
+    <div class="border-b border-gray-200 p-6 dark:border-gray-700">
+      <div class="mb-6 flex items-start justify-between">
         <div class="flex items-center gap-4">
-          <div class="h-12 w-12 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-            <div
-              class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
+          <div class="flex">
+            <h3
+              class="text-2xl font-medium text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400"
             >
-              {{ project.id }}
-            </div>
-          </div>
-          <div class="flex flex-col">
-            <h3 class="font-medium text-gray-900 dark:text-gray-100">
-              {{ project.name }}
+              {{ project.name || 'لا يوجد اسم' }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{ project.executingDepartment }}
-            </p>
           </div>
         </div>
-        <Button
-          @click.stop="openAttachmentDialog"
-          variant="outline"
-          size="sm"
-          class="flex items-center gap-2 border-blue-100 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:border-blue-400/20 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
+        <h3
+          class="rounded-full bg-blue-500 px-4 py-1 text-xl font-medium text-white shadow-sm transition-all dark:bg-blue-600"
         >
-          <Icon icon="lucide:paperclip" class="h-4 w-4" />
-          إضافة مرفق
-        </Button>
+          {{ formatCost(project.cost) || 0 }} $
+        </h3>
       </div>
-      <div class="flex items-center gap-8">
-        <div class="flex-1">
-          <div class="mb-2 flex items-center justify-between">
+      <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          class="flex flex-col space-y-4 rounded-lg bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-gray-800"
+        >
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:dollar-sign" class="h-4 w-4 text-amber-500" />
-              <span class="text-sm text-gray-600 dark:text-gray-300">الانجاز المالي</span>
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon icon="lucide:layers" class="h-5 w-5 text-gray-600 dark:text-gray-100" />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">المكونات</h3>
             </div>
-            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">24%</span>
+            <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+              {{ project.components?.length || 0 }}
+            </h3>
           </div>
-          <div class="relative h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
-            <div
-              class="absolute inset-y-0 left-0 bg-amber-500 transition-all"
-              :style="{ width: '24%' }"
-            ></div>
-          </div>
-        </div>
-        <div class="flex-1">
-          <div class="mb-2 flex items-center justify-between">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:target" class="h-4 w-4 text-blue-500" />
-              <span class="text-sm text-gray-600 dark:text-gray-300">الانجاز الفني</span>
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon icon="lucide:list-todo" class="h-5 w-5 text-gray-600 dark:text-gray-100" />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">الفعاليات</h3>
             </div>
-            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">24%</span>
-          </div>
-          <div class="relative h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
-            <div
-              class="absolute inset-y-0 left-0 bg-blue-500 transition-all"
-              :style="{ width: '24%' }"
-            ></div>
+            <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+              {{ getTotalActivities(project) || 0 }}
+            </h3>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="grid grid-cols-4 divide-x divide-gray-100 dark:divide-gray-700">
-      <div class="p-4 text-center">
-        <div class="mb-1 flex items-center justify-center gap-2">
-          <Icon icon="lucide:layers" class="h-4 w-4 text-gray-400" />
-          <span class="text-sm text-gray-500 dark:text-gray-400">المكونات</span>
+        <div
+          class="flex flex-col space-y-4 rounded-lg bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-gray-800"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon icon="formkit:datetime" class="h-5 w-5 text-gray-600 dark:text-gray-100" />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">فترة التنفيذ</h3>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+              {{ project.duration }}
+              {{ project.periodType ? (project.periodType === 1 ? 'أسبوع' : 'شهر') : '' }}
+            </h3>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon
+                  icon="lucide:calendar-days"
+                  class="h-5 w-5 text-gray-600 dark:text-gray-100"
+                />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">تاريخ البدء</h3>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+              {{ formatDate(project.actualStartDate) }}
+            </h3>
+          </div>
         </div>
-        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ project.components?.length || 0 }}
-        </div>
-      </div>
-      <div class="p-4 text-center">
-        <div class="mb-1 flex items-center justify-center gap-2">
-          <Icon icon="lucide:list-todo" class="h-4 w-4 text-gray-400" />
-          <span class="text-sm text-gray-500 dark:text-gray-400">الفعاليات</span>
-        </div>
-        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ getTotalActivities(project) }}
-        </div>
-      </div>
-      <div class="p-4 text-center">
-        <div class="mb-1 flex items-center justify-center gap-2">
-          <Icon icon="lucide:calendar" class="h-4 w-4 text-gray-400" />
-          <span class="text-sm text-gray-500 dark:text-gray-400">تاريخ البدء</span>
-        </div>
-        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {{ formatDate(project.actualStartDate) }}
-        </div>
-      </div>
-      <div class="p-4 text-center">
-        <div class="mb-1 flex items-center justify-center gap-2">
-          <Icon icon="lucide:dollar-sign" class="h-4 w-4 text-gray-400" />
-          <span class="text-sm text-gray-500 dark:text-gray-400">مبلغ التمويل</span>
-        </div>
-        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          ${{ formatCost(project.cost) }}
+        <div
+          class="flex flex-col space-y-4 rounded-lg bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-gray-800"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon
+                  icon="fluent:money-calculator-24-regular"
+                  class="h-5 w-5 text-gray-600 dark:text-gray-100"
+                />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">الانجاز المالي</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="h-2.5 w-20 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                <div
+                  class="h-full bg-gray-600 transition-all dark:bg-gray-100"
+                  :style="{ width: `${project.financialProgress || 0}%` }"
+                ></div>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+                {{ project.financialProgress || 0 }}%
+              </h3>
+            </div>
+          </div>
+          <div class="flex items-center justify-between opacity-50 hover:cursor-not-allowed">
+            <div class="flex items-center gap-2">
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon
+                  icon="hugeicons:percent-square"
+                  class="h-5 w-5 text-gray-600 dark:text-gray-100"
+                />
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">الإنجاز الفني</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="h-2.5 w-20 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                <div
+                  class="h-full bg-gray-600 transition-all dark:bg-gray-100"
+                  :style="{ width: `${project.actualProgress || 0}%` }"
+                ></div>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-100">
+                {{ project.actualProgress || 0 }}%
+              </h3>
+            </div>
+          </div>
         </div>
       </div>
     </div>
