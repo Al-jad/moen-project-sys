@@ -49,6 +49,7 @@
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              <slot name="componentActions" :component="component" />
             </div>
           </div>
           <div class="space-y-3 pl-6">
@@ -103,15 +104,18 @@
                       {{ activity.name || `الفعالية ${activityIndex + 1}` }}
                     </span>
                   </div>
-                  <Badge
-                    variant="outline"
-                    :style="{
-                      borderColor: `${getComponentColor(componentIndex)}`,
-                      color: `${getComponentColor(componentIndex)}`,
-                    }"
-                  >
-                    المستهدف: {{ activity.targetPercentage || activity.totalTarget || 0 }}%
-                  </Badge>
+                  <div class="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      :style="{
+                        borderColor: `${getComponentColor(componentIndex)}`,
+                        color: `${getComponentColor(componentIndex)}`,
+                      }"
+                    >
+                      المستهدف: {{ activity.targetPercentage || activity.totalTarget || 0 }}%
+                    </Badge>
+                    <slot name="activityActions" :activity="activity" :component="component" />
+                  </div>
                 </div>
                 <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
                   <div>

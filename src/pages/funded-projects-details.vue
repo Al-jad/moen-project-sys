@@ -240,7 +240,28 @@
               <ComponentsActivitiesDetails
                 :components="project?.components || []"
                 :periodType="project?.periodType || 1"
-              />
+              >
+                <template #componentActions="{ component }">
+                  <Button
+                    @click="handleDeleteComponent(component)"
+                    variant="ghost"
+                    size="sm"
+                    class="text-red-500 hover:text-red-600 dark:text-red-400"
+                  >
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
+                  </Button>
+                </template>
+                <template #activityActions="{ activity, component }">
+                  <Button
+                    @click="handleDeleteActivity(activity, component)"
+                    variant="ghost"
+                    size="sm"
+                    class="text-red-500 hover:text-red-600 dark:text-red-400"
+                  >
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
+                  </Button>
+                </template>
+              </ComponentsActivitiesDetails>
             </div>
 
             <!-- Edit Mode -->
@@ -444,6 +465,42 @@
           @cancel="cancelDeleteAttachment"
         />
 
+        <!-- Delete Component Modal -->
+        <DeleteModal
+          v-model:open="isDeleteComponentModalOpen"
+          title="حذف المكون"
+          description="تأكيد حذف المكون"
+          :message="
+            selectedComponentToDelete?.name
+              ? 'هل أنت متأكد من حذف المكون ' +
+                selectedComponentToDelete.name +
+                '؟ سيتم حذف جميع الفعاليات المرتبطة به.'
+              : ''
+          "
+          :loading="isDeleting"
+          @confirm="confirmDeleteComponent"
+          @cancel="cancelDeleteComponent"
+        />
+
+        <!-- Delete Activity Modal -->
+        <DeleteModal
+          v-model:open="isDeleteActivityModalOpen"
+          title="حذف الفعالية"
+          description="تأكيد حذف الفعالية"
+          :message="
+            selectedActivityToDelete?.name
+              ? 'هل أنت متأكد من حذف الفعالية ' +
+                selectedActivityToDelete.name +
+                ' من المكون ' +
+                selectedActivityToDelete.componentName +
+                '؟'
+              : ''
+          "
+          :loading="isDeleting"
+          @confirm="confirmDeleteActivity"
+          @cancel="cancelDeleteActivity"
+        />
+
         <!-- Action Buttons -->
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
@@ -471,14 +528,13 @@
 
   <!-- Delete Confirmation Modal -->
   <DeleteModal
-    :open="showDeleteModal"
-    @update:open="showDeleteModal = $event"
+    v-model:open="showDeleteModal"
     title="حذف المشروع"
     description="تأكيد حذف المشروع"
     :message="`هل أنت متأكد من حذف المشروع '${project?.name}'؟ لا يمكن التراجع عن هذا الإجراء.`"
     :loading="isDeleting"
     @confirm="confirmDeleteProject"
-    @cancel="showDeleteModal = false"
+    @cancel="() => (showDeleteModal = false)"
   />
 </template>
 
@@ -794,25 +850,34 @@
           targetPercentage: parseFloat(component.targetPercentage) || 0,
         };
 
-        const componentResponse = await axiosInstance.put(
-          `/api/Component/${component.id}`,
-          componentData
-        );
+        let savedComponent;
+        if (component.id) {
+          // Update existing component
+          await axiosInstance.put(`/api/Component/${component.id}`, componentData);
+          savedComponent = component;
+        } else {
+          // Create new component
+          const componentResponse = await axiosInstance.post('/api/Component', componentData);
+          savedComponent = componentResponse.data;
+        }
 
         // If component save was successful and there are activities, save them separately
         if (Array.isArray(component.activities) && component.activities.length > 0) {
           for (const activity of component.activities) {
             const activityData = {
-              componentId: component.id,
+              componentId: savedComponent.id,
               name: activity.name,
               targetPercentage: parseFloat(activity.targetPercentage) || 0,
               selectedPeriods: activity.selectedPeriods || [],
             };
 
-            const activityResponse = await axiosInstance.put(
-              `/api/Activity/${activity.id}`,
-              activityData
-            );
+            if (activity.id) {
+              // Update existing activity
+              await axiosInstance.put(`/api/Activity/${activity.id}`, activityData);
+            } else {
+              // Create new activity
+              await axiosInstance.post('/api/Activity', activityData);
+            }
           }
         }
       }
@@ -843,7 +908,7 @@
   const confirmDeleteProject = async () => {
     isDeleting.value = true;
     try {
-      await axiosInstance.delete(`/Project/${project.value.id}`);
+      await axiosInstance.delete(`/api/Project/${project.value.id}`);
       toast.success('تم حذف المشروع بنجاح');
       router.push('/funded-projects');
     } catch (error) {
@@ -856,6 +921,7 @@
   };
 
   const showDeleteConfirmation = () => {
+    if (!project.value) return;
     showDeleteModal.value = true;
   };
 
@@ -1085,6 +1151,68 @@
       })) || []
     );
   });
+
+  // Add these new refs and functions for components and activities
+  const isDeleteComponentModalOpen = ref(false);
+  const isDeleteActivityModalOpen = ref(false);
+  const selectedComponentToDelete = ref(null);
+  const selectedActivityToDelete = ref(null);
+
+  const handleDeleteComponent = (component) => {
+    selectedComponentToDelete.value = component;
+    isDeleteComponentModalOpen.value = true;
+  };
+
+  const handleDeleteActivity = (activity, component) => {
+    selectedActivityToDelete.value = { ...activity, componentName: component.name };
+    isDeleteActivityModalOpen.value = true;
+  };
+
+  const confirmDeleteComponent = async () => {
+    if (!selectedComponentToDelete.value?.id) return;
+
+    try {
+      isDeleting.value = true;
+      await axiosInstance.delete(`/api/Component/${selectedComponentToDelete.value.id}`);
+      toast.success('تم حذف المكون بنجاح');
+      await fetchProject();
+    } catch (error) {
+      console.error('Error deleting component:', error);
+      toast.error('حدث خطأ أثناء حذف المكون');
+    } finally {
+      isDeleting.value = false;
+      isDeleteComponentModalOpen.value = false;
+      selectedComponentToDelete.value = null;
+    }
+  };
+
+  const confirmDeleteActivity = async () => {
+    if (!selectedActivityToDelete.value?.id) return;
+
+    try {
+      isDeleting.value = true;
+      await axiosInstance.delete(`/api/Activity/${selectedActivityToDelete.value.id}`);
+      toast.success('تم حذف الفعالية بنجاح');
+      await fetchProject();
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      toast.error('حدث خطأ أثناء حذف الفعالية');
+    } finally {
+      isDeleting.value = false;
+      isDeleteActivityModalOpen.value = false;
+      selectedActivityToDelete.value = null;
+    }
+  };
+
+  const cancelDeleteComponent = () => {
+    isDeleteComponentModalOpen.value = false;
+    selectedComponentToDelete.value = null;
+  };
+
+  const cancelDeleteActivity = () => {
+    isDeleteActivityModalOpen.value = false;
+    selectedActivityToDelete.value = null;
+  };
 </script>
 
 <style scoped>
