@@ -165,6 +165,7 @@ const router = createRouter({
 
 // Add navigation guard for debugging
 router.beforeEach((to, from, next) => {
+  scrollTo(0, 0);
   next();
 });
 
