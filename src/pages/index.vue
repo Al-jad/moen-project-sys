@@ -50,9 +50,14 @@
         <div class="mb-8 grid grid-cols-4 gap-4">
           <ShortcutCard title="البرنامج الحكومي" icon="lucide:users" color="sky" />
 
-          <ShortcutCard title="المشاريع" icon="lucide:users" to="/projects" color="sky" />
+          <ShortcutCard
+            title="الإجراءات الإدارية"
+            icon="eos-icons:admin"
+            to="/modifications"
+            color="sky"
+          />
 
-          <ShortcutCard title="تقرير رئاسة الوزراء" icon="lucide:line-chart" color="green" />
+          <ShortcutCard title="المهام" to="/tasks" icon="lucide:check-circle" color="green" />
 
           <ShortcutCard title="بيانات على الخارطة" icon="lucide:map-pin" to="/map" color="yellow" />
         </div>
