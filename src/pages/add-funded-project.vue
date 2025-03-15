@@ -7,7 +7,11 @@
         </div>
 
         <div class="space-y-8">
-          <ProjectDetails />
+          <ProjectDetails
+            :project="store.form"
+            :is-editing="true"
+            @update:project="updateProjectDetails"
+          />
           <ProjectDuration />
           <ProjectLocation />
           <ProjectComponents />
@@ -238,6 +242,11 @@
   const formatCost = (value) => {
     if (!value) return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const updateProjectDetails = (updatedProject) => {
+    Object.assign(store.form, updatedProject);
+    store.hasUnsavedChanges = true;
   };
 </script>
 

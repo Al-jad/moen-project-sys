@@ -88,11 +88,19 @@
           <div class="p-6">
             <div v-if="!isLoading" class="grid grid-cols-1 gap-6">
               <FundedProjectCard
-                v-for="project in projects"
+                v-for="project in paginatedProjects"
                 :key="project.id"
                 :project="project"
                 @attachment-added="fetchProjects"
               />
+
+              <div class="mt-4 flex justify-center">
+                <CustomPagination
+                  v-model="currentPage"
+                  :total="projects.length"
+                  :per-page="itemsPerPage"
+                />
+              </div>
             </div>
             <div v-else class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               <div
@@ -129,6 +137,7 @@
   </DefaultLayout>
 </template>
 <script setup>
+  import CustomPagination from '@/components/CustomPagination.vue';
   import FundedProjectCard from '@/components/FundedProjectCard.vue';
   import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
@@ -136,12 +145,22 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { onMounted, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { RouterLink, useRouter } from 'vue-router';
+
   const projects = ref([]);
   const isLoading = ref(true);
   const router = useRouter();
   const showPremiumModal = ref(false);
+  const currentPage = ref(1);
+  const itemsPerPage = ref(6);
+
+  const paginatedProjects = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return projects.value.slice(start, end);
+  });
+
   const OpenPremiumModal = () => {
     showPremiumModal.value = true;
   };
