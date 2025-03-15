@@ -265,6 +265,77 @@
             </div>
           </div>
         </template>
+
+        <!-- Achievements Section -->
+        <div
+          class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
+        >
+          <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+            <div class="flex items-center gap-2">
+              <Icon
+                icon="hugeicons:task-done-01"
+                class="h-5 w-5 text-gray-500 dark:text-gray-400"
+              />
+              <h4 class="font-medium text-gray-900 dark:text-gray-100">الإنجازات </h4>
+            </div>
+            <Button @click="toggleEditAchievements" variant="ghost" size="sm">
+              <Icon v-if="!isEditingAchievements" icon="lucide:edit" class="h-4 w-4" />
+              <Icon v-else icon="lucide:check" class="h-4 w-4" />
+            </Button>
+          </div>
+          <div class="divide-y dark:divide-gray-700">
+            <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+              <!-- Financial Achievement -->
+              <div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">الإنجاز المالي</div>
+                <div
+                  v-if="!isEditingAchievements"
+                  class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100"
+                >
+                  {{ project?.financialAchievements || 'لم يتم تحديد الإنجاز المالي' }}
+                </div>
+                <div v-else class="mt-1">
+                  <NumberInput
+                    v-model="editForm.financialAchievements"
+                    class="w-full"
+                    placeholder="ادخل الإنجاز المالي"
+                  />
+                </div>
+              </div>
+              <!-- Technical Achievement (Premium) -->
+              <div class="relative">
+                <div class="text-sm text-gray-500 dark:text-gray-400"
+                  >الإنجاز الفني (ميزة مدفوعة)</div
+                >
+                <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
+                </div>
+                <div
+                  class="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-800/80"
+                >
+                  <div class="text-center">
+                    <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-gray-400" />
+                    <p class="mt-2 text-sm text-gray-500">هذه ميزة مدفوعة</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Save/Cancel Buttons -->
+            <div v-if="isEditingAchievements" class="flex justify-end gap-2 p-4">
+              <Button @click="cancelEditAchievements" variant="outline">الغاء</Button>
+              <Button
+                @click="saveAchievements"
+                :disabled="isSaving"
+                class="bg-slate-700 hover:bg-slate-800"
+              >
+                <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+                حفظ التغييرات
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
             <Button variant="outline" class="hover:cursor-not-allowed">
@@ -326,6 +397,7 @@
   const isSaving = ref(false);
   const showDeleteModal = ref(false);
   const isDeleting = ref(false);
+  const isEditingAchievements = ref(false);
 
   // Initialize empty editForm
   const editForm = reactive({
@@ -341,6 +413,7 @@
     duration: 0,
     periodType: 1,
     components: [],
+    financialAchievements: '',
   });
 
   const fetchProject = async () => {
@@ -371,6 +444,7 @@
         components: Array.isArray(response.data.components)
           ? JSON.parse(JSON.stringify(response.data.components))
           : [],
+        financialAchievements: response.data.financialAchievements || '',
       });
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -679,6 +753,46 @@
 
   const showDeleteConfirmation = () => {
     showDeleteModal.value = true;
+  };
+
+  const toggleEditAchievements = () => {
+    if (isEditingAchievements.value) {
+      cancelEditAchievements();
+    } else {
+      isEditingAchievements.value = true;
+      editForm.financialAchievements = project.value?.financialAchievements || '';
+    }
+  };
+
+  const cancelEditAchievements = () => {
+    isEditingAchievements.value = false;
+    editForm.financialAchievements = project.value?.financialAchievements || '';
+  };
+
+  const saveAchievements = async () => {
+    isSaving.value = true;
+    try {
+      const response = await axiosInstance.put(`/api/Project/${project.value.id}`, {
+        ...project.value,
+        financialAchievements: editForm.financialAchievements,
+      });
+
+      if (response.status === 200 || response.status === 204) {
+        if (response.data) {
+          project.value = response.data;
+        }
+        isEditingAchievements.value = false;
+        toast.success('تم حفظ التغييرات بنجاح');
+        await fetchProject();
+      }
+    } catch (error) {
+      console.error('Error saving achievements:', error);
+      toast.error('حدث خطأ أثناء الحفظ', {
+        description: error.response?.data?.message || 'يرجى المحاولة مرة أخرى',
+      });
+    } finally {
+      isSaving.value = false;
+    }
   };
 </script>
 

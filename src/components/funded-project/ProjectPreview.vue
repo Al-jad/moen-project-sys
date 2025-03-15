@@ -135,6 +135,31 @@
         :periodType="store.form.periodType"
         :useExternalSorting="true"
       />
+
+      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div class="border-b p-4 dark:border-gray-700">
+          <div class="flex items-center gap-2">
+            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <h4 class="font-medium text-gray-900 dark:text-gray-100">الإنجازات </h4>
+          </div>
+        </div>
+        <div class="divide-y dark:divide-gray-700">
+          <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+            <div>
+              <div class="text-sm text-gray-500 dark:text-gray-400"> الإنجاز المالي</div>
+              <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                {{ store.form.financialAchievements || 'لم يتم تحديد الإنجاز المالي' }}
+              </div>
+            </div>
+            <div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">الإنجاز الفني</div>
+              <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                {{ store.form.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </FormSection>
 </template>
