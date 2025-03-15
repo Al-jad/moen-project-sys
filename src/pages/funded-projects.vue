@@ -70,7 +70,7 @@
                 <Badge variant="outline" class="px-3">{{ projects.length }} مشروع</Badge>
               </div>
               <div class="flex flex-row items-center gap-6">
-                <PrimaryButton class="cursor-not-allowed">
+                <PrimaryButton @click="OpenPremiumModal">
                   <Icon icon="lucide:lock" />
                   طباعة
                 </PrimaryButton>
@@ -125,10 +125,12 @@
         </div>
       </div>
     </div>
+    <PremiumModal v-model:open="showPremiumModal" @close="showPremiumModal = false" />
   </DefaultLayout>
 </template>
 <script setup>
   import FundedProjectCard from '@/components/FundedProjectCard.vue';
+  import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -139,6 +141,10 @@
   const projects = ref([]);
   const isLoading = ref(true);
   const router = useRouter();
+  const showPremiumModal = ref(false);
+  const OpenPremiumModal = () => {
+    showPremiumModal.value = true;
+  };
   const fetchProjects = async () => {
     try {
       isLoading.value = true;

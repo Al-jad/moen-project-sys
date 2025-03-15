@@ -303,22 +303,24 @@
                 </div>
               </div>
               <!-- Technical Achievement (Premium) -->
-              <div class="relative">
-                <div class="text-sm text-gray-500 dark:text-gray-400"
-                  >الإنجاز الفني (ميزة مدفوعة)</div
-                >
-                <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+              <div
+                @click="OpenPremiumModal"
+                class="relative rounded-lg border border-red-300 bg-red-200 p-4"
+              >
+                <div class="text-sm text-red-600">الإنجاز الفني (ميزة مدفوعة)</div>
+                <div class="mt-1 text-sm font-medium text-red-600">
                   {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
                 </div>
                 <div
-                  class="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-800/80"
+                  class="absolute inset-0 flex items-center justify-center bg-red-200/10 dark:bg-gray-800/80"
                 >
                   <div class="text-center">
-                    <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-gray-400" />
-                    <p class="mt-2 text-sm text-gray-500">هذه ميزة مدفوعة</p>
+                    <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-red-400" />
+                    <p class="mt-2 text-sm text-red-400">هذه ميزة مدفوعة</p>
                   </div>
                 </div>
               </div>
+              <PremiumModal v-model:open="showPremiumModal" @close="showPremiumModal = false" />
             </div>
             <!-- Save/Cancel Buttons -->
             <div v-if="isEditingAchievements" class="flex justify-end gap-2 p-4">
@@ -378,6 +380,7 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
   import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
+  import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -415,7 +418,10 @@
     components: [],
     financialAchievements: '',
   });
-
+  const showPremiumModal = ref(false);
+  const OpenPremiumModal = () => {
+    showPremiumModal.value = true;
+  };
   const fetchProject = async () => {
     isLoading.value = true;
     error.value = null;

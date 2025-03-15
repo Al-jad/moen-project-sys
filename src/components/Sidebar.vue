@@ -152,6 +152,7 @@
     { type: 'separator' },
     { path: '/tasks', icon: 'lucide:bell', label: 'المهام' },
     { path: '/settings', icon: 'lucide:settings', label: 'الاعدادات' },
+    { path: '/about', icon: 'lucide:info', label: 'حول النظام' },
   ];
 
   const isActive = (path) => {

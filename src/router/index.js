@@ -19,6 +19,7 @@ import Settings from '@/pages/settings.vue';
 import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
+import About from '@/pages/about.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -141,6 +142,12 @@ const routes = [
     path: '/done',
     name: 'done',
     component: () => import('@/pages/done.vue'),
+    props: true,
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: About,
     props: true,
   },
 ];
