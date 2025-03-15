@@ -95,7 +95,6 @@
   };
 
   const handleSubmitAction = (formData) => {
-    console.log('Form submitted:', formData);
     // Handle form submission here
   };
 

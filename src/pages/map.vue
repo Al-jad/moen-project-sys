@@ -113,10 +113,6 @@
       const response = await projectService.getAllProjects();
       const apiProjects = response.data;
       projects.value = [...apiProjects, ...mockupProjects];
-      console.log('Projects loaded:', projects.value);
-      console.log('Total projects:', projects.value.length);
-      console.log('API projects:', apiProjects.length);
-      console.log('Mockup projects:', mockupProjects.length);
     } catch (err) {
       console.error('Error fetching projects:', err);
       projects.value = [...mockupProjects];

@@ -251,29 +251,22 @@
 
   const handleCellClick = ({ key, item }) => {
     if (key === 'employee') {
-      console.log('Employee clicked:', item.employee);
     } else if (key === 'project') {
-      console.log('Project clicked:', item.project);
     }
   };
 
   const showDetails = (item) => {
-    console.log('Details shown for:', item);
   };
 
   const handleFilterChange = (filters) => {
-    console.log('Filters changed:', filters);
   };
 
   const handleSearchChange = (query) => {
-    console.log('Search query:', query);
   };
 
   const handleDateChange = (date) => {
-    console.log('Date range:', date);
   };
 
   const handleExport = () => {
-    console.log('Export clicked');
   };
 </script>

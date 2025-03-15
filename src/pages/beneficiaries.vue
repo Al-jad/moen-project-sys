@@ -201,6 +201,5 @@
   };
 
   const exportToExcel = () => {
-    console.log('Exporting to Excel...');
   };
 </script>

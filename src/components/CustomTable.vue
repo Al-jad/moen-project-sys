@@ -240,21 +240,13 @@
     )
   );
 
-  console.log('Initial selectedFilters:', selectedFilters.value);
-
   // Still keep the onMounted hook to ensure values are updated if props change
   onMounted(() => {
-    console.log('CustomTable onMounted, props.filters:', props.filters);
-    console.log('CustomTable onMounted, props.initialFilters:', props.initialFilters);
     props.filters.forEach((filter) => {
       if (!selectedFilters.value[filter.key]) {
         selectedFilters.value[filter.key] = props.initialFilters[filter.key] || 'all';
       }
     });
-    console.log(
-      'CustomTable onMounted, selectedFilters after initialization:',
-      selectedFilters.value
-    );
   });
 
   // Date formatting
@@ -316,11 +308,9 @@
 
   // Paginated data
   const paginatedData = computed(() => {
-    console.log('Computing paginatedData, filteredData:', filteredData.value);
     const start = (currentPage.value - 1) * props.itemsPerPage;
     const end = start + props.itemsPerPage;
     const result = filteredData.value.slice(start, end);
-    console.log('Computing paginatedData, result:', result);
     return result;
   });
 

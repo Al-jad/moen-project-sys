@@ -168,7 +168,6 @@ import { useRouter } from 'vue-router';
 
   // Methods
   const exportToExcel = () => {
-    console.log('Exporting to Excel...');
   };
 
   function getUsers() {

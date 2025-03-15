@@ -150,6 +150,5 @@
   const showConfirmPassword = ref(false);
 
   const handlePasswordChange = () => {
-    console.log('Password change submitted');
   };
 </script>

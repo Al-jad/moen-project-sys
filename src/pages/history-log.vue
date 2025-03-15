@@ -113,7 +113,7 @@
     try {
       isLoading.value = true;
       const response = await axiosInstance.get('/api/ActionAudit');
-      
+
       // Process the data to format dates and prepare for display
       logs.value = response.data.map(log => ({
         ...log,
@@ -141,7 +141,6 @@
   // Methods
   const exportToExcel = () => {
     // Implement Excel export functionality
-    console.log('Exporting to Excel...');
   };
 
   const viewDetails = (log) => {

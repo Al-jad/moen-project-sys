@@ -231,16 +231,6 @@
     return statusClasses[status] || '';
   }
 
-  // Log projects for debugging
-  watch(
-    () => props.projects,
-    (newProjects) => {
-      console.log('Projects in Map component:', newProjects);
-      console.log('Projects with coordinates:', projectsWithCoordinates.value);
-    },
-    { immediate: true }
-  );
-
   function formatCurrency(value) {
     return value ? `${value.toLocaleString()} دينار` : 'غير متوفر';
   }

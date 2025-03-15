@@ -579,9 +579,7 @@
     error.value = null;
 
     try {
-      console.log('Fetching project with ID:', route.params.id);
       const response = await axiosInstance.get(`/api/Project/${route.params.id}`);
-      console.log('API Response:', response);
       project.value = response.data;
 
       // Initialize editForm with current project data
@@ -747,8 +745,6 @@
         lng: project.value.lng || 0,
       };
 
-      console.log('Sending project data:', projectData);
-
       const response = await axiosInstance.put(`/api/Project/${project.value.id}`, projectData);
 
       if (response.status === 200 || response.status === 204) {
@@ -793,7 +789,6 @@
       cancelEditComponents();
     } else {
       // Deep clone components when starting to edit
-      console.log('Starting component edit with:', project.value.components);
       editForm.components = JSON.parse(JSON.stringify(project.value.components || []));
       // Ensure all components have the required properties
       editForm.components = editForm.components.map((component) => ({
@@ -843,12 +838,10 @@
           targetPercentage: parseFloat(component.targetPercentage) || 0,
         };
 
-        console.log('Saving component with data:', componentData);
         const componentResponse = await axiosInstance.put(
           `/api/Component/${component.id}`,
           componentData
         );
-        console.log('Component save response:', componentResponse);
 
         // If component save was successful and there are activities, save them separately
         if (Array.isArray(component.activities) && component.activities.length > 0) {
@@ -860,12 +853,10 @@
               selectedPeriods: activity.selectedPeriods || [],
             };
 
-            console.log('Saving activity with data:', activityData);
             const activityResponse = await axiosInstance.put(
               `/api/Activity/${activity.id}`,
               activityData
             );
-            console.log('Activity save response:', activityResponse);
           }
         }
       }
@@ -889,7 +880,6 @@
   };
 
   const updateComponents = (updatedComponents) => {
-    console.log('Received updated components:', updatedComponents);
     // Deep clone the components to avoid reference issues
     editForm.components = JSON.parse(JSON.stringify(updatedComponents));
   };

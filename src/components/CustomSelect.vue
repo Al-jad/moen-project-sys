@@ -100,10 +100,7 @@
   });
 
   const selectedLabel = computed(() => {
-    console.log('CustomSelect modelValue:', props.modelValue);
-    console.log('CustomSelect options:', props.options);
     const label = props.options.find((opt) => opt.value === props.modelValue)?.label;
-    console.log('CustomSelect selectedLabel:', label);
     return label;
   });
 

@@ -157,9 +157,7 @@
       if (projectId && projectId !== 'all') {
         url = `api/Attachment?projectId=${projectId}`;
       }
-      console.log('Fetching attachments from:', url);
       const response = await axiosInstance.get(url);
-      console.log('Attachments response:', response.data);
       attachments.value = response.data;
     } catch (error) {
       console.error('Error fetching attachments:', error);
@@ -177,7 +175,6 @@
     );
   });
   const filteredAttachments = computed(() => {
-    console.log('Filtering attachments:', attachments.value);
     return attachments.value;
   });
   const paginatedAttachments = computed(() => {
@@ -202,10 +199,8 @@
     return project ? project.name : '';
   };
   onMounted(async () => {
-    console.log('Component mounted, selectedProject:', selectedProject.value);
     await Promise.all([fetchProjects(), fetchAttachments()]);
     selectedProject.value = 'all';
-    console.log('After initialization, selectedProject:', selectedProject.value);
   });
 
   const getFileTypeInfo = (filename) => {
@@ -295,7 +290,6 @@
 
   // Update transformed attachments to include file type info
   const transformedAttachments = computed(() => {
-    console.log('Transforming attachments:', filteredAttachments.value);
     const transformed = filteredAttachments.value.map((attachment) => {
       const fileInfo = getFileTypeInfo(attachment.url);
       return {
@@ -305,7 +299,6 @@
         fileType: fileInfo,
       };
     });
-    console.log('Transformed attachments:', transformed);
     return transformed;
   });
 
@@ -458,20 +451,15 @@
           'flex-row-reverse w-full dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
       },
     ];
-    console.log('Table filters:', filters);
     return filters;
   });
 
   const handleFilterChange = (filters) => {
-    console.log('Filter changed:', filters);
-    console.log('Before update, selectedProject:', selectedProject.value);
     if (filters.projectId && filters.projectId !== 'all') {
       selectedProject.value = filters.projectId;
-      console.log('After update, selectedProject:', selectedProject.value);
       fetchAttachments(filters.projectId);
     } else {
       selectedProject.value = 'all';
-      console.log('After update, selectedProject:', selectedProject.value);
       fetchAttachments('all');
     }
   };

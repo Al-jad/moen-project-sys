@@ -52,7 +52,9 @@
 
   // Ensure beneficiaryEntities is always an array
   if (!Array.isArray(store.form.beneficiaryEntities)) {
-    store.form.beneficiaryEntities = store.form.beneficiaryEntities ? [store.form.beneficiaryEntities] : [];
+    store.form.beneficiaryEntities = store.form.beneficiaryEntities
+      ? [store.form.beneficiaryEntities]
+      : [];
   }
 
   onMounted(() => {
@@ -133,34 +135,32 @@
       if (store.form.cost) {
         store.form.cost = parseFloat(store.form.cost);
       }
-      
+
       if (store.form.duration) {
         store.form.duration = parseInt(store.form.duration);
       }
-      
+
       if (store.form.latitude) {
         store.form.latitude = parseFloat(store.form.latitude);
       }
-      
+
       if (store.form.longitude) {
         store.form.longitude = parseFloat(store.form.longitude);
       }
-      
+
       if (store.form.actualStartDate instanceof Date) {
         store.form.actualStartDate = store.form.actualStartDate.toISOString();
       }
-      
+
       if (Array.isArray(store.form.beneficiaryEntities)) {
         store.form.beneficiaryEntities = store.form.beneficiaryEntities
-          .filter(entity => entity && entity.toString().trim() !== '')
-          .map(entity => {
+          .filter((entity) => entity && entity.toString().trim() !== '')
+          .map((entity) => {
             const parsed = parseInt(entity);
             return !isNaN(parsed) ? parsed : entity;
           });
       }
-      
-      console.log('Saving project with data:', store.form);
-      
+
       const response = await store.saveProject();
       if (response.success) {
         router.push({
@@ -174,11 +174,11 @@
     } catch (error) {
       console.error('API Error:', error);
       let errorMessage = 'يرجى المحاولة مرة أخرى';
-      
+
       if (error.response) {
         console.error('Error status:', error.response.status);
         console.error('Error data:', error.response.data);
-        
+
         // Handle specific error codes
         if (error.response.status === 400) {
           errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
@@ -188,7 +188,7 @@
           errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
         }
       }
-      
+
       toast.error('حدث خطأ أثناء الحفظ', {
         description: error.response?.data?.message || errorMessage,
       });

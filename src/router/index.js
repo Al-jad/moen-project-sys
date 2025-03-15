@@ -165,9 +165,6 @@ const router = createRouter({
 
 // Add navigation guard for debugging
 router.beforeEach((to, from, next) => {
-  if (to.name === 'funded-projects-details') {
-    console.log('Navigating to project details:', to.params.id);
-  }
   next();
 });
 
