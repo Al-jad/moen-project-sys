@@ -337,6 +337,87 @@
           </div>
         </div>
 
+        <!-- Attachments Section -->
+        <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+          <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+            <div class="flex items-center gap-2">
+              <Icon icon="lucide:paperclip" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <h4 class="font-medium text-gray-900 dark:text-gray-100">المرفقات</h4>
+            </div>
+            <Button @click="openAttachmentDialog" variant="ghost" size="sm">
+              <Icon icon="lucide:plus" class="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div class="p-4">
+            <div v-if="project?.attachments?.length > 0">
+              <CustomTable
+                :columns="attachmentColumns"
+                :data="transformedAttachments"
+                :items-per-page="8"
+                :show-export="false"
+                :show-date-filter="false"
+                :show-search="true"
+              >
+                <template #fileType="{ item }">
+                  <div class="flex items-center gap-2">
+                    <div :class="getFileTypeContainerClass(item.fileType)">
+                      <Icon
+                        :icon="item.fileType.icon"
+                        :class="getFileTypeIconClass(item.fileType)"
+                      />
+                    </div>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                      item.fileType.type
+                    }}</span>
+                  </div>
+                </template>
+                <template #action="{ item }">
+                  <div class="flex items-center justify-center gap-4">
+                    <a
+                      :href="item.url"
+                      target="_blank"
+                      class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      <Icon icon="lucide:external-link" class="h-4 w-4" />
+                    </a>
+                    <button
+                      @click="handleEditAttachment(item)"
+                      class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    >
+                      <Icon icon="lucide:edit" class="h-4 w-4" />
+                    </button>
+                    <button
+                      @click="handleDeleteAttachment(item)"
+                      class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      <Icon icon="lucide:trash" class="h-4 w-4" />
+                    </button>
+                  </div>
+                </template>
+              </CustomTable>
+            </div>
+            <div
+              v-else
+              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center dark:border-gray-700"
+            >
+              <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
+                <Icon icon="lucide:file" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
+                لا توجد مرفقات
+              </h3>
+              <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                قم بإضافة مرفقات للمشروع
+              </p>
+              <Button variant="outline" size="sm" @click="openAttachmentDialog">
+                <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
+                إضافة مرفق
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <!-- Action Buttons -->
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
@@ -373,6 +454,77 @@
     @confirm="confirmDeleteProject"
     @cancel="showDeleteModal = false"
   />
+
+  <!-- Delete Attachment Modal -->
+  <DeleteModal
+    v-model:open="isDeleteAttachmentModalOpen"
+    title="حذف المرفق"
+    description="تأكيد حذف المرفق"
+    :message="
+      selectedAttachment?.title
+        ? 'هل أنت متأكد من حذف المرفق ' + selectedAttachment.title + '؟'
+        : ''
+    "
+    :loading="isDeleting"
+    @confirm="confirmDeleteAttachment"
+    @cancel="cancelDeleteAttachment"
+  />
+
+  <!-- Edit Attachment Modal -->
+  <Dialog :open="isEditAttachmentModalOpen" @update:open="closeEditAttachmentDialog">
+    <DialogContent class="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle class="text-center">تعديل المرفق</DialogTitle>
+        <DialogDescription class="text-center">قم بتعديل بيانات المرفق</DialogDescription>
+      </DialogHeader>
+      <form @submit.prevent="handleEditAttachmentSubmit" class="space-y-4">
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">عنوان المرفق</label>
+          <input
+            v-model="editAttachmentData.title"
+            type="text"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+            required
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">الوصف</label>
+          <textarea
+            v-model="editAttachmentData.description"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">الملف</label>
+          <input
+            ref="editFileInput"
+            type="file"
+            @change="handleEditFileChange"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+          />
+        </div>
+        <DialogFooter class="flex justify-center gap-4 sm:justify-center">
+          <Button
+            type="button"
+            variant="outline"
+            @click="closeEditAttachmentDialog"
+            class="min-w-[8rem]"
+          >
+            إلغاء
+          </Button>
+          <Button
+            type="submit"
+            :disabled="isUploading"
+            class="min-w-[8rem] bg-blue-600 hover:bg-blue-700"
+          >
+            <Icon v-if="isUploading" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+            {{ isUploading ? 'جاري الحفظ...' : 'حفظ التغييرات' }}
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup>
@@ -800,6 +952,271 @@
       isSaving.value = false;
     }
   };
+
+  // Add these new refs and functions for attachments
+  const isAttachmentDialogOpen = ref(false);
+  const isUploading = ref(false);
+  const fileInput = ref(null);
+  const attachmentData = ref({
+    title: '',
+    description: '',
+    url: '',
+    projectId: 0,
+  });
+
+  const getFileTypeInfo = (filename) => {
+    if (!filename) return { type: 'unknown', color: 'gray', icon: 'lucide:file' };
+
+    const extension = filename.split('.').pop()?.toLowerCase();
+
+    const typeMap = {
+      // Images
+      jpg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      jpeg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      png: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      gif: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+      svg: { type: 'صورة', color: 'emerald', icon: 'lucide:image' },
+
+      // Documents
+      pdf: { type: 'PDF', color: 'red', icon: 'lucide:file-text' },
+      doc: { type: 'مستند', color: 'blue', icon: 'lucide:file-text' },
+      docx: { type: 'مستند', color: 'blue', icon: 'lucide:file-text' },
+      txt: { type: 'نص', color: 'gray', icon: 'lucide:file-text' },
+
+      // Spreadsheets
+      xls: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+      xlsx: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+      csv: { type: 'جدول بيانات', color: 'green', icon: 'lucide:table' },
+
+      // Archives
+      zip: { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+      rar: { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+      '7z': { type: 'ملف مضغوط', color: 'yellow', icon: 'lucide:folder' },
+    };
+
+    return typeMap[extension] || { type: 'ملف', color: 'gray', icon: 'lucide:file' };
+  };
+
+  const getFileTypeContainerClass = (fileType) => {
+    const baseClasses = 'flex h-8 w-8 items-center justify-center rounded-lg';
+    const colorClasses = {
+      emerald: 'bg-emerald-50 dark:bg-emerald-500/10',
+      red: 'bg-red-50 dark:bg-red-500/10',
+      blue: 'bg-blue-50 dark:bg-blue-500/10',
+      gray: 'bg-gray-50 dark:bg-gray-500/10',
+      green: 'bg-green-50 dark:bg-green-500/10',
+      yellow: 'bg-yellow-50 dark:bg-yellow-500/10',
+    };
+
+    return `${baseClasses} ${colorClasses[fileType.color] || colorClasses.gray}`;
+  };
+
+  const getFileTypeIconClass = (fileType) => {
+    const baseClasses = 'h-4 w-4';
+    const colorClasses = {
+      emerald: 'text-emerald-500 dark:text-emerald-400',
+      red: 'text-red-500 dark:text-red-400',
+      blue: 'text-blue-500 dark:text-blue-400',
+      gray: 'text-gray-500 dark:text-gray-400',
+      green: 'text-green-500 dark:text-green-400',
+      yellow: 'text-yellow-500 dark:text-yellow-400',
+    };
+
+    return `${baseClasses} ${colorClasses[fileType.color] || colorClasses.gray}`;
+  };
+
+  const openAttachmentDialog = () => {
+    isAttachmentDialogOpen.value = true;
+    attachmentData.value.projectId = project.value.id;
+  };
+
+  const closeAttachmentDialog = () => {
+    isAttachmentDialogOpen.value = false;
+    resetAttachmentForm();
+  };
+
+  const resetAttachmentForm = () => {
+    attachmentData.value = {
+      title: '',
+      description: '',
+      url: '',
+      projectId: project.value.id,
+    };
+    if (fileInput.value) fileInput.value.value = '';
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      attachmentData.value.url = URL.createObjectURL(file);
+    }
+  };
+
+  const handleAttachmentSubmit = async () => {
+    try {
+      isUploading.value = true;
+      const file = fileInput.value.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await axiosInstance.post(
+        'https://encode.ibaity.com/uploads/raw',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      attachmentData.value.url = uploadResponse.data.url;
+      await axiosInstance.post('/api/Attachment', attachmentData.value);
+      closeAttachmentDialog();
+      await fetchProject();
+      toast.success('تم إضافة المرفق بنجاح');
+    } catch (error) {
+      console.error('Error in attachment process:', error);
+      toast.error('حدث خطأ أثناء رفع المرفق');
+    } finally {
+      isUploading.value = false;
+    }
+  };
+
+  const handleEditAttachment = (attachment) => {
+    selectedAttachment.value = attachment;
+    editAttachmentData.value = {
+      title: attachment.title,
+      description: attachment.description,
+      url: attachment.url,
+    };
+    isEditAttachmentModalOpen.value = true;
+  };
+
+  const handleDeleteAttachment = (attachment) => {
+    selectedAttachment.value = attachment;
+    isDeleteAttachmentModalOpen.value = true;
+  };
+
+  // New refs and functions for the new attachment handling
+  const isDeleteAttachmentModalOpen = ref(false);
+  const selectedAttachment = ref(null);
+  const editAttachmentData = ref({
+    title: '',
+    description: '',
+    url: '',
+  });
+  const editFileInput = ref(null);
+
+  const confirmDeleteAttachment = async () => {
+    try {
+      await axiosInstance.delete(`/api/Attachment/${selectedAttachment.value.id}`);
+      await fetchProject();
+      toast.success('تم حذف المرفق بنجاح');
+    } catch (error) {
+      console.error('Error deleting attachment:', error);
+      toast.error('حدث خطأ أثناء حذف المرفق');
+    } finally {
+      isDeleteAttachmentModalOpen.value = false;
+    }
+  };
+
+  const cancelDeleteAttachment = () => {
+    isDeleteAttachmentModalOpen.value = false;
+    selectedAttachment.value = null;
+  };
+
+  const handleEditAttachmentSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      isUploading.value = true;
+      const file = editFileInput.value.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await axiosInstance.post(
+        'https://encode.ibaity.com/uploads/raw',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      editAttachmentData.value.url = uploadResponse.data.url;
+      await axiosInstance.put(
+        `/api/Attachment/${selectedAttachment.value.id}`,
+        editAttachmentData.value
+      );
+      await fetchProject();
+      toast.success('تم حفظ التغييرات بنجاح');
+    } catch (error) {
+      console.error('Error in attachment process:', error);
+      toast.error('حدث خطأ أثناء رفع المرفق');
+    } finally {
+      isUploading.value = false;
+    }
+  };
+
+  const handleEditFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      editAttachmentData.value.url = URL.createObjectURL(file);
+    }
+  };
+
+  const closeEditAttachmentDialog = () => {
+    isEditAttachmentModalOpen.value = false;
+    selectedAttachment.value = null;
+    resetAttachmentForm();
+  };
+
+  const attachmentColumns = [
+    {
+      key: 'fileType',
+      label: 'النوع',
+      type: 'custom',
+      width: '7rem',
+    },
+    {
+      key: 'title',
+      label: 'عنوان المرفق',
+      type: 'text',
+    },
+    {
+      key: 'description',
+      label: 'الوصف',
+      type: 'text',
+    },
+    {
+      key: 'createdAt',
+      label: 'تاريخ الإضافة',
+      type: 'text',
+    },
+    {
+      key: 'action',
+      label: 'الإجراءات',
+      type: 'action',
+      icon: 'lucide:external-link',
+    },
+  ];
+
+  const transformedAttachments = computed(() => {
+    return (
+      project.value?.attachments?.map((attachment) => {
+        const fileInfo = getFileTypeInfo(attachment.url);
+        return {
+          ...attachment,
+          createdAt: formatDate(attachment.createdAt),
+          fileType: fileInfo,
+        };
+      }) || []
+    );
+  });
 </script>
 
 <style scoped>

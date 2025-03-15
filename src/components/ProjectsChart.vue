@@ -37,14 +37,14 @@
 
 <script setup>
   import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
   } from 'chart.js';
   import { Line } from 'vue-chartjs';
 

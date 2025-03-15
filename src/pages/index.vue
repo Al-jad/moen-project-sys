@@ -64,9 +64,16 @@
 
         <!-- Chart Section -->
         <div
-          class="w-full rounded-lg border border-gray-100 bg-white p-6 shadow dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+          class="relative w-full overflow-hidden rounded-lg border border-red-200 bg-red-100 p-6 shadow dark:border-red-700/50 dark:bg-red-600/20 dark:shadow-gray-900/50"
         >
-          <div class="mb-4 flex items-center justify-between">
+          <!-- Demo Version Ribbon -->
+          <div
+            class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-red-600 to-red-500 py-1 text-center text-xs shadow-md"
+          >
+            <span class="text-xs font-semibold tracking-wide text-white"> DEMO VERSION </span>
+          </div>
+
+          <div class="mb-4 flex mr-20 items-center justify-between">
             <div class="flex items-center gap-2">
               <CustomSelect
                 v-model="selectedYear"

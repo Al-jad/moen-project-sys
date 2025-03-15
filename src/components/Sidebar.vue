@@ -5,7 +5,7 @@
     @mouseleave="isAnyItemHovered = false"
   >
     <div
-      class="relative flex h-24 cursor-pointer items-center overflow-hidden transition-all duration-300 ease-in-out"
+      class="relative flex h-24 cursor-pointer items-center overflow-x-hidden transition-all duration-300 ease-in-out"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
       @click="router.push('/')"
     >
@@ -35,14 +35,14 @@
     </div>
 
     <nav
-      class="flex-1 overflow-hidden p-2 transition-all duration-300 ease-in-out"
+      class="hide-scrollbar flex-1 overflow-x-hidden p-2 transition-all duration-300 ease-in-out"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
     >
       <ul class="mt-4 space-y-1.5">
         <template v-for="(item, index) in menuItems" :key="index">
           <li v-if="item.type === 'separator'" class="px-2">
             <hr
-              class="my-2 h-px w-full rounded border-0 bg-gradient-to-l from-gray-200 to-transparent opacity-30 dark:from-gray-700"
+              class="my-2 h-px w-full rounded border-0 bg-gradient-to-l from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
             />
           </li>
           <li
@@ -139,8 +139,17 @@
 
   const menuItems = [
     { path: '/', icon: 'lucide:layout-grid', label: 'لوحة التحكم' },
+    { type: 'separator' },
+
     { path: '/projects', icon: 'lucide:inbox', label: 'المشاريع' },
+
     { path: '/funded-projects', icon: 'lucide:dollar-sign', label: 'المشاريع الممولة' },
+    { path: '/investment-projects', icon: 'flowbite:chart-outline', label: 'المشاريع الإستثمارية' },
+    { path: '/operational-projects', icon: 'hugeicons:tools', label: 'المشاريع التشغيلية' },
+    { path: '/regional-projects', icon: 'oui:vis-map-region', label: 'مشاريع تنمية الأقاليم' },
+
+    { type: 'separator' },
+
     { path: '/contracts', icon: 'lucide:scroll-text', label: 'العقود' },
     { path: '/map', icon: 'lucide:map-pin', label: 'الخريطة' },
     { path: '/reports', icon: 'lucide:chart-line', label: 'التقارير و الاحصائيات' },
@@ -169,5 +178,14 @@
 <style scoped>
   .router-link-active {
     @apply bg-[#08182F] text-white;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 </style>
