@@ -26,13 +26,14 @@
           <CustomTable
             v-if="filteredAttachments.length > 0"
             :columns="tableColumns"
-            :data="transformedAttachments"
+            :items="transformedAttachments"
             :items-per-page="itemsPerPage"
             :show-export="false"
             :show-date-filter="true"
             :show-search="true"
             :filters="tableFilters"
             :initial-filters="{ projectId: selectedProject || 'all' }"
+            :loading="isLoading"
             @filter-change="handleFilterChange"
             @search-change="handleSearchChange"
           >
@@ -76,13 +77,8 @@
             v-else
             class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
           >
-            <Icon
-              icon="lucide:file"
-              class="mb-2 h-12 w-12 text-gray-300 dark:text-gray-600"
-            />
-            <h3 class="mb-1 text-lg font-medium text-gray-900 dark:text-white">
-              لا توجد مرفقات
-            </h3>
+            <Icon icon="lucide:file" class="mb-2 h-12 w-12 text-gray-300 dark:text-gray-600" />
+            <h3 class="mb-1 text-lg font-medium text-gray-900 dark:text-white"> لا توجد مرفقات </h3>
             <p class="max-w-sm text-sm text-gray-500 dark:text-gray-400">
               لم يتم العثور على أي مرفقات للمشروع المحدد.
             </p>
@@ -123,8 +119,6 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import projectService from '@/services/projectService';
-  import projectUtils from '@/utils/projectUtils';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';

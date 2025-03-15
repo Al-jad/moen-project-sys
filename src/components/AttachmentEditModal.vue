@@ -4,10 +4,13 @@
       <DialogHeader class="mb-2 mt-4 flex flex-row gap-4">
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-start">
-            <DialogTitle class="text-xl font-semibold">تعديل المرفق</DialogTitle>
+            <DialogTitle class="text-xl font-semibold">
+              {{ props.attachment ? 'تعديل المرفق' : 'إضافة مرفق جديد' }}
+            </DialogTitle>
           </div>
           <DialogDescription class="text-right">
-            قم بتعديل بيانات المرفق هنا. اضغط حفظ عند الانتهاء.
+            {{ props.attachment ? 'قم بتعديل بيانات المرفق هنا.' : 'قم بإضافة مرفق جديد هنا.' }}
+            اضغط حفظ عند الانتهاء.
           </DialogDescription>
         </div>
         <Button variant="ghost" @click="cancel">
@@ -16,7 +19,7 @@
       </DialogHeader>
       <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
       <div class="space-y-5 py-6">
-        <div class="grid gap-2">
+        <div v-if="props.attachment" class="grid gap-2">
           <Label for="project" class="text-[0.925rem]">المشروع</Label>
           <div
             class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 dark:border-gray-700 dark:bg-gray-800/50"
@@ -68,6 +71,7 @@
             <Input
               id="file"
               type="file"
+              :required="!props.attachment"
               class="h-14 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-600 hover:file:bg-blue-100 dark:bg-gray-800 dark:file:bg-blue-950 dark:file:text-blue-400 dark:hover:file:bg-blue-900"
               @change="handleFileChange"
             />
@@ -87,9 +91,9 @@
       <DialogFooter class="border-t pt-4 dark:border-gray-700">
         <div class="flex w-full items-center justify-end gap-3">
           <Button variant="outline" @click="cancel">إلغاء</Button>
-          <Button type="submit" :disabled="isLoading" @click="confirm">
+          <Button type="submit" :disabled="isLoading || !isValid" @click="confirm">
             <Icon v-if="isLoading" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
-            حفظ التغييرات
+            {{ props.attachment ? 'حفظ التغييرات' : 'إضافة المرفق' }}
           </Button>
         </div>
       </DialogFooter>
@@ -111,7 +115,7 @@
   import { Label } from '@/components/ui/label';
   import { Textarea } from '@/components/ui/textarea';
   import { Icon } from '@iconify/vue';
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
 
   const props = defineProps({
     open: {
@@ -120,11 +124,15 @@
     },
     attachment: {
       type: Object,
-      default: () => ({}),
+      default: () => null,
     },
     loading: {
       type: Boolean,
       default: false,
+    },
+    projectId: {
+      type: [Number, String],
+      default: null,
     },
   });
 
@@ -139,17 +147,30 @@
   });
   const currentFile = ref('');
 
+  const isValid = computed(() => {
+    return form.value.title && (form.value.file || props.attachment);
+  });
+
   watch(
     () => props.open,
     (newVal) => {
       isOpen.value = newVal;
-      if (newVal && props.attachment) {
-        form.value = {
-          title: props.attachment.title || '',
-          description: props.attachment.description || '',
-          file: null,
-        };
-        currentFile.value = props.attachment.url?.split('/').pop() || '';
+      if (newVal) {
+        if (props.attachment) {
+          form.value = {
+            title: props.attachment.title || '',
+            description: props.attachment.description || '',
+            file: null,
+          };
+          currentFile.value = props.attachment.url?.split('/').pop() || '';
+        } else {
+          form.value = {
+            title: '',
+            description: '',
+            file: null,
+          };
+          currentFile.value = '';
+        }
       }
     }
   );
@@ -174,7 +195,8 @@
   };
 
   const confirm = () => {
-    emit('confirm', { ...form.value });
+    if (!isValid.value) return;
+    emit('confirm', { ...form.value, projectId: props.projectId });
   };
 
   const cancel = () => {

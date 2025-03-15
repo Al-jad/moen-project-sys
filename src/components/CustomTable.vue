@@ -83,15 +83,19 @@
         </template>
         <TableRow
           v-else
-          v-for="(item, index) in filteredData"
+          v-for="(item, index) in paginatedData"
           :key="index"
           class="hover:bg-gray-50/50 dark:text-gray-300 dark:hover:bg-gray-700/50"
           :class="{
             'last:[&>td:first-child]:rounded-br-xl last:[&>td:last-child]:rounded-bl-xl':
-              index === filteredData.length - 1,
+              index === paginatedData.length - 1,
           }"
         >
-          <TableCell v-for="column in columns" :key="column.key" :class="column.cellClass">
+          <TableCell
+            v-for="column in columns"
+            :key="column.key"
+            :class="[column.cellClass, column.width ? `w-[${column.width}]` : '']"
+          >
             <slot :name="column.key" :item="item" :value="item[column.key]">
               <template v-if="column.type === 'button'">
                 <Button
@@ -130,6 +134,11 @@
                   </Button>
                 </slot>
               </template>
+              <template v-else-if="column.type === 'custom'">
+                <slot :name="column.key" :item="item">
+                  {{ item[column.key] }}
+                </slot>
+              </template>
               <template v-else>
                 {{ item[column.key] }}
               </template>
@@ -164,12 +173,28 @@
   import CustomSelect from './CustomSelect.vue';
   import DateRangeInput from './DateRangeInput.vue';
 
+  interface FileType {
+    type: string;
+    icon: string;
+    color: string;
+  }
+
+  interface Attachment {
+    id: number;
+    title: string;
+    description: string;
+    url: string;
+    createdAt: string;
+    fileType: FileType;
+  }
+
   interface Column {
     key: string;
     label: string;
-    type?: 'text' | 'button' | 'action' | 'actions';
+    type?: 'text' | 'button' | 'action' | 'actions' | 'custom';
     icon?: string;
     cellClass?: string;
+    width?: string;
     actions?: Array<{
       key: string;
       icon: string;
@@ -195,6 +220,7 @@
   interface Props {
     columns: Column[];
     data: any[];
+    items?: Attachment[];
     itemsPerPage?: number;
     filters?: Filter[];
     showExport?: boolean;
@@ -214,6 +240,7 @@
     initialFilters: () => ({}),
     loading: false,
     isExportPremium: false,
+    items: () => [],
   });
 
   const emit = defineEmits([
@@ -263,7 +290,8 @@
 
   // Filtered data
   const filteredData = computed(() => {
-    let result = [...props.data];
+    const sourceData = props.items?.length > 0 ? props.items : props.data;
+    let result = [...sourceData];
 
     // Apply search filter - search across all fields
     if (searchQuery.value) {
