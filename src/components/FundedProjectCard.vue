@@ -1,31 +1,38 @@
 <template>
   <div
-    @click="router.push(`/funded-projects/${project.id}`)"
-    class="relative overflow-hidden transition-all duration-300 bg-white border rounded-lg group hover:cursor-pointer hover:border-blue-500/20 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+    @click="!disabled && router.push(`/funded-projects/${project.id}`)"
+    class="group relative overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
+    :class="[
+      disabled
+        ? 'cursor-not-allowed opacity-70'
+        : 'hover:cursor-pointer hover:border-blue-500/20 hover:shadow-lg',
+    ]"
   >
-    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-      <div class="flex items-start justify-between mb-4">
+    <div class="border-b border-gray-200 p-6 dark:border-gray-700">
+      <div class="mb-4 flex items-start justify-between">
         <div class="flex items-center gap-4">
           <div class="flex">
             <h3
-              class="text-lg font-medium text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400"
+              class="text-lg font-medium text-gray-900 transition-colors dark:text-gray-100"
+              :class="[disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400']"
             >
               {{ project.name || 'لا يوجد اسم' }}
             </h3>
           </div>
         </div>
         <h3
-          class="px-4 py-1 text-lg font-medium text-white transition-all bg-blue-500 rounded-full shadow-sm dark:bg-blue-600"
+          class="rounded-full bg-blue-500 px-4 py-1 text-lg font-medium text-white shadow-sm transition-all dark:bg-blue-600"
+          :class="{ 'opacity-70': disabled }"
         >
           {{ formatCost(project.cost) || 0 }} $
         </h3>
       </div>
-      <hr class="w-full mb-6 border-gray-200 dark:border-gray-700" />
+      <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(section, index) in cardSections"
           :key="index"
-          class="flex flex-col p-2 space-y-4 transition-all bg-white rounded-lg shadow-sm dark:bg-gray-800"
+          class="flex flex-col space-y-4 rounded-lg bg-white p-2 shadow-sm transition-all dark:bg-gray-800"
         >
           <div
             v-for="(item, itemIndex) in section.items"
@@ -34,8 +41,8 @@
             :class="{ 'opacity-50 hover:cursor-not-allowed': item.disabled }"
           >
             <div class="flex items-center gap-2">
-              <div class="p-2 rounded-full bg-gray-50 dark:bg-gray-500/10">
-                <Icon :icon="item.icon" class="w-4 h-4 text-gray-600 dark:text-gray-100" />
+              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+                <Icon :icon="item.icon" class="h-4 w-4 text-gray-600 dark:text-gray-100" />
               </div>
               <h3 class="font-medium text-gray-900 dark:text-gray-100">{{ item.title }}</h3>
             </div>
@@ -43,7 +50,7 @@
               <div class="flex items-center gap-2">
                 <div class="h-2.5 w-20 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
                   <div
-                    class="h-full transition-all bg-gray-600 dark:bg-gray-100"
+                    class="h-full bg-gray-600 transition-all dark:bg-gray-100"
                     :style="{ width: `${item.value || 0}%` }"
                   ></div>
                 </div>
@@ -71,6 +78,10 @@
     project: {
       type: Object,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   });
 

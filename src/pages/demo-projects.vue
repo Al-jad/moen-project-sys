@@ -62,6 +62,7 @@
         <Premium />
         <div class="grid grid-cols-1 gap-6">
           <FundedProjectCard
+            disabled
             v-for="project in filteredProjects"
             :key="project.id"
             :project="{
