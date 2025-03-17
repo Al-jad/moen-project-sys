@@ -185,33 +185,45 @@
 
     <!-- Bottom Bar -->
     <div class="w-full bg-gray-900 border-t border-gray-700">
-      <div class="container flex flex-col items-center justify-between max-w-6xl py-6 space-y-4 text-xs md:flex-row md:space-y-0">
+      <div
+        class="container flex flex-col items-center justify-between max-w-6xl py-6 space-y-4 text-xs md:flex-row md:space-y-0"
+      >
         <div class="flex items-center gap-2 text-xs text-gray-300 group">
           <span>تم التطوير بواسطة</span>
-          <a href="https://www.alfakharcompany.com/" target="_blank" class="flex items-center gap-2 transition-all duration-200 hover:text-white">
-            شركة الجاد للحلول البرمجية
-            <img src="/img/jad.jpeg" class="w-5 h-5 transition-opacity duration-200 opacity-75 group-hover:opacity-100" alt="Fakhar co. logo" />
+          <a
+            href="https://www.alfakharco.com/"
+            target="_blank"
+            class="flex items-center gap-2 transition-all duration-200 hover:text-white"
+          >
+            <img
+              src="/img/Fakhar.png"
+              class="w-5 h-5 transition-opacity duration-200 opacity-75 group-hover:opacity-100"
+              alt="Fakhar co. logo"
+            />
+            شركة الفخار للمقاولات الهندسية المحدودة
           </a>
         </div>
 
         <div class="flex items-center gap-8 text-sm">
-          <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/privacy">سياسة الخصوصية</RouterLink>
-          <RouterLink class="text-gray-400 transition-all duration-200 hover:text-white hover:translate-x-0.5" to="/terms">شروط الاستخدام</RouterLink>
+          <RouterLink
+            class="text-gray-400 transition-all duration-200 hover:translate-x-0.5 hover:text-white"
+            to="/about"
+            >سياسة الخصوصية</RouterLink
+          >
+          <RouterLink
+            class="text-gray-400 transition-all duration-200 hover:translate-x-0.5 hover:text-white"
+            to="/about"
+            >شروط الاستخدام</RouterLink
+          >
         </div>
 
-        <p class="text-xs font-medium text-gray-300">جميع الحقوق محفوظة © {{ new Date().getFullYear() }}</p>
+        <p class="text-xs font-medium text-gray-300">جميع الحقوق محفوظة © 2025</p>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup>
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { RouterLink } from 'vue-router'
-import { Icon } from '@iconify/vue';
+  import { Card, CardContent } from '@/components/ui/card';
+  import { RouterLink } from 'vue-router';
 </script>
-
-<style scoped>
-/* Remove the existing style block since shadcn will handle text colors through its theming */
-</style>
