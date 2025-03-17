@@ -4,7 +4,7 @@
       <!-- Stats Cards - Moved to top for better overview -->
       <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div
-          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
@@ -15,7 +15,7 @@
           <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/10 dark:bg-blue-400/10"></div>
         </div>
         <div
-          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
@@ -26,7 +26,7 @@
           <div class="absolute inset-x-0 bottom-0 h-1 bg-green-500/10 dark:bg-green-400/10"></div>
         </div>
         <div
-          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
@@ -39,10 +39,10 @@
       </div>
 
       <!-- Project Details Preview - Enhanced with better spacing and icons -->
-      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div class="border-b p-4 dark:border-gray-700">
+      <div class="overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800">
+        <div class="p-4 border-b dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:clipboard-list" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
           </div>
         </div>
@@ -69,7 +69,11 @@
             <div>
               <div class="text-sm text-gray-500 dark:text-gray-400">الجهات المستفيدة</div>
               <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                {{ store.form.beneficiaryEntities || 'لم يتم تحديد الجهات المستفيدة' }}
+                {{
+                  beneficiaryNames.length
+                    ? beneficiaryNames.join('، ')
+                    : 'لم يتم تحديد الجهات المستفيدة'
+                }}
               </div>
             </div>
           </div>
@@ -136,10 +140,10 @@
         :useExternalSorting="true"
       />
 
-      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div class="border-b p-4 dark:border-gray-700">
+      <div class="overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800">
+        <div class="p-4 border-b dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:clipboard-list" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">الإنجازات </h4>
           </div>
         </div>
@@ -168,11 +172,44 @@
   import ComponentsActivitiesDetails from '@/components/ComponentsActivitiesDetails.vue';
   import FormSection from '@/components/FormSection.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
+  import { beneficiaryService } from '@/services/beneficiaryService';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
+  import { computed, onMounted, ref } from 'vue';
 
   const store = useFundedProjectStore();
   const totalPeriods = computed(() => store.totalPeriods);
+  const beneficiaries = ref([]);
+  const isLoading = ref(false);
+
+  // Fetch beneficiaries once
+  const fetchBeneficiaries = async () => {
+    if (isLoading.value || beneficiaries.value.length > 0) return;
+
+    isLoading.value = true;
+    try {
+      const response = await beneficiaryService.getAllBeneficiaries();
+      beneficiaries.value = response.data;
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+      beneficiaries.value = [];
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  // Computed property for beneficiary names
+  const beneficiaryNames = computed(() => {
+    if (!store.form.beneficiaryEntities || !beneficiaries.value.length) return [];
+
+    return store.form.beneficiaryEntities
+      .map((id) => beneficiaries.value.find((b) => b.id === id)?.name)
+      .filter(Boolean);
+  });
+
+  onMounted(() => {
+    fetchBeneficiaries();
+  });
 
   // Add sorting functions to match ComponentsActivitiesDetails.vue
   const reversedComponents = computed(() => {
