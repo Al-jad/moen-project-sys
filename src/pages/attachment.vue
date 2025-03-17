@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
     <Toaster position="bottom-left" />
-    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
-      <div class="mb-6 flex items-center justify-between">
+    <main class="min-h-screen p-6 bg-gray-200 dark:bg-gray-900">
+      <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
           <BackToMainButton />
           <div>
@@ -14,11 +14,11 @@
       </div>
 
       <div
-        class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
+        class="p-6 bg-white border border-gray-100 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
       >
         <div v-if="isLoading" class="flex items-center justify-center py-12">
           <div
-            class="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+            class="w-8 h-8 border-2 border-blue-500 rounded-full animate-spin border-t-transparent"
           ></div>
         </div>
 
@@ -52,22 +52,22 @@
                 <a
                   :href="item.url"
                   target="_blank"
-                  class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  class="inline-flex items-center gap-1 text-blue-600 text-nowrap hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  <Icon icon="lucide:external-link" class="h-4 w-4" />
+                  <Icon icon="lucide:external-link" class="w-4 h-4" />
                 </a>
                 <button
                   @click="handleEdit(item)"
-                  class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  class="inline-flex items-center gap-1 text-gray-600 text-nowrap hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  <Icon icon="lucide:edit" class="h-4 w-4" />
+                  <Icon icon="lucide:edit" class="w-4 h-4" />
                 </button>
                 <button
                   @click="handleDelete(item)"
                   :disabled="isDeleting"
-                  class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                  class="inline-flex items-center gap-1 text-red-600 text-nowrap hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
-                  <Icon icon="lucide:trash" class="h-4 w-4" />
+                  <Icon icon="lucide:trash" class="w-4 h-4" />
                 </button>
               </div>
             </template>
@@ -75,9 +75,9 @@
 
           <div
             v-else
-            class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
+            class="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg dark:border-gray-700"
           >
-            <Icon icon="lucide:file" class="mb-2 h-12 w-12 text-gray-300 dark:text-gray-600" />
+            <Icon icon="lucide:file" class="w-12 h-12 mb-2 text-gray-300 dark:text-gray-600" />
             <h3 class="mb-1 text-lg font-medium text-gray-900 dark:text-white"> لا توجد مرفقات </h3>
             <p class="max-w-sm text-sm text-gray-500 dark:text-gray-400">
               لم يتم العثور على أي مرفقات للمشروع المحدد.
@@ -119,7 +119,7 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
+  import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
   import { toast } from 'vue-sonner';
@@ -381,15 +381,7 @@
         const fileFormData = new FormData();
         fileFormData.append('file', formData.file);
 
-        const uploadResponse = await axiosInstance.post(
-          'https://encode.ibaity.com/uploads/raw',
-          fileFormData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
+        const uploadResponse = await fileUploadInstance.post(API_CONFIG.FILE_URL, fileFormData);
 
         requestData = {
           id: selectedAttachment.value.id,
