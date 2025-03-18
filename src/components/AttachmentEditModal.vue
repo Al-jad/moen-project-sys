@@ -63,7 +63,7 @@
               >
                 <Icon icon="lucide:file" class="h-4 w-4" />
                 <span>{{ currentFile }}</span>
-                <Icon icon="lucide:external-link" class="h-3.5 w-3.5" />
+                <Icon icon="tabler:download" class="h-3.5 w-3.5" />
               </a>
             </div>
           </div>

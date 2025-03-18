@@ -401,7 +401,7 @@
                       target="_blank"
                       class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                     >
-                      <Icon icon="lucide:external-link" class="h-4 w-4" />
+                      <Icon icon="tabler:download" class="h-4 w-4" />
                     </a>
                     <button
                       @click="handleEditAttachment(item)"
@@ -1138,7 +1138,7 @@
       key: 'action',
       label: 'الإجراءات',
       type: 'action',
-      icon: 'lucide:external-link',
+      icon: 'tabler:download',
     },
   ];
 
