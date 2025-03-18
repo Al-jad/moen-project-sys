@@ -1,8 +1,9 @@
-import axios from 'axios';
 import { useAuthStore } from '@/stores/authStore';
+import axios from 'axios';
 
 export const API_CONFIG = {
   BASE_URL: 'https://pmsapi.alfakharco.com/',
+  FILE_URL: 'https://encode.ibaity.com/uploads/raw',
 };
 
 const axiosInstance = axios.create({
@@ -11,7 +12,17 @@ const axiosInstance = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
+    'Allow-Cross-Origin': '*',
+  },
+});
+
+// Create a separate instance for file uploads without credentials
+export const fileUploadInstance = axios.create({
+  timeout: 30000,
+  withCredentials: false,
+  headers: {
+    'Content-Type': 'multipart/form-data',
   },
 });
 

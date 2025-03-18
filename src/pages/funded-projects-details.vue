@@ -112,7 +112,7 @@
               </div>
               <Button @click="toggleEditDetails" variant="ghost" size="sm">
                 <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:check" class="h-4 w-4" />
+                <Icon v-else icon="lucide:x" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -231,7 +231,7 @@
               </div>
               <Button @click="toggleEditComponents" variant="ghost" size="sm">
                 <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:check" class="h-4 w-4" />
+                <Icon v-else icon="lucide:x" class="h-4 w-4" />
               </Button>
             </div>
 
@@ -301,7 +301,7 @@
             </div>
             <Button @click="toggleEditAchievements" variant="ghost" size="sm">
               <Icon v-if="!isEditingAchievements" icon="lucide:edit" class="h-4 w-4" />
-              <Icon v-else icon="lucide:check" class="h-4 w-4" />
+              <Icon v-else icon="lucide:x" class="h-4 w-4" />
             </Button>
           </div>
           <div class="divide-y dark:divide-gray-700">
@@ -548,7 +548,7 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
+  import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -993,15 +993,7 @@
       if (formData.file) {
         const uploadFormData = new FormData();
         uploadFormData.append('file', formData.file);
-        const uploadResponse = await axiosInstance.post(
-          'https://encode.ibaity.com/uploads/raw',
-          uploadFormData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
+        const uploadResponse = await fileUploadInstance.post(API_CONFIG.FILE_URL, uploadFormData);
         fileUrl = uploadResponse.data.url;
       }
 

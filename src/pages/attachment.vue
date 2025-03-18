@@ -119,7 +119,7 @@
   import DeleteModal from '@/components/DeleteModal.vue';
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
+  import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
   import { toast } from 'vue-sonner';
@@ -381,15 +381,7 @@
         const fileFormData = new FormData();
         fileFormData.append('file', formData.file);
 
-        const uploadResponse = await axiosInstance.post(
-          'https://encode.ibaity.com/uploads/raw',
-          fileFormData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
+        const uploadResponse = await fileUploadInstance.post(API_CONFIG.FILE_URL, fileFormData);
 
         requestData = {
           id: selectedAttachment.value.id,
