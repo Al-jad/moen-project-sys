@@ -1,133 +1,145 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-7xl space-y-8">
-        <div class="grid gap-4 md:grid-cols-4">
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center gap-4">
-              <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
-                <Icon icon="lucide:folders" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {{ projects.length }}
+    <div class="flex flex-1">
+      <ProjectsFilter 
+        v-model:searchQuery="searchQuery"
+        :isFundedProjects="true"
+        v-model:budgetRange="budgetRange"
+        v-model:selectedYear="selectedYear"
+        v-model:selectedStatus="selectedStatus"
+        v-model:selectedBeneficiaries="selectedBeneficiaries"
+      />
+      <div class="min-h-screen flex-1 bg-gray-100 p-6 dark:bg-gray-900">
+        <div class="mx-auto w-full max-w-7xl space-y-8">
+          <div class="grid gap-4 md:grid-cols-4">
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div class="flex items-center gap-4">
+                <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
+                  <Icon icon="lucide:folders" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي المشاريع</div>
+                <div>
+                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {{ filteredProjects.length }}
+                  </div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي المشاريع</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div class="flex items-center gap-4">
+                <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
+                  <Icon icon="lucide:target" class="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {{ getTotalComponents() }}
+                  </div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي المكونات</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div class="flex items-center gap-4">
+                <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
+                  <Icon
+                    icon="lucide:list-todo"
+                    class="h-6 w-6 text-purple-600 dark:text-purple-400"
+                  />
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {{ getTotalActivitiesAll() }}
+                  </div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي الفعاليات</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div class="flex items-center gap-4">
+                <div class="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
+                  <Icon
+                    icon="lucide:dollar-sign"
+                    class="h-6 w-6 text-amber-600 dark:text-amber-400"
+                  />
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    ${{ formatTotalCost() }}
+                  </div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي التمويل</div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center gap-4">
-              <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
-                <Icon icon="lucide:target" class="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {{ getTotalComponents() }}
+          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div class="border-b p-6 dark:border-gray-700">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">المشاريع الممولة</h1>
+                  <Badge variant="outline" class="px-3">
+                    {{ filteredProjects.length }} من {{ projects.length }} مشروع
+                  </Badge>
                 </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي المكونات</div>
+                <div class="flex flex-row items-center gap-6">
+                  <PrimaryButton @click="OpenPremiumModal">
+                    <Icon icon="lucide:lock" />
+                    طباعة
+                  </PrimaryButton>
+                  <RouterLink to="/add-funded-project">
+                    <Button
+                      class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    >
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4 text-gray-900 dark:text-gray-100" />
+                      <span class="text-gray-900 dark:text-gray-100">اضافة مشروع جديد</span>
+                    </Button>
+                  </RouterLink>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center gap-4">
-              <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
-                <Icon
-                  icon="lucide:list-todo"
-                  class="h-6 w-6 text-purple-600 dark:text-purple-400"
+            <div class="p-6">
+              <div v-if="!isLoading" class="grid grid-cols-1 gap-6">
+                <FundedProjectCard
+                  v-for="project in paginatedProjects"
+                  :key="project.id"
+                  :project="project"
+                  @attachment-added="fetchProjects"
+                />
+
+                <div class="mt-4 flex justify-center">
+                  <CustomPagination
+                    v-model="currentPage"
+                    :total="filteredProjects.length"
+                    :per-page="itemsPerPage"
+                  />
+                </div>
+              </div>
+              <div v-else class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div
+                  v-for="n in 6"
+                  :key="n"
+                  class="h-[280px] animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800"
                 />
               </div>
-              <div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {{ getTotalActivitiesAll() }}
+              <div
+                v-if="!isLoading && projects.length === 0"
+                class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
+              >
+                <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
+                  <Icon icon="lucide:folder-open" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
                 </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي الفعاليات</div>
-              </div>
-            </div>
-          </div>
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center gap-4">
-              <div class="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
-                <Icon
-                  icon="lucide:dollar-sign"
-                  class="h-6 w-6 text-amber-600 dark:text-amber-400"
-                />
-              </div>
-              <div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  ${{ formatTotalCost() }}
-                </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي التمويل</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-          <div class="border-b p-6 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">المشاريع الممولة</h1>
-                <Badge variant="outline" class="px-3">{{ projects.length }} مشروع</Badge>
-              </div>
-              <div class="flex flex-row items-center gap-6">
-                <PrimaryButton @click="OpenPremiumModal">
-                  <Icon icon="lucide:lock" />
-                  طباعة
-                </PrimaryButton>
+                <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
+                  >لا توجد مشاريع</h3
+                >
+                <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
+                  >قم بإضافة مشروع جديد للبدء</p
+                >
                 <RouterLink to="/add-funded-project">
-                  <Button
-                    class="bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
-                  >
+                  <Button variant="outline" size="sm">
                     <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-                    اضافة مشروع جديد
+                    اضافة مشروع
                   </Button>
                 </RouterLink>
               </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div v-if="!isLoading" class="grid grid-cols-1 gap-6">
-              <FundedProjectCard
-                v-for="project in paginatedProjects"
-                :key="project.id"
-                :project="project"
-                @attachment-added="fetchProjects"
-              />
-
-              <div class="mt-4 flex justify-center">
-                <CustomPagination
-                  v-model="currentPage"
-                  :total="projects.length"
-                  :per-page="itemsPerPage"
-                />
-              </div>
-            </div>
-            <div v-else class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <div
-                v-for="n in 6"
-                :key="n"
-                class="h-[280px] animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800"
-              />
-            </div>
-            <div
-              v-if="!isLoading && projects.length === 0"
-              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
-            >
-              <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                <Icon icon="lucide:folder-open" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
-              </div>
-              <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
-                >لا توجد مشاريع</h3
-              >
-              <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
-                >قم بإضافة مشروع جديد للبدء</p
-              >
-              <RouterLink to="/add-funded-project">
-                <Button variant="outline" size="sm">
-                  <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-                  اضافة مشروع
-                </Button>
-              </RouterLink>
             </div>
           </div>
         </div>
@@ -137,23 +149,138 @@
   </DefaultLayout>
 </template>
 <script setup>
-  import CustomPagination from '@/components/CustomPagination.vue';
-  import FundedProjectCard from '@/components/FundedProjectCard.vue';
-  import PremiumModal from '@/components/PremiumModal.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { Badge } from '@/components/ui/badge';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { computed, onMounted, ref } from 'vue';
-  import { RouterLink, useRouter } from 'vue-router';
 
   const projects = ref([]);
+  const filteredProjects = ref([]);
   const isLoading = ref(true);
   const router = useRouter();
   const showPremiumModal = ref(false);
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
+
+  // Filter states
+  const searchQuery = ref('');
+  const selectedFunding = ref({
+    all: true,
+    government: false,
+    investment: false,
+    operational: false,
+    environment: false,
+    fund: false,
+  });
+  const budgetRange = ref([100000, 9000000]);
+  const selectedYear = ref('all');
+  const selectedStatus = ref({
+    all: true,
+    completed: false,
+    inProgress: false,
+    delayed: false,
+  });
+  const selectedBeneficiaries = ref({
+    all: true,
+    baghdadEducation: false,
+    environmentProtection: false,
+    najafEducation: false,
+    basraEducation: false,
+  });
+
+  // Apply filters to projects
+  const applyFilters = () => {
+    if (!projects.value.length) {
+      filteredProjects.value = [];
+      return;
+    }
+
+    let result = [...projects.value];
+
+    // Apply search filter
+    if (searchQuery.value) {
+      const query = searchQuery.value.toLowerCase();
+      result = result.filter(
+        (project) =>
+          project.title?.toLowerCase().includes(query) ||
+          project.description?.toLowerCase().includes(query) ||
+          project.id?.toString().includes(query)
+      );
+    }
+
+    // Apply funding type filter
+    if (!selectedFunding.value.all) {
+      // Implement based on your project data structure
+      // This is a placeholder implementation
+      if (selectedFunding.value.fund) {
+        result = result.filter((project) => project.fundingType === 'fund');
+      }
+      if (selectedFunding.value.government) {
+        result = result.filter((project) => project.fundingType === 'government');
+      }
+      // Add other funding type filters as needed
+    }
+
+    // Apply budget range filter
+    result = result.filter(
+      (project) =>
+        project.cost >= budgetRange.value[1] && project.cost <= budgetRange.value[0]
+    );
+
+    // Apply year filter
+    if (selectedYear.value !== 'all') {
+      result = result.filter((project) => {
+        const startYear = project.startDate ? new Date(project.startDate).getFullYear() : null;
+        return startYear === parseInt(selectedYear.value);
+      });
+    }
+
+    // Apply status filter
+    if (!selectedStatus.value.all) {
+      const statusFilters = [];
+      if (selectedStatus.value.completed) statusFilters.push('completed');
+      if (selectedStatus.value.inProgress) statusFilters.push('in-progress');
+      if (selectedStatus.value.delayed) statusFilters.push('delayed');
+
+      if (statusFilters.length > 0) {
+        result = result.filter((project) => statusFilters.includes(project.status));
+      }
+    }
+
+    // Apply beneficiary filter
+    if (!selectedBeneficiaries.value.all) {
+      // Implement based on your project data structure
+      // This is a placeholder implementation
+      const beneficiaryFilters = [];
+      if (selectedBeneficiaries.value.baghdadEducation) beneficiaryFilters.push('مديرية تربية بغداد');
+      if (selectedBeneficiaries.value.environmentProtection) beneficiaryFilters.push('دائرة حماية تحسين بيئة');
+      if (selectedBeneficiaries.value.najafEducation) beneficiaryFilters.push('مديرية تربية النجف');
+      if (selectedBeneficiaries.value.basraEducation) beneficiaryFilters.push('مديرية تربية البصرة');
+
+      if (beneficiaryFilters.length > 0) {
+        result = result.filter((project) => beneficiaryFilters.includes(project.beneficiary));
+      }
+    }
+
+    filteredProjects.value = result;
+    // Reset to first page when filters change
+    currentPage.value = 1;
+  };
+
+  // Watch for filter changes
+  watch(
+    [
+      searchQuery,
+      selectedFunding,
+      budgetRange,
+      selectedYear,
+      selectedStatus,
+      selectedBeneficiaries
+    ],
+    () => {
+      applyFilters();
+    },
+    { deep: true }
+  );
 
   const paginatedProjects = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -164,41 +291,50 @@
   const OpenPremiumModal = () => {
     showPremiumModal.value = true;
   };
+  
   const fetchProjects = async () => {
     try {
       isLoading.value = true;
       const response = await axiosInstance.get('api/Project');
       projects.value = response.data;
+      applyFilters();
     } catch (error) {
       console.error('Error fetching projects:', error);
     } finally {
       isLoading.value = false;
     }
   };
+  
   onMounted(async () => {
     await fetchProjects();
   });
+  
   const viewProject = (projectId) => {
     router.push({
       name: 'funded-projects-details',
       params: { id: projectId },
     });
   };
+  
   const getTotalComponents = () => {
     return projects.value.reduce((total, project) => total + (project.components?.length || 0), 0);
   };
+  
   const getTotalActivitiesAll = () => {
     return projects.value.reduce((total, project) => total + getTotalActivities(project), 0);
   };
+  
   const getTotalActivities = (project) => {
     return (
       project.components?.reduce((total, comp) => total + (comp.activities?.length || 0), 0) || 0
     );
   };
+  
   const formatTotalCost = () => {
     const total = projects.value.reduce((sum, project) => sum + (project.cost || 0), 0);
     return formatCost(total);
   };
+  
   const formatDate = (dateString) => {
     if (!dateString) return 'غير محدد';
     return new Date(dateString).toLocaleDateString('ar-EG', {
@@ -207,6 +343,7 @@
       day: 'numeric',
     });
   };
+  
   const formatCost = (value) => {
     if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
