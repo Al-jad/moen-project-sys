@@ -2,12 +2,14 @@
   <DefaultLayout>
     <div class="flex flex-1">
       <ProjectsFilter 
-        v-model:searchQuery="searchQuery"
         :isFundedProjects="true"
-        v-model:budgetRange="budgetRange"
-        v-model:selectedYear="selectedYear"
-        v-model:selectedStatus="selectedStatus"
-        v-model:selectedBeneficiaries="selectedBeneficiaries"
+        @filter-applied="applyFilters"
+        :searchQuery="searchQuery"
+        :budgetRange="budgetRange"
+        :selectedStatus="selectedStatus"
+        :selectedBeneficiaries="selectedBeneficiaries"
+        :showGovernmentProjects="showGovernmentProjects"
+        :beneficiaries="beneficiaries"
       />
       <div class="min-h-screen flex-1 bg-gray-100 p-6 dark:bg-gray-900">
         <div class="mx-auto w-full max-w-7xl space-y-8">
@@ -152,6 +154,7 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
+  import { ref, computed, onMounted } from 'vue';
 
   const projects = ref([]);
   const filteredProjects = ref([]);
@@ -160,8 +163,9 @@
   const showPremiumModal = ref(false);
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
-
-  // Filter states
+  const beneficiaries = ref([]);
+  
+  // Filter states - initialized but not watched
   const searchQuery = ref('');
   const selectedFunding = ref({
     all: true,
@@ -179,113 +183,148 @@
     inProgress: false,
     delayed: false,
   });
-  const selectedBeneficiaries = ref({
-    all: true,
-    baghdadEducation: false,
-    environmentProtection: false,
-    najafEducation: false,
-    basraEducation: false,
-  });
+  const selectedBeneficiaries = ref({ all: true });
+  const showGovernmentProjects = ref(false);
+  const isBudgetFilterEnabled = ref(false);
 
-  // Apply filters to projects
-  const applyFilters = () => {
+  // Only applied when the button is pressed
+  const applyFilters = (filters) => {
+    console.log("Applying filters:", filters);
+    
     if (!projects.value.length) {
       filteredProjects.value = [];
       return;
     }
 
+    // First, log the total projects before filtering
+    console.log("Total projects before filtering:", projects.value.length);
+    
+    // Make a copy of all projects for filtering
     let result = [...projects.value];
-
-    // Apply search filter
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase();
-      result = result.filter(
-        (project) =>
-          project.title?.toLowerCase().includes(query) ||
-          project.description?.toLowerCase().includes(query) ||
-          project.id?.toString().includes(query)
-      );
+    
+    // Check if any filters are active at all
+    const isAnyFilterActive = 
+      (filters.searchQuery && filters.searchQuery.trim() !== '') || 
+      !filters.selectedStatus.all ||
+      !filters.selectedBeneficiaries.all ||
+      filters.showGovernmentProjects ||
+      filters.isBudgetFilterEnabled;
+    
+    // If no filters are active, return all projects
+    if (!isAnyFilterActive) {
+      console.log("No active filters, showing all projects");
+      filteredProjects.value = result;
+      return;
     }
 
-    // Apply funding type filter
-    if (!selectedFunding.value.all) {
-      // Implement based on your project data structure
-      // This is a placeholder implementation
-      if (selectedFunding.value.fund) {
-        result = result.filter((project) => project.fundingType === 'fund');
-      }
-      if (selectedFunding.value.government) {
-        result = result.filter((project) => project.fundingType === 'government');
-      }
-      // Add other funding type filters as needed
-    }
-
-    // Apply budget range filter
-    result = result.filter(
-      (project) =>
-        project.cost >= budgetRange.value[1] && project.cost <= budgetRange.value[0]
+    // DEBUG: Log sample of projects before filtering
+    console.log("Sample projects before filtering:", 
+      result.slice(0, 3).map(p => ({ 
+        id: p.id, 
+        name: p.name, 
+        status: p.projectStatus,
+        cost: p.cost
+      }))
     );
 
-    // Apply year filter
-    if (selectedYear.value !== 'all') {
-      result = result.filter((project) => {
-        const startYear = project.startDate ? new Date(project.startDate).getFullYear() : null;
-        return startYear === parseInt(selectedYear.value);
+    // Apply search filter - improved to search across multiple fields
+    if (filters.searchQuery && filters.searchQuery.trim() !== '') {
+      const query = filters.searchQuery.toLowerCase().trim();
+      console.log("Searching for:", query);
+      
+      const beforeCount = result.length;
+      result = result.filter(project => {
+        const matches = (
+          (project.name && project.name.toLowerCase().includes(query)) ||
+          (project.executingDepartment && project.executingDepartment.toLowerCase().includes(query)) ||
+          (project.implementingEntity && project.implementingEntity.toLowerCase().includes(query)) ||
+          (project.grantingEntity && project.grantingEntity.toLowerCase().includes(query)) ||
+          (project.projectObjectives && project.projectObjectives.toLowerCase().includes(query)) ||
+          (project.id && project.id.toString().includes(query))
+        );
+        
+        // Log each match for debugging
+        if (matches) {
+          console.log("Match found:", { 
+            id: project.id, 
+            name: project.name, 
+            dept: project.executingDepartment 
+          });
+        }
+        
+        return matches;
       });
+      console.log(`Search filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
-
-    // Apply status filter
-    if (!selectedStatus.value.all) {
-      const statusFilters = [];
-      if (selectedStatus.value.completed) statusFilters.push('completed');
-      if (selectedStatus.value.inProgress) statusFilters.push('in-progress');
-      if (selectedStatus.value.delayed) statusFilters.push('delayed');
-
-      if (statusFilters.length > 0) {
-        result = result.filter((project) => statusFilters.includes(project.status));
-      }
+    
+    // Apply budget range filter only if it's enabled
+    if (filters.isBudgetFilterEnabled && filters.budgetRange && filters.budgetRange.length === 2) {
+      const [maxBudget, minBudget] = filters.budgetRange;
+      console.log(`Budget filter (enabled): Min=${minBudget}, Max=${maxBudget}`);
+      
+      const beforeCount = result.length;
+      result = result.filter(project => {
+        const cost = Number(project.cost) || 0;
+        return cost >= minBudget && cost <= maxBudget;
+      });
+      console.log(`Budget filter applied. Before: ${beforeCount}, After: ${result.length}`);
+    } else {
+      console.log("Budget filter not enabled or values not set");
     }
-
-    // Apply beneficiary filter
-    if (!selectedBeneficiaries.value.all) {
-      // Implement based on your project data structure
-      // This is a placeholder implementation
-      const beneficiaryFilters = [];
-      if (selectedBeneficiaries.value.baghdadEducation) beneficiaryFilters.push('مديرية تربية بغداد');
-      if (selectedBeneficiaries.value.environmentProtection) beneficiaryFilters.push('دائرة حماية تحسين بيئة');
-      if (selectedBeneficiaries.value.najafEducation) beneficiaryFilters.push('مديرية تربية النجف');
-      if (selectedBeneficiaries.value.basraEducation) beneficiaryFilters.push('مديرية تربية البصرة');
-
-      if (beneficiaryFilters.length > 0) {
-        result = result.filter((project) => beneficiaryFilters.includes(project.beneficiary));
-      }
+    
+    // Apply status filter - match to projectStatus value
+    if (filters.selectedStatus && !filters.selectedStatus.all) {
+      console.log("Status filter:", filters.selectedStatus);
+      
+      const beforeCount = result.length;
+      result = result.filter(project => {
+        const statusMatches = (
+          (filters.selectedStatus.completed && project.projectStatus === 1) ||
+          (filters.selectedStatus.inProgress && project.projectStatus === 2) ||
+          (filters.selectedStatus.delayed && project.projectStatus === 3)
+        );
+        
+        // Log each status check for debugging
+        if (project.id < 90) { // Limit logging
+          console.log(`Status check: Project ${project.id}, Status=${project.projectStatus}, Matches=${statusMatches}`);
+        }
+        
+        return statusMatches;
+      });
+      console.log(`Status filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
-
+    
+    // Apply beneficiary filter - match to beneficiaries array if it exists
+    if (filters.selectedBeneficiaries && !filters.selectedBeneficiaries.all) {
+      console.log("Beneficiary filter:", filters.selectedBeneficiaries);
+      
+      const beforeCount = result.length;
+      result = result.filter(project => {
+        // Skip beneficiary filter if project has no beneficiaries
+        if (!project.beneficiaries || project.beneficiaries.length === 0) {
+          return false;
+        }
+        
+        const beneficiaryMatches = project.beneficiaries.some(beneficiary => 
+          filters.selectedBeneficiaries[beneficiary.id]
+        );
+        
+        return beneficiaryMatches;
+      });
+      console.log(`Beneficiary filter applied. Before: ${beforeCount}, After: ${result.length}`);
+    }
+    
+    // Update filtered projects
     filteredProjects.value = result;
-    // Reset to first page when filters change
-    currentPage.value = 1;
+    currentPage.value = 1; // Reset to first page when filters change
+    
+    console.log("Final filtered projects count:", filteredProjects.value.length);
   };
-
-  // Watch for filter changes
-  watch(
-    [
-      searchQuery,
-      selectedFunding,
-      budgetRange,
-      selectedYear,
-      selectedStatus,
-      selectedBeneficiaries
-    ],
-    () => {
-      applyFilters();
-    },
-    { deep: true }
-  );
 
   const paginatedProjects = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
-    return projects.value.slice(start, end);
+    return filteredProjects.value.slice(start, end);
   });
 
   const OpenPremiumModal = () => {
@@ -296,17 +335,39 @@
     try {
       isLoading.value = true;
       const response = await axiosInstance.get('api/Project');
-      projects.value = response.data;
-      applyFilters();
+      const fetchedProjects = response.data || [];
+      
+      // No need to map status, use projectStatus directly
+      projects.value = fetchedProjects;
+      filteredProjects.value = [...fetchedProjects];
     } catch (error) {
       console.error('Error fetching projects:', error);
+      projects.value = [];
+      filteredProjects.value = [];
     } finally {
       isLoading.value = false;
     }
   };
   
+  const fetchBeneficiaries = async () => {
+    try {
+      const response = await axiosInstance.get('/api/beneficiary');
+      beneficiaries.value = response.data;
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+    }
+  };
+  
   onMounted(async () => {
-    await fetchProjects();
+    try {
+      // Fetch data
+      await Promise.all([
+        fetchProjects(),
+        fetchBeneficiaries()
+      ]);
+    } catch (error) {
+      console.error("Error initializing component:", error);
+    }
   });
   
   const viewProject = (projectId) => {
@@ -317,21 +378,30 @@
   };
   
   const getTotalComponents = () => {
-    return projects.value.reduce((total, project) => total + (project.components?.length || 0), 0);
+    return projects.value.reduce((total, project) => {
+      return total + (project.components?.length || 0);
+    }, 0);
   };
   
   const getTotalActivitiesAll = () => {
-    return projects.value.reduce((total, project) => total + getTotalActivities(project), 0);
+    return projects.value.reduce((total, project) => {
+      return total + getTotalActivities(project);
+    }, 0);
   };
   
   const getTotalActivities = (project) => {
-    return (
-      project.components?.reduce((total, comp) => total + (comp.activities?.length || 0), 0) || 0
-    );
+    if (!project.components) return 0;
+    
+    return project.components.reduce((total, comp) => {
+      // If your activities are nested differently, adjust this
+      return total + (comp.activities?.length || 0);
+    }, 0);
   };
   
   const formatTotalCost = () => {
-    const total = projects.value.reduce((sum, project) => sum + (project.cost || 0), 0);
+    const total = projects.value.reduce((sum, project) => {
+      return sum + (Number(project.cost) || 0);
+    }, 0);
     return formatCost(total);
   };
   
@@ -347,5 +417,14 @@
   const formatCost = (value) => {
     if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const getStatusDisplay = (projectStatus) => {
+    switch(projectStatus) {
+      case 1: return 'completed';
+      case 2: return 'in-progress';
+      case 3: return 'delayed';
+      default: return 'in-progress';
+    }
   };
 </script>

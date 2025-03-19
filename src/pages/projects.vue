@@ -1,7 +1,23 @@
 <template>
   <DefaultLayout>
     <div class="flex flex-1">
-      <ProjectsFilter />
+      <ProjectsFilter 
+        :isFundedProjects="false"
+        @filter-applied="applyFilters"
+        @update:searchQuery="searchQuery = $event"
+        @update:budgetRange="budgetRange = $event"
+        @update:selectedYear="selectedYear = $event"
+        @update:selectedStatus="selectedStatus = $event"
+        @update:selectedFunding="selectedFunding = $event"
+        @update:selectedBeneficiaries="selectedBeneficiaries = $event"
+        :searchQuery="searchQuery"
+        :budgetRange="budgetRange"
+        :selectedYear="selectedYear"
+        :selectedStatus="selectedStatus"
+        :selectedFunding="selectedFunding"
+        :selectedBeneficiaries="selectedBeneficiaries"
+        :beneficiaries="beneficiaries"
+      />
 
       <div class="flex-1 bg-gray-200 p-6 dark:bg-darkmode">
         <!-- Projects Header -->
@@ -93,7 +109,7 @@
           </div>
         </div>
 
-        <ProjectsList :projects="allProjects" />
+        <ProjectsList :projects="filteredProjects" />
       </div>
     </div>
   </DefaultLayout>
@@ -114,6 +130,7 @@
   import projectUtils from '@/utils/projectUtils';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
+  import axiosInstance from '@/plugins/axios';
 
   interface SortOption {
     id: string;
@@ -132,8 +149,98 @@
   ];
 
   const allProjects = ref([]);
+  const filteredProjects = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
+  const beneficiaries = ref([]);
+
+  // Filter states
+  const searchQuery = ref('');
+  const selectedFunding = ref({
+    all: true,
+    government: false,
+    investment: false,
+    operational: false,
+    environment: false,
+    fund: false,
+  });
+  const budgetRange = ref([100000, 9000000]);
+  const selectedYear = ref('all');
+  const selectedStatus = ref({
+    all: true,
+    completed: false,
+    inProgress: false,
+    delayed: false,
+  });
+  const selectedBeneficiaries = ref({ all: true });
+
+  const applyFilters = (filters) => {
+    console.log("Applying filters:", filters);
+    if (!allProjects.value.length) {
+      filteredProjects.value = [];
+      return;
+    }
+
+    let result = [...allProjects.value];
+
+    // Apply search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter(
+        (project) =>
+          project.title?.toLowerCase().includes(query) ||
+          project.description?.toLowerCase().includes(query) ||
+          project.id?.toString().includes(query)
+      );
+    }
+    
+    // Apply budget range filter
+    if (filters.budgetRange && filters.budgetRange.length === 2) {
+      const [maxBudget, minBudget] = filters.budgetRange;
+      result = result.filter(
+        (project) => project.cost >= minBudget && project.cost <= maxBudget
+      );
+    }
+    
+    // Apply funding type filter
+    if (filters.selectedFunding && !filters.selectedFunding.all) {
+      result = result.filter(project => {
+        if (filters.selectedFunding.government && project.fundingType === 'government') return true;
+        if (filters.selectedFunding.investment && project.fundingType === 'investment') return true;
+        if (filters.selectedFunding.operational && project.fundingType === 'operational') return true;
+        if (filters.selectedFunding.environment && project.fundingType === 'environment') return true;
+        if (filters.selectedFunding.fund && project.fundingType === 'fund') return true;
+        return false;
+      });
+    }
+    
+    // Apply year filter
+    if (filters.selectedYear && filters.selectedYear !== 'all') {
+      result = result.filter(project => {
+        const year = new Date(project.startDate).getFullYear().toString();
+        return year === filters.selectedYear;
+      });
+    }
+    
+    // Apply status filter
+    if (filters.selectedStatus && !filters.selectedStatus.all) {
+      result = result.filter(project => {
+        if (filters.selectedStatus.completed && project.status === 'completed') return true;
+        if (filters.selectedStatus.inProgress && project.status === 'in-progress') return true;
+        if (filters.selectedStatus.delayed && project.status === 'delayed') return true;
+        return false;
+      });
+    }
+    
+    // Apply beneficiary filter
+    if (filters.selectedBeneficiaries && !filters.selectedBeneficiaries.all) {
+      result = result.filter(project => {
+        return project.beneficiaryId && filters.selectedBeneficiaries[project.beneficiaryId];
+      });
+    }
+    
+    filteredProjects.value = result;
+  };
 
   // Fetch projects from API
   const fetchProjects = function () {
@@ -144,18 +251,17 @@
       .getAllProjects()
       .then(function (response) {
         const apiProjects = response.data;
-
-        // Transform API projects to the format expected by the UI
         allProjects.value = Array.isArray(apiProjects)
           ? apiProjects.map(projectUtils.transformProject)
           : [];
+        filteredProjects.value = [...allProjects.value]; // Initialize filtered projects with all projects
         isLoading.value = false;
       })
       .catch(function (err) {
         console.error('Error fetching projects:', err);
         error.value = err.message || 'Failed to fetch projects';
-        // Use mock data as fallback in case of error
         allProjects.value = mockProjects;
+        filteredProjects.value = [...mockProjects];
         isLoading.value = false;
       });
   };
@@ -177,7 +283,7 @@
   ];
 
   const totalProjects = computed(() => allProjects.value.length);
-  const paginatedCount = computed(() => Math.min(10, totalProjects.value));
+  const paginatedCount = computed(() => Math.min(10, filteredProjects.value.length));
 
   const selectedSort = ref('');
 
@@ -185,7 +291,7 @@
     selectedSort.value = sortId;
 
     // Implement sorting logic
-    const sortedProjects = [...allProjects.value];
+    const sortedProjects = [...filteredProjects.value];
 
     switch (sortId) {
       case 'price-low':
@@ -222,7 +328,7 @@
         break;
     }
 
-    allProjects.value = sortedProjects;
+    filteredProjects.value = sortedProjects;
   };
 
   const getSelectedSortLabel = computed(() => {
@@ -242,8 +348,17 @@
     fetchProjects();
   };
 
-  // Fetch projects when component is mounted
+  const fetchBeneficiaries = async () => {
+    try {
+      const response = await axiosInstance.get('/api/beneficiary');
+      beneficiaries.value = response.data;
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+    }
+  };
+
+  // Fetch projects and beneficiaries when component is mounted
   onMounted(function () {
-    fetchProjects();
+    Promise.all([fetchProjects(), fetchBeneficiaries()]);
   });
 </script>
