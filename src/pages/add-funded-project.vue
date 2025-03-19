@@ -41,11 +41,6 @@
 </template>
 
 <script setup>
-  import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
-  import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
-  import ProjectDuration from '@/components/funded-project/ProjectDuration.vue';
-  import ProjectLocation from '@/components/funded-project/ProjectLocation.vue';
-  import ProjectPreview from '@/components/funded-project/ProjectPreview.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { Icon } from '@iconify/vue';
