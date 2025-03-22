@@ -20,6 +20,7 @@ import Settings from '@/pages/settings.vue';
 import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
+import { useAuthStore } from '@/stores/authStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -27,41 +28,49 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    meta: { requiresAuth: true },
   },
   {
     path: '/projects',
     name: 'projects',
     component: Projects,
+    meta: { requiresAuth: true },
   },
   {
     path: '/projects/:id',
     name: 'project-details',
     component: ProjectDetails,
+    meta: { requiresAuth: true },
   },
   {
     path: '/modifications/:id?',
     name: 'modifications',
     component: ProjectModifications,
+    meta: { requiresAuth: true },
   },
   {
     path: '/map',
     name: 'map',
     component: Map,
+    meta: { requiresAuth: true },
   },
   {
     path: '/users',
     name: 'users',
     component: Users,
+    meta: { requiresAuth: true },
   },
   {
     path: '/users/:id',
     name: 'user-details',
     component: UserDetails,
+    meta: { requiresAuth: true },
   },
   {
     path: '/settings',
     name: 'settings',
     component: Settings,
+    meta: { requiresAuth: true },
   },
   {
     path: '/login',
@@ -72,89 +81,101 @@ const routes = [
     path: '/attachments',
     name: 'attachments',
     component: Attachment,
+    meta: { requiresAuth: true },
   },
   {
     path: '/add-action',
     name: 'add-action',
     component: AddAction,
+    meta: { requiresAuth: true },
   },
   {
     path: '/history-log',
     name: 'history-log',
     component: HistoryLog,
+    meta: { requiresAuth: true },
   },
   {
     path: '/tasks',
     name: 'tasks',
     component: Tasks,
+    meta: { requiresAuth: true },
   },
   {
     path: '/beneficiaries',
     name: 'beneficiaries',
     component: Beneficiaries,
+    meta: { requiresAuth: true },
   },
   {
     path: '/contracts',
     name: 'contracts',
     component: Contracts,
+    meta: { requiresAuth: true },
   },
   {
     path: '/contracts/:id',
     name: 'contract-details',
     component: ContractDetails,
+    meta: { requiresAuth: true },
   },
   {
     path: '/reports',
     name: 'reports',
     component: Reports,
-    meta: {
-      requiresAuth: true,
-      title: 'التقارير',
-    },
+    meta: { requiresAuth: true },
   },
   {
     path: '/add-project',
     name: 'add-project',
     component: AddProject,
+    meta: { requiresAuth: true },
   },
   {
     path: '/add-devlopment-project',
     name: 'add-devlopment-project',
     component: AddDevlopmentProject,
+    meta: { requiresAuth: true },
   },
   {
     path: '/add-funded-project',
     name: 'add-funded-project',
     component: AddFundedProject,
+    meta: { requiresAuth: true },
   },
   {
     path: '/funded-projects',
     name: 'funded-projects',
     component: FundedProjects,
+    meta: { requiresAuth: true },
   },
   {
     path: '/funded-projects/:id',
     name: 'funded-projects-details',
     component: () => import('@/pages/funded-projects-details.vue'),
     props: true,
+    meta: { requiresAuth: true },
   },
   {
     path: '/done',
     name: 'done',
     component: () => import('@/pages/done.vue'),
     props: true,
+    meta: { requiresAuth: true },
   },
   {
     path: '/about',
     name: 'about',
     component: About,
     props: true,
+    meta: { requiresAuth: true },
   },
   {
     path: '/demo-projects/:type',
     name: 'demo-projects',
     component: () => import('@/pages/demo-projects.vue'),
     props: true,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -163,9 +184,22 @@ const router = createRouter({
   routes,
 });
 
-// Add navigation guard for debugging
+// Navigation guard
 router.beforeEach((to, from, next) => {
-  scrollTo(0, 0);
+  const authStore = useAuthStore();
+
+  // If the route requires auth and user is not authenticated
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login');
+    return;
+  }
+
+  // If user is authenticated and tries to access login page
+  if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/');
+    return;
+  }
+
   next();
 });
 
