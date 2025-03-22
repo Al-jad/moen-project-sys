@@ -21,28 +21,28 @@
             :count="completedProjects.length"
             icon="lucide:folder-check"
             color="green"
-            to="/funded-projects?status=completed"
+            to="/funded-projects?status=2"
           />
           <ProjectStatCard
             title="قيد التنفيذ"
             :count="inProgressProjects.length"
             icon="lucide:folder-symlink"
             color="yellow"
-            to="/funded-projects?status=in-progress"
+            to="/funded-projects?status=1"
           />
           <ProjectStatCard
             title="المتلكئة"
             :count="delayedProjects.length"
             icon="lucide:folder-x"
             color="red"
-            to="/funded-projects?status=delayed"
+            to="/funded-projects?status=3"
           />
           <ProjectStatCard
             title="الملغاة"
             :count="cancelledProjects.length"
             icon="lucide:folder-closed"
             color="gray"
-            to="/funded-projects?status=cancelled"
+            to="/funded-projects?status=0"
           />
         </div>
         <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>

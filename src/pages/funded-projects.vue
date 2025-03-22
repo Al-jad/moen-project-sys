@@ -178,12 +178,29 @@
   // Initialize showGovernmentProjects from route query
   const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
 
-  // Watch for route changes to update the filter
+  // Initialize status from route query
+  const selectedStatus = ref({
+    all: !route.query.status,
+    completed: route.query.status === '2',
+    inProgress: route.query.status === '1',
+    delayed: route.query.status === '3',
+    cancelled: route.query.status === '0',
+  });
+
+  // Watch for route changes to update the filters
   watch(
-    () => route.query.showGovernmentProjects,
-    (newValue) => {
-      showGovernmentProjects.value = newValue === 'true';
-    }
+    () => route.query,
+    (newQuery) => {
+      showGovernmentProjects.value = newQuery.showGovernmentProjects === 'true';
+      selectedStatus.value = {
+        all: !newQuery.status,
+        completed: newQuery.status === '2',
+        inProgress: newQuery.status === '1',
+        delayed: newQuery.status === '3',
+        cancelled: newQuery.status === '0',
+      };
+    },
+    { deep: true }
   );
 
   // Computed properties for budget range
@@ -214,12 +231,6 @@
   });
   const budgetRange = ref(minMaxBudgetRange); // Initialize with computed range
   const selectedYear = ref('all');
-  const selectedStatus = ref({
-    all: true,
-    completed: false,
-    inProgress: false,
-    delayed: false,
-  });
   const selectedBeneficiaries = ref({ all: true });
   const isBudgetFilterEnabled = ref(false);
 
@@ -326,9 +337,10 @@
       const beforeCount = result.length;
       result = result.filter((project) => {
         const statusMatches =
-          (filters.selectedStatus.completed && project.projectStatus === 1) ||
-          (filters.selectedStatus.inProgress && project.projectStatus === 2) ||
-          (filters.selectedStatus.delayed && project.projectStatus === 3);
+          (filters.selectedStatus.completed && project.projectStatus === 2) ||
+          (filters.selectedStatus.inProgress && project.projectStatus === 1) ||
+          (filters.selectedStatus.delayed && project.projectStatus === 3) ||
+          (filters.selectedStatus.cancelled && project.projectStatus === 0);
 
         // Log each status check for debugging
         if (project.id < 90) {

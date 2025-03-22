@@ -146,6 +146,13 @@
             <CustomCheckbox v-model="localSelectedStatus.delayed" id="status-delayed" label="متلكئ">
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
             </CustomCheckbox>
+            <CustomCheckbox
+              v-model="localSelectedStatus.cancelled"
+              id="status-cancelled"
+              label="ملغي"
+            >
+              <div class="mx-1 h-2.5 w-2.5 rounded-full bg-gray-500"></div>
+            </CustomCheckbox>
           </div>
         </div>
 
@@ -251,6 +258,7 @@
     completed: false,
     inProgress: false,
     delayed: false,
+    cancelled: false,
   });
   const localSelectedBeneficiaries = ref({ all: true });
   const localShowGovernmentProjects = ref(false);
@@ -437,6 +445,7 @@
       completed: false,
       inProgress: false,
       delayed: false,
+      cancelled: false,
     };
 
     // Reset beneficiaries to only "all" selected
