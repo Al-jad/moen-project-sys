@@ -1,10 +1,18 @@
 <template>
   <div class="flex items-center justify-between gap-4">
-    <span v-if="label" class="text-sm text-gray-700 dark:text-gray-200">{{ label }}</span>
+    <span
+      v-if="label"
+      class="text-sm text-gray-700 dark:text-gray-200"
+      :class="{ 'opacity-50': disabled }"
+    >
+      {{ label }}
+    </span>
     <SwitchRoot
       dir="rtl"
       v-model:checked="switchState"
+      :disabled="disabled"
       class="relative flex h-[25px] w-[42px] cursor-default rounded-full border border-gray-200 bg-gray-100 shadow-sm focus-within:outline focus-within:outline-gray-500 data-[state=checked]:bg-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:data-[state=checked]:bg-gray-950"
+      :class="{ 'cursor-not-allowed opacity-50': disabled }"
     >
       <SwitchThumb
         class="my-auto block h-[21px] w-[21px] -translate-x-0.5 rounded-full bg-white shadow-sm transition-transform duration-100 will-change-transform data-[state=checked]:-translate-x-[19px]"
@@ -26,6 +34,10 @@
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   const switchState = ref(props.modelValue);
@@ -38,7 +50,9 @@
   );
 
   watch(switchState, (value) => {
-    emit('update:modelValue', value);
+    if (!props.disabled) {
+      emit('update:modelValue', value);
+    }
   });
 
   const emit = defineEmits(['update:modelValue']);

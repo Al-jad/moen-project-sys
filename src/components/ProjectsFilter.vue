@@ -1,5 +1,11 @@
 <template>
-  <div class="min-h-screen w-[400px] bg-gray-50 p-6 dark:bg-gray-800/50">
+  <div
+    :class="
+      disabled
+        ? 'cursor-not-allowed opacity-80'
+        : 'min-h-screen w-[400px] bg-gray-50 p-6 dark:bg-gray-800/50'
+    "
+  >
     <div class="flex flex-col gap-6">
       <div
         class="rounded-md border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
@@ -23,6 +29,8 @@
               v-model="localSearchQuery"
               placeholder="ابحث عن اسم او وصف او الرقم المرجعي"
               icon="lucide:search"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSearch"
             />
           </FormField>
@@ -37,28 +45,48 @@
         <div class="space-y-3" v-if="!isFundedProjects">
           <label class="text-sm text-gray-600 dark:text-gray-300">نوع التمويل</label>
           <div class="space-y-2">
-            <CustomCheckbox v-model="localSelectedFunding.all" id="all" label="الكل" />
+            <CustomCheckbox
+              v-model="localSelectedFunding.all"
+              id="all"
+              label="الكل"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+            />
             <CustomCheckbox
               v-model="localSelectedFunding.government"
               id="government"
               label="البرنامج الحكومي"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
             <CustomCheckbox
               v-model="localSelectedFunding.investment"
               id="investment"
               label="الموازنة الاستثمارية"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
             <CustomCheckbox
               v-model="localSelectedFunding.operational"
               id="operational"
               label="الموازنة التشغيلية"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
             <CustomCheckbox
               v-model="localSelectedFunding.environment"
               id="environment"
               label="الممولة دوليا"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
-            <CustomCheckbox v-model="localSelectedFunding.fund" id="fund" label="ممولة" />
+            <CustomCheckbox
+              v-model="localSelectedFunding.fund"
+              id="fund"
+              label="ممولة"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+            />
           </div>
         </div>
         <div>
@@ -69,7 +97,12 @@
         <div class="mt-4 space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-200">المبلغ</label>
-            <CustomSwitch v-model="isBudgetFilterEnabled" label="تفعيل" />
+            <CustomSwitch
+              v-model="isBudgetFilterEnabled"
+              label="تفعيل"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+            />
           </div>
           <div class="space-y-4" :class="{ 'opacity-50': !isBudgetFilterEnabled }">
             <Slider
@@ -78,7 +111,8 @@
               :max="budgetRange[1]"
               :step="calculateStep(budgetRange[1] - budgetRange[0])"
               class="w-full"
-              :disabled="!isBudgetFilterEnabled"
+              :disabled="!isBudgetFilterEnabled || disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"
             />
             <div class="grid grid-cols-2 gap-4">
@@ -86,7 +120,8 @@
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <NumberInput
                   v-model="localBudgetRange[0]"
-                  :disabled="!isBudgetFilterEnabled"
+                  :disabled="!isBudgetFilterEnabled || disabled"
+                  :class="{ 'cursor-not-allowed': disabled }"
                   unit="د.ع"
                   @update:model-value="validateAndUpdateMin"
                 />
@@ -95,7 +130,8 @@
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الاعلى</label>
                 <NumberInput
                   v-model="localBudgetRange[1]"
-                  :disabled="!isBudgetFilterEnabled"
+                  :disabled="!isBudgetFilterEnabled || disabled"
+                  :class="{ 'cursor-not-allowed': disabled }"
                   unit="د.ع"
                   @update:model-value="validateAndUpdateMax"
                 />
@@ -113,13 +149,20 @@
             :options="implementationYears"
             placeholder="جميع المواعيد"
             :triggerClass="'flex flex-row-reverse w-full'"
+            :disabled="disabled"
+            :class="{ 'cursor-not-allowed': disabled }"
           />
         </div>
 
         <!-- is Government Projects -->
         <div v-if="isFundedProjects" class="my-4 space-y-3">
           <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
-          <CustomSwitch v-model="localShowGovernmentProjects" label="عرض البرامج الحكومية" />
+          <CustomSwitch
+            v-model="localShowGovernmentProjects"
+            label="عرض البرامج الحكومية"
+            :disabled="disabled"
+            :class="{ 'cursor-not-allowed': disabled }"
+          />
         </div>
 
         <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
@@ -128,11 +171,19 @@
         <div class="space-y-3">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200">حالة المشروع</label>
           <div class="space-y-2">
-            <CustomCheckbox v-model="localSelectedStatus.all" id="status-all" label="الكل" />
+            <CustomCheckbox
+              v-model="localSelectedStatus.all"
+              id="status-all"
+              label="الكل"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+            />
             <CustomCheckbox
               v-model="localSelectedStatus.completed"
               id="status-completed"
               label="منجز"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-green-500"></div>
             </CustomCheckbox>
@@ -140,16 +191,26 @@
               v-model="localSelectedStatus.inProgress"
               id="status-in-progress"
               label="قيد الانجاز"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-yellow-500" />
             </CustomCheckbox>
-            <CustomCheckbox v-model="localSelectedStatus.delayed" id="status-delayed" label="متلكئ">
+            <CustomCheckbox
+              v-model="localSelectedStatus.delayed"
+              id="status-delayed"
+              label="متلكئ"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+            >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
             </CustomCheckbox>
             <CustomCheckbox
               v-model="localSelectedStatus.cancelled"
               id="status-cancelled"
               label="ملغي"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-gray-500"></div>
             </CustomCheckbox>
@@ -170,6 +231,8 @@
               v-model="localSelectedBeneficiaries.all"
               id="beneficiary-all"
               label="الكل"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
 
             <CustomCheckbox
@@ -178,6 +241,8 @@
               v-model="localSelectedBeneficiaries[beneficiary.id]"
               :id="`beneficiary-${beneficiary.id}`"
               :label="beneficiary.name"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
             />
           </div>
         </div>
@@ -189,11 +254,20 @@
           <PrimaryButton
             variant="outline"
             buttonClass="flex-1 text-gray-700 dark:text-gray-200"
+            :disabled="disabled"
+            :class="{ 'cursor-not-allowed': disabled }"
             @click.prevent="resetFilters"
           >
             الغاء
           </PrimaryButton>
-          <PrimaryButton buttonClass="flex-1" @click.prevent="applyFilters"> تطبيق </PrimaryButton>
+          <PrimaryButton
+            buttonClass="flex-1"
+            :disabled="disabled"
+            :class="{ 'cursor-not-allowed': disabled }"
+            @click.prevent="applyFilters"
+          >
+            تطبيق
+          </PrimaryButton>
         </div>
       </div>
     </div>
@@ -209,6 +283,10 @@
 
   const props = defineProps({
     isFundedProjects: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

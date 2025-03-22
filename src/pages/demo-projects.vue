@@ -1,8 +1,7 @@
 <template>
   <DefaultLayout>
     <div class="flex flex-1">
-      <ProjectsFilter />
-
+      <ProjectsFilter disabled />
       <main class="flex-1 bg-gray-200 p-6 dark:bg-darkmode">
         <div class="mb-6 flex items-center justify-between">
           <div class="space-y-1">

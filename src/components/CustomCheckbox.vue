@@ -2,19 +2,22 @@
   <div class="flex items-center gap-2">
     <div
       class="relative flex items-center"
-      @click="toggle"
-      @keydown.space.prevent="toggle"
+      @click="!disabled && toggle"
+      @keydown.space.prevent="!disabled && toggle"
       tabindex="0"
       role="checkbox"
       :aria-checked="modelValue"
+      :aria-disabled="disabled"
+      :class="{ 'cursor-not-allowed opacity-50': disabled }"
     >
       <div
         :class="[
-          'h-4 w-4 cursor-pointer rounded border transition-colors',
+          'h-4 w-4 rounded border transition-colors',
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           modelValue
             ? 'border-primary bg-primary dark:border-primary dark:bg-primary'
             : 'border-gray-300 dark:border-gray-600',
-          'hover:border-primary dark:hover:border-primary',
+          !disabled && 'hover:border-primary dark:hover:border-primary',
         ]"
       >
         <Icon
@@ -34,8 +37,9 @@
       <label
         v-if="label"
         :for="id"
-        class="cursor-pointer select-none text-sm text-gray-800 dark:text-gray-200"
-        @click="toggle"
+        class="select-none text-sm text-gray-800 dark:text-gray-200"
+        :class="{ 'cursor-not-allowed opacity-50': disabled }"
+        @click="!disabled && toggle"
       >
         {{ label }}
       </label>
@@ -67,12 +71,18 @@
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   const emit = defineEmits(['update:modelValue']);
 
   const toggle = () => {
-    emit('update:modelValue', !props.modelValue);
+    if (!props.disabled) {
+      emit('update:modelValue', !props.modelValue);
+    }
   };
 </script>
 
