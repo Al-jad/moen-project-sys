@@ -168,6 +168,8 @@
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
   import { computed, onMounted, ref, watch } from 'vue';
+  import { toast } from 'vue-sonner';
+  import * as XLSX from 'xlsx';
   import CustomInput from './CustomInput.vue';
   import Pagination from './CustomPagination.vue';
   import CustomSelect from './CustomSelect.vue';
@@ -255,6 +257,62 @@
   const currentPage = ref(1);
   const searchQuery = ref('');
   const dateRange = ref<DateRange>();
+
+  // Export function
+  const exportToExcel = (data: any[], headers: string[], fileName: string) => {
+    try {
+      // Create worksheet data
+      const wsData = [
+        headers, // Headers row
+        ...data.map((item) => {
+          // Map each item to match the header order
+          return headers.map((header) => {
+            // Get the value based on the header key
+            const value = item[header] || '';
+
+            // Handle dates
+            if (header.toLowerCase().includes('date') || header.toLowerCase().includes('تاريخ')) {
+              return new Date(value).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              });
+            }
+            return value;
+          });
+        }),
+      ];
+
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // Set column widths
+      const colWidths = headers.map(() => ({ wch: 20 })); // Set default width for all columns
+      ws['!cols'] = colWidths;
+
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+      // Generate Excel file
+      XLSX.writeFile(
+        wb,
+        `${fileName}_${new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })}.xlsx`
+      );
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      toast.error('حدث خطأ أثناء تصدير البيانات');
+    }
+  };
+
+  // Expose the export function
+  defineExpose({
+    exportToExcel,
+  });
 
   // Initialize selectedFilters with default values from props.filters
   const selectedFilters = ref<Record<string, string>>(

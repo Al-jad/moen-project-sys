@@ -18,6 +18,7 @@
       <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="p-6">
           <CustomTable
+            ref="tableRef"
             :columns="columns"
             :data="entities"
             @export="exportToExcel"
@@ -38,7 +39,7 @@
             </template>
             <template #createdAt="{ value }">
               <span class="dark:text-gray-300">{{
-                new Date(value).toLocaleDateString('ar-SA')
+                new Date(value).toLocaleDateString('en-US')
               }}</span>
             </template>
             <template #action="{ item }">
@@ -110,6 +111,7 @@
   const isDeleting = ref(false);
   const isDeleteModalOpen = ref(false);
   const selectedEntity = ref(null);
+  const tableRef = ref();
 
   // Fetch beneficiaries on component mount
   onMounted(async () => {
@@ -205,51 +207,13 @@
   };
 
   const exportToExcel = () => {
-    try {
-      // Create CSV content with proper headers
-      const headers = ['اسم الجهة المستفيدة', 'اسم الجهة المرجعية', 'العنوان', 'تاريخ الإنشاء'];
-      const csvContent = [
-        headers.join(','),
-        ...entities.value.map((entity) => {
-          // Format each field properly
-          const formattedData = [
-            `"${entity.name || ''}"`, // Wrap in quotes to handle commas in text
-            `"${entity.referenceEntity || ''}"`,
-            `"${entity.location || ''}"`,
-            new Date(entity.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            }),
-          ];
-          return formattedData.join(',');
-        }),
-      ].join('\n');
-
-      // Add BOM for UTF-8 to ensure Excel displays Arabic correctly
-      const BOM = '\uFEFF';
-      const csvContentWithBOM = BOM + csvContent;
-
-      // Create blob and download
-      const blob = new Blob([csvContentWithBOM], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute(
-        'download',
-        `الجهات المستفيدة_${new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-        })}.csv`
-      );
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error exporting to Excel:', error);
-      toast.error('حدث خطأ أثناء تصدير البيانات');
-    }
+    const headerLabels = ['اسم الجهة المستفيدة', 'اسم الجهة المرجعية', 'العنوان', 'تاريخ الإنشاء'];
+    const formattedData = entities.value.map((entity) => ({
+      'اسم الجهة المستفيدة': entity.name || '',
+      'اسم الجهة المرجعية': entity.referenceEntity || '',
+      العنوان: entity.location || '',
+      'تاريخ الإنشاء': entity.createdAt || '',
+    }));
+    tableRef.value?.exportToExcel(formattedData, headerLabels, 'الجهات المستفيدة');
   };
 </script>

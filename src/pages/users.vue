@@ -4,39 +4,56 @@
       <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="p-6">
           <CustomTable
+            ref="tableRef"
             :columns="columns"
             :data="users"
             :filters="filters"
             @export="exportToExcel"
-            :is-export-premium="true"
             @cell-click="handleCellClick"
             @action-click="viewUserDetails"
+            :isExportPremium="false"
           >
-            <template #id="{ value }">
+            <template #id="{ item }">
               <Button
                 variant="link"
                 class="h-auto p-0 text-blue-600 dark:text-blue-400"
-                @click="$router.push(`/users/${value}`)"
+                @click="$router.push(`/users/${item.id}`)"
               >
-                {{ value }}
+                {{ item.id }}
               </Button>
             </template>
 
-            <template #role="{ value }">
-              <Badge v-if="value === 'ADMIN'" variant="success" class="w-fit font-medium text-white bg-green-500 dark:bg-green-500/20">
+            <template #role="{ item }">
+              <Badge
+                v-if="item.role === 'ADMIN'"
+                variant="success"
+                class="w-fit bg-green-500 font-medium text-white dark:bg-green-500/20"
+              >
                 مدير
               </Badge>
-              <Badge v-else-if="value === 'SUPERVISOR'" class="w-fit font-medium text-white bg-gray-500 dark:bg-gray-500/20 dark:text-gray-300">
+              <Badge
+                v-else-if="item.role === 'SUPERVISOR'"
+                class="w-fit bg-gray-500 font-medium text-white dark:bg-gray-500/20 dark:text-gray-300"
+              >
                 مشرف
               </Badge>
-              <Badge v-else class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300">
+              <Badge
+                v-else
+                class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300"
+              >
                 مدخل بيانات
               </Badge>
             </template>
 
-            <template #createdAt="{ value }">
+            <template #createdAt="{ item }">
               <div>
-                {{ new Date(value).toLocaleDateString('ar', { year: 'numeric', month: '2-digit', day: '2-digit' }) }}
+                {{
+                  new Date(item.createdAt).toLocaleDateString('ar', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })
+                }}
               </div>
             </template>
           </CustomTable>
@@ -74,9 +91,7 @@
 </template>
 
 <script setup lang="ts">
-  import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
   import {
     Dialog,
@@ -86,9 +101,9 @@
     DialogTitle,
   } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import axiosInstance from '@/plugins/axios';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+  import axiosInstance from '@/plugins/axios';
+  import { onMounted, ref } from 'vue';
+  import { useRouter } from 'vue-router';
 
   const router = useRouter();
 
@@ -152,14 +167,14 @@ import { useRouter } from 'vue-router';
     createdAt: string;
   }
 
-  const users = ref([])
+  const users = ref([]);
 
   // User details configuration
   const userDetailsFields = [
-    { key: 'name', label: 'الاسم الكامل' },
-    { key: 'email', label: 'الايميل' },
-    { key: 'role', label: 'الصلاحية' },
-    { key: 'createdAt', label: 'تاريخ الاضافة' },
+    { key: 'name', label: 'الاسم الكامل', type: 'text' },
+    { key: 'email', label: 'الايميل', type: 'text' },
+    { key: 'role', label: 'الصلاحية', type: 'badge' },
+    { key: 'createdAt', label: 'تاريخ الاضافة', type: 'text' },
   ];
 
   // State
@@ -168,6 +183,16 @@ import { useRouter } from 'vue-router';
 
   // Methods
   const exportToExcel = () => {
+    const headerLabels = ['اسم الموظف', 'الايميل', 'الصلاحية', 'تاريخ الاضافة'];
+    const formattedData = users.value.map((user) => ({
+      'اسم الموظف': user.name || '',
+      الايميل: user.email || '',
+      الصلاحية:
+        user.role === 'ADMIN' ? 'مدير' : user.role === 'SUPERVISOR' ? 'مشرف' : 'مدخل بيانات',
+      'تاريخ الاضافة': user.createdAt || '',
+    }));
+    const tableRef = ref();
+    tableRef.value?.exportToExcel(formattedData, headerLabels, 'المستخدمين');
   };
 
   function getUsers() {
