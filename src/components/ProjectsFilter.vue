@@ -150,9 +150,13 @@
         <div class="space-y-2" v-if="!isFundedProjects">
           <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
           <label class="text-sm text-gray-600 dark:text-gray-300">سنوات التنفيذ</label>
+          <div class="px-2 text-red-500 text-sm">
+            <slot> الميزة غير متاحة، والبيانات الظاهرة للتوضيح فقط </slot>
+          </div>
           <CustomSelect
             v-model="localSelectedYear"
             :options="implementationYears"
+            disabled
             placeholder="جميع المواعيد"
             :triggerClass="'flex flex-row-reverse w-full'"
             :disabled="disabled"
