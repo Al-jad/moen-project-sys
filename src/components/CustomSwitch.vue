@@ -4,7 +4,7 @@
     <SwitchRoot
       dir="rtl"
       v-model:checked="switchState"
-      class="relative flex h-[25px] w-[42px] cursor-default rounded-full border border-gray-200 bg-gray-100 shadow-sm focus-within:outline focus-within:outline-gray-500 data-[state=checked]:bg-gray-700 dark:border-gray-700 dark:bg-gray-700 dark:data-[state=checked]:bg-gray-600"
+      class="relative flex h-[25px] w-[42px] cursor-default rounded-full border border-gray-200 bg-gray-100 shadow-sm focus-within:outline focus-within:outline-gray-500 data-[state=checked]:bg-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:data-[state=checked]:bg-gray-950"
     >
       <SwitchThumb
         class="my-auto block h-[21px] w-[21px] -translate-x-0.5 rounded-full bg-white shadow-sm transition-transform duration-100 will-change-transform data-[state=checked]:-translate-x-[19px]"
