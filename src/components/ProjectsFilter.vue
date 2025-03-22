@@ -166,6 +166,7 @@
             v-model="localShowGovernmentProjects"
             label="عرض البرامج الحكومية"
             :disabled="disabled"
+            @update:model-value="handleGovernmentProjectsChange"
             :class="{ 'cursor-not-allowed': disabled }"
           />
         </div>
@@ -431,6 +432,16 @@
         console.error('Error fetching beneficiaries:', error);
       });
   }
+
+  const handleGovernmentProjectsChange = (value) => {
+    // Update the local state to match the checkbox
+    localShowGovernmentProjects.value = value;
+    
+    // When the filter changes, we can optionally apply filters immediately
+    // or wait for the Apply button to be clicked
+    // Uncomment the line below if you want immediate application
+    // applyFilters();
+  };
 
   // Add all handlers in one place
   const handleAllStatusChange = (value) => {

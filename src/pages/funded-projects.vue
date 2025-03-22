@@ -302,6 +302,7 @@
         name: p.name,
         status: p.projectStatus,
         cost: p.cost,
+        isGovernment: p.isGovernment
       }))
     );
 
@@ -383,6 +384,23 @@
         return statusMatches;
       });
       console.log(`Status filter applied. Before: ${beforeCount}, After: ${result.length}`);
+    }
+
+    // Apply government projects filter
+    if (filters.showGovernmentProjects) {
+      console.log('Filtering for government projects only');
+      const beforeCount = result.length;
+      result = result.filter((project) => {
+        const isGovernment = Boolean(project.isGovernment);
+        
+        // Debug logging for first few projects
+        if (project.id < 5) {
+          console.log(`Project ${project.id}: isGovernment = ${isGovernment}`);
+        }
+        
+        return isGovernment;
+      });
+      console.log(`Government filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
     // Apply beneficiary filter - match to beneficiaries array if it exists
