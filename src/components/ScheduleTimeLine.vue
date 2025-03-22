@@ -189,8 +189,24 @@
   });
 
   const sortedActivities = (activities) => {
-    // Return activities in reverse order to match ComponentsActivitiesDetails
-    return [...activities].reverse();
+    // Check if activities is an array
+    if (!activities || !Array.isArray(activities)) {
+      return [];
+    }
+    
+    // Sort the activities based on the selectedPeriods
+    return [...activities].sort((a, b) => {
+      // If activities have selectedPeriods, sort by the earliest period
+      if (a.selectedPeriods && b.selectedPeriods && 
+          Array.isArray(a.selectedPeriods) && Array.isArray(b.selectedPeriods)) {
+        const aMin = a.selectedPeriods.length > 0 ? Math.min(...a.selectedPeriods) : 0;
+        const bMin = b.selectedPeriods.length > 0 ? Math.min(...b.selectedPeriods) : 0;
+        return aMin - bMin;
+      }
+      
+      // Fallback for activities without selectedPeriods
+      return 0;
+    });
   };
 
   const componentColors = [
