@@ -175,11 +175,49 @@
 
   const cancelledProjects = computed(() => allProjects.value.filter((p) => p.projectStatus === 0));
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   const fetchProjects = async () => {
     try {
       isLoading.value = true;
       const response = await axiosInstance.get('/api/Project');
-      allProjects.value = response.data;
+      // Transform the data to match ProjectCard props
+      allProjects.value = response.data.map((project) => ({
+        id: project.id,
+        title: project.name || project.title,
+        department: project.executingDepartment || project.department,
+        startDate: formatDate(project.actualStartDate || project.startDate),
+        endDate: formatDate(project.endDate),
+        status:
+          project.projectStatus === 2
+            ? 'منجز'
+            : project.projectStatus === 1
+              ? 'قيد التنفيذ'
+              : project.projectStatus === 3
+                ? 'متلكئ'
+                : project.projectStatus === 0
+                  ? 'ملغي'
+                  : 'غير محدد',
+        statusVariant:
+          project.projectStatus === 2
+            ? 'success'
+            : project.projectStatus === 1
+              ? 'warning'
+              : project.projectStatus === 3
+                ? 'destructive'
+                : project.projectStatus === 0
+                  ? 'secondary'
+                  : 'default',
+        duration: project.duration || '12',
+      }));
     } catch (err) {
       console.error('Error fetching projects:', err);
       error.value = err.response?.data?.message || 'حدث خطأ في تحميل المشاريع';

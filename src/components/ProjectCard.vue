@@ -7,6 +7,12 @@
     @click="viewProject"
   >
     <div :class="['flex flex-col gap-4', contentClass]">
+      <!-- Status Badge -->
+      <div class="flex justify-end">
+        <Badge :variant="statusVariant" class="px-3 py-1 text-sm">{{ status }}</Badge>
+      </div>
+
+      <!-- Project Name -->
       <div class="flex flex-col gap-2">
         <h3
           :class="[
@@ -17,29 +23,21 @@
           {{ title }}
         </h3>
       </div>
-      <div class="flex flex-row justify-between gap-4">
-        <div class="flex flex-col gap-1 text-right">
-          <p class="text-sm text-gray-500 dark:text-gray-400">الجهة المستفيدة</p>
-          <p class="text-sm text-gray-900 dark:text-white">{{ department }}</p>
-        </div>
 
-        <div class="mb-2 flex flex-col items-start gap-2">
-          <p class="text-sm text-gray-500 dark:text-gray-400">حالة المشروع</p>
-          <Badge :variant="statusVariant" class="px-3 py-1">{{ status }}</Badge>
-        </div>
+      <!-- Department -->
+      <div class="flex items-center gap-2 text-right">
+        <Icon icon="lucide:building-2" class="h-4 w-4 text-gray-400" />
+        <p class="text-sm text-gray-600 dark:text-gray-300">{{ department }}</p>
       </div>
 
-      <div class="flex flex-row-reverse items-center justify-between">
-        <div class="flex flex-col gap-1">
-          <span class="text-xs text-gray-500 dark:text-gray-400">تاريخ الانجاز</span>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ endDate }}</span>
-        </div>
-        <div>
-          <span class="flex items-center text-gray-400 dark:text-gray-500"> - </span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-xs text-gray-500 dark:text-gray-400">تاريخ المباشرة</span>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ startDate }}</span>
+      <!-- Dates -->
+      <div class="flex flex-col gap-2 border-t border-gray-100 pt-4 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Icon icon="lucide:calendar-days" class="h-4 w-4 text-gray-400" />
+            <span class="text-sm text-gray-600 dark:text-gray-300">تاريخ المباشرة</span>
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-white">{{ startDate }}</span>
         </div>
       </div>
     </div>
@@ -48,6 +46,7 @@
 
 <script setup>
   import { Badge } from '@/components/ui/badge';
+  import { Icon } from '@iconify/vue';
   const router = useRouter();
   const props = defineProps({
     id: {
