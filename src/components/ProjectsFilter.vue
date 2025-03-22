@@ -534,11 +534,6 @@
   };
 
   const applyFilters = () => {
-    // Make sure selections are consistent
-    updateBeneficiarySelection();
-    updateStatusSelection();
-    updateFundingSelection();
-
     // Send all filters to parent
     const filters = {
       searchQuery: localSearchQuery.value,
