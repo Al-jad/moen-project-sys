@@ -2,8 +2,8 @@
   <div class="flex items-center gap-2">
     <div
       class="relative flex items-center"
-      @click="!disabled && toggle"
-      @keydown.space.prevent="!disabled && toggle"
+      @click="toggle"
+      @keydown.space.prevent="toggle"
       tabindex="0"
       role="checkbox"
       :aria-checked="modelValue"
@@ -39,7 +39,7 @@
         :for="id"
         class="select-none text-sm text-gray-800 dark:text-gray-200"
         :class="{ 'cursor-not-allowed opacity-50': disabled }"
-        @click="!disabled && toggle"
+        @click="toggle"
       >
         {{ label }}
       </label>
@@ -80,9 +80,8 @@
   const emit = defineEmits(['update:modelValue']);
 
   const toggle = () => {
-    if (!props.disabled) {
-      emit('update:modelValue', !props.modelValue);
-    }
+    if (props.disabled) return;
+    emit('update:modelValue', !props.modelValue);
   };
 </script>
 
