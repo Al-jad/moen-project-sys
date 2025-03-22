@@ -1,27 +1,31 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-gray-200 dark:bg-gray-900">
-      <div class="flex items-center justify-between mb-6">
+    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-4">
           <BackToMainButton />
           <h1 class="text-xl font-bold dark:text-white">الجهات المستفيدة</h1>
         </div>
         <div class="flex items-center gap-4">
           <PrimaryButton @click="handleAdd">
-            <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
+            <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
             اضافة جهة مستفيدة
           </PrimaryButton>
         </div>
       </div>
 
       <!-- Table Card -->
-      <div class="bg-white rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="p-6">
           <CustomTable
             :columns="columns"
             :data="entities"
             @export="exportToExcel"
             :loading="isLoading"
+            :showDateFilter="false"
+            :showSearch="true"
+            :showExport="true"
+            :isExportPremium="false"
           >
             <template #name="{ value }">
               <span class="dark:text-gray-300">{{ value }}</span>
@@ -41,16 +45,16 @@
               <div class="flex items-center justify-center gap-4">
                 <button
                   @click="handleEdit(item)"
-                  class="inline-flex items-center gap-1 text-gray-600 text-nowrap hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  <Icon icon="lucide:edit" class="w-4 h-4" />
+                  <Icon icon="lucide:edit" class="h-4 w-4" />
                 </button>
                 <button
                   @click="handleDelete(item)"
                   :disabled="isDeleting"
-                  class="inline-flex items-center gap-1 text-red-600 text-nowrap hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                  class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
-                  <Icon icon="lucide:trash" class="w-4 h-4" />
+                  <Icon icon="lucide:trash" class="h-4 w-4" />
                 </button>
               </div>
             </template>
@@ -59,7 +63,7 @@
       </div>
 
       <!-- Add/Edit Modal -->
-      <AddBeneficiaryModal v-model:open="showModal" :edit-data="editingEntity" @save="handleSave"  />
+      <AddBeneficiaryModal v-model:open="showModal" :edit-data="editingEntity" @save="handleSave" />
 
       <!-- Delete Modal -->
       <DeleteModal
@@ -201,5 +205,51 @@
   };
 
   const exportToExcel = () => {
+    try {
+      // Create CSV content with proper headers
+      const headers = ['اسم الجهة المستفيدة', 'اسم الجهة المرجعية', 'العنوان', 'تاريخ الإنشاء'];
+      const csvContent = [
+        headers.join(','),
+        ...entities.value.map((entity) => {
+          // Format each field properly
+          const formattedData = [
+            `"${entity.name || ''}"`, // Wrap in quotes to handle commas in text
+            `"${entity.referenceEntity || ''}"`,
+            `"${entity.location || ''}"`,
+            new Date(entity.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }),
+          ];
+          return formattedData.join(',');
+        }),
+      ].join('\n');
+
+      // Add BOM for UTF-8 to ensure Excel displays Arabic correctly
+      const BOM = '\uFEFF';
+      const csvContentWithBOM = BOM + csvContent;
+
+      // Create blob and download
+      const blob = new Blob([csvContentWithBOM], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute(
+        'download',
+        `الجهات المستفيدة_${new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })}.csv`
+      );
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      toast.error('حدث خطأ أثناء تصدير البيانات');
+    }
   };
 </script>
