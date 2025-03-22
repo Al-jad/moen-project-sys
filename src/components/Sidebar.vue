@@ -109,7 +109,7 @@
             authStore.getUser?.name || 'User'
           }}</span>
           <span class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">{{
-            authStore.getUser?.role || 'Guest'
+            userTranslations[authStore.getUser?.role] || 'Guest'
           }}</span>
         </div>
         <Icon
@@ -136,6 +136,12 @@
   const authStore = useAuthStore();
   const hoveredItem = ref(null);
   const isAnyItemHovered = ref(false);
+
+  const userTranslations = {
+    ADMIN: 'مدير',
+    SUPERVISOR: 'مشرف',
+    DATA_ENTRY: 'مدخل بيانات',
+  };
 
   const menuItems = [
     { path: '/', icon: 'lucide:layout-grid', label: 'لوحة التحكم' },
