@@ -24,7 +24,7 @@
           class="rounded-full bg-blue-500 px-4 py-1 text-lg font-medium text-white shadow-sm transition-all dark:bg-blue-600"
           :class="{ 'opacity-70': disabled }"
         >
-          {{ formatCost(project.cost) || 0 }} $
+          {{ formatCost(project.cost) }}
         </h3>
       </div>
       <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
@@ -71,8 +71,10 @@
   </div>
 </template>
 <script setup>
+  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import { Icon } from '@iconify/vue';
   import { useRouter } from 'vue-router';
+
   const router = useRouter();
   const props = defineProps({
     project: {
@@ -82,6 +84,10 @@
     disabled: {
       type: Boolean,
       default: false,
+    },
+    selectedCurrency: {
+      type: String,
+      default: 'IQD',
     },
   });
 
@@ -149,8 +155,34 @@
       day: 'numeric',
     });
   };
+  const convertCurrency = (value, fromCurrency, toCurrency) => {
+    if (!value) return 0;
+    const numValue = Number(value);
+    if (fromCurrency === toCurrency) return numValue;
+
+    let convertedValue;
+    if (fromCurrency === 'USD') {
+      convertedValue = numValue * CURRENCY_CONVERSION.USD_TO_IQD;
+    } else {
+      convertedValue = numValue * CURRENCY_CONVERSION.IQD_TO_USD;
+    }
+
+    // Round to appropriate precision
+    const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
+    return Number(convertedValue.toFixed(precision));
+  };
   const formatCost = (value) => {
     if (!value) return '0';
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const numValue = Number(value);
+    const convertedValue = convertCurrency(numValue, 'IQD', props.selectedCurrency);
+
+    // Format with appropriate precision
+    const precision = CURRENCY_CONVERSION.PRECISION[props.selectedCurrency];
+    const formattedValue = convertedValue.toLocaleString('en-US', {
+      minimumFractionDigits: precision,
+      maximumFractionDigits: precision,
+    });
+
+    return `${formattedValue} ${props.selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
   };
 </script>

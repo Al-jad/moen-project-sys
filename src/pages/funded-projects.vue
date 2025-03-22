@@ -10,9 +10,24 @@
         :selectedBeneficiaries="selectedBeneficiaries"
         :showGovernmentProjects="showGovernmentProjects"
         :beneficiaries="beneficiaries"
+        :selectedCurrency="selectedCurrency"
+        @currency-changed="handleCurrencyChange"
       />
       <div class="min-h-screen flex-1 bg-gray-100 p-6 dark:bg-gray-900">
         <div class="mx-auto w-full max-w-7xl space-y-8">
+          <div class="mb-4 flex justify-end">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 dark:text-gray-300">العملة:</span>
+              <CustomSelect
+                v-model="selectedCurrency"
+                :options="currencyOptions"
+                placeholder="اختر العملة"
+                :triggerClass="'w-[120px]'"
+                icon="lucide:currency-dollar"
+                @update:model-value="handleCurrencyChange"
+              />
+            </div>
+          </div>
           <div class="grid gap-4 md:grid-cols-4">
             <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
@@ -66,7 +81,7 @@
                 </div>
                 <div>
                   <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    ${{ formatTotalCost() }}
+                    {{ formatTotalCost() }}
                   </div>
                   <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي التمويل</div>
                 </div>
@@ -109,6 +124,7 @@
                   v-for="project in paginatedProjects"
                   :key="project.id"
                   :project="project"
+                  :selectedCurrency="selectedCurrency"
                   @attachment-added="fetchProjects"
                 />
 
@@ -159,6 +175,8 @@
   </DefaultLayout>
 </template>
 <script setup>
+  import CustomSelect from '@/components/CustomSelect.vue';
+  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
@@ -233,6 +251,15 @@
   const selectedYear = ref('all');
   const selectedBeneficiaries = ref({ all: true });
   const isBudgetFilterEnabled = ref(false);
+
+  // Add currency selection state with localStorage initialization
+  const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
+
+  // Add currency options
+  const currencyOptions = [
+    { value: 'IQD', label: UNITS.CURRENCY.IQD },
+    { value: 'USD', label: UNITS.CURRENCY.USD },
+  ];
 
   // Only applied when the button is pressed
   const applyFilters = (filters) => {
@@ -421,6 +448,12 @@
 
   onMounted(async () => {
     try {
+      // Get saved currency from localStorage
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency) {
+        selectedCurrency.value = savedCurrency;
+      }
+
       // Fetch data
       await Promise.all([fetchProjects(), fetchBeneficiaries()]);
     } catch (error) {
@@ -456,10 +489,43 @@
     }, 0);
   };
 
+  const convertCurrency = (value, fromCurrency, toCurrency) => {
+    if (!value || isNaN(value)) return 0;
+    const numValue = Number(value);
+    if (fromCurrency === toCurrency) return numValue;
+
+    let convertedValue;
+    if (fromCurrency === 'USD') {
+      convertedValue = numValue * CURRENCY_CONVERSION.USD_TO_IQD;
+    } else {
+      convertedValue = numValue * CURRENCY_CONVERSION.IQD_TO_USD;
+    }
+
+    // Round to appropriate precision
+    const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
+    return Number(convertedValue.toFixed(precision));
+  };
+
+  const formatCost = (value) => {
+    if (!value) return '0';
+    const numValue = Number(value);
+    const convertedValue = convertCurrency(numValue, 'IQD', selectedCurrency.value);
+
+    // Format with appropriate precision
+    const precision = CURRENCY_CONVERSION.PRECISION[selectedCurrency.value];
+    const formattedValue = convertedValue.toLocaleString('en-US', {
+      minimumFractionDigits: precision,
+      maximumFractionDigits: precision,
+    });
+
+    return `${formattedValue} ${selectedCurrency.value === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
+  };
+
   const formatTotalCost = () => {
     const total = projects.value.reduce((sum, project) => {
       return sum + (Number(project.cost) || 0);
     }, 0);
+    // Remove the extra conversion since formatCost already handles it
     return formatCost(total);
   };
 
@@ -472,11 +538,6 @@
     });
   };
 
-  const formatCost = (value) => {
-    if (!value) return '0';
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
-
   const getStatusDisplay = (projectStatus) => {
     switch (projectStatus) {
       case 1:
@@ -487,6 +548,20 @@
         return 'delayed';
       default:
         return 'in-progress';
+    }
+  };
+
+  const handleCurrencyChange = (newCurrency) => {
+    if (!newCurrency) return;
+
+    selectedCurrency.value = newCurrency;
+    localStorage.setItem('selectedCurrency', newCurrency);
+
+    // Recalculate budget range when currency changes
+    if (budgetRange.value) {
+      budgetRange.value = budgetRange.value.map((value) =>
+        convertCurrency(value, 'IQD', newCurrency)
+      );
     }
   };
 </script>

@@ -97,19 +97,21 @@
         <div class="mt-4 space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-200">المبلغ</label>
-            <CustomSwitch
-              v-model="isBudgetFilterEnabled"
-              label="تفعيل"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-            />
+            <div class="flex items-center gap-4">
+              <CustomSwitch
+                v-model="isBudgetFilterEnabled"
+                label="تفعيل"
+                :disabled="disabled"
+                :class="{ 'cursor-not-allowed': disabled }"
+              />
+            </div>
           </div>
           <div class="space-y-4" :class="{ 'opacity-50': !isBudgetFilterEnabled }">
             <Slider
               v-model="localBudgetRange"
-              :min="budgetRange[0]"
-              :max="budgetRange[1]"
-              :step="calculateStep(budgetRange[1] - budgetRange[0])"
+              :min="convertedMin"
+              :max="convertedMax"
+              :step="convertedStep"
               class="w-full"
               :disabled="!isBudgetFilterEnabled || disabled"
               :class="{ 'cursor-not-allowed': disabled }"
@@ -122,7 +124,7 @@
                   v-model="localBudgetRange[0]"
                   :disabled="!isBudgetFilterEnabled || disabled"
                   :class="{ 'cursor-not-allowed': disabled }"
-                  unit="د.ع"
+                  :unit="selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD"
                   @update:model-value="validateAndUpdateMin"
                 />
               </div>
@@ -132,7 +134,7 @@
                   v-model="localBudgetRange[1]"
                   :disabled="!isBudgetFilterEnabled || disabled"
                   :class="{ 'cursor-not-allowed': disabled }"
-                  unit="د.ع"
+                  :unit="selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD"
                   @update:model-value="validateAndUpdateMax"
                 />
               </div>
@@ -275,9 +277,10 @@
 </template>
 
 <script setup>
+  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { onMounted, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import CustomSwitch from './CustomSwitch.vue';
   import NumberInput from './NumberInput.vue';
 
@@ -322,6 +325,10 @@
       type: String,
       default: '',
     },
+    selectedCurrency: {
+      type: String,
+      default: 'IQD',
+    },
   });
 
   // Only emit filter-applied event
@@ -351,31 +358,14 @@
   // Add a new ref for budget filter enablement
   const isBudgetFilterEnabled = ref(false);
 
-  // Watch for changes in budget filter enablement
-  watch(isBudgetFilterEnabled, (newValue) => {
-    if (newValue) {
-      // When enabled, set to the full range from props
-      localBudgetRange.value = [...props.budgetRange];
-    }
-  });
-
-  // Watch for changes in budget range props
-  watch(
-    () => props.budgetRange,
-    (newRange) => {
-      // Update local range if filter is enabled or during initialization
-      if (isBudgetFilterEnabled.value) {
-        localBudgetRange.value = [...newRange];
-      }
-    },
-    { deep: true }
-  );
-
   // Initialize local values from props
   onMounted(() => {
     // Copy from props to local state
     localSearchQuery.value = props.searchQuery || '';
-    localBudgetRange.value = [...props.budgetRange];
+    // Initialize budget range with proper currency conversion
+    localBudgetRange.value = props.budgetRange.map((value) =>
+      convertCurrency(value, 'IQD', props.selectedCurrency)
+    );
     localSelectedYear.value = props.selectedYear;
 
     // Deep copy objects
@@ -500,16 +490,27 @@
     localSearchQuery.value = val;
   };
 
-  const calculateStep = (range) => {
-    // Calculate a reasonable step size based on the range
+  // Add computed values for slider
+  const convertedMin = computed(() =>
+    convertCurrency(props.budgetRange[0], 'IQD', props.selectedCurrency)
+  );
+  const convertedMax = computed(() =>
+    convertCurrency(props.budgetRange[1], 'IQD', props.selectedCurrency)
+  );
+  const convertedStep = computed(() => {
+    const range = convertedMax.value - convertedMin.value;
     const magnitude = Math.floor(Math.log10(range));
-    return Math.pow(10, magnitude - 2); // Two orders of magnitude smaller than the range
-  };
+    const step = Math.pow(10, magnitude - 2);
+    return props.selectedCurrency === 'USD' ? Math.max(0.01, step) : step;
+  });
 
   const resetFilters = () => {
     // Reset all local filters
     localSearchQuery.value = '';
-    localBudgetRange.value = [...props.budgetRange]; // Use the props range instead of hardcoded values
+    // Reset budget range with proper currency conversion
+    localBudgetRange.value = props.budgetRange.map((value) =>
+      convertCurrency(value, 'IQD', props.selectedCurrency)
+    );
     localSelectedFunding.value = {
       all: true,
       government: false,
@@ -549,13 +550,13 @@
     // Send all filters to parent
     const filters = {
       searchQuery: localSearchQuery.value,
-      budgetRange: isBudgetFilterEnabled.value ? localBudgetRange.value : null, // Only send budget if enabled
+      budgetRange: isBudgetFilterEnabled.value ? localBudgetRange.value : null,
       selectedFunding: localSelectedFunding.value,
       selectedYear: localSelectedYear.value,
       selectedStatus: localSelectedStatus.value,
       selectedBeneficiaries: localSelectedBeneficiaries.value,
       showGovernmentProjects: localShowGovernmentProjects.value,
-      isBudgetFilterEnabled: isBudgetFilterEnabled.value, // Send the enablement state
+      isBudgetFilterEnabled: isBudgetFilterEnabled.value,
     };
 
     emit('filter-applied', filters);
@@ -572,12 +573,25 @@
     return parseInt(value.toString().replace(/,/g, ''), 10);
   };
 
-  // Add these validation functions
+  // Update the validation functions to use props.selectedCurrency
   const validateAndUpdateMin = (val) => {
     let value = Number(val);
+    if (isNaN(value)) return;
+
+    // Get the min and max values in the current currency
+    const minInCurrentCurrency = convertCurrency(
+      props.budgetRange[0],
+      'IQD',
+      props.selectedCurrency
+    );
+    const maxInCurrentCurrency = convertCurrency(
+      props.budgetRange[1],
+      'IQD',
+      props.selectedCurrency
+    );
 
     // Ensure the value is within bounds
-    value = Math.max(props.budgetRange[0], Math.min(value, localBudgetRange.value[1]));
+    value = Math.max(minInCurrentCurrency, Math.min(value, localBudgetRange.value[1]));
 
     // Update the value
     localBudgetRange.value[0] = value;
@@ -585,16 +599,86 @@
 
   const validateAndUpdateMax = (val) => {
     let value = Number(val);
+    if (isNaN(value)) return;
+
+    // Get the min and max values in the current currency
+    const minInCurrentCurrency = convertCurrency(
+      props.budgetRange[0],
+      'IQD',
+      props.selectedCurrency
+    );
+    const maxInCurrentCurrency = convertCurrency(
+      props.budgetRange[1],
+      'IQD',
+      props.selectedCurrency
+    );
 
     // Ensure the value is within bounds
-    value = Math.max(localBudgetRange.value[0], Math.min(value, props.budgetRange[1]));
+    value = Math.max(localBudgetRange.value[0], Math.min(value, maxInCurrentCurrency));
 
     // Update the value
     localBudgetRange.value[1] = value;
   };
 
+  // Update the slider to handle currency conversion
   const handleSliderChange = (newValue) => {
-    localBudgetRange[0] = newValue[0];
-    localBudgetRange[1] = newValue[1];
+    localBudgetRange.value = newValue;
+  };
+
+  // Watch for currency changes in props
+  watch(
+    () => props.selectedCurrency,
+    (newCurrency) => {
+      if (isBudgetFilterEnabled.value) {
+        // Convert the current range from IQD to the new currency
+        const convertedRange = localBudgetRange.value.map((value) => {
+          return convertCurrency(value, 'IQD', newCurrency);
+        });
+        localBudgetRange.value = convertedRange;
+      }
+    },
+    { immediate: true }
+  );
+
+  // Watch for changes in budget filter enablement
+  watch(isBudgetFilterEnabled, (newValue) => {
+    if (newValue) {
+      // When enabled, set to the full range from props in the current currency
+      localBudgetRange.value = props.budgetRange.map((value) =>
+        convertCurrency(value, 'IQD', props.selectedCurrency)
+      );
+    }
+  });
+
+  // Watch for changes in budget range props
+  watch(
+    () => props.budgetRange,
+    (newRange) => {
+      // Update local range if filter is enabled or during initialization
+      if (isBudgetFilterEnabled.value) {
+        localBudgetRange.value = newRange.map((value) =>
+          convertCurrency(value, 'IQD', props.selectedCurrency)
+        );
+      }
+    },
+    { deep: true }
+  );
+
+  // Add currency conversion function with proper precision
+  const convertCurrency = (value, fromCurrency, toCurrency) => {
+    if (!value || isNaN(value)) return 0;
+    const numValue = Number(value);
+    if (fromCurrency === toCurrency) return numValue;
+
+    let convertedValue;
+    if (fromCurrency === 'USD') {
+      convertedValue = numValue * CURRENCY_CONVERSION.USD_TO_IQD;
+    } else {
+      convertedValue = numValue * CURRENCY_CONVERSION.IQD_TO_USD;
+    }
+
+    // Round to appropriate precision
+    const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
+    return Number(convertedValue.toFixed(precision));
   };
 </script>
