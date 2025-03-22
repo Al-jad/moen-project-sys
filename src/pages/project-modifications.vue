@@ -13,9 +13,10 @@
       <!-- Notification Banner -->
       <Premium />
 
-      <div class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
+      <div class="relative rounded-lg bg-white shadow-sm dark:bg-gray-800">
+        <div class="absolute inset-0 z-10 cursor-not-allowed"></div>
         <div class="p-6">
-          <div class="w-full">
+          <div class="pointer-events-auto w-full">
             <CustomTable
               :columns="columns"
               :filters="filters"
@@ -26,6 +27,7 @@
               @search-change="handleSearchChange"
               @date-change="handleDateChange"
               @export="handleExport"
+              :is-export-premium="true"
             >
               <template #action="{ item }">
                 <Dialog>
@@ -80,6 +82,7 @@
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
+  import Premium from '@/components/Premium.vue';
   import {
     Dialog,
     DialogContent,
@@ -93,7 +96,6 @@
   import type { DateRange } from 'radix-vue';
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import Premium from '@/components/Premium.vue';
 
   interface Column {
     key: string;
@@ -255,18 +257,13 @@
     }
   };
 
-  const showDetails = (item) => {
-  };
+  const showDetails = (item) => {};
 
-  const handleFilterChange = (filters) => {
-  };
+  const handleFilterChange = (filters) => {};
 
-  const handleSearchChange = (query) => {
-  };
+  const handleSearchChange = (query) => {};
 
-  const handleDateChange = (date) => {
-  };
+  const handleDateChange = (date) => {};
 
-  const handleExport = () => {
-  };
+  const handleExport = () => {};
 </script>
