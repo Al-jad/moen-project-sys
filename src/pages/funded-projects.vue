@@ -162,16 +162,29 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
   const projects = ref([]);
   const filteredProjects = ref([]);
   const isLoading = ref(true);
   const router = useRouter();
+  const route = useRoute();
   const showPremiumModal = ref(false);
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
   const beneficiaries = ref([]);
+
+  // Initialize showGovernmentProjects from route query
+  const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
+
+  // Watch for route changes to update the filter
+  watch(
+    () => route.query.showGovernmentProjects,
+    (newValue) => {
+      showGovernmentProjects.value = newValue === 'true';
+    }
+  );
 
   // Computed properties for budget range
   const minMaxBudgetRange = computed(() => {
@@ -208,7 +221,6 @@
     delayed: false,
   });
   const selectedBeneficiaries = ref({ all: true });
-  const showGovernmentProjects = ref(false);
   const isBudgetFilterEnabled = ref(false);
 
   // Only applied when the button is pressed

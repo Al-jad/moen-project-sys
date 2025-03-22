@@ -301,7 +301,8 @@
       localSelectedBeneficiaries.value = { ...props.selectedBeneficiaries };
     }
 
-    localShowGovernmentProjects.value = props.showGovernmentProjects;
+    // Set government projects filter from props
+    localShowGovernmentProjects.value = props.showGovernmentProjects || false;
 
     if (props.selectedFunding) {
       localSelectedFunding.value = { ...props.selectedFunding };

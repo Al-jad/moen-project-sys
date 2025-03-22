@@ -6,9 +6,9 @@
       <Header />
 
       <div class="mt-[6%] p-6">
-        <h1 class="mb-4 text-2xl font-bold text-right text-gray-900 dark:text-white"> المشاريع </h1>
+        <h1 class="mb-4 text-right text-2xl font-bold text-gray-900 dark:text-white"> المشاريع </h1>
         <!-- Stats Cards -->
-        <div class="grid grid-cols-5 gap-4 mb-8">
+        <div class="mb-8 grid grid-cols-5 gap-4">
           <ProjectStatCard
             title="كل المشاريع"
             :count="allProjects.length"
@@ -45,10 +45,15 @@
             to="/funded-projects?status=cancelled"
           />
         </div>
-        <h1 class="mb-4 text-2xl font-bold text-right"> الاختصارات </h1>
+        <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
         <!-- Shortcuts Cards -->
-        <div class="grid grid-cols-4 gap-4 mb-8">
-          <ShortcutCard title="البرنامج الحكومي" icon="lucide:users" color="sky" />
+        <div class="mb-8 grid grid-cols-4 gap-4">
+          <ShortcutCard
+            title="البرنامج الحكومي"
+            icon="lucide:users"
+            color="sky"
+            to="/funded-projects?showGovernmentProjects=true"
+          />
 
           <ShortcutCard
             title="الإجراءات الإدارية"
@@ -64,7 +69,7 @@
 
         <!-- Chart Section -->
         <div
-          class="relative w-full p-6 overflow-hidden bg-white border border-red-200 rounded-lg shadow dark:border-red-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+          class="relative w-full overflow-hidden rounded-lg border border-red-200 bg-white p-6 shadow dark:border-red-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
         >
           <!-- Demo Version Ribbon -->
           <div
@@ -73,7 +78,7 @@
             <span class="text-xs font-semibold tracking-wide text-white"> DEMO VERSION </span>
           </div>
 
-          <div class="flex items-center justify-between mb-4 mr-20">
+          <div class="mb-4 mr-20 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <CustomSelect
                 v-model="selectedYear"
@@ -95,7 +100,7 @@
         <div class="mt-8">
           <Tabs default-value="projects" class="w-full">
             <TabsList
-              class="justify-end w-full p-0 bg-transparent border-b border-gray-200 rounded-none dark:border-gray-700"
+              class="w-full justify-end rounded-none border-b border-gray-200 bg-transparent p-0 dark:border-gray-700"
             >
               <TabsTrigger
                 value="users"
@@ -117,14 +122,14 @@
               <div v-if="isLoadingUsers" class="flex items-center justify-center py-8">
                 <div class="flex flex-col items-center gap-4">
                   <div
-                    class="w-12 h-12 border-4 rounded-full animate-spin border-primary border-t-transparent"
+                    class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
                   ></div>
                   <p class="text-gray-600 dark:text-gray-300">جاري تحميل المستخدمين...</p>
                 </div>
               </div>
               <div
                 v-else-if="userError"
-                class="p-4 text-center rounded-lg bg-red-50 dark:bg-red-900/20"
+                class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
               >
                 <p class="text-red-600 dark:text-red-400">{{ userError }}</p>
               </div>
