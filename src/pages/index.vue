@@ -188,36 +188,49 @@
   const fetchProjects = async () => {
     try {
       isLoading.value = true;
-      const response = await axiosInstance.get('/api/Project');
+      const response = await axiosInstance.get('/api/project');
+      console.log('API Response:', response.data); // Debug log
       // Transform the data to match ProjectCard props
-      allProjects.value = response.data.map((project) => ({
-        id: project.id,
-        title: project.name || project.title,
-        department: project.executingDepartment || project.department,
-        startDate: formatDate(project.actualStartDate || project.startDate),
-        endDate: formatDate(project.endDate),
-        status:
-          project.projectStatus === 2
-            ? 'منجز'
-            : project.projectStatus === 1
-              ? 'قيد التنفيذ'
-              : project.projectStatus === 3
-                ? 'متلكئ'
-                : project.projectStatus === 0
-                  ? 'ملغي'
-                  : 'غير محدد',
-        statusVariant:
-          project.projectStatus === 2
-            ? 'success'
-            : project.projectStatus === 1
-              ? 'warning'
-              : project.projectStatus === 3
-                ? 'destructive'
-                : project.projectStatus === 0
-                  ? 'secondary'
-                  : 'default',
-        duration: project.duration || '12',
-      }));
+      allProjects.value = response.data.map((project) => {
+        const transformed = {
+          id: project.id,
+          title: project.name || project.title,
+          department: project.executingDepartment || project.department,
+          startDate: formatDate(project.actualStartDate || project.startDate),
+          endDate: formatDate(project.endDate),
+          projectStatus: project.projectStatus,
+          status:
+            project.projectStatus === 2
+              ? 'منجز'
+              : project.projectStatus === 1
+                ? 'قيد التنفيذ'
+                : project.projectStatus === 3
+                  ? 'متلكئ'
+                  : project.projectStatus === 0
+                    ? 'ملغي'
+                    : 'غير محدد',
+          statusVariant:
+            project.projectStatus === 2
+              ? 'success'
+              : project.projectStatus === 1
+                ? 'warning'
+                : project.projectStatus === 3
+                  ? 'destructive'
+                  : project.projectStatus === 0
+                    ? 'secondary'
+                    : 'default',
+          duration: project.duration || '12',
+        };
+        console.log('Transformed project:', transformed); // Debug log
+        return transformed;
+      });
+      console.log('All projects:', allProjects.value); // Debug log
+      console.log('Stats:', {
+        completed: completedProjects.value.length,
+        inProgress: inProgressProjects.value.length,
+        delayed: delayedProjects.value.length,
+        cancelled: cancelledProjects.value.length,
+      }); // Debug log
     } catch (err) {
       console.error('Error fetching projects:', err);
       error.value = err.response?.data?.message || 'حدث خطأ في تحميل المشاريع';
