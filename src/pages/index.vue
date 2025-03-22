@@ -153,10 +153,10 @@
   import Sidebar from '@/components/Sidebar.vue';
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import UsersList from '@/components/UsersList.vue';
+  import { useToast } from '@/composables/useToast';
   import axiosInstance from '@/plugins/axios';
   import { useAuthStore } from '@/stores/authStore';
   import { computed, onMounted, ref } from 'vue';
-  import { toast, Toaster } from 'vue-sonner';
 
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
@@ -238,14 +238,13 @@
     },
   ];
 
+  const { showSuccess } = useToast();
+
   onMounted(async () => {
     await Promise.all([fetchProjects(), fetchUsers()]);
     // Show welcome toast if user just logged in
     if (router.currentRoute.value.query.from === 'login') {
-      toast.success('تم تسجيل الدخول بنجاح', {
-        duration: 2000,
-        rtl: true,
-      });
+      showSuccess('تم تسجيل الدخول بنجاح');
       // Clear the query parameter after showing the toast
       router.replace({ query: {} });
     }

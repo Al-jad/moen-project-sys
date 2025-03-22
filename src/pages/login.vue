@@ -79,11 +79,11 @@
 </template>
 
 <script setup>
+  import { useToast } from '@/composables/useToast';
   import axiosInstance from '@/plugins/axios';
   import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
   import { ref } from 'vue';
-  import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const authStore = useAuthStore();
@@ -91,6 +91,8 @@
   const password = ref('');
   const showPassword = ref(false);
   const errorMessage = ref('');
+
+  const { showError } = useToast();
 
   const handleLogin = async () => {
     errorMessage.value = '';
@@ -112,11 +114,7 @@
     } catch (error) {
       console.error('Login Error:', error);
       errorMessage.value = 'خطأ في تسجيل الدخول. تحقق من اسم المستخدم أو كلمة المرور.';
-      toast.error('فشل تسجيل الدخول', {
-        description: 'يرجى التحقق من اسم المستخدم وكلمة المرور',
-        duration: 3000,
-        rtl: true,
-      });
+      showError('فشل تسجيل الدخول', 'يرجى التحقق من اسم المستخدم وكلمة المرور');
     }
   };
 </script>

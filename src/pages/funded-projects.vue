@@ -176,13 +176,13 @@
 </template>
 <script setup>
   import CustomSelect from '@/components/CustomSelect.vue';
+  import { useToast } from '@/composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { toast } from 'vue-sonner';
 
   const projects = ref([]);
   const filteredProjects = ref([]);
@@ -261,6 +261,8 @@
     { value: 'IQD', label: UNITS.CURRENCY.IQD },
     { value: 'USD', label: UNITS.CURRENCY.USD },
   ];
+
+  const { showSuccess } = useToast();
 
   // Only applied when the button is pressed
   const applyFilters = (filters) => {
@@ -553,26 +555,25 @@
   };
 
   const handleCurrencyChange = (newCurrency) => {
-    if (!newCurrency) return;
-
     selectedCurrency.value = newCurrency;
     localStorage.setItem('selectedCurrency', newCurrency);
 
-    // Show toast notification
-    toast.success('تم تغيير العملة', {
-      description:
-        newCurrency === 'USD'
-          ? 'تم تغيير العملة إلى الدولار الأمريكي'
-          : 'تم تغيير العملة إلى الدينار العراقي',
-      duration: 2000,
-      rtl: true,
-    });
+    showSuccess(
+      'تم تغيير العملة',
+      newCurrency === 'USD'
+        ? 'تم تغيير العملة إلى الدولار الأمريكي'
+        : 'تم تغيير العملة إلى الدينار العراقي'
+    );
 
     // Recalculate budget range when currency changes
     if (budgetRange.value) {
-      budgetRange.value = budgetRange.value.map((value) =>
-        convertCurrency(value, 'IQD', newCurrency)
-      );
+      budgetRange.value = budgetRange.value.map((value) => {
+        if (newCurrency === 'USD') {
+          return value * 1450; // Convert from USD to IQD
+        } else {
+          return value / 1450; // Convert from IQD to USD
+        }
+      });
     }
   };
 </script>

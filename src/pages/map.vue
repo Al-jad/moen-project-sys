@@ -2,11 +2,11 @@
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import Map from '@/components/Map.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
+  import { useToast } from '@/composables/useToast';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { projectService } from '@/services/projectService';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
-  import { toast } from 'vue-sonner';
   const selected = ref('all');
   const projects = ref([]);
   const loading = ref(true);
@@ -109,20 +109,16 @@
       id: 106,
     },
   ];
+  const { showSuccess, showError } = useToast();
   onMounted(async () => {
     try {
       const response = await projectService.getAllProjects();
-      const apiProjects = response.data;
-      projects.value = [...apiProjects, ...mockupProjects];
+      projects.value = [...response.data, ...mockupProjects];
     } catch (err) {
       console.error('Error fetching projects:', err);
       projects.value = [...mockupProjects];
       error.value = 'Failed to load API projects. Showing mockup data only.';
-      toast.error('فشل تحميل المشاريع', {
-        description: 'تم عرض بيانات تجريبية بدلاً من البيانات الفعلية',
-        duration: 3000,
-        rtl: true,
-      });
+      showError('فشل تحميل المشاريع', 'تم عرض بيانات تجريبية بدلاً من البيانات الفعلية');
     } finally {
       loading.value = false;
     }
@@ -155,11 +151,7 @@
 
   const handleStatusChange = (newStatus) => {
     selected.value = newStatus;
-    toast.success('تم تغيير حالة العرض', {
-      description: `تم عرض المشاريع ${getStatusLabel(newStatus)}`,
-      duration: 2000,
-      rtl: true,
-    });
+    showSuccess('تم تغيير حالة العرض', `تم عرض المشاريع ${getStatusLabel(newStatus)}`);
   };
 
   // Expose the function to the template
@@ -197,11 +189,7 @@
               @click="
                 () => {
                   selected = 'all';
-                  toast.success('تم تغيير حالة العرض', {
-                    description: 'تم عرض كل المشاريع',
-                    duration: 2000,
-                    rtl: true,
-                  });
+                  showSuccess('تم تغيير حالة العرض', 'تم عرض كل المشاريع');
                 }
               "
             >
@@ -226,11 +214,7 @@
               @click="
                 () => {
                   selected = 'completed';
-                  toast.success('تم تغيير حالة العرض', {
-                    description: 'تم عرض المشاريع المنجزة',
-                    duration: 2000,
-                    rtl: true,
-                  });
+                  showSuccess('تم تغيير حالة العرض', 'تم عرض المشاريع المنجزة');
                 }
               "
             >
@@ -255,11 +239,7 @@
               @click="
                 () => {
                   selected = 'inProgress';
-                  toast.success('تم تغيير حالة العرض', {
-                    description: 'تم عرض المشاريع قيد التنفيذ',
-                    duration: 2000,
-                    rtl: true,
-                  });
+                  showSuccess('تم تغيير حالة العرض', 'تم عرض المشاريع قيد التنفيذ');
                 }
               "
             >
@@ -284,11 +264,7 @@
               @click="
                 () => {
                   selected = 'delayed';
-                  toast.success('تم تغيير حالة العرض', {
-                    description: 'تم عرض المشاريع المتلكئة',
-                    duration: 2000,
-                    rtl: true,
-                  });
+                  showSuccess('تم تغيير حالة العرض', 'تم عرض المشاريع المتلكئة');
                 }
               "
             >
@@ -313,11 +289,7 @@
               @click="
                 () => {
                   selected = 'cancelled';
-                  toast.success('تم تغيير حالة العرض', {
-                    description: 'تم عرض المشاريع الملغاة',
-                    duration: 2000,
-                    rtl: true,
-                  });
+                  showSuccess('تم تغيير حالة العرض', 'تم عرض المشاريع الملغاة');
                 }
               "
             >

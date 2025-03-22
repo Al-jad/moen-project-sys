@@ -95,7 +95,6 @@
     <div
       class="relative flex cursor-pointer items-center border-t border-gray-200 p-2 transition-all duration-300 ease-in-out hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-gray-800"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
-      @click="router.push('/profile')"
     >
       <div class="flex items-center gap-3 px-2 py-1.5">
         <div class="flex items-center justify-center">
@@ -112,30 +111,45 @@
             userTranslations[authStore.getUser?.role] || 'Guest'
           }}</span>
         </div>
-        <Icon
-          icon="lucide:log-out"
-          class="mr-auto h-4 w-4 text-gray-400 transition-all duration-200 hover:text-red-500"
+        <div
+          class="flex items-center justify-center rounded-full bg-red-100 p-2 transition-all duration-200 hover:bg-red-200 dark:bg-red-950/30 dark:hover:bg-red-950/50"
           :class="{
             'translate-x-2 opacity-0': !isAnyItemHovered,
             'translate-x-0 opacity-100': isAnyItemHovered,
           }"
-          @click.stop="handleLogout"
-        />
+        >
+          <Icon
+            icon="lucide:log-out"
+            class="h-4 w-4 text-gray-500 transition-all duration-200 hover:text-red-500 dark:text-gray-400"
+            @click.stop="showLogoutModal = true"
+          />
+        </div>
       </div>
     </div>
   </div>
+
+  <LogoutModal
+    v-model:open="showLogoutModal"
+    :loading="isLoggingOut"
+    @confirm="handleLogout"
+    @cancel="showLogoutModal = false"
+  />
 </template>
 
 <script setup>
+  import LogoutModal from '@/components/LogoutModal.vue';
   import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
   const hoveredItem = ref(null);
   const isAnyItemHovered = ref(false);
+  const showLogoutModal = ref(false);
+  const isLoggingOut = ref(false);
 
   const userTranslations = {
     ADMIN: 'مدير',
@@ -179,9 +193,17 @@
     return route.path.startsWith(path);
   };
 
-  const handleLogout = () => {
-    authStore.logout();
-    router.push('/login');
+  const handleLogout = async () => {
+    isLoggingOut.value = true;
+    try {
+      await authStore.logout();
+      router.push('/login');
+    } catch (error) {
+      toast.error('حدث خطأ أثناء تسجيل الخروج');
+    } finally {
+      isLoggingOut.value = false;
+      showLogoutModal.value = false;
+    }
   };
 </script>
 

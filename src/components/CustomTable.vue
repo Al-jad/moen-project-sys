@@ -164,11 +164,11 @@
     TableHeader,
     TableRow,
   } from '@/components/ui/table';
+  import { useToast } from '@/composables/useToast';
   import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
   import { computed, onMounted, ref, watch } from 'vue';
-  import { toast } from 'vue-sonner';
   import * as XLSX from 'xlsx';
   import CustomInput from './CustomInput.vue';
   import Pagination from './CustomPagination.vue';
@@ -258,6 +258,8 @@
   const searchQuery = ref('');
   const dateRange = ref<DateRange>();
 
+  const { showSuccess, showError } = useToast();
+
   // Export function
   const exportToExcel = (data: any[], headers: string[], fileName: string) => {
     try {
@@ -303,9 +305,11 @@
           day: '2-digit',
         })}.xlsx`
       );
+
+      showSuccess('تم تصدير البيانات بنجاح', 'تم حفظ الملف في مجلد التنزيلات');
     } catch (error) {
       console.error('Error exporting to Excel:', error);
-      toast.error('حدث خطأ أثناء تصدير البيانات');
+      showError('حدث خطأ أثناء تصدير البيانات', 'يرجى المحاولة مرة أخرى');
     }
   };
 

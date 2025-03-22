@@ -16,7 +16,7 @@
       <div class="flex items-center gap-3">
         <div
           class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
-          @click="handleLogout"
+          @click="showLogoutModal = true"
         >
           <Icon icon="lucide:log-out" class="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </div>
@@ -88,20 +88,30 @@
       </Button>
     </div>
   </header>
+
+  <LogoutModal
+    v-model:open="showLogoutModal"
+    :loading="isLoggingOut"
+    @confirm="handleLogout"
+    @cancel="showLogoutModal = false"
+  />
 </template>
 
 <script setup>
+  import LogoutModal from '@/components/LogoutModal.vue';
   import { useTheme } from '@/composables/useTheme';
+  import { useToast } from '@/composables/useToast';
   import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
   import { onMounted, onUnmounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const authStore = useAuthStore();
   const isTasksOpen = ref(false);
+  const showLogoutModal = ref(false);
+  const isLoggingOut = ref(false);
 
   const userTranslations = {
     ADMIN: 'مدير',
@@ -109,18 +119,27 @@
     DATA_ENTRY: 'مدخل بيانات',
   };
 
-  const handleLogout = () => {
-    authStore.logout();
-    router.push('/login');
+  const { showInfo, showError } = useToast();
+
+  const handleLogout = async () => {
+    isLoggingOut.value = true;
+    try {
+      await authStore.logout();
+      router.push('/login');
+    } catch (error) {
+      showError('حدث خطأ أثناء تسجيل الخروج');
+    } finally {
+      isLoggingOut.value = false;
+      showLogoutModal.value = false;
+    }
   };
 
   const handleThemeToggle = () => {
     const newTheme = theme.value === 'dark' ? 'light' : 'dark';
-    toast.success('تم تغيير المظهر', {
-      description: newTheme === 'dark' ? 'تم تفعيل الوضع الليلي' : 'تم تفعيل الوضع النهاري',
-      duration: 2000,
-      rtl: true,
-    });
+    showInfo(
+      'تم تغيير المظهر',
+      newTheme === 'dark' ? 'تم تفعيل الوضع الليلي' : 'تم تفعيل الوضع النهاري'
+    );
     toggleTheme();
   };
 
