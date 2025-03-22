@@ -51,6 +51,7 @@
               label="الكل"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleAllFundingChange"
             />
             <CustomCheckbox
               v-model="localSelectedFunding.government"
@@ -58,6 +59,7 @@
               label="البرنامج الحكومي"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualFundingChange"
             />
             <CustomCheckbox
               v-model="localSelectedFunding.investment"
@@ -179,6 +181,7 @@
               label="الكل"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleAllStatusChange"
             />
             <CustomCheckbox
               v-model="localSelectedStatus.completed"
@@ -186,6 +189,7 @@
               label="منجز"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualStatusChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-green-500"></div>
             </CustomCheckbox>
@@ -195,6 +199,7 @@
               label="قيد الانجاز"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualStatusChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-yellow-500" />
             </CustomCheckbox>
@@ -204,6 +209,7 @@
               label="متلكئ"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualStatusChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
             </CustomCheckbox>
@@ -213,6 +219,7 @@
               label="ملغي"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualStatusChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-gray-500"></div>
             </CustomCheckbox>
@@ -235,6 +242,7 @@
               label="الكل"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleAllBeneficiaryChange"
             />
 
             <CustomCheckbox
@@ -245,6 +253,7 @@
               :label="beneficiary.name"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualBeneficiaryChange"
             />
           </div>
         </div>
@@ -419,71 +428,54 @@
       });
   }
 
-  // Handle "all" selection for beneficiaries
-  function updateBeneficiarySelection() {
-    if (localSelectedBeneficiaries.value.all) {
-      // If "all" is selected, deselect individual options
-      Object.keys(localSelectedBeneficiaries.value).forEach((key) => {
-        if (key !== 'all') {
-          localSelectedBeneficiaries.value[key] = false;
-        }
-      });
-    } else {
-      // Check if any individual option is selected
-      const anyIndividualSelected = Object.keys(localSelectedBeneficiaries.value).some(
-        (key) => key !== 'all' && localSelectedBeneficiaries.value[key]
-      );
-
-      // If none is selected, reselect "all"
-      if (!anyIndividualSelected) {
-        localSelectedBeneficiaries.value.all = true;
-      }
-    }
-  }
-
-  // Handle "all" selection for status
-  function updateStatusSelection() {
-    if (localSelectedStatus.value.all) {
-      // If "all" is selected, deselect individual options
+  // Add all handlers in one place
+  const handleAllStatusChange = (value) => {
+    if (value) {
+      // If "All" is selected, uncheck all individual statuses
       Object.keys(localSelectedStatus.value).forEach((key) => {
         if (key !== 'all') {
           localSelectedStatus.value[key] = false;
         }
       });
-    } else {
-      // Check if any individual option is selected
-      const anyIndividualSelected = Object.keys(localSelectedStatus.value).some(
-        (key) => key !== 'all' && localSelectedStatus.value[key]
-      );
-
-      // If none is selected, reselect "all"
-      if (!anyIndividualSelected) {
-        localSelectedStatus.value.all = true;
-      }
     }
-  }
+  };
 
-  // Handle "all" selection for funding
-  function updateFundingSelection() {
-    if (localSelectedFunding.value.all) {
-      // If "all" is selected, deselect individual options
+  const handleIndividualStatusChange = () => {
+    // If any individual status is selected, uncheck "All"
+    localSelectedStatus.value.all = false;
+  };
+
+  const handleAllFundingChange = (value) => {
+    if (value) {
+      // If "All" is selected, uncheck all individual funding options
       Object.keys(localSelectedFunding.value).forEach((key) => {
         if (key !== 'all') {
           localSelectedFunding.value[key] = false;
         }
       });
-    } else {
-      // Check if any individual option is selected
-      const anyIndividualSelected = Object.keys(localSelectedFunding.value).some(
-        (key) => key !== 'all' && localSelectedFunding.value[key]
-      );
-
-      // If none is selected, reselect "all"
-      if (!anyIndividualSelected) {
-        localSelectedFunding.value.all = true;
-      }
     }
-  }
+  };
+
+  const handleIndividualFundingChange = () => {
+    // If any individual funding option is selected, uncheck "All"
+    localSelectedFunding.value.all = false;
+  };
+
+  const handleAllBeneficiaryChange = (value) => {
+    if (value) {
+      // If "All" is selected, uncheck all individual beneficiaries
+      Object.keys(localSelectedBeneficiaries.value).forEach((key) => {
+        if (key !== 'all') {
+          localSelectedBeneficiaries.value[key] = false;
+        }
+      });
+    }
+  };
+
+  const handleIndividualBeneficiaryChange = () => {
+    // If any individual beneficiary is selected, uncheck "All"
+    localSelectedBeneficiaries.value.all = false;
+  };
 
   // Search without debounce
   const handleSearch = (val) => {
