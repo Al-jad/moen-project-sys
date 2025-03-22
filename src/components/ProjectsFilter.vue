@@ -115,6 +115,7 @@
               :max="convertedMax"
               :step="convertedStep"
               class="w-full"
+              dir="rtl"
               :disabled="!isBudgetFilterEnabled || disabled"
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"

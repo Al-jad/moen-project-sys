@@ -46,7 +46,7 @@
     v-bind="forwarded"
   >
     <SliderTrack
-      class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary data-[orientation=vertical]:w-2"
+      class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary dark:bg-gray-700 data-[orientation=vertical]:w-2"
     >
       <SliderRange class="absolute h-full bg-primary data-[orientation=vertical]:w-full" />
     </SliderTrack>
