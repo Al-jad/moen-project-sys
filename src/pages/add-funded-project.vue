@@ -12,6 +12,24 @@
             :is-editing="true"
             @update:project="updateProjectDetails"
           />
+
+          <!-- Government Project Toggle -->
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">نوع المشروع</h2>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <CustomSwitch
+                v-model="store.form.isGovernment"
+                label="مشروع حكومي"
+                @update:model-value="updateGovernmentStatus"
+              />
+              <div v-if="store.form.isGovernment" class="text-sm text-green-600 dark:text-green-400">
+                تم تعيين المشروع كمشروع حكومي
+              </div>
+            </div>
+          </div>
+
           <ProjectDuration />
           <ProjectLocation />
           <ProjectComponents />
@@ -46,6 +64,7 @@
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted } from 'vue';
   import { toast } from 'vue-sonner';
+
   const store = useFundedProjectStore();
   const router = useRouter();
 
@@ -76,7 +95,14 @@
       isSaving: false,
       hasUnsavedChanges: false,
       projectStatus: 1,
+      isGovernment: false,
     };
+
+    // A check to ensure components is always an array
+    if (!Array.isArray(store.form.components)) {
+      store.form.components = [];
+    }
+    
     localStorage.removeItem('fundedProject');
     sessionStorage.removeItem('fundedProject');
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -94,6 +120,11 @@
   };
 
   const totalPeriods = computed(() => store.totalPeriods);
+
+  const updateGovernmentStatus = (value) => {
+    store.form.isGovernment = value;
+    store.hasUnsavedChanges = true;
+  };
 
   const saveProject = async () => {
     if (!store.form.name) {
@@ -150,6 +181,8 @@
       if (store.form.actualStartDate instanceof Date) {
         store.form.actualStartDate = store.form.actualStartDate.toISOString();
       }
+
+      store.form.isGovernment = !!store.form.isGovernment;
 
       if (Array.isArray(store.form.beneficiaryEntities)) {
         store.form.beneficiaryEntities = store.form.beneficiaryEntities
