@@ -11,13 +11,22 @@
     <div class="border-b border-gray-200 p-6 dark:border-gray-700">
       <div class="mb-4 flex items-start justify-between">
         <div class="flex items-center gap-4">
-          <div class="flex">
-            <h3
-              class="text-lg font-medium text-gray-900 transition-colors dark:text-gray-100"
-              :class="[disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400']"
-            >
-              {{ project.name || 'لا يوجد اسم' }}
-            </h3>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+              <h3
+                class="text-lg font-medium text-gray-900 transition-colors dark:text-gray-100"
+                :class="[disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400']"
+              >
+                {{ project.name || 'لا يوجد اسم' }}
+              </h3>
+              <div
+                v-if="project.projectStatus !== undefined"
+                :class="getStatusBadgeClass(project.projectStatus)"
+                class="rounded-full px-3 py-1 text-xs font-medium dark:bg-opacity-20"
+              >
+                {{ getStatusText(project.projectStatus) }}
+              </div>
+            </div>
           </div>
         </div>
         <h3
@@ -74,6 +83,7 @@
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import { Icon } from '@iconify/vue';
   import { useRouter } from 'vue-router';
+  import { computed } from 'vue';
 
   const router = useRouter();
   const props = defineProps({
@@ -185,4 +195,24 @@
 
     return `${formattedValue} ${props.selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
   };
+
+  function getStatusBadgeClass(status) {
+    const statusClasses = {
+      0: 'bg-red-100 text-red-700 dark:bg-red-500 dark:text-red-100',
+      1: 'bg-blue-100 text-blue-700 dark:bg-blue-500 dark:text-blue-100',
+      2: 'bg-green-100 text-green-700 dark:bg-green-500 dark:text-green-100',
+      3: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500 dark:text-yellow-100',
+    };
+    return statusClasses[status] || '';
+  }
+
+  function getStatusText(status) {
+    const statusMap = {
+      0: 'ملغاة',
+      1: 'قيد التنفيذ',
+      2: 'منجزة',
+      3: 'متلكئة',
+    };
+    return statusMap[status] || 'غير معروف';
+  }
 </script>
