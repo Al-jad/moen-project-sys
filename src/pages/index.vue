@@ -140,6 +140,7 @@
       </div>
     </main>
   </div>
+  <Toaster />
 </template>
 
 <script setup>
@@ -155,6 +156,7 @@
   import axiosInstance from '@/plugins/axios';
   import { useAuthStore } from '@/stores/authStore';
   import { computed, onMounted, ref } from 'vue';
+  import { toast, Toaster } from 'vue-sonner';
 
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
@@ -238,6 +240,15 @@
 
   onMounted(async () => {
     await Promise.all([fetchProjects(), fetchUsers()]);
+    // Show welcome toast if user just logged in
+    if (router.currentRoute.value.query.from === 'login') {
+      toast.success('تم تسجيل الدخول بنجاح', {
+        duration: 2000,
+        rtl: true,
+      });
+      // Clear the query parameter after showing the toast
+      router.replace({ query: {} });
+    }
   });
 </script>
 

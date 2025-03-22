@@ -182,6 +182,7 @@
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const projects = ref([]);
   const filteredProjects = ref([]);
@@ -556,6 +557,16 @@
 
     selectedCurrency.value = newCurrency;
     localStorage.setItem('selectedCurrency', newCurrency);
+
+    // Show toast notification
+    toast.success('تم تغيير العملة', {
+      description:
+        newCurrency === 'USD'
+          ? 'تم تغيير العملة إلى الدولار الأمريكي'
+          : 'تم تغيير العملة إلى الدينار العراقي',
+      duration: 2000,
+      rtl: true,
+    });
 
     // Recalculate budget range when currency changes
     if (budgetRange.value) {

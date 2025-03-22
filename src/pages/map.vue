@@ -6,6 +6,7 @@
   import { projectService } from '@/services/projectService';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
+  import { toast } from 'vue-sonner';
   const selected = ref('all');
   const projects = ref([]);
   const loading = ref(true);
@@ -117,6 +118,11 @@
       console.error('Error fetching projects:', err);
       projects.value = [...mockupProjects];
       error.value = 'Failed to load API projects. Showing mockup data only.';
+      toast.error('فشل تحميل المشاريع', {
+        description: 'تم عرض بيانات تجريبية بدلاً من البيانات الفعلية',
+        duration: 3000,
+        rtl: true,
+      });
     } finally {
       loading.value = false;
     }
@@ -129,6 +135,36 @@
       cancelled: projects.value.filter((p) => p.projectStatus === 0).length,
     };
     return counts;
+  });
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'all':
+        return 'عرض الكل';
+      case 'completed':
+        return 'المنجزة';
+      case 'inProgress':
+        return 'قيد التنفيذ';
+      case 'delayed':
+        return 'المتلكئة';
+      case 'cancelled':
+        return 'الملغاة';
+      default:
+        return '';
+    }
+  };
+
+  const handleStatusChange = (newStatus) => {
+    selected.value = newStatus;
+    toast.success('تم تغيير حالة العرض', {
+      description: `تم عرض المشاريع ${getStatusLabel(newStatus)}`,
+      duration: 2000,
+      rtl: true,
+    });
+  };
+
+  // Expose the function to the template
+  defineExpose({
+    handleStatusChange,
   });
 </script>
 <template>
@@ -158,7 +194,16 @@
                 'ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'all',
               }"
-              @click="selected = 'all'"
+              @click="
+                () => {
+                  selected = 'all';
+                  toast.success('تم تغيير حالة العرض', {
+                    description: 'تم عرض كل المشاريع',
+                    duration: 2000,
+                    rtl: true,
+                  });
+                }
+              "
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
                 <Icon :name="'lucide:layout-grid'" class="h-5 w-5" />
@@ -178,7 +223,16 @@
                 'ring-2 ring-green-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'completed',
               }"
-              @click="selected = 'completed'"
+              @click="
+                () => {
+                  selected = 'completed';
+                  toast.success('تم تغيير حالة العرض', {
+                    description: 'تم عرض المشاريع المنجزة',
+                    duration: 2000,
+                    rtl: true,
+                  });
+                }
+              "
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
                 <Icon :name="'lucide:check-circle'" class="h-5 w-5 text-green-500" />
@@ -198,7 +252,16 @@
                 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'inProgress',
               }"
-              @click="selected = 'inProgress'"
+              @click="
+                () => {
+                  selected = 'inProgress';
+                  toast.success('تم تغيير حالة العرض', {
+                    description: 'تم عرض المشاريع قيد التنفيذ',
+                    duration: 2000,
+                    rtl: true,
+                  });
+                }
+              "
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
                 <Icon :name="'lucide:loader'" class="h-5 w-5 animate-spin text-yellow-500" />
@@ -218,7 +281,16 @@
                 'ring-2 ring-red-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'delayed',
               }"
-              @click="selected = 'delayed'"
+              @click="
+                () => {
+                  selected = 'delayed';
+                  toast.success('تم تغيير حالة العرض', {
+                    description: 'تم عرض المشاريع المتلكئة',
+                    duration: 2000,
+                    rtl: true,
+                  });
+                }
+              "
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
                 <Icon :name="'lucide:alert-circle'" class="h-5 w-5 text-red-500" />
@@ -238,7 +310,16 @@
                 'ring-2 ring-gray-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'cancelled',
               }"
-              @click="selected = 'cancelled'"
+              @click="
+                () => {
+                  selected = 'cancelled';
+                  toast.success('تم تغيير حالة العرض', {
+                    description: 'تم عرض المشاريع الملغاة',
+                    duration: 2000,
+                    rtl: true,
+                  });
+                }
+              "
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
                 <Icon :name="'lucide:x-circle'" class="h-5 w-5 text-gray-500" />

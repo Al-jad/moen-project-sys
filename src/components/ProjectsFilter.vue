@@ -290,6 +290,7 @@
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
+  import { toast } from 'vue-sonner';
   import CustomSwitch from './CustomSwitch.vue';
   import NumberInput from './NumberInput.vue';
 
@@ -547,6 +548,11 @@
     };
 
     emit('filter-applied', filters);
+    toast.success('تم تطبيق الفلتر بنجاح', {
+      description: 'تم تحديث قائمة المشاريع حسب المعايير المحددة',
+      duration: 2000,
+      rtl: true,
+    });
   };
 
   // Add these formatting functions after the other utility functions

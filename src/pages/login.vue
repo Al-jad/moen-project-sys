@@ -30,7 +30,12 @@
                 >
                   اسم المستخدم
                 </label>
-                <CustomInput type="text" v-model="username" placeholder="ادخل اسم المستخدم" required />
+                <CustomInput
+                  type="text"
+                  v-model="username"
+                  placeholder="ادخل اسم المستخدم"
+                  required
+                />
               </div>
               <div class="space-y-2">
                 <label
@@ -74,10 +79,11 @@
 </template>
 
 <script setup>
-  import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
   import axiosInstance from '@/plugins/axios';
   import { useAuthStore } from '@/stores/authStore';
+  import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
+  import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const authStore = useAuthStore();
@@ -92,7 +98,7 @@
     try {
       const response = await axiosInstance.post('/api/auth/login', {
         username: username.value,
-        password: password.value
+        password: password.value,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -101,11 +107,16 @@
         authStore.setUser(user);
         authStore.setToken(tokens.access);
 
-        router.push('/');
+        router.push({ path: '/', query: { from: 'login' } });
       }
     } catch (error) {
       console.error('Login Error:', error);
       errorMessage.value = 'خطأ في تسجيل الدخول. تحقق من اسم المستخدم أو كلمة المرور.';
+      toast.error('فشل تسجيل الدخول', {
+        description: 'يرجى التحقق من اسم المستخدم وكلمة المرور',
+        duration: 3000,
+        rtl: true,
+      });
     }
   };
 </script>

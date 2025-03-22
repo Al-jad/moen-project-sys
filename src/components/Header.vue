@@ -36,7 +36,7 @@
         variant="ghost"
         size="icon"
         class="text-gray-700 transition-colors hover:bg-gray-200 hover:text-primary dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-primary"
-        @click="toggleTheme"
+        @click="handleThemeToggle"
       >
         <Icon v-if="theme === 'dark'" icon="lucide:sun" class="h-5 w-5" />
         <Icon v-else icon="lucide:moon" class="h-5 w-5" />
@@ -96,6 +96,7 @@
   import { Icon } from '@iconify/vue';
   import { onMounted, onUnmounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
@@ -111,6 +112,16 @@
   const handleLogout = () => {
     authStore.logout();
     router.push('/login');
+  };
+
+  const handleThemeToggle = () => {
+    const newTheme = theme.value === 'dark' ? 'light' : 'dark';
+    toast.success('تم تغيير المظهر', {
+      description: newTheme === 'dark' ? 'تم تفعيل الوضع الليلي' : 'تم تفعيل الوضع النهاري',
+      duration: 2000,
+      rtl: true,
+    });
+    toggleTheme();
   };
 
   // Close tasks dropdown when clicking outside
