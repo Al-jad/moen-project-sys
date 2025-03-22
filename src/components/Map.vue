@@ -119,15 +119,15 @@
           <span class="text-xs">منجزة</span>
         </div>
         <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-blue-500"></div>
+          <div class="h-4 w-4 rounded-full bg-yellow-500"></div>
           <span class="text-xs">قيد التنفيذ</span>
         </div>
         <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-yellow-500"></div>
+          <div class="h-4 w-4 rounded-full bg-red-500"></div>
           <span class="text-xs">متلكئة</span>
         </div>
         <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-red-500"></div>
+          <div class="h-4 w-4 rounded-full bg-gray-500"></div>
           <span class="text-xs">ملغاة</span>
         </div>
       </div>
@@ -139,7 +139,7 @@
   import { LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
-  import { computed, defineProps, onMounted, ref, watch } from 'vue';
+  import { computed, defineProps, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   const zoom = ref(10);
@@ -178,7 +178,7 @@
     0: L.icon({
       // Cancelled
       iconUrl:
-        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
@@ -188,7 +188,7 @@
     1: L.icon({
       // In Progress
       iconUrl:
-        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
@@ -208,7 +208,7 @@
     3: L.icon({
       // Delayed
       iconUrl:
-        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
@@ -223,10 +223,10 @@
 
   function getStatusClass(status) {
     const statusClasses = {
-      0: 'text-red-600',
-      1: 'text-blue-600',
+      0: 'text-gray-600',
+      1: 'text-yellow-600',
       2: 'text-green-600',
-      3: 'text-yellow-600',
+      3: 'text-red-600',
     };
     return statusClasses[status] || '';
   }
@@ -265,10 +265,10 @@
 
   function getStatusBadgeClass(status) {
     const statusClasses = {
-      0: 'bg-red-100 text-red-700 dark:bg-red-500 dark:text-red-100',
-      1: 'bg-blue-100 text-blue-700 dark:bg-blue-500 dark:text-blue-100',
+      0: 'bg-gray-100 text-gray-700 dark:bg-gray-500 dark:text-gray-100',
+      1: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500 dark:text-yellow-100',
       2: 'bg-green-100 text-green-700 dark:bg-green-500 dark:text-green-100',
-      3: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500 dark:text-yellow-100',
+      3: 'bg-red-100 text-red-700 dark:bg-red-500 dark:text-red-100',
     };
     return statusClasses[status] || '';
   }

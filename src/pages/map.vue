@@ -193,19 +193,19 @@
               size="lg"
               :variant="selected === 'inProgress' ? 'primary' : 'outline'"
               icon="lucide:loader"
-              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20"
               :class="{
-                'ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
+                'ring-2 ring-yellow-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'inProgress',
               }"
               @click="selected = 'inProgress'"
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
-                <Icon :name="'lucide:loader'" class="h-5 w-5 animate-spin text-blue-500" />
+                <Icon :name="'lucide:loader'" class="h-5 w-5 animate-spin text-yellow-500" />
                 <span>قيد التنفيذ ({{ statusCounts.inProgress }})</span>
               </span>
               <div
-                class="absolute inset-0 -z-10 bg-blue-500/10 transition-transform duration-300 group-hover:scale-100"
+                class="absolute inset-0 -z-10 bg-yellow-500/10 transition-transform duration-300 group-hover:scale-100"
                 :class="selected === 'inProgress' ? 'scale-100' : 'scale-0'"
               ></div>
             </PrimaryButton>
@@ -213,19 +213,19 @@
               size="lg"
               :variant="selected === 'delayed' ? 'primary' : 'outline'"
               icon="lucide:alert-circle"
-              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20"
+              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
               :class="{
-                'ring-2 ring-yellow-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
+                'ring-2 ring-red-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'delayed',
               }"
               @click="selected = 'delayed'"
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
-                <Icon :name="'lucide:alert-circle'" class="h-5 w-5 text-yellow-500" />
+                <Icon :name="'lucide:alert-circle'" class="h-5 w-5 text-red-500" />
                 <span>المتلكئة ({{ statusCounts.delayed }})</span>
               </span>
               <div
-                class="absolute inset-0 -z-10 bg-yellow-500/10 transition-transform duration-300 group-hover:scale-100"
+                class="absolute inset-0 -z-10 bg-red-500/10 transition-transform duration-300 group-hover:scale-100"
                 :class="selected === 'delayed' ? 'scale-100' : 'scale-0'"
               ></div>
             </PrimaryButton>
@@ -233,19 +233,19 @@
               size="lg"
               :variant="selected === 'cancelled' ? 'primary' : 'outline'"
               icon="lucide:x-circle"
-              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
+              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-gray-500/20"
               :class="{
-                'ring-2 ring-red-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
+                'ring-2 ring-gray-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'cancelled',
               }"
               @click="selected = 'cancelled'"
             >
               <span class="relative z-10 flex items-center justify-center gap-2">
-                <Icon :name="'lucide:x-circle'" class="h-5 w-5 text-red-500" />
+                <Icon :name="'lucide:x-circle'" class="h-5 w-5 text-gray-500" />
                 <span>الملغاة ({{ statusCounts.cancelled }})</span>
               </span>
               <div
-                class="absolute inset-0 -z-10 bg-red-500/10 transition-transform duration-300 group-hover:scale-100"
+                class="absolute inset-0 -z-10 bg-gray-500/10 transition-transform duration-300 group-hover:scale-100"
                 :class="selected === 'cancelled' ? 'scale-100' : 'scale-0'"
               ></div>
             </PrimaryButton>
