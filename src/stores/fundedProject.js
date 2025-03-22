@@ -130,6 +130,29 @@ export const useFundedProjectStore = defineStore(
       form.value.isSaving = true;
 
       try {
+        // Ensure beneficiaryEntities is properly formatted for the API
+        let beneficiaryEntitiesData = form.value.beneficiaryEntities;
+        
+        // Make sure it's an array
+        if (!Array.isArray(beneficiaryEntitiesData)) {
+          beneficiaryEntitiesData = beneficiaryEntitiesData ? [beneficiaryEntitiesData] : [];
+        }
+        
+        // If it contains objects with value property (from CustomMultiSelect), extract the values
+        if (beneficiaryEntitiesData.length > 0 && typeof beneficiaryEntitiesData[0] === 'object') {
+          beneficiaryEntitiesData = beneficiaryEntitiesData.map(b => b.value || b.id || b);
+        }
+        
+        // Filter out empty values and convert to numbers if possible
+        beneficiaryEntitiesData = beneficiaryEntitiesData
+          .filter(entity => entity !== null && entity !== undefined && entity !== '')
+          .map(entity => {
+            const parsed = parseInt(entity);
+            return !isNaN(parsed) ? parsed : entity;
+          });
+        
+        console.log('Saving beneficiaryEntities:', beneficiaryEntitiesData);
+
         const projectData = {
           fundingType: form.value.fundingType,
           periodType: form.value.periodType,
@@ -140,12 +163,8 @@ export const useFundedProjectStore = defineStore(
           grantingEntity: form.value.grantingEntity,
           lng: form.value.longitude ? parseFloat(form.value.longitude) : 0,
           lat: form.value.latitude ? parseFloat(form.value.latitude) : 0,
-          beneficiaryEntities: Array.isArray(form.value.beneficiaryEntities)
-            ? form.value.beneficiaryEntities.filter(
-                (entity) => entity && entity.trim && entity.trim() !== ''
-              )
-            : [],
-          projectStatus: 1,
+          beneficiaryEntities: beneficiaryEntitiesData,
+          projectStatus: form.value.projectStatus || 1,
           cost: parseFloat(form.value.cost) || 0,
           actualStartDate: form.value.actualStartDate,
           projectObjectives: form.value.projectObjectives || '',

@@ -73,7 +73,7 @@
               <div
                 class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
               >
-                {{ project?.beneficiaryEntities?.join(', ') || 'لم يتم تحديد الجهات المستفيدة' }}
+                {{ formatBeneficiaries(project?.beneficiaryEntities) }}
               </div>
             </template>
           </FormField>
@@ -184,31 +184,79 @@
     projectObjectives: '',
   });
 
+  // Update to handle beneficiaries properly
+  const formatBeneficiaries = (entities) => {
+    if (!entities || entities.length === 0) return 'لم يتم تحديد الجهات المستفيدة';
+    
+    // If entities is an array of objects with name property
+    if (typeof entities[0] === 'object' && entities[0].name) {
+      return entities.map(e => e.name).join(', ');
+    }
+    
+    // If entities is an array of IDs
+    if (beneficiaries.value.length > 0) {
+      return entities
+        .map(id => {
+          const found = beneficiaries.value.find(b => b.value === id);
+          return found ? found.label : id;
+        })
+        .join(', ');
+    }
+    
+    // Fallback
+    return Array.isArray(entities) ? entities.join(', ') : entities;
+  };
+
   // Initialize form data when project changes
   watch(
     () => props.project,
     (newProject) => {
       if (newProject) {
+        // Process beneficiaryEntities to ensure it's in the right format
+        let beneficiaryData = newProject.beneficiaryEntities || [];
+        
+        // Convert to array if it's not already
+        if (!Array.isArray(beneficiaryData)) {
+          beneficiaryData = beneficiaryData ? [beneficiaryData] : [];
+        }
+        
+        // Extract IDs if entities are objects
+        if (beneficiaryData.length > 0 && typeof beneficiaryData[0] === 'object') {
+          beneficiaryData = beneficiaryData.map(b => b.id || b.value);
+        }
+        
         formData.value = {
           name: newProject.name || '',
           executingDepartment: newProject.executingDepartment || '',
           implementingEntity: newProject.implementingEntity || '',
-          beneficiaryEntities: newProject.beneficiaryEntities || [],
+          beneficiaryEntities: beneficiaryData,
           grantingEntity: newProject.grantingEntity || '',
           fundingType: newProject.fundingType || 1,
           cost: newProject.cost || null,
           projectObjectives: newProject.projectObjectives || '',
+          projectStatus: newProject.projectStatus !== undefined ? Number(newProject.projectStatus) : 1,
         };
+        
+        // Debug logging
+        console.log('Processed beneficiaryEntities:', formData.value.beneficiaryEntities);
       }
     },
-    { immediate: true }
+    { immediate: true, deep: true }
   );
-
-  // Watch for form changes and emit updates
+  
+  // Watch for form changes and emit updates with debug logging
   watch(
     formData,
     (newValue) => {
-      emit('update:project', newValue);
+      console.log('FormData changed:', JSON.stringify(newValue));
+      // Make sure we're passing the values properly
+      emit('update:project', {
+        ...newValue,
+        // Ensure beneficiaryEntities is properly formatted
+        beneficiaryEntities: Array.isArray(newValue.beneficiaryEntities) 
+          ? newValue.beneficiaryEntities 
+          : (newValue.beneficiaryEntities ? [newValue.beneficiaryEntities] : [])
+      });
     },
     { deep: true }
   );
@@ -216,10 +264,17 @@
   onMounted(async () => {
     try {
       const response = await beneficiaryService.getAllBeneficiaries();
+      // Format beneficiaries for CustomMultiSelect
       beneficiaries.value = response.data.map((b) => ({
         value: b.id,
         label: b.name,
       }));
+      console.log('Loaded beneficiaries:', beneficiaries.value);
+      
+      // Reapply the project data to ensure beneficiaries are properly formatted
+      if (props.project) {
+        watch.value = props.project;
+      }
     } catch (error) {
       console.error('Error fetching beneficiaries:', error);
     }
