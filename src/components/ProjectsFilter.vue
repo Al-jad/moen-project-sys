@@ -83,9 +83,9 @@
               :class="{ 'cursor-not-allowed': disabled }"
             />
             <CustomCheckbox
-              v-model="localSelectedFunding.fund"
-              id="fund"
-              label="ممولة"
+              v-model="localSelectedFunding.regional"
+              id="regional"
+              label="تنمية الاقاليم"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
             />
@@ -119,8 +119,9 @@
               :disabled="!isBudgetFilterEnabled || disabled"
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"
+              dir="rtl"
             />
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 flex-row-reverse">
               <div class="space-y-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <NumberInput
@@ -365,6 +366,7 @@
     investment: false,
     operational: false,
     environment: false,
+    regional: false,
   });
 
   // Add a new ref for budget filter enablement
