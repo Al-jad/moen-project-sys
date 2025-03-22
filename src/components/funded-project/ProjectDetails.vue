@@ -143,6 +143,31 @@
           </template>
         </FormField>
       </div>
+
+      <!-- Status select dropdown -->
+      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
+        <h3 class="mb-6 text-lg font-medium">حالة المشروع</h3>
+        <FormField label="حالة المشروع">
+          <template v-if="isEditing">
+            <select
+              v-model="formData.projectStatus"
+              class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            >
+              <option :value="0">ملغاة</option>
+              <option :value="1">قيد التنفيذ</option>
+              <option :value="2">منجزة</option>
+              <option :value="3">متلكئة</option>
+            </select>
+          </template>
+          <template v-else>
+            <div
+              class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
+            >
+              {{ getStatusText(project?.projectStatus) }}
+            </div>
+          </template>
+        </FormField>
+      </div>
     </div>
   </FormSection>
 </template>
@@ -157,7 +182,7 @@
   import { beneficiaryService } from '@/services/beneficiaryService';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { defineEmits, defineProps, onMounted, ref, watch } from 'vue';
-
+  
   const props = defineProps({
     project: {
       type: Object,
@@ -166,6 +191,10 @@
     isEditing: {
       type: Boolean,
       default: false,
+    },
+    form: {
+      type: Object,
+      required: true,
     },
   });
 
@@ -283,5 +312,16 @@
   const formatCost = (value) => {
     if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // Helper function to display status text
+  const getStatusText = (status) => {
+    const statusMap = {
+      0: 'ملغاة',
+      1: 'قيد التنفيذ',
+      2: 'منجزة',
+      3: 'متلكئة',
+    };
+    return statusMap[status] || 'غير معروف';
   };
 </script>
