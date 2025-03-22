@@ -1,9 +1,7 @@
 <template>
   <div class="relative">
     <Input
-      :value="displayValue"
-      @input="handleInput"
-      @blur="handleBlur"
+      v-model="inputValue"
       type="text"
       dir="rtl"
       :placeholder="placeholder"
@@ -20,6 +18,7 @@
 
 <script setup>
   import { Input } from '@/components/ui/input';
+  import { ref, watch } from 'vue';
 
   const props = defineProps({
     modelValue: {
@@ -49,12 +48,9 @@
   });
 
   const emit = defineEmits(['update:modelValue']);
+  const inputValue = ref('');
 
-  const displayValue = computed(() => {
-    if (!props.modelValue) return '';
-    return props.format ? props.format(props.modelValue) : formatNumber(props.modelValue);
-  });
-
+  // Define utility functions first
   const formatNumber = (value) => {
     if (!value) return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -65,25 +61,18 @@
     return value.toString().replace(/,/g, '');
   };
 
-  const handleInput = (event) => {
-    const value = event.target.value;
-    const unformattedValue = unformatNumber(value);
+  // Then use them in watchers
+  watch(
+    () => props.modelValue,
+    (newValue) => {
+      inputValue.value = formatNumber(newValue);
+    },
+    { immediate: true }
+  );
 
-    // Only allow numbers
-    if (!/^\d*$/.test(unformattedValue)) {
-      event.preventDefault();
-      return;
-    }
-
-    emit('update:modelValue', unformattedValue);
-  };
-
-  const handleBlur = (event) => {
-    const value = event.target.value;
-    const unformattedValue = unformatNumber(value);
-
-    if (unformattedValue) {
-      emit('update:modelValue', unformattedValue);
-    }
-  };
+  watch(inputValue, (newValue) => {
+    const unformattedValue = unformatNumber(newValue);
+    if (!/^\d*$/.test(unformattedValue)) return;
+    emit('update:modelValue', unformattedValue ? Number(unformattedValue) : '');
+  });
 </script>
