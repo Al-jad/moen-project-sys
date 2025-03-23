@@ -44,7 +44,7 @@
                   <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                     <tr v-for="(detail, index) in log.details" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-800">
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {{ detail.fieldName }}
+                        {{ translateFieldName(detail.fieldName) }}
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {{ detail.oldValue || 'لا يوجد' }}
@@ -89,13 +89,32 @@ const translatedTableName = computed(() => {
   return props.log?.tableName ? translations[props.log.tableName] || props.log.tableName : 'غير متوفر';
 });
 
-const translations = {
-  'AppUser': 'المستخدمين',
-  'Project': 'المشاريع',
-  'ProjectPhase': 'المراحل',
-  'ProjectActivity': 'الأنشطة',
-  'Attachment': 'المرفقات',
-}
+const translateFieldName = (fieldName) => {
+    const fieldTranslations = {
+      'createdAt': 'تاريخ الإنشاء',
+      'isDeleted': 'محذوف',
+      'Name': 'الاسم',
+      'ComponentId': 'رقم المكون',
+      'Notes': 'ملاحظات',
+      'TargetPercentage': 'النسبة المستهدفة',
+      'ProjectId': 'رقم المشروع',
+      'ProjectPhaseId': 'رقم المرحلة',
+      'ProjectActivityId': 'رقم النشاط',
+      'AttachmentId': 'رقم المرفق',
+      'AppUserId': 'رقم المستخدم',
+      'ProjectPhaseName': 'اسم المرحلة',
+      'ProjectActivityName': 'اسم النشاط',
+      'IsDeleted': 'محذوف',
+      'IsActive': 'مفعل',
+      'CreatedAt': 'تاريخ الإنشاء',
+      'Id': 'معرف الصف',
+      'UpdatedAt': 'تاريخ التعديل',
+      'AttachmentName': 'اسم المرفق',
+      'AppUserName': 'اسم المستخدم',
+      'ProjectName': 'اسم المشروع',
+    };
+    return fieldTranslations[fieldName] || fieldName;
+  };
 
 const tableNames = {
  'رقم العملية': 'id',

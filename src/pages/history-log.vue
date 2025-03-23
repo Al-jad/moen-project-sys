@@ -66,6 +66,8 @@
         { value: 'Project', label: 'المشاريع' },
         { value: 'Attachment', label: 'المرفقات' },
         { value: 'AppUser', label: 'المستخدمين' },
+        { value: 'Activity', label: 'الأنشطة' },
+        { value: 'Component', label: 'المكونات' }
       ],
       icon: 'lucide:folder',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -103,7 +105,15 @@
       'Project': 'المشاريع',
       'ProjectPhase': 'المراحل',
       'ProjectActivity': 'الأنشطة',
+      'Activity': 'الأنشطة',
+      'Component': 'المكونات',
       'Attachment': 'المرفقات',
+      'User': 'المستخدمين',
+      'Phase': 'المراحل',
+      'Task': 'المهام',
+      'Document': 'المستندات',
+      'Report': 'التقارير',
+      'Dashboard': 'لوحة القيادة'
     };
     return translations[tableName] || tableName;
   };
@@ -138,13 +148,76 @@
     return actionMap[action] || action;
   };
 
+  // Translate field names to Arabic
+  const translateFieldName = (fieldName) => {
+    const fieldTranslations = {
+      'createdAt': 'تاريخ الإنشاء',
+      'isDeleted': 'محذوف',
+      'Name': 'الاسم',
+      'ComponentId': 'رقم المكون',
+      'Notes': 'ملاحظات',
+      'TargetPercentage': 'النسبة المستهدفة',
+      'id': 'المعرف',
+      'description': 'الوصف',
+      'title': 'العنوان',
+      'status': 'الحالة',
+      'startDate': 'تاريخ البدء',
+      'endDate': 'تاريخ الانتهاء',
+      'projectId': 'رقم المشروع',
+      'userId': 'رقم المستخدم',
+      'fileName': 'اسم الملف',
+      'fileSize': 'حجم الملف',
+      'fileType': 'نوع الملف',
+      'path': 'المسار',
+      'email': 'البريد الإلكتروني',
+      'username': 'اسم المستخدم',
+      'password': 'كلمة المرور',
+      'phoneNumber': 'رقم الهاتف',
+      'role': 'الدور',
+      'progress': 'التقدم',
+      'attachmentId': 'رقم المرفق',
+      'activityId': 'رقم النشاط',
+      'phaseId': 'رقم المرحلة',
+      'updatedAt': 'تاريخ التحديث',
+      'deletedAt': 'تاريخ الحذف'
+    };
+    return fieldTranslations[fieldName] || fieldName;
+  };
+
   // Methods
   const exportToExcel = () => {
     // Implement Excel export functionality
   };
 
   const viewDetails = (log) => {
-    selectedLog.value = log;
+    // Create a copy of the log object to avoid mutating the original data
+    const processedLog = { ...log };
+    
+    // Translate the table name
+    if (processedLog.tableName) {
+      processedLog.tableName = getTableName(processedLog.tableName);
+    }
+    
+    // Translate field names in changes before showing details
+    if (processedLog.changes) {
+      try {
+        let changes = typeof processedLog.changes === 'string' 
+          ? JSON.parse(processedLog.changes) 
+          : processedLog.changes;
+        
+        // Transform the changes object to translate field names
+        const translatedChanges = {};
+        for (const field in changes) {
+          translatedChanges[translateFieldName(field)] = changes[field];
+        }
+        
+        processedLog.changes = translatedChanges;
+      } catch (error) {
+        console.error('Error parsing changes:', error);
+      }
+    }
+    
+    selectedLog.value = processedLog;
     showDetailsDialog.value = true;
   };
 

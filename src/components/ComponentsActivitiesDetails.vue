@@ -141,7 +141,7 @@
               </div>
             </template>
             <div
-              v-if="component.activities.length === 0"
+              v-if="!component.activities || component.activities.length === 0"
               class="rounded-lg border border-dashed border-gray-200 p-3 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
             >
               لا توجد فعاليات لهذا المكون
@@ -180,6 +180,10 @@
   });
 
   const sortedActivities = (activities) => {
+    if (!activities || !Array.isArray(activities)) {
+      return [];
+    }
+    
     if (props.useExternalSorting) {
       return activities;
     }

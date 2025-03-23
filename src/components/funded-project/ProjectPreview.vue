@@ -20,7 +20,7 @@
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
             <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {{ store.form.components.length }}
+              {{ totalComponents }}
             </div>
           </div>
           <div class="absolute inset-x-0 bottom-0 h-1 bg-green-500/10 dark:bg-green-400/10"></div>
@@ -31,7 +31,7 @@
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
             <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {{ store.form.components.reduce((total, comp) => total + comp.activities.length, 0) }}
+              {{ totalActivities }}
             </div>
           </div>
           <div class="absolute inset-x-0 bottom-0 h-1 bg-purple-500/10 dark:bg-purple-400/10"></div>
@@ -221,7 +221,7 @@
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return 'غير محدد';
     const date = new Date(dateString);
     return date.toLocaleDateString('ar-EG', {
       year: 'numeric',
@@ -261,9 +261,32 @@
   };
 
   const formatCost = (value) => {
-    if (!value) return '';
+    if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
+
+  // Safely calculate total activities
+  const totalActivities = computed(() => {
+    if (!store.form.components || !Array.isArray(store.form.components)) {
+      return 0;
+    }
+    
+    return store.form.components.reduce((total, component) => {
+      // Safely check if activities exists and is an array
+      if (component.activities && Array.isArray(component.activities)) {
+        return total + component.activities.length;
+      }
+      return total;
+    }, 0);
+  });
+
+  // Safely calculate total components
+  const totalComponents = computed(() => {
+    if (!store.form.components || !Array.isArray(store.form.components)) {
+      return 0;
+    }
+    return store.form.components.length;
+  });
 </script>
 
 <style scoped>

@@ -83,9 +83,9 @@
               :class="{ 'cursor-not-allowed': disabled }"
             />
             <CustomCheckbox
-              v-model="localSelectedFunding.fund"
-              id="fund"
-              label="ممولة"
+              v-model="localSelectedFunding.regional"
+              id="regional"
+              label="تنمية الاقاليم"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
             />
@@ -119,8 +119,9 @@
               :disabled="!isBudgetFilterEnabled || disabled"
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"
+              dir="rtl"
             />
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 flex-row-reverse">
               <div class="space-y-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <NumberInput
@@ -149,9 +150,13 @@
         <div class="space-y-2" v-if="!isFundedProjects">
           <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
           <label class="text-sm text-gray-600 dark:text-gray-300">سنوات التنفيذ</label>
+          <div class="px-2 text-red-500 text-sm">
+            <slot> الميزة غير متاحة، والبيانات الظاهرة للتوضيح فقط </slot>
+          </div>
           <CustomSelect
             v-model="localSelectedYear"
             :options="implementationYears"
+            disabled
             placeholder="جميع المواعيد"
             :triggerClass="'flex flex-row-reverse w-full'"
             :disabled="disabled"
@@ -365,6 +370,7 @@
     investment: false,
     operational: false,
     environment: false,
+    regional: false,
   });
 
   // Add a new ref for budget filter enablement

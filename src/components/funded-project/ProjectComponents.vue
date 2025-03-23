@@ -223,7 +223,7 @@
         variant="outline"
         class="w-full border-dashed py-6 hover:border-gray-400 dark:hover:border-gray-600"
       >
-        <Plus class="ml-2 h-4 w-4" />
+        <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
         اضافة مكون جديد
       </Button>
     </div>
@@ -237,11 +237,16 @@
   import NumberInput from '@/components/NumberInput.vue';
   import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { Icon } from '@iconify/vue';
-
+  import { computed, nextTick } from 'vue';
+  
+  // Update the Button import to match where it's located in your project
+  // This path should match the one used in add-funded-project.vue
+  import Button from '@/components/ui/button/Button.vue';
+  
   const props = defineProps({
     components: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     periodType: {
       type: Number,
@@ -268,14 +273,31 @@
     return isLight ? componentColors[colorIndex].light : componentColors[colorIndex].base;
   };
 
+  const components = computed(() => {
+    return Array.isArray(props.components) ? props.components : [];
+  });
+
   const addComponent = () => {
-    const newComponents = [...props.components];
-    newComponents.push({
-      name: '',
-      targetPercentage: 0,
-      activities: [],
-    });
-    emit('update:components', newComponents);
+    if (!Array.isArray(props.components)) {
+      emit('update:components', []);
+      nextTick(() => {
+        const newComponent = {
+          id: Date.now().toString(),
+          name: '',
+          description: '',
+          activities: [],
+        };
+        emit('update:components', [...(props.components || []), newComponent]);
+      });
+    } else {
+      const newComponent = {
+        id: Date.now().toString(),
+        name: '',
+        description: '',
+        activities: [],
+      };
+      emit('update:components', [...props.components, newComponent]);
+    }
   };
 
   const removeComponent = (index) => {

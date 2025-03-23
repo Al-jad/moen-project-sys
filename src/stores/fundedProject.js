@@ -1,5 +1,6 @@
 import projectService from '@/services/projectService';
 import { defineStore } from 'pinia';
+import axiosInstance from '@/plugins/axios';
 
 const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') return obj;
@@ -16,6 +17,7 @@ const defaultForm = {
   fundingType: 1,
   cost: null,
   actualStartDate: null,
+  isGovernment: false,
   projectObjectives: '',
   duration: 0,
   durationType: 'weeks',
@@ -158,6 +160,7 @@ export const useFundedProjectStore = defineStore(
           periodType: form.value.periodType,
           duration: parseInt(form.value.duration) || 0,
           name: form.value.name,
+          isGovernment: form.value.isGovernment,
           executingDepartment: form.value.executingDepartment,
           implementingEntity: form.value.implementingEntity,
           grantingEntity: form.value.grantingEntity,
@@ -182,6 +185,161 @@ export const useFundedProjectStore = defineStore(
       }
     };
 
+    const updateProjectComponents = async (projectId, components) => {
+      isSaving.value = true;
+      try {
+        const componentsData = JSON.parse(JSON.stringify(components));
+        
+        const response = await axiosInstance.post(`/api/Component/${projectId}`, {
+          components: componentsData
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update components');
+        }
+        
+        const data = await response.json();
+        isSaving.value = false;
+        return {
+          success: true,
+          data: data
+        };
+      } catch (error) {
+        isSaving.value = false;
+        throw error;
+      }
+    };
+
+    const addProjectComponent = async (projectId, component) => {
+      isSaving.value = true;
+      try {
+        const payload = {
+          projectId: projectId,
+          name: component.name || "",
+          targetPercentage: component.targetPercentage || 0
+        };
+        
+        const response = await axiosInstance.post(`/api/Component`, payload);
+        
+        if (response.status >= 400) {
+          throw new Error('Failed to add component');
+        }
+        
+        isSaving.value = false;
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        isSaving.value = false;
+        throw error;
+      }
+    };
+
+    const updateProjectComponent = async (projectId, componentId, component) => {
+      isSaving.value = true;
+      try {
+        const payload = {
+          projectId: projectId,
+          name: component.name || "",
+          targetPercentage: component.targetPercentage || 0
+        };
+        
+        const response = await axiosInstance.put(`/api/Component/${componentId}`, payload);
+        
+        if (response.status >= 400) {
+          throw new Error('Failed to update component');
+        }
+        
+        isSaving.value = false;
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        isSaving.value = false;
+        throw error;
+      }
+    };
+
+    const createProjectActivity = async (componentId, activity) => {
+      isSaving.value = true;
+      try {
+        console.log("Creating activity for component ID:", componentId, "with data:", activity);
+        
+        const payload = {
+          componentId: componentId,
+          name: activity.name || "",
+          targetPercentage: activity.targetPercentage || 0,
+          notes: activity.notes || "",
+          selectedPeriods: activity.selectedPeriods || []
+        };
+        
+        const response = await axiosInstance.post(`/api/Activity`, payload);
+        
+        console.log("API response for activity creation:", response);
+        
+        isSaving.value = false;
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        console.error('Error in createProjectActivity:', error);
+        isSaving.value = false;
+        throw error;
+      }
+    };
+    
+    const updateProjectActivity = async (activityId, activity) => {
+      isSaving.value = true;
+      try {
+        console.log("Updating activity ID:", activityId, "with data:", activity);
+        
+        const payload = {
+          componentId: activity.componentId,
+          name: activity.name || "",
+          targetPercentage: activity.targetPercentage || 0,
+          notes: activity.notes || "",
+          selectedPeriods: activity.selectedPeriods || []
+        };
+        
+        const response = await axiosInstance.put(`/api/Activity/${activityId}`, payload);
+        
+        console.log("API response for activity update:", response);
+        
+        isSaving.value = false;
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        console.error('Error in updateProjectActivity:', error);
+        isSaving.value = false;
+        throw error;
+      }
+    };
+    
+    const deleteProjectActivity = async (activityId) => {
+      isSaving.value = true;
+      try {
+        console.log("Deleting activity ID:", activityId);
+        
+        const response = await axiosInstance.delete(`/api/Activity/${activityId}`);
+        
+        console.log("API response for activity deletion:", response);
+        
+        isSaving.value = false;
+        return {
+          success: true
+        };
+      } catch (error) {
+        console.error('Error in deleteProjectActivity:', error);
+        isSaving.value = false;
+        throw error;
+      }
+    };
+
     return {
       form,
       totalPeriods,
@@ -197,6 +355,12 @@ export const useFundedProjectStore = defineStore(
       toggleActivityWeek,
       clearForm,
       saveProject,
+      updateProjectComponents,
+      addProjectComponent,
+      updateProjectComponent,
+      createProjectActivity,
+      updateProjectActivity,
+      deleteProjectActivity,
     };
   },
   {
