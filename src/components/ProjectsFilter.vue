@@ -119,7 +119,6 @@
               :disabled="!isBudgetFilterEnabled || disabled"
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"
-              dir="rtl"
             />
             <div class="grid grid-cols-2 gap-4 flex-row-reverse">
               <div class="space-y-2">
