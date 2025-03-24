@@ -23,7 +23,7 @@
           }"
         />
         <img
-          src="/public/img/logo-white-text.png"
+          :src="isDark ? '/public/img/logo-white-text.png' : '/public/img/logo-text.png'"
           alt="Logo with Text"
           class="absolute h-12 object-contain transition-all duration-300 ease-in-out"
           :class="{
@@ -138,18 +138,25 @@
 
 <script setup>
   import LogoutModal from '@/components/LogoutModal.vue';
+  import { useTheme } from '@/composables/useTheme';
   import { useAuthStore } from '@/stores/authStore';
   import { Icon } from '@iconify/vue';
+  import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
 
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
+  const { theme } = useTheme();
   const hoveredItem = ref(null);
   const isAnyItemHovered = ref(false);
   const showLogoutModal = ref(false);
   const isLoggingOut = ref(false);
+
+  const isDark = computed(() => {
+    return theme.value === 'dark';
+  });
 
   const userTranslations = {
     ADMIN: 'مدير',

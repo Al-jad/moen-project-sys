@@ -480,6 +480,31 @@
 
       // Auto apply filters based on route query
       if (route.query.status || route.query.showGovernmentProjects) {
+        // Get status message based on query
+        let statusMessage = '';
+        if (route.query.status) {
+          switch (route.query.status) {
+            case '2':
+              statusMessage = 'تم تطبيق فلتر المشاريع المنجزة';
+              break;
+            case '1':
+              statusMessage = 'تم تطبيق فلتر المشاريع قيد التنفيذ';
+              break;
+            case '3':
+              statusMessage = 'تم تطبيق فلتر المشاريع المتلكئة';
+              break;
+            case '0':
+              statusMessage = 'تم تطبيق فلتر المشاريع الملغاة';
+              break;
+          }
+          showSuccess('تم تطبيق الفلتر', statusMessage);
+        }
+
+        // Show government projects filter message
+        if (route.query.showGovernmentProjects === 'true') {
+          showSuccess('تم تطبيق الفلتر', 'تم تطبيق فلتر البرنامج الحكومي');
+        }
+
         applyFilters({
           searchQuery: '',
           budgetRange: minMaxBudgetRange.value,
@@ -500,7 +525,7 @@
     }
   });
 
-  // Add watch effect for route query changes
+  // Remove the toaster from the watch effect since we're handling it in onMounted
   watch(
     () => route.query,
     (newQuery) => {
