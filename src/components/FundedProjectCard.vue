@@ -216,10 +216,10 @@
 
   function getStatusBadgeClass(status) {
     const statusClasses = {
-      0: 'bg-red-100 text-red-700 dark:bg-red-500 dark:text-red-100',
-      1: 'bg-blue-100 text-blue-700 dark:bg-blue-500 dark:text-blue-100',
-      2: 'bg-green-100 text-green-700 dark:bg-green-500 dark:text-green-100',
-      3: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500 dark:text-yellow-100',
+      0: 'bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-300',
+      1: 'bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300',
+      2: 'bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-300',
+      3: 'bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-300',
     };
     return statusClasses[status] || '';
   }
