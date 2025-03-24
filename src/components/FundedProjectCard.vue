@@ -21,6 +21,13 @@
               >
                 {{ project.name || 'لا يوجد اسم' }}
               </h3>
+
+              <div
+                v-if="project.isGovernment"
+                class="rounded-full bg-blue-500 px-3 py-1 text-xs font-medium text-white"
+              >
+                مشروع حكومي
+              </div>
               <div
                 v-if="project.projectStatus !== undefined"
                 :class="getStatusBadgeClass(project.projectStatus)"
