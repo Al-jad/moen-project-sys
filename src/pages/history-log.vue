@@ -70,7 +70,9 @@
         { value: 'Attachment', label: 'المرفقات' },
         { value: 'AppUser', label: 'المستخدمين' },
         { value: 'Activity', label: 'الأنشطة' },
-        { value: 'Component', label: 'المكونات' }
+        { value: 'Component', label: 'المكونات' },
+        { value: 'Beneficiary', label: 'الجهات المستفيدة' },
+        { value: null, label: 'غير محدد' }
       ],
       icon: 'lucide:folder',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -80,9 +82,9 @@
       placeholder: 'نوع العملية',
       options: [
         { value: 'all', label: 'الكل' },
-        { value: 'create', label: 'إنشاء' },
-        { value: 'update', label: 'تعديل' },
-        { value: 'delete', label: 'حذف' },
+        { value: 'إنشاء', label: 'إنشاء' },
+        { value: 'تعديل', label: 'تعديل' },
+        { value: 'حذف', label: 'حذف' },
       ],
       icon: 'lucide:activity',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -126,6 +128,20 @@
     return translations[tableName] || tableName;
   };
 
+  // Translate action types to Arabic
+  const translateAction = (action) => {
+    if (action === null || action === undefined) {
+      return 'غير محدد'; // "Not specified" for null values
+    }
+    
+    const actionMap = {
+      'create': 'إنشاء',
+      'update': 'تعديل',
+      'delete': 'حذف'
+    };
+    return actionMap[action] || action;
+  };
+
   // Fetch logs from API
   const fetchLogs = async () => {
     try {
@@ -133,29 +149,26 @@
       const response = await axiosInstance.get('/api/ActionAudit');
 
       // Process the data to format dates and prepare for display
-      logs.value = response.data.map(log => ({
-        ...log,
-        createdAt: formatDate(log.createdAt),
-        // Translate action types to Arabic and handle null values
-        action: translateAction(log.action),
-        // Ensure tableName is never null in the UI
-        tableName: log.tableName
-      }));
+      logs.value = response.data.map(log => {
+        const translatedAction = translateAction(log.action);
+        
+        return {
+          ...log,
+          createdAt: formatDate(log.createdAt),
+          // Store both the original and translated action
+          originalAction: log.action,
+          action: translatedAction,
+          // Ensure tableName is properly handled
+          tableName: log.tableName,
+          // Add a field that combines both for filtering
+          filterableAction: translatedAction
+        };
+      });
     } catch (error) {
       console.error('Error fetching logs:', error);
     } finally {
       isLoading.value = false;
     }
-  };
-
-  // Translate action types to Arabic
-  const translateAction = (action) => {
-    const actionMap = {
-      'create': 'إنشاء',
-      'update': 'تعديل',
-      'delete': 'حذف'
-    };
-    return actionMap[action] || action;
   };
 
   // Translate field names to Arabic
