@@ -147,20 +147,23 @@
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex flex-col gap-2">
-                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">الهدف من المشروع</div>
+              <div class="flex flex-col gap-2 p-4">
+                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400"
+                  >الهدف من المشروع</div
+                >
                 <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                   {{ project?.projectObjectives || 'لم يتم تحديد الهدف' }}
                 </div>
               </div>
 
-              <div class="p-4 flex flex-col gap-2">
-                  <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">نوع المشروع</div>
+              <div class="flex flex-col gap-2 p-4">
+                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400"
+                  >نوع المشروع</div
+                >
                 <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                   {{ project?.isGovernment ? 'مشروع حكومي' : 'مشروع غير حكومي' }}
                 </div>
               </div>
-
 
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
@@ -322,13 +325,18 @@
                   v-if="!isEditingAchievements"
                   class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100"
                 >
-                  {{ project?.financialAchievements || 'لم يتم تحديد الإنجاز المالي' }}
+                  {{
+                    project?.financialAchievement
+                      ? project.financialAchievement + '%'
+                      : 'لم يتم تحديد الإنجاز المالي'
+                  }}
                 </div>
                 <div v-else class="mt-1">
                   <NumberInput
-                    v-model="editForm.financialAchievements"
+                    v-model="editForm.financialAchievement"
                     class="w-full"
                     placeholder="ادخل الإنجاز المالي"
+                    unit="%"
                   />
                 </div>
               </div>
@@ -589,7 +597,7 @@
     duration: 0,
     periodType: 1,
     components: [],
-    financialAchievements: '',
+    financialAchievement: 0,
   });
   const showPremiumModal = ref(false);
   const OpenPremiumModal = () => {
@@ -621,7 +629,7 @@
         components: Array.isArray(response.data.components)
           ? JSON.parse(JSON.stringify(response.data.components))
           : [],
-        financialAchievements: response.data.financialAchievements || '',
+        financialAchievement: response.data.financialAchievement || 0,
       });
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -939,13 +947,13 @@
       cancelEditAchievements();
     } else {
       isEditingAchievements.value = true;
-      editForm.financialAchievements = project.value?.financialAchievements || '';
+      editForm.financialAchievement = project.value?.financialAchievement || 0;
     }
   };
 
   const cancelEditAchievements = () => {
     isEditingAchievements.value = false;
-    editForm.financialAchievements = project.value?.financialAchievements || '';
+    editForm.financialAchievement = project.value?.financialAchievement || 0;
   };
 
   const saveAchievements = async () => {
@@ -953,7 +961,7 @@
     try {
       const response = await axiosInstance.put(`/api/Project/${project.value.id}`, {
         ...project.value,
-        financialAchievements: editForm.financialAchievements,
+        financialAchievement: Number(editForm.financialAchievement) || 0,
       });
 
       if (response.status === 200 || response.status === 204) {
