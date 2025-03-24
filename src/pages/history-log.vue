@@ -18,6 +18,8 @@
             :columns="columns"
             :data="logs"
             :filters="filters"
+            :showDateFilter="true"
+            :isPremium="true"
             @export="exportToExcel"
             @action-click="viewDetails"
           >
