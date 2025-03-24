@@ -112,6 +112,20 @@ const translateFieldName = (fieldName) => {
       'AttachmentName': 'اسم المرفق',
       'AppUserName': 'اسم المستخدم',
       'ProjectName': 'اسم المشروع',
+      'isGovernment': 'مشروع حكومي',
+      'Lng': 'خط الطول',
+      'Lat': 'خط العرض',
+      'FinancialAchievement': 'الانجاز المالي',
+      'isFunded': 'ممول',
+      'PeriodType': 'نوع الفترة',
+      'Duration': 'المدة',
+      'projectObjectives': 'أهداف المشروع',
+      'ActualStartDate': 'تاريخ بدء المشروع الفعلي',
+      'ActualEndDate': 'تاريخ انتهاء المشروع الفعلي',
+      'ProjectStatus': 'حالة المشروع',
+      'ProjectType': 'نوع المشروع',
+      'ProjectCategory': 'تصنيف المشروع',
+      'ProjectSubCategory': 'تصنيف المشروع الفرعي',
     };
     return fieldTranslations[fieldName] || fieldName;
   };
