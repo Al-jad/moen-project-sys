@@ -100,6 +100,56 @@
                   </Badge>
                 </div>
                 <div class="flex flex-row items-center gap-6">
+                  <div class="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <PrimaryButton variant="outline" icon="lucide:align-left">
+                          ترتيب
+                        </PrimaryButton>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
+                        align="end"
+                      >
+                        <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
+                          <h3
+                            class="text-right text-base font-medium text-gray-900 dark:text-white"
+                          >
+                            ترتيب
+                          </h3>
+                        </div>
+                        <div class="flex flex-col">
+                          <DropdownMenuItem
+                            v-for="option in sortOptions"
+                            :key="option.id"
+                            class="flex w-full items-center justify-between border-b px-4 py-2.5 text-right text-sm transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/50 dark:focus:bg-gray-700/50"
+                            :class="{
+                              'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id,
+                            }"
+                            @click="handleSort(option.id)"
+                          >
+                            <Icon
+                              :icon="option.icon"
+                              class="h-4 w-4 text-gray-500 dark:text-gray-400"
+                            />
+                            <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
+                          </DropdownMenuItem>
+                        </div>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <div
+                      v-if="selectedSort"
+                      class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    >
+                      <span>{{ getSelectedSortLabel }}</span>
+                      <button
+                        class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
+                        @click="clearSort"
+                      >
+                        <Icon icon="lucide:x" class="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
                   <PrimaryButton @click="OpenPremiumModal">
                     <Icon icon="lucide:lock" />
                     طباعة
@@ -176,6 +226,12 @@
 </template>
 <script setup>
   import CustomSelect from '@/components/CustomSelect.vue';
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from '@/components/ui/dropdown-menu';
   import { useToast } from '@/composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -193,6 +249,60 @@
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
   const beneficiaries = ref([]);
+
+  const sortOptions = [
+    { id: 'price-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-to-line' },
+    { id: 'price-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-to-line' },
+    { id: 'period-high', label: 'من الفترة الاعلى', icon: 'lucide:arrow-up-wide-narrow' },
+    { id: 'period-low', label: 'من الفترة الادنى', icon: 'lucide:arrow-down-narrow-wide' },
+    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-up-circle' },
+    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-down-circle' },
+  ];
+
+  const selectedSort = ref('');
+
+  const handleSort = (sortId) => {
+    selectedSort.value = sortId;
+
+    // Implement sorting logic
+    const sortedProjects = [...filteredProjects.value];
+
+    switch (sortId) {
+      case 'price-low':
+        sortedProjects.sort((a, b) => parseFloat(a.cost) - parseFloat(b.cost));
+        break;
+      case 'price-high':
+        sortedProjects.sort((a, b) => parseFloat(b.cost) - parseFloat(a.cost));
+        break;
+      case 'period-high':
+        sortedProjects.sort((a, b) => b.duration - a.duration);
+        break;
+      case 'period-low':
+        sortedProjects.sort((a, b) => a.duration - b.duration);
+        break;
+      case 'progress-high':
+        sortedProjects.sort((a, b) => b.progress - a.progress);
+        break;
+      case 'progress-low':
+        sortedProjects.sort((a, b) => a.progress - b.progress);
+        break;
+      default:
+        break;
+    }
+
+    filteredProjects.value = sortedProjects;
+  };
+
+  const getSelectedSortLabel = computed(() => {
+    const option = sortOptions.find((opt) => opt.id === selectedSort.value);
+    return option ? option.label : '';
+  });
+
+  const clearSort = () => {
+    selectedSort.value = '';
+    // Reset to original order
+    fetchProjects();
+  };
 
   // Initialize showGovernmentProjects from route query
   const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
