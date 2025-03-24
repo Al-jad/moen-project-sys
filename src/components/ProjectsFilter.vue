@@ -120,7 +120,7 @@
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleSliderChange"
             />
-            <div class="grid grid-cols-2 gap-4 flex-row-reverse">
+            <div class="grid grid-cols-2 flex-row-reverse gap-4">
               <div class="space-y-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
                 <NumberInput
@@ -149,7 +149,7 @@
         <div class="space-y-2" v-if="!isFundedProjects">
           <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
           <label class="text-sm text-gray-600 dark:text-gray-300">سنوات التنفيذ</label>
-          <div class="px-2 text-red-500 text-sm">
+          <div class="px-2 text-sm text-red-500">
             <slot> الميزة غير متاحة، والبيانات الظاهرة للتوضيح فقط </slot>
           </div>
           <CustomSelect
@@ -441,7 +441,7 @@
   const handleGovernmentProjectsChange = (value) => {
     // Update the local state to match the checkbox
     localShowGovernmentProjects.value = value;
-    
+
     // When the filter changes, we can optionally apply filters immediately
     // or wait for the Apply button to be clicked
     // Uncomment the line below if you want immediate application
@@ -670,6 +670,17 @@
       }
     },
     { deep: true }
+  );
+
+  // Watch for prop changes to auto-apply filters
+  watch(
+    () => [props.selectedStatus, props.showGovernmentProjects],
+    ([newStatus, newShowGovernment]) => {
+      if (props.isFundedProjects) {
+        applyFilters();
+      }
+    },
+    { immediate: true }
   );
 
   // Add currency conversion function with proper precision

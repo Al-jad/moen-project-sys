@@ -302,7 +302,7 @@
         name: p.name,
         status: p.projectStatus,
         cost: p.cost,
-        isGovernment: p.isGovernment
+        isGovernment: p.isGovernment,
       }))
     );
 
@@ -392,12 +392,12 @@
       const beforeCount = result.length;
       result = result.filter((project) => {
         const isGovernment = Boolean(project.isGovernment);
-        
+
         // Debug logging for first few projects
         if (project.id < 5) {
           console.log(`Project ${project.id}: isGovernment = ${isGovernment}`);
         }
-        
+
         return isGovernment;
       });
       console.log(`Government filter applied. Before: ${beforeCount}, After: ${result.length}`);
@@ -477,10 +477,52 @@
 
       // Fetch data
       await Promise.all([fetchProjects(), fetchBeneficiaries()]);
+
+      // Auto apply filters based on route query
+      if (route.query.status || route.query.showGovernmentProjects) {
+        applyFilters({
+          searchQuery: '',
+          budgetRange: minMaxBudgetRange.value,
+          selectedStatus: {
+            all: !route.query.status,
+            completed: route.query.status === '2',
+            inProgress: route.query.status === '1',
+            delayed: route.query.status === '3',
+            cancelled: route.query.status === '0',
+          },
+          selectedBeneficiaries: { all: true },
+          showGovernmentProjects: route.query.showGovernmentProjects === 'true',
+          isBudgetFilterEnabled: false,
+        });
+      }
     } catch (error) {
       console.error('Error initializing component:', error);
     }
   });
+
+  // Add watch effect for route query changes
+  watch(
+    () => route.query,
+    (newQuery) => {
+      if (newQuery.status || newQuery.showGovernmentProjects) {
+        applyFilters({
+          searchQuery: '',
+          budgetRange: minMaxBudgetRange.value,
+          selectedStatus: {
+            all: !newQuery.status,
+            completed: newQuery.status === '2',
+            inProgress: newQuery.status === '1',
+            delayed: newQuery.status === '3',
+            cancelled: newQuery.status === '0',
+          },
+          selectedBeneficiaries: { all: true },
+          showGovernmentProjects: newQuery.showGovernmentProjects === 'true',
+          isBudgetFilterEnabled: false,
+        });
+      }
+    },
+    { immediate: true }
+  );
 
   const viewProject = (projectId) => {
     router.push({
