@@ -26,7 +26,7 @@
           </div>
         </Button>
 
-        <DateRangeInput v-if="showDateFilter" v-model="dateRange" />
+        <DateRangeInput v-if="showDateFilter" v-model="dateRange" :isPremium="isPremium" />
 
         <div v-for="filter in filters" :key="filter.key" class="min-w-[200px]">
           <CustomSelect
@@ -227,6 +227,7 @@
     filters?: Filter[];
     showExport?: boolean;
     showDateFilter?: boolean;
+    isPremium?: boolean;
     showSearch?: boolean;
     initialFilters?: Record<string, string>;
     loading?: boolean;
@@ -238,6 +239,7 @@
     filters: () => [],
     showExport: true,
     showDateFilter: true,
+    isPremium: false,
     showSearch: true,
     initialFilters: () => ({}),
     loading: false,
