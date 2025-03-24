@@ -26,7 +26,7 @@
                 v-if="project.isGovernment"
                 class="rounded-full bg-blue-500 px-3 py-1 text-xs font-medium text-white"
               >
-                مشروع حكومي
+              ضمن البرنامج الحكومي
               </div>
               <div
                 v-if="project.projectStatus !== undefined"
