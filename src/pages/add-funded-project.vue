@@ -646,10 +646,16 @@
       // Wait a moment before redirecting to ensure the toast is visible
       setTimeout(() => {
         router.push({
-          name: 'done',
-          params: {
-            id: projectId.toString(),
-            name: encodeURIComponent(store.form.name),
+          path: '/done',
+          query: {
+            title: 'تم حفظ المشروع بنجاح',
+            message: `تم حفظ المشروع "${store.form.name}" بنجاح`,
+            projectDetails: {
+              id: projectId,
+              name: store.form.name,
+              executingDepartment: store.form.executingDepartment,
+              components: store.form.components,
+            },
           },
         });
       }, 1000);
