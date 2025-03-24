@@ -8,30 +8,13 @@
 
         <div class="space-y-8">
           <ProjectDetails
-            :project="store.form"
+            :project="projectFormWithGovernment"
             :is-editing="true"
             @update:project="updateProjectDetails"
           />
 
-          <!-- Government Project Toggle -->
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">نوع المشروع</h2>
-            </div>
-            <div class="mt-4 flex items-center gap-3">
-              <CustomSwitch
-                v-model="store.form.isGovernment"
-                label="مشروع حكومي"
-                @update:model-value="updateGovernmentStatus"
-              />
-              <div v-if="store.form.isGovernment" class="text-sm text-green-600 dark:text-green-400">
-                تم تعيين المشروع كمشروع حكومي
-              </div>
-            </div>
-          </div>
-
-          <ProjectDuration />
           <ProjectLocation />
+          <ProjectDuration />
           
           <!-- First save project section - only shown if project not yet saved -->
           <div v-if="!projectSaved" class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
@@ -212,9 +195,9 @@
                             </FormField>
                           </div>
 
-                          <!-- Activity Weeks Selection -->
+                          <!-- Activity Weeks/Months Selection -->
                           <div class="mt-4">
-                            <FormField label="الفترات المحددة">
+                            <FormField :label="store.form.periodType === 1 ? 'الاسابيع المحددة' : 'الاشهر المحددة'">
                               <div v-if="totalPeriods > 0" class="space-y-4">
                                 <div
                                   class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
@@ -249,7 +232,7 @@
                                     class="flex flex-col items-center"
                                   >
                                     <span class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                                      {{ store.form.periodType === 1 ? `${period}` : `${period}` }}
+                                      {{ period }}
                                     </span>
                                     <button
                                       type="button"
@@ -349,6 +332,34 @@
             </Button>
           </div>
         </div>
+
+        <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
+          <h3 class="mb-6 text-lg font-medium">تفاصيل التمويل</h3>
+          <div class="grid gap-6 md:grid-cols-2">
+            <FormField label="نوع التمويل">
+              <div
+                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
+              >
+                دولي
+              </div>
+            </FormField>
+            <FormField label="كلفة المشروع">
+              <div class="flex gap-2">
+                <div class="flex-1">
+                  <NumberInput v-model="store.form.cost" placeholder="165,000" :unit="selectedCurrency" />
+                </div>
+                <div class="w-24">
+                  <CustomSelect
+                    v-model="selectedCurrency"
+                    :options="currencyOptions"
+                    placeholder="العملة"
+                    @update:model-value="handleCurrencyChange"
+                  />
+                </div>
+              </div>
+            </FormField>
+          </div>
+        </div>
       </div>
     </div>
   </DefaultLayout>
@@ -368,11 +379,21 @@
   import Textarea from '@/components/ui/textarea/Textarea.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import CustomInput from '@/components/CustomInput.vue';
+  import { useRouter, useRoute } from 'vue-router';
+  import axiosInstance from '@/plugins/axios';
+  import CustomSelect from '@/components/CustomSelect.vue';
+  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
 
   const store = useFundedProjectStore();
   const router = useRouter();
+  const route = useRoute();
   const projectSaved = ref(false);
   const projectId = ref(null);
+  const selectedCurrency = ref('USD');
+  const currencyOptions = [
+    { value: 'USD', label: 'دولار أمريكي' },
+    { value: 'IQD', label: 'دينار عراقي' }
+  ];
 
   // Ensure beneficiaryEntities is always an array
   if (!Array.isArray(store.form.beneficiaryEntities)) {
@@ -381,7 +402,40 @@
       : [];
   }
 
-  onMounted(() => {
+  // Function to fetch project data directly
+  const fetchProjectData = async (projectId) => {
+    try {
+      console.log('Fetching project data for ID:', projectId);
+      
+      // Make a simple GET request and await the response
+      const response = await axiosInstance.get(`/api/projects/${projectId}`);
+      
+      // Log the entire response for debugging
+      console.log('API Response:', response);
+      console.log('Response data:', response.data);
+      console.log('isGovernment in response:', response.data.isGovernment);
+      
+      // Update the store with the project data
+      if (response.data) {
+        // First assign all data
+        Object.assign(store.form, response.data);
+        
+        // Then explicitly force isGovernment to be a boolean
+        store.form.isGovernment = response.data.isGovernment === true;
+        
+        console.log('Updated store.form:', store.form);
+        console.log('Store form isGovernment (after update):', store.form.isGovernment, typeof store.form.isGovernment);
+        
+        // Update UI state
+        projectSaved.value = true;
+        projectId.value = response.data.id;
+      }
+    } catch (error) {
+      console.error('Error fetching project data:', error);
+    }
+  };
+
+  onMounted(async () => {
     store.form = {
       name: '',
       executingDepartment: '',
@@ -409,8 +463,24 @@
       store.form.components = [];
     }
     
-    localStorage.removeItem('fundedProject');
-    sessionStorage.removeItem('fundedProject');
+    console.log('Component mounted, isGovernment initialized as:', store.form.isGovernment, typeof store.form.isGovernment);
+    
+    // If there's a project ID in the route, fetch the project data
+    const routeProjectId = route.params.id;
+    if (routeProjectId) {
+      await fetchProjectData(routeProjectId);
+    } else {
+      // For new projects, clear the localStorage/sessionStorage
+      localStorage.removeItem('fundedProject');
+      sessionStorage.removeItem('fundedProject');
+    }
+    
+    // Get saved currency from localStorage if available
+    const savedCurrency = localStorage.getItem('projectCurrency');
+    if (savedCurrency === 'IQD' || savedCurrency === 'USD') {
+      selectedCurrency.value = savedCurrency;
+    }
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
   });
 
@@ -425,7 +495,23 @@
     }
   };
 
-  const totalPeriods = computed(() => store.totalPeriods);
+  const totalPeriods = computed(() => {
+    if (!store.form.duration) return 0;
+    
+    // For weeks (periodType 1), convert months to weeks if needed
+    if (store.form.periodType === 1) {
+      // If the durationType is 'months', convert to weeks (approx 4 weeks per month)
+      if (store.form.durationType === 'months') {
+        return parseInt(store.form.duration) * 4;
+      }
+      // Otherwise, if already in weeks, return the duration directly
+      return parseInt(store.form.duration);
+    } 
+    // For months (periodType 2), return the duration directly
+    else {
+      return parseInt(store.form.duration);
+    }
+  });
 
   const updateGovernmentStatus = (value) => {
     store.form.isGovernment = value;
@@ -471,37 +557,67 @@
 
   // Function to prepare form data before sending to API
   const prepareFormData = () => {
-      // Ensure data types are correct before saving
-      if (store.form.cost) {
-        store.form.cost = parseFloat(store.form.cost);
+    // Ensure data types are correct before saving
+    if (store.form.cost) {
+      // First parse as float to handle any existing formatting
+      let costValue = parseFloat(store.form.cost);
+      
+      // Ensure it's a valid number
+      if (!isNaN(costValue)) {
+        // Convert currency if needed
+        if (selectedCurrency.value === 'IQD') {
+          // Convert from IQD to USD using constant
+          costValue = costValue * CURRENCY_CONVERSION.IQD_TO_USD;
+          
+          // Format with proper decimal places but keep as number
+          costValue = parseFloat(costValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
+        }
+        
+        // Assign the clean number value to the form
+        store.form.cost = costValue;
       }
+    }
 
-      if (store.form.duration) {
-        store.form.duration = parseInt(store.form.duration);
+    if (store.form.duration) {
+      store.form.duration = parseInt(store.form.duration);
+      
+      // Ensure periodType and durationType are synchronized
+      if (store.form.periodType === 1) {
+        // When using weeks for periodType
+        store.form.durationType = 'weeks';
+      } else if (store.form.periodType === 2) {
+        // When using months for periodType
+        store.form.durationType = 'months';
       }
+    }
 
-      if (store.form.latitude) {
-        store.form.latitude = parseFloat(store.form.latitude);
-      }
+    if (store.form.latitude) {
+      store.form.latitude = parseFloat(store.form.latitude);
+    }
 
-      if (store.form.longitude) {
-        store.form.longitude = parseFloat(store.form.longitude);
-      }
+    if (store.form.longitude) {
+      store.form.longitude = parseFloat(store.form.longitude);
+    }
 
-      if (store.form.actualStartDate instanceof Date) {
-        store.form.actualStartDate = store.form.actualStartDate.toISOString();
-      }
+    if (store.form.actualStartDate instanceof Date) {
+      store.form.actualStartDate = store.form.actualStartDate.toISOString();
+    }
 
-      store.form.isGovernment = !!store.form.isGovernment;
+    // Make sure isGovernment is explicitly a boolean
+    store.form.isGovernment = typeof store.form.isGovernment === 'boolean' 
+      ? store.form.isGovernment 
+      : Boolean(store.form.isGovernment);
+    
+    console.log('Preparing form data with isGovernment:', store.form.isGovernment, typeof store.form.isGovernment);
 
-      if (Array.isArray(store.form.beneficiaryEntities)) {
-        store.form.beneficiaryEntities = store.form.beneficiaryEntities
-          .filter((entity) => entity && entity.toString().trim() !== '')
-          .map((entity) => {
-            const parsed = parseInt(entity);
-            return !isNaN(parsed) ? parsed : entity;
-          });
-      }
+    if (Array.isArray(store.form.beneficiaryEntities)) {
+      store.form.beneficiaryEntities = store.form.beneficiaryEntities
+        .filter((entity) => entity && entity.toString().trim() !== '')
+        .map((entity) => {
+          const parsed = parseInt(entity);
+          return !isNaN(parsed) ? parsed : entity;
+        });
+    }
   };
 
   // Save the initial project data (without components)
@@ -513,14 +629,25 @@
     try {
       prepareFormData();
       
+      console.log('Before API call - isGovernment:', store.form.isGovernment, typeof store.form.isGovernment);
+      
       // Save with empty components array
       store.form.components = [];
       
       const response = await store.saveProject();
       if (response.success) {
+        console.log('Project saved, server response:', response.data);
+        console.log('isGovernment in response:', response.data.isGovernment, typeof response.data.isGovernment);
+        
         projectSaved.value = true;
         projectId.value = response.data.id;
         store.form.id = response.data.id;
+        
+        // Ensure isGovernment is set correctly from response
+        if (response.data.hasOwnProperty('isGovernment')) {
+          store.form.isGovernment = Boolean(response.data.isGovernment);
+          console.log('isGovernment set from response:', store.form.isGovernment);
+        }
         
         toast.success('تم حفظ بيانات المشروع بنجاح', {
           description: 'يمكنك الآن إضافة المكونات والفعاليات للمشروع'
@@ -710,7 +837,23 @@
   };
 
   const updateProjectDetails = (updatedProject) => {
+    console.log('Received updated project data from ProjectDetails');
+    console.log('Current isGovernment value:', store.form.isGovernment, typeof store.form.isGovernment);
+    console.log('New isGovernment value:', updatedProject.isGovernment, typeof updatedProject.isGovernment);
+    
+    // First, update all other properties
     Object.assign(store.form, updatedProject);
+    
+    // Then, handle isGovernment explicitly to ensure it's a boolean
+    if (updatedProject.hasOwnProperty('isGovernment')) {
+      // Convert explicitly to boolean (true for true/"true"/1, false otherwise)
+      store.form.isGovernment = updatedProject.isGovernment === true || 
+                               updatedProject.isGovernment === "true" || 
+                               updatedProject.isGovernment === 1;
+    }
+    
+    console.log('After update, isGovernment value:', store.form.isGovernment, typeof store.form.isGovernment);
+    
     store.hasUnsavedChanges = true;
   };
 
@@ -746,6 +889,9 @@
     if (!activity.selectedPeriods) {
       activity.selectedPeriods = [];
     }
+    
+    // No need to validate here - we're showing the user only valid periods in the UI
+    // The period buttons shown are already limited to totalPeriods
     
     const periodIndex = activity.selectedPeriods.indexOf(period);
     if (periodIndex === -1) {
@@ -786,14 +932,15 @@
     try {
       store.form.isSaving = true;
       
-      // Debug log
-      console.log('Preparing to save activity:', {
-        componentId: component.id,
-        name: activity.name,
-        targetPercentage: activity.targetPercentage || 0,
-        notes: activity.notes || "",
-        selectedPeriods: activity.selectedPeriods || []
-      });
+      // The key change - transform the period numbers based on periodType
+      // For weekly periods (periodType === 1), no transformation needed
+      // For monthly periods (periodType === 2), transform to the correct format expected by the API
+      let selectedPeriods = [...(activity.selectedPeriods || [])];
+      
+      // Log the raw periods before any transformation
+      console.log('Original selected periods:', selectedPeriods);
+      console.log('Project period type:', store.form.periodType);
+      console.log('Total project periods:', totalPeriods.value);
       
       // Prepare activity data with component ID
       const activityData = {
@@ -801,24 +948,25 @@
         name: activity.name,
         targetPercentage: activity.targetPercentage || 0,
         notes: activity.notes || "",
-        selectedPeriods: activity.selectedPeriods || []
+        selectedPeriods: selectedPeriods,
+        // Add period type information to help the backend interpret the periods correctly
+        periodType: store.form.periodType
       };
+      
+      // Add a console log to debug the request
+      console.log('Sending activity data:', JSON.stringify(activityData));
       
       let response;
       
       if (activity.id) {
-        console.log(`Updating existing activity with ID: ${activity.id}`);
-        // Update existing activity - use the renamed method
+        // Update existing activity
         response = await store.updateProjectActivity(activity.id, activityData);
       } else {
-        console.log('Adding new activity');
-        // Add new activity - use the renamed method
+        // Add new activity
         response = await store.createProjectActivity(component.id, activityData);
       }
       
       if (response && response.success) {
-        console.log('Activity saved successfully:', response.data);
-        
         // Update the activity in the local state with returned data
         store.form.components[componentIndex].activities[activityIndex] = {
           ...activity,
@@ -827,20 +975,20 @@
         
         toast.success(activity.id ? 'تم تحديث الفعالية بنجاح' : 'تم إضافة الفعالية بنجاح');
       } else {
-        console.error('No success response from activity save:', response);
         toast.error('حدث خطأ أثناء حفظ الفعالية');
       }
     } catch (error) {
-      console.error('Detailed error saving activity:', error);
+      console.error('Error saving activity:', error);
       
-      // More specific error handling for activities
       let errorMessage = 'يرجى المحاولة مرة أخرى';
       if (error.response) {
-        console.error('Error response:', error.response);
-        if (error.response.data && error.response.data.message) {
+        if (error.response.data && typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data && error.response.data.message) {
           errorMessage = error.response.data.message;
         } else if (error.response.status === 400) {
-          errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
+          // More specific error message for this exact issue
+          errorMessage = 'الفترات المحددة غير صالحة. تأكد من أن الفترات لا تتجاوز مدة المشروع';
         } else if (error.response.status === 404) {
           errorMessage = 'لم يتم العثور على المكون المحدد';
         }
@@ -905,6 +1053,65 @@
       // If activity doesn't have an ID, just remove it locally
       removeActivity(componentIndex, activityIndex);
       toast.success('تم حذف الفعالية');
+    }
+  };
+
+  // Add an explicit console log when passing the form to ProjectDetails
+  const projectFormWithGovernment = computed(() => {
+    const isGov = Boolean(store.form.isGovernment);
+    console.log('Computing projectFormWithGovernment:');
+    console.log('- store.form.isGovernment:', store.form.isGovernment, typeof store.form.isGovernment);
+    console.log('- converted to Boolean:', isGov, typeof isGov);
+    
+    return {
+      ...store.form,
+      isGovernment: isGov
+    };
+  });
+
+  const handleCurrencyChange = (newCurrency) => {
+    if (store.form.cost && selectedCurrency.value !== newCurrency) {
+      // Convert the cost value when currency changes
+      const currentCost = parseFloat(store.form.cost);
+      if (!isNaN(currentCost)) {
+        if (newCurrency === 'IQD' && selectedCurrency.value === 'USD') {
+          // Convert from USD to IQD using constant
+          // For display, we want to show a clean integer value for IQD
+          const convertedValue = currentCost * CURRENCY_CONVERSION.USD_TO_IQD;
+          store.form.cost = parseInt(convertedValue.toFixed(0));
+        } else if (newCurrency === 'USD' && selectedCurrency.value === 'IQD') {
+          // Convert from IQD to USD using constant
+          const convertedValue = currentCost * CURRENCY_CONVERSION.IQD_TO_USD;
+          // Preserve 2 decimal places for USD but keep as a clean number
+          store.form.cost = parseFloat(convertedValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
+        }
+      }
+    }
+    selectedCurrency.value = newCurrency;
+    
+    // Save preference to localStorage
+    localStorage.setItem('projectCurrency', newCurrency);
+  };
+
+  // Add a helper function to format cost display
+  const formatCostWithCurrency = (value, currency) => {
+    if (!value) return '';
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return '';
+    
+    let formattedValue;
+    if (currency === 'USD') {
+      formattedValue = numValue.toLocaleString('en-US', {
+        minimumFractionDigits: CURRENCY_CONVERSION.PRECISION.USD,
+        maximumFractionDigits: CURRENCY_CONVERSION.PRECISION.USD
+      });
+      return `$${formattedValue}`;
+    } else {
+      formattedValue = numValue.toLocaleString('en-US', {
+        minimumFractionDigits: CURRENCY_CONVERSION.PRECISION.IQD,
+        maximumFractionDigits: CURRENCY_CONVERSION.PRECISION.IQD
+      });
+      return `${formattedValue} د.ع`;
     }
   };
 </script>

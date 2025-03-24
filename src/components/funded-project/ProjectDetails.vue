@@ -56,6 +56,48 @@
         </div>
       </div>
 
+      <!-- Project Status and Type Section -->
+      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
+        <h3 class="mb-6 text-lg font-medium">حالة ونوع المشروع</h3>
+        <div class="grid gap-6 md:grid-cols-2">
+          <!-- Status select dropdown -->
+          <FormField label="حالة المشروع">
+            <template v-if="isEditing">
+              <select
+                v-model="formData.projectStatus"
+                class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option :value="0">ملغاة</option>
+                <option :value="1">قيد التنفيذ</option>
+                <option :value="2">منجزة</option>
+                <option :value="3">متلكئة</option>
+              </select>
+            </template>
+            <template v-else>
+              <div
+                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
+              >
+                {{ getStatusText(project?.projectStatus) }}
+              </div>
+            </template>
+          </FormField>
+          
+          <!-- Government Project Toggle -->
+          <FormField label="نوع المشروع">
+            <div class="flex items-center gap-3">
+              <CustomSwitch
+                v-model="formData.isGovernment"
+                label="مشروع حكومي"
+                @update:model-value="updateIsGovernment"
+              />
+              <div class="text-xs" :class="formData.isGovernment ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
+                {{ formData.isGovernment ? 'تم تعيين المشروع كاحد مشاريع البرنامج الحكومي' : 'مشروع غير حكومي' }}
+              </div>
+            </div>
+          </FormField>
+        </div>
+      </div>
+
       <!-- Beneficiaries Section -->
       <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
         <h3 class="mb-6 text-lg font-medium">الجهات المستفيدة والمانحة</h3>
@@ -143,31 +185,6 @@
           </template>
         </FormField>
       </div>
-
-      <!-- Status select dropdown -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">حالة المشروع</h3>
-        <FormField label="حالة المشروع">
-          <template v-if="isEditing">
-            <select
-              v-model="formData.projectStatus"
-              class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option :value="0">ملغاة</option>
-              <option :value="1">قيد التنفيذ</option>
-              <option :value="2">منجزة</option>
-              <option :value="3">متلكئة</option>
-            </select>
-          </template>
-          <template v-else>
-            <div
-              class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-            >
-              {{ getStatusText(project?.projectStatus) }}
-            </div>
-          </template>
-        </FormField>
-      </div>
     </div>
   </FormSection>
 </template>
@@ -211,6 +228,8 @@
     fundingType: 1,
     cost: null,
     projectObjectives: '',
+    projectStatus: 1,
+    isGovernment: false,
   });
 
   // Update to handle beneficiaries properly
@@ -236,11 +255,13 @@
     return Array.isArray(entities) ? entities.join(', ') : entities;
   };
 
-  // Initialize form data when project changes
+  // Update the watch function to directly access the isGovernment property
   watch(
     () => props.project,
     (newProject) => {
       if (newProject) {
+        console.log('Full project data received:', newProject);
+        
         // Process beneficiaryEntities to ensure it's in the right format
         let beneficiaryData = newProject.beneficiaryEntities || [];
         
@@ -254,6 +275,27 @@
           beneficiaryData = beneficiaryData.map(b => b.id || b.value);
         }
         
+        // DEBUG: Check ALL possible property names for isGovernment
+        console.log('Checking all possible property names:');
+        console.log('- isGovernment:', newProject.isGovernment, typeof newProject.isGovernment);
+        console.log('- is_government:', newProject.is_government, typeof newProject.is_government);
+        console.log('- IsGovernment:', newProject.IsGovernment, typeof newProject.IsGovernment);
+        
+        // Try to extract the isGovernment value using all possible approaches
+        let isGovernment = false;
+        
+        if (typeof newProject.isGovernment === 'boolean') {
+          isGovernment = newProject.isGovernment;
+        } else if (newProject.isGovernment === 'true' || newProject.isGovernment === 1) {
+          isGovernment = true;
+        } else if (newProject.is_government === true || newProject.is_government === 'true' || newProject.is_government === 1) {
+          isGovernment = true;
+        } else if (newProject.IsGovernment === true || newProject.IsGovernment === 'true' || newProject.IsGovernment === 1) {
+          isGovernment = true;
+        }
+        
+        console.log('Final isGovernment value to be used:', isGovernment);
+        
         formData.value = {
           name: newProject.name || '',
           executingDepartment: newProject.executingDepartment || '',
@@ -264,10 +306,10 @@
           cost: newProject.cost || null,
           projectObjectives: newProject.projectObjectives || '',
           projectStatus: newProject.projectStatus !== undefined ? Number(newProject.projectStatus) : 1,
+          isGovernment: isGovernment,
         };
         
-        // Debug logging
-        console.log('Processed beneficiaryEntities:', formData.value.beneficiaryEntities);
+        console.log('FormData initialized with isGovernment:', formData.value.isGovernment);
       }
     },
     { immediate: true, deep: true }
@@ -323,5 +365,20 @@
       3: 'متلكئة',
     };
     return statusMap[status] || 'غير معروف';
+  };
+
+  // Add a function to handle the government status change
+  const updateIsGovernment = (value) => {
+    // Log the incoming value
+    console.log('updateIsGovernment called with value:', value);
+    
+    // Update the form data locally
+    formData.value.isGovernment = value;
+    
+    // Emit the update with the entire form data
+    emit('update:project', {...formData.value});
+    
+    // Log the emitted data
+    console.log('Emitted formData with isGovernment:', formData.value.isGovernment);
   };
 </script>

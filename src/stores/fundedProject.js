@@ -12,7 +12,7 @@ const defaultForm = {
   name: '',
   executingDepartment: '',
   implementingEntity: '',
-  beneficiaryEntities: '',
+  beneficiaryEntities: [],
   grantingEntity: '',
   fundingType: 1,
   cost: null,
@@ -145,22 +145,19 @@ export const useFundedProjectStore = defineStore(
           beneficiaryEntitiesData = beneficiaryEntitiesData.map(b => b.value || b.id || b);
         }
         
-        // Filter out empty values and convert to numbers if possible
-        beneficiaryEntitiesData = beneficiaryEntitiesData
-          .filter(entity => entity !== null && entity !== undefined && entity !== '')
-          .map(entity => {
-            const parsed = parseInt(entity);
-            return !isNaN(parsed) ? parsed : entity;
-          });
+        // Ensure isGovernment is properly set as a boolean
+        const isGovernment = form.value.isGovernment === true || 
+                             form.value.isGovernment === 'true' || 
+                             form.value.isGovernment === 1;
         
-        console.log('Saving beneficiaryEntities:', beneficiaryEntitiesData);
+        console.log('Saving project with isGovernment:', isGovernment);
 
         const projectData = {
           fundingType: form.value.fundingType,
           periodType: form.value.periodType,
           duration: parseInt(form.value.duration) || 0,
           name: form.value.name,
-          isGovernment: form.value.isGovernment,
+          isGovernment: isGovernment, // Use the properly converted boolean
           executingDepartment: form.value.executingDepartment,
           implementingEntity: form.value.implementingEntity,
           grantingEntity: form.value.grantingEntity,
@@ -174,6 +171,16 @@ export const useFundedProjectStore = defineStore(
         };
 
         const response = await projectService.createProject(projectData);
+        
+        // Make sure to update the form with the response data INCLUDING isGovernment
+        if (response.data) {
+          form.value = {
+            ...form.value,
+            ...response.data,
+            isGovernment: Boolean(response.data.isGovernment)
+          };
+          console.log('Updated form after save with isGovernment:', form.value.isGovernment);
+        }
 
         form.value.hasUnsavedChanges = false;
         return { success: true, data: response.data };
@@ -340,6 +347,67 @@ export const useFundedProjectStore = defineStore(
       }
     };
 
+    const getProject = async (id) => {
+      try {
+        const response = await axiosInstance.get(`/api/projects/${id}`);
+        console.log('Raw API response for project:', response.data);
+        
+        if (response.data) {
+          // Force convert isGovernment to boolean
+          const isGovernment = response.data.isGovernment === true || 
+                              response.data.isGovernment === 'true' || 
+                              response.data.isGovernment === 1;
+          
+          console.log('API isGovernment value:', response.data.isGovernment, typeof response.data.isGovernment);
+          console.log('Converted isGovernment value:', isGovernment);
+          
+          // Update the form
+          form.value = {
+            ...response.data,
+            isGovernment: isGovernment
+          };
+          
+          console.log('Store form updated with isGovernment:', form.value.isGovernment);
+          return form.value;
+        }
+      } catch (error) {
+        console.error('Error fetching project:', error);
+        throw error;
+      }
+    };
+
+    const loadProject = async (id) => {
+      try {
+        console.log('Loading project with ID:', id);
+        const response = await projectService.getProject(id);
+        
+        console.log('API response for project:', response.data);
+        
+        if (response.data) {
+          // Ensure isGovernment is properly converted to boolean
+          const isGovernment = response.data.isGovernment === true || 
+                              response.data.isGovernment === 'true' || 
+                              response.data.isGovernment === 1;
+          
+          console.log('API isGovernment:', response.data.isGovernment);
+          console.log('Converted isGovernment:', isGovernment);
+          
+          // Update form with all project data
+          form.value = {
+            ...defaultForm,
+            ...response.data,
+            isGovernment: isGovernment // Use the properly converted value
+          };
+          
+          console.log('Form updated with isGovernment:', form.value.isGovernment);
+          return form.value;
+        }
+      } catch (error) {
+        console.error('Error loading project:', error);
+        throw error;
+      }
+    };
+
     return {
       form,
       totalPeriods,
@@ -361,6 +429,8 @@ export const useFundedProjectStore = defineStore(
       createProjectActivity,
       updateProjectActivity,
       deleteProjectActivity,
+      getProject,
+      loadProject,
     };
   },
   {

@@ -147,12 +147,21 @@
                   </div>
                 </div>
               </div>
-              <div class="p-4">
-                <div class="text-sm text-gray-500 dark:text-gray-400">الهدف من المشروع</div>
+              <div class="p-4 flex flex-col gap-2">
+                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">الهدف من المشروع</div>
                 <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                   {{ project?.projectObjectives || 'لم يتم تحديد الهدف' }}
                 </div>
               </div>
+
+              <div class="p-4 flex flex-col gap-2">
+                  <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">نوع المشروع</div>
+                <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.isGovernment ? 'مشروع حكومي' : 'مشروع غير حكومي' }}
+                </div>
+              </div>
+
+
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
                   <div class="text-sm text-gray-500 dark:text-gray-400">نوع التمويل</div>
