@@ -48,7 +48,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 divide-x dark:divide-gray-700">
+            <!-- <div class="grid grid-cols-2 divide-x dark:divide-gray-700">
               <div class="p-4 text-center">
                 <div class="text-sm text-gray-500 dark:text-gray-400">المكونات</div>
                 <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -61,7 +61,7 @@
                   {{ getTotalActivities(projectDetails) }}
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- Actions -->
