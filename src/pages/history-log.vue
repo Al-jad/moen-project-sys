@@ -43,6 +43,7 @@
   import ViewLogModal from '@/components/ViewLogModal.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
+  import * as XLSX from 'xlsx';
 
   // State
   const showDetailsDialog = ref(false);
@@ -69,7 +70,9 @@
         { value: 'Attachment', label: 'المرفقات' },
         { value: 'AppUser', label: 'المستخدمين' },
         { value: 'Activity', label: 'الأنشطة' },
-        { value: 'Component', label: 'المكونات' }
+        { value: 'Component', label: 'المكونات' },
+        { value: 'Beneficiary', label: 'الجهات المستفيدة' },
+        { value: null, label: 'غير محدد' }
       ],
       icon: 'lucide:folder',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -79,9 +82,9 @@
       placeholder: 'نوع العملية',
       options: [
         { value: 'all', label: 'الكل' },
-        { value: 'create', label: 'إنشاء' },
-        { value: 'update', label: 'تعديل' },
-        { value: 'delete', label: 'حذف' },
+        { value: 'إنشاء', label: 'إنشاء' },
+        { value: 'تعديل', label: 'تعديل' },
+        { value: 'حذف', label: 'حذف' },
       ],
       icon: 'lucide:activity',
       triggerClass: 'flex-row-reverse dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
@@ -102,6 +105,10 @@
   };
 
   const getTableName = (tableName) => {
+    if (tableName === null || tableName === undefined) {
+      return 'غير محدد'; // "Not specified" for null values
+    }
+    
     const translations = {
       'AppUser': 'المستخدمين',
       'Project': 'المشاريع',
@@ -115,9 +122,24 @@
       'Task': 'المهام',
       'Document': 'المستندات',
       'Report': 'التقارير',
-      'Dashboard': 'لوحة القيادة'
+      'Dashboard': 'لوحة القيادة',
+      'Beneficiary': 'الجهات المستفيدة',
     };
     return translations[tableName] || tableName;
+  };
+
+  // Translate action types to Arabic
+  const translateAction = (action) => {
+    if (action === null || action === undefined) {
+      return 'غير محدد'; // "Not specified" for null values
+    }
+    
+    const actionMap = {
+      'create': 'إنشاء',
+      'update': 'تعديل',
+      'delete': 'حذف'
+    };
+    return actionMap[action] || action;
   };
 
   // Fetch logs from API
@@ -127,27 +149,26 @@
       const response = await axiosInstance.get('/api/ActionAudit');
 
       // Process the data to format dates and prepare for display
-      logs.value = response.data.map(log => ({
-        ...log,
-        createdAt: formatDate(log.createdAt),
-        // Translate action types to Arabic
-        action: translateAction(log.action),
-      }));
+      logs.value = response.data.map(log => {
+        const translatedAction = translateAction(log.action);
+        
+        return {
+          ...log,
+          createdAt: formatDate(log.createdAt),
+          // Store both the original and translated action
+          originalAction: log.action,
+          action: translatedAction,
+          // Ensure tableName is properly handled
+          tableName: log.tableName,
+          // Add a field that combines both for filtering
+          filterableAction: translatedAction
+        };
+      });
     } catch (error) {
       console.error('Error fetching logs:', error);
     } finally {
       isLoading.value = false;
     }
-  };
-
-  // Translate action types to Arabic
-  const translateAction = (action) => {
-    const actionMap = {
-      'create': 'إنشاء',
-      'update': 'تعديل',
-      'delete': 'حذف'
-    };
-    return actionMap[action] || action;
   };
 
   // Translate field names to Arabic
@@ -207,7 +228,39 @@
 
   // Methods
   const exportToExcel = () => {
-    // Implement Excel export functionality
+    // Create formatted data for Excel export
+    const headerLabels = [
+      'رقم العملية',
+      'اسم الجدول',
+      'نوع العملية',
+      'تاريخ العملية',
+      'اسم المستخدم'
+    ];
+    
+    const formattedData = logs.value.map(log => ({
+      'رقم العملية': log.id || '',
+      'اسم الجدول': getTableName(log.tableName) || 'غير محدد',
+      'نوع العملية': log.action || '',
+      'تاريخ العملية': log.createdAt || '',
+      'اسم المستخدم': log.user?.name || 'غير معروف'
+    }));
+    
+    // Use the exportToExcel method from CustomTable if it exists
+    if (typeof CustomTable?.exportToExcel === 'function') {
+      CustomTable.exportToExcel(formattedData, headerLabels, 'سجل الاحداث');
+    } else {
+      // Fallback implementation if CustomTable doesn't provide the export method
+      
+      // Convert data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(formattedData);
+      
+      // Create workbook and add the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'سجل الاحداث');
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, 'سجل الاحداث.xlsx');
+    }
   };
 
   const viewDetails = (log) => {
