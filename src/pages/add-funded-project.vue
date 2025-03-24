@@ -76,21 +76,7 @@
 
                   <!-- Activities Section -->
                   <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                      <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
-                      <Button
-                        @click="addActivity(index)"
-                        variant="outline"
-                        size="sm"
-                        :style="{
-                          borderColor: getComponentColor(index),
-                          color: getComponentColor(index),
-                        }"
-                      >
-                        <Icon icon="lucide:plus" class="h-4 w-4" />
-                        اضافة فعالية
-                      </Button>
-                    </div>
+                    <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
 
                     <!-- Activities List -->
                     <div class="space-y-3">
@@ -239,6 +225,21 @@
                         </div>
                       </div>
                     </div>
+
+                    <!-- Add Activity Button (Moved here) -->
+                    <Button
+                      @click="addActivity(index)"
+                      variant="outline"
+                      size="sm"
+                      :style="{
+                        borderColor: getComponentColor(index),
+                        color: getComponentColor(index),
+                      }"
+                      class="w-full"
+                    >
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                      اضافة فعالية
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -705,7 +706,7 @@
     store.hasUnsavedChanges = true;
   };
 
-  const removeActivity = (componentIndex, activityIndex) => {
+  const deleteActivity = (componentIndex, activityIndex) => {
     if (store.form.components[componentIndex].activities) {
       store.form.components[componentIndex].activities.splice(activityIndex, 1);
       store.hasUnsavedChanges = true;
