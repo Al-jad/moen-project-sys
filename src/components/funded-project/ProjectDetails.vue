@@ -81,17 +81,28 @@
               </div>
             </template>
           </FormField>
-          
+
           <!-- Government Project Toggle -->
           <FormField label="نوع المشروع">
             <div class="flex items-center gap-3">
               <CustomSwitch
                 v-model="formData.isGovernment"
-                label="مشروع حكومي"
+                label="ضمن البرنامج الحكومي"
                 @update:model-value="updateIsGovernment"
               />
-              <div class="text-xs" :class="formData.isGovernment ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'">
-                {{ formData.isGovernment ? 'تم تعيين المشروع كاحد مشاريع البرنامج الحكومي' : 'مشروع غير حكومي' }}
+              <div
+                class="text-xs"
+                :class="
+                  formData.isGovernment
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-500 dark:text-gray-400'
+                "
+              >
+                {{
+                  formData.isGovernment
+                    ? 'تم تعيين المشروع كاحد مشاريع البرنامج الحكومي'
+                    : 'ليس ضمن مشاريع البرنامج الحكومي'
+                }}
               </div>
             </div>
           </FormField>
@@ -149,7 +160,7 @@
               دولي
             </div>
           </FormField>
-          <FormField label="كلفة المشروع بالدولار">
+          <FormField label="كلفة المشروع">
             <template v-if="isEditing">
               <NumberInput v-model="formData.cost" placeholder="165,000" unit="$" />
             </template>
@@ -199,7 +210,7 @@
   import { beneficiaryService } from '@/services/beneficiaryService';
   import { useFundedProjectStore } from '@/stores/fundedProject';
   import { defineEmits, defineProps, onMounted, ref, watch } from 'vue';
-  
+
   const props = defineProps({
     project: {
       type: Object,
@@ -235,22 +246,22 @@
   // Update to handle beneficiaries properly
   const formatBeneficiaries = (entities) => {
     if (!entities || entities.length === 0) return 'لم يتم تحديد الجهات المستفيدة';
-    
+
     // If entities is an array of objects with name property
     if (typeof entities[0] === 'object' && entities[0].name) {
-      return entities.map(e => e.name).join(', ');
+      return entities.map((e) => e.name).join(', ');
     }
-    
+
     // If entities is an array of IDs
     if (beneficiaries.value.length > 0) {
       return entities
-        .map(id => {
-          const found = beneficiaries.value.find(b => b.value === id);
+        .map((id) => {
+          const found = beneficiaries.value.find((b) => b.value === id);
           return found ? found.label : id;
         })
         .join(', ');
     }
-    
+
     // Fallback
     return Array.isArray(entities) ? entities.join(', ') : entities;
   };
@@ -261,41 +272,49 @@
     (newProject) => {
       if (newProject) {
         console.log('Full project data received:', newProject);
-        
+
         // Process beneficiaryEntities to ensure it's in the right format
         let beneficiaryData = newProject.beneficiaryEntities || [];
-        
+
         // Convert to array if it's not already
         if (!Array.isArray(beneficiaryData)) {
           beneficiaryData = beneficiaryData ? [beneficiaryData] : [];
         }
-        
+
         // Extract IDs if entities are objects
         if (beneficiaryData.length > 0 && typeof beneficiaryData[0] === 'object') {
-          beneficiaryData = beneficiaryData.map(b => b.id || b.value);
+          beneficiaryData = beneficiaryData.map((b) => b.id || b.value);
         }
-        
+
         // DEBUG: Check ALL possible property names for isGovernment
         console.log('Checking all possible property names:');
         console.log('- isGovernment:', newProject.isGovernment, typeof newProject.isGovernment);
         console.log('- is_government:', newProject.is_government, typeof newProject.is_government);
         console.log('- IsGovernment:', newProject.IsGovernment, typeof newProject.IsGovernment);
-        
+
         // Try to extract the isGovernment value using all possible approaches
         let isGovernment = false;
-        
+
         if (typeof newProject.isGovernment === 'boolean') {
           isGovernment = newProject.isGovernment;
         } else if (newProject.isGovernment === 'true' || newProject.isGovernment === 1) {
           isGovernment = true;
-        } else if (newProject.is_government === true || newProject.is_government === 'true' || newProject.is_government === 1) {
+        } else if (
+          newProject.is_government === true ||
+          newProject.is_government === 'true' ||
+          newProject.is_government === 1
+        ) {
           isGovernment = true;
-        } else if (newProject.IsGovernment === true || newProject.IsGovernment === 'true' || newProject.IsGovernment === 1) {
+        } else if (
+          newProject.IsGovernment === true ||
+          newProject.IsGovernment === 'true' ||
+          newProject.IsGovernment === 1
+        ) {
           isGovernment = true;
         }
-        
+
         console.log('Final isGovernment value to be used:', isGovernment);
-        
+
         formData.value = {
           name: newProject.name || '',
           executingDepartment: newProject.executingDepartment || '',
@@ -305,16 +324,17 @@
           fundingType: newProject.fundingType || 1,
           cost: newProject.cost || null,
           projectObjectives: newProject.projectObjectives || '',
-          projectStatus: newProject.projectStatus !== undefined ? Number(newProject.projectStatus) : 1,
+          projectStatus:
+            newProject.projectStatus !== undefined ? Number(newProject.projectStatus) : 1,
           isGovernment: isGovernment,
         };
-        
+
         console.log('FormData initialized with isGovernment:', formData.value.isGovernment);
       }
     },
     { immediate: true, deep: true }
   );
-  
+
   // Watch for form changes and emit updates with debug logging
   watch(
     formData,
@@ -324,9 +344,11 @@
       emit('update:project', {
         ...newValue,
         // Ensure beneficiaryEntities is properly formatted
-        beneficiaryEntities: Array.isArray(newValue.beneficiaryEntities) 
-          ? newValue.beneficiaryEntities 
-          : (newValue.beneficiaryEntities ? [newValue.beneficiaryEntities] : [])
+        beneficiaryEntities: Array.isArray(newValue.beneficiaryEntities)
+          ? newValue.beneficiaryEntities
+          : newValue.beneficiaryEntities
+            ? [newValue.beneficiaryEntities]
+            : [],
       });
     },
     { deep: true }
@@ -341,7 +363,7 @@
         label: b.name,
       }));
       console.log('Loaded beneficiaries:', beneficiaries.value);
-      
+
       // Reapply the project data to ensure beneficiaries are properly formatted
       if (props.project) {
         watch.value = props.project;
@@ -371,13 +393,13 @@
   const updateIsGovernment = (value) => {
     // Log the incoming value
     console.log('updateIsGovernment called with value:', value);
-    
+
     // Update the form data locally
     formData.value.isGovernment = value;
-    
+
     // Emit the update with the entire form data
-    emit('update:project', {...formData.value});
-    
+    emit('update:project', { ...formData.value });
+
     // Log the emitted data
     console.log('Emitted formData with isGovernment:', formData.value.isGovernment);
   };

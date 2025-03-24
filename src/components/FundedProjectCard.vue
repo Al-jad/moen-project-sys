@@ -15,7 +15,9 @@
             <div class="flex items-center gap-2">
               <h3
                 class="text-lg font-medium text-gray-900 transition-colors dark:text-gray-100"
-                :class="[disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400']"
+                :class="[
+                  disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400',
+                ]"
               >
                 {{ project.name || 'لا يوجد اسم' }}
               </h3>
@@ -57,15 +59,24 @@
             </div>
             <template v-if="item.type === 'progress'">
               <div class="flex items-center gap-2">
-                <div class="h-2.5 w-20 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                <div
+                  class="relative h-2.5 w-20 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700"
+                >
                   <div
-                    class="h-full bg-gray-600 transition-all dark:bg-gray-100"
+                    class="absolute inset-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out dark:from-blue-400 dark:to-blue-500"
+                    :style="{ width: `${item.value || 0}%` }"
+                  ></div>
+                  <div
+                    class="absolute inset-0 h-full animate-pulse bg-gradient-to-r from-blue-200/50 to-blue-300/50 dark:from-blue-500/20 dark:to-blue-600/20"
                     :style="{ width: `${item.value || 0}%` }"
                   ></div>
                 </div>
-                <h3 class="font-semibold text-gray-600 dark:text-gray-100">
-                  {{ item.value || 0 }}%
-                </h3>
+                <div class="flex items-center gap-1">
+                  <h3 class="font-semibold text-gray-600 dark:text-gray-100">
+                    {{ item.value || 0 }}
+                  </h3>
+                  <span class="text-xs text-gray-500 dark:text-gray-400">%</span>
+                </div>
               </div>
             </template>
             <template v-else>
@@ -82,8 +93,8 @@
 <script setup>
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import { Icon } from '@iconify/vue';
-  import { useRouter } from 'vue-router';
   import { computed } from 'vue';
+  import { useRouter } from 'vue-router';
 
   const router = useRouter();
   const props = defineProps({
@@ -139,7 +150,7 @@
           title: 'الانجاز المالي',
           icon: 'fluent:money-calculator-24-regular',
           type: 'progress',
-          value: computed(() => props.project.financialProgress || 0),
+          value: computed(() => props.project.financialAchievement || 0),
         },
         {
           title: 'الإنجاز الفني',

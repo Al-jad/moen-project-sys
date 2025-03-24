@@ -1,6 +1,6 @@
+import axiosInstance from '@/plugins/axios';
 import projectService from '@/services/projectService';
 import { defineStore } from 'pinia';
-import axiosInstance from '@/plugins/axios';
 
 const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') return obj;
@@ -27,6 +27,7 @@ const defaultForm = {
   hasUnsavedChanges: false,
   latitude: '',
   longitude: '',
+  financialAchievement: 0,
 };
 
 export const useFundedProjectStore = defineStore(
@@ -134,22 +135,23 @@ export const useFundedProjectStore = defineStore(
       try {
         // Ensure beneficiaryEntities is properly formatted for the API
         let beneficiaryEntitiesData = form.value.beneficiaryEntities;
-        
+
         // Make sure it's an array
         if (!Array.isArray(beneficiaryEntitiesData)) {
           beneficiaryEntitiesData = beneficiaryEntitiesData ? [beneficiaryEntitiesData] : [];
         }
-        
+
         // If it contains objects with value property (from CustomMultiSelect), extract the values
         if (beneficiaryEntitiesData.length > 0 && typeof beneficiaryEntitiesData[0] === 'object') {
-          beneficiaryEntitiesData = beneficiaryEntitiesData.map(b => b.value || b.id || b);
+          beneficiaryEntitiesData = beneficiaryEntitiesData.map((b) => b.value || b.id || b);
         }
-        
+
         // Ensure isGovernment is properly set as a boolean
-        const isGovernment = form.value.isGovernment === true || 
-                             form.value.isGovernment === 'true' || 
-                             form.value.isGovernment === 1;
-        
+        const isGovernment =
+          form.value.isGovernment === true ||
+          form.value.isGovernment === 'true' ||
+          form.value.isGovernment === 1;
+
         console.log('Saving project with isGovernment:', isGovernment);
 
         const projectData = {
@@ -168,16 +170,17 @@ export const useFundedProjectStore = defineStore(
           cost: parseFloat(form.value.cost) || 0,
           actualStartDate: form.value.actualStartDate,
           projectObjectives: form.value.projectObjectives || '',
+          financialAchievement: Number(form.value.financialAchievement) || 0,
         };
 
         const response = await projectService.createProject(projectData);
-        
+
         // Make sure to update the form with the response data INCLUDING isGovernment
         if (response.data) {
           form.value = {
             ...form.value,
             ...response.data,
-            isGovernment: Boolean(response.data.isGovernment)
+            isGovernment: Boolean(response.data.isGovernment),
           };
           console.log('Updated form after save with isGovernment:', form.value.isGovernment);
         }
@@ -196,20 +199,20 @@ export const useFundedProjectStore = defineStore(
       isSaving.value = true;
       try {
         const componentsData = JSON.parse(JSON.stringify(components));
-        
+
         const response = await axiosInstance.post(`/api/Component/${projectId}`, {
-          components: componentsData
+          components: componentsData,
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to update components');
         }
-        
+
         const data = await response.json();
         isSaving.value = false;
         return {
           success: true,
-          data: data
+          data: data,
         };
       } catch (error) {
         isSaving.value = false;
@@ -222,20 +225,20 @@ export const useFundedProjectStore = defineStore(
       try {
         const payload = {
           projectId: projectId,
-          name: component.name || "",
-          targetPercentage: component.targetPercentage || 0
+          name: component.name || '',
+          targetPercentage: component.targetPercentage || 0,
         };
-        
+
         const response = await axiosInstance.post(`/api/Component`, payload);
-        
+
         if (response.status >= 400) {
           throw new Error('Failed to add component');
         }
-        
+
         isSaving.value = false;
         return {
           success: true,
-          data: response.data
+          data: response.data,
         };
       } catch (error) {
         isSaving.value = false;
@@ -248,20 +251,20 @@ export const useFundedProjectStore = defineStore(
       try {
         const payload = {
           projectId: projectId,
-          name: component.name || "",
-          targetPercentage: component.targetPercentage || 0
+          name: component.name || '',
+          targetPercentage: component.targetPercentage || 0,
         };
-        
+
         const response = await axiosInstance.put(`/api/Component/${componentId}`, payload);
-        
+
         if (response.status >= 400) {
           throw new Error('Failed to update component');
         }
-        
+
         isSaving.value = false;
         return {
           success: true,
-          data: response.data
+          data: response.data,
         };
       } catch (error) {
         isSaving.value = false;
@@ -272,24 +275,24 @@ export const useFundedProjectStore = defineStore(
     const createProjectActivity = async (componentId, activity) => {
       isSaving.value = true;
       try {
-        console.log("Creating activity for component ID:", componentId, "with data:", activity);
-        
+        console.log('Creating activity for component ID:', componentId, 'with data:', activity);
+
         const payload = {
           componentId: componentId,
-          name: activity.name || "",
+          name: activity.name || '',
           targetPercentage: activity.targetPercentage || 0,
-          notes: activity.notes || "",
-          selectedPeriods: activity.selectedPeriods || []
+          notes: activity.notes || '',
+          selectedPeriods: activity.selectedPeriods || [],
         };
-        
+
         const response = await axiosInstance.post(`/api/Activity`, payload);
-        
-        console.log("API response for activity creation:", response);
-        
+
+        console.log('API response for activity creation:', response);
+
         isSaving.value = false;
         return {
           success: true,
-          data: response.data
+          data: response.data,
         };
       } catch (error) {
         console.error('Error in createProjectActivity:', error);
@@ -297,28 +300,28 @@ export const useFundedProjectStore = defineStore(
         throw error;
       }
     };
-    
+
     const updateProjectActivity = async (activityId, activity) => {
       isSaving.value = true;
       try {
-        console.log("Updating activity ID:", activityId, "with data:", activity);
-        
+        console.log('Updating activity ID:', activityId, 'with data:', activity);
+
         const payload = {
           componentId: activity.componentId,
-          name: activity.name || "",
+          name: activity.name || '',
           targetPercentage: activity.targetPercentage || 0,
-          notes: activity.notes || "",
-          selectedPeriods: activity.selectedPeriods || []
+          notes: activity.notes || '',
+          selectedPeriods: activity.selectedPeriods || [],
         };
-        
+
         const response = await axiosInstance.put(`/api/Activity/${activityId}`, payload);
-        
-        console.log("API response for activity update:", response);
-        
+
+        console.log('API response for activity update:', response);
+
         isSaving.value = false;
         return {
           success: true,
-          data: response.data
+          data: response.data,
         };
       } catch (error) {
         console.error('Error in updateProjectActivity:', error);
@@ -326,19 +329,19 @@ export const useFundedProjectStore = defineStore(
         throw error;
       }
     };
-    
+
     const deleteProjectActivity = async (activityId) => {
       isSaving.value = true;
       try {
-        console.log("Deleting activity ID:", activityId);
-        
+        console.log('Deleting activity ID:', activityId);
+
         const response = await axiosInstance.delete(`/api/Activity/${activityId}`);
-        
-        console.log("API response for activity deletion:", response);
-        
+
+        console.log('API response for activity deletion:', response);
+
         isSaving.value = false;
         return {
-          success: true
+          success: true,
         };
       } catch (error) {
         console.error('Error in deleteProjectActivity:', error);
@@ -351,22 +354,27 @@ export const useFundedProjectStore = defineStore(
       try {
         const response = await axiosInstance.get(`/api/projects/${id}`);
         console.log('Raw API response for project:', response.data);
-        
+
         if (response.data) {
           // Force convert isGovernment to boolean
-          const isGovernment = response.data.isGovernment === true || 
-                              response.data.isGovernment === 'true' || 
-                              response.data.isGovernment === 1;
-          
-          console.log('API isGovernment value:', response.data.isGovernment, typeof response.data.isGovernment);
+          const isGovernment =
+            response.data.isGovernment === true ||
+            response.data.isGovernment === 'true' ||
+            response.data.isGovernment === 1;
+
+          console.log(
+            'API isGovernment value:',
+            response.data.isGovernment,
+            typeof response.data.isGovernment
+          );
           console.log('Converted isGovernment value:', isGovernment);
-          
+
           // Update the form
           form.value = {
             ...response.data,
-            isGovernment: isGovernment
+            isGovernment: isGovernment,
           };
-          
+
           console.log('Store form updated with isGovernment:', form.value.isGovernment);
           return form.value;
         }
@@ -380,25 +388,26 @@ export const useFundedProjectStore = defineStore(
       try {
         console.log('Loading project with ID:', id);
         const response = await projectService.getProject(id);
-        
+
         console.log('API response for project:', response.data);
-        
+
         if (response.data) {
           // Ensure isGovernment is properly converted to boolean
-          const isGovernment = response.data.isGovernment === true || 
-                              response.data.isGovernment === 'true' || 
-                              response.data.isGovernment === 1;
-          
+          const isGovernment =
+            response.data.isGovernment === true ||
+            response.data.isGovernment === 'true' ||
+            response.data.isGovernment === 1;
+
           console.log('API isGovernment:', response.data.isGovernment);
           console.log('Converted isGovernment:', isGovernment);
-          
+
           // Update form with all project data
           form.value = {
             ...defaultForm,
             ...response.data,
-            isGovernment: isGovernment // Use the properly converted value
+            isGovernment: isGovernment, // Use the properly converted value
           };
-          
+
           console.log('Form updated with isGovernment:', form.value.isGovernment);
           return form.value;
         }
