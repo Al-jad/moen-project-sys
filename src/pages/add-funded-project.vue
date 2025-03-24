@@ -17,332 +17,258 @@
           <ProjectDuration />
           <ProjectAchivments />
 
-          <!-- First save project section - only shown if project not yet saved -->
-          <div
-            v-if="!projectSaved"
-            class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-          >
-            <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">حفظ المشروع</h2>
-            </div>
-            <div class="space-y-4">
-              <p class="text-gray-600 dark:text-gray-300">
-                يجب حفظ بيانات المشروع الأساسية قبل إضافة المكونات والفعاليات.
-              </p>
-              <Button
-                @click="saveProjectInitial"
-                class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
-                :disabled="store.isSaving"
+          <!-- Components section -->
+          <FormSection title="مكونات المشروع" full-width>
+            <div class="space-y-6">
+              <!-- Display existing components -->
+              <div
+                v-for="(component, index) in store.form.components"
+                :key="component.id || index"
+                class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
               >
-                <Icon
-                  v-if="store.isSaving"
-                  icon="lucide:loader-2"
-                  class="ml-2 h-4 w-4 animate-spin"
-                />
-                <Icon v-else icon="lucide:save" class="ml-2 h-4 w-4" />
-                {{ store.isSaving ? 'جاري الحفظ...' : 'حفظ بيانات المشروع الأساسية' }}
-              </Button>
-            </div>
-          </div>
-
-          <!-- Components section - only shown after initial project save -->
-          <div v-if="projectSaved">
-            <FormSection title="مكونات المشروع" full-width>
-              <div class="space-y-6">
-                <!-- Display existing components -->
-                <div
-                  v-for="(component, index) in store.form.components"
-                  :key="component.id || index"
-                  class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-                >
-                  <div class="mb-6 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
+                <div class="mb-6 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="h-8 w-8 rounded-lg"
+                      :style="{ backgroundColor: getComponentColor(index, true) }"
+                    >
                       <div
-                        class="h-8 w-8 rounded-lg"
-                        :style="{ backgroundColor: getComponentColor(index, true) }"
+                        class="flex h-full w-full items-center justify-center text-sm font-medium"
+                        :style="{ color: getComponentColor(index) }"
                       >
-                        <div
-                          class="flex h-full w-full items-center justify-center text-sm font-medium"
-                          :style="{ color: getComponentColor(index) }"
-                        >
-                          {{ index + 1 }}
-                        </div>
+                        {{ index + 1 }}
                       </div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        المكون {{ index + 1 }}
-                      </h3>
                     </div>
-                    <Button
-                      @click="removeComponent(index)"
-                      variant="ghost"
-                      size="sm"
-                      class="text-red-500 hover:text-red-600 dark:text-red-400"
-                    >
-                      <Icon icon="lucide:trash" class="h-4 w-4" />
-                    </Button>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      المكون {{ index + 1 }}
+                    </h3>
                   </div>
-
-                  <div class="space-y-6">
-                    <!-- Component Fields -->
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                      <FormField label="اسم المكون">
-                        <CustomInput
-                          v-model="component.name"
-                          dir="rtl"
-                          placeholder="ادخل اسم المكون"
-                          class="bg-white dark:bg-gray-800"
-                        />
-                      </FormField>
-                      <FormField label="المستهدف الكلي للمكون">
-                        <NumberInput
-                          v-model="component.targetPercentage"
-                          placeholder="ادخل المستهدف الكلي"
-                          unit="%"
-                          class="bg-white dark:bg-gray-800"
-                        />
-                      </FormField>
-                    </div>
-
-                    <!-- Activities Section -->
-                    <div class="space-y-4">
-                      <div class="flex items-center justify-between">
-                        <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
-                        <Button
-                          @click="addActivity(index)"
-                          variant="outline"
-                          size="sm"
-                          :style="{
-                            borderColor: getComponentColor(index),
-                            color: getComponentColor(index),
-                          }"
-                        >
-                          <Icon icon="lucide:plus" class="h-4 w-4" />
-                          اضافة فعالية
-                        </Button>
-                      </div>
-
-                      <!-- Activities List -->
-                      <div class="space-y-3">
-                        <div
-                          v-for="(activity, activityIndex) in component.activities || []"
-                          :key="activityIndex"
-                          class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700/50"
-                        >
-                          <div class="mb-4 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                              <div
-                                class="h-2 w-2 rounded-full"
-                                :style="{ backgroundColor: getComponentColor(index) }"
-                              ></div>
-                              <span class="font-medium text-gray-900 dark:text-gray-100">
-                                الفعالية {{ activityIndex + 1 }}
-                              </span>
-                              <span v-if="activity.id" class="text-xs text-gray-500"
-                                >(ID: {{ activity.id }})</span
-                              >
-                            </div>
-                            <div class="flex items-center gap-2">
-                              <Button
-                                @click="saveActivity(index, activityIndex)"
-                                variant="outline"
-                                size="sm"
-                                :disabled="!component.id || store.form.isSaving"
-                                :style="{
-                                  borderColor: getComponentColor(index),
-                                  color: getComponentColor(index),
-                                }"
-                              >
-                                <Icon
-                                  v-if="store.form.isSaving"
-                                  icon="lucide:loader-2"
-                                  class="h-4 w-4 animate-spin"
-                                />
-                                <Icon v-else icon="lucide:save" class="h-4 w-4" />
-                                {{ activity.id ? 'تحديث' : 'حفظ' }}
-                              </Button>
-                              <Button
-                                @click="deleteActivity(index, activityIndex)"
-                                variant="ghost"
-                                size="sm"
-                                :disabled="store.form.isSaving"
-                                class="text-red-500 hover:text-red-600 dark:text-red-400"
-                              >
-                                <Icon
-                                  v-if="store.form.isSaving"
-                                  icon="lucide:loader-2"
-                                  class="h-4 w-4 animate-spin"
-                                />
-                                <Icon v-else icon="lucide:trash" class="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-
-                          <!-- Activity Fields -->
-                          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                            <FormField label="اسم الفعالية">
-                              <CustomInput
-                                v-model="activity.name"
-                                dir="rtl"
-                                placeholder="ادخل اسم الفعالية"
-                                class="bg-white dark:bg-gray-800"
-                              />
-                            </FormField>
-                            <FormField label="المستهدف الكلي للفعالية">
-                              <NumberInput
-                                v-model="activity.targetPercentage"
-                                placeholder="ادخل المستهدف الكلي"
-                                unit="%"
-                                class="bg-white dark:bg-gray-800"
-                              />
-                            </FormField>
-                            <FormField label="ملاحظات" class="md:col-span-2">
-                              <Textarea
-                                v-model="activity.notes"
-                                dir="rtl"
-                                placeholder="ادخل الملاحظات"
-                                class="min-h-[80px] bg-white dark:bg-gray-800"
-                              />
-                            </FormField>
-                          </div>
-
-                          <!-- Activity Weeks/Months Selection -->
-                          <div class="mt-4">
-                            <FormField
-                              :label="
-                                store.form.periodType === 1 ? 'الاسابيع المحددة' : 'الاشهر المحددة'
-                              "
-                            >
-                              <div v-if="totalPeriods > 0" class="space-y-4">
-                                <div
-                                  class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
-                                >
-                                  <span
-                                    class="text-sm font-medium text-gray-600 dark:text-gray-300"
-                                  >
-                                    {{
-                                      store.form.periodType === 1
-                                        ? `اختر الاسابيع (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
-                                        : `اختر الاشهر (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
-                                    }}
-                                  </span>
-                                  <button
-                                    v-if="activity.selectedPeriods?.length"
-                                    type="button"
-                                    class="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                                    @click="clearActivityPeriods(index, activityIndex)"
-                                  >
-                                    مسح التحديد
-                                  </button>
-                                </div>
-                                <div
-                                  class="grid gap-2 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-                                  :class="{
-                                    'grid-cols-4': totalPeriods <= 4,
-                                    'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
-                                    'grid-cols-12': totalPeriods > 8,
-                                  }"
-                                >
-                                  <div
-                                    v-for="period in totalPeriods"
-                                    :key="period"
-                                    class="flex flex-col items-center"
-                                  >
-                                    <span
-                                      class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
-                                    >
-                                      {{ period }}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
-                                      :class="[
-                                        activity.selectedPeriods?.includes(period)
-                                          ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
-                                          : 'border-gray-200 bg-white hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600',
-                                      ]"
-                                      @click.prevent="
-                                        toggleActivityPeriod(index, activityIndex, period)
-                                      "
-                                    >
-                                      <span
-                                        class="absolute inset-0 flex items-center justify-center text-xs font-medium"
-                                        :class="[
-                                          activity.selectedPeriods?.includes(period)
-                                            ? 'text-white'
-                                            : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
-                                        ]"
-                                      >
-                                        {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
-                                      </span>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                v-else
-                                class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
-                              >
-                                <div class="space-y-1">
-                                  <div class="text-sm font-medium"
-                                    >يرجى تحديد مدة المشروع أولاً</div
-                                  >
-                                  <div class="text-xs"
-                                    >قم بتحديد المدة ونوع الفترة في القسم السابق</div
-                                  >
-                                </div>
-                              </div>
-                            </FormField>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Save component button -->
-                    <Button
-                      @click="saveComponent(component, index)"
-                      variant="outline"
-                      size="sm"
-                      class="w-full"
-                      :disabled="isSavingComponent === index"
-                    >
-                      <Icon
-                        v-if="isSavingComponent === index"
-                        icon="lucide:loader-2"
-                        class="ml-2 h-4 w-4 animate-spin"
-                      />
-                      <Icon v-else icon="lucide:save" class="ml-2 h-4 w-4" />
-                      {{ isSavingComponent === index ? 'جاري الحفظ...' : 'حفظ المكون' }}
-                    </Button>
-                  </div>
+                  <Button
+                    @click="removeComponent(index)"
+                    variant="ghost"
+                    size="sm"
+                    class="text-red-500 hover:text-red-600 dark:text-red-400"
+                  >
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
+                  </Button>
                 </div>
 
-                <!-- Add Component Button -->
-                <Button
-                  @click="addNewComponent"
-                  variant="outline"
-                  class="w-full border-dashed py-6 hover:border-gray-400 dark:hover:border-gray-600"
-                >
-                  <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-                  اضافة مكون جديد
-                </Button>
-              </div>
-            </FormSection>
+                <div class="space-y-6">
+                  <!-- Component Fields -->
+                  <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                    <FormField label="اسم المكون">
+                      <CustomInput
+                        v-model="component.name"
+                        dir="rtl"
+                        placeholder="ادخل اسم المكون"
+                        class="bg-white dark:bg-gray-800"
+                      />
+                    </FormField>
+                    <FormField label="المستهدف الكلي للمكون">
+                      <NumberInput
+                        v-model="component.targetPercentage"
+                        placeholder="ادخل المستهدف الكلي"
+                        unit="%"
+                        class="bg-white dark:bg-gray-800"
+                      />
+                    </FormField>
+                  </div>
 
-            <!-- Schedule Timeline Section -->
-            <ScheduleTimeLine
-              :components="store.form.components"
-              :duration="store.form.duration"
-              :periodType="store.form.periodType"
-            />
-          </div>
+                  <!-- Activities Section -->
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
+                      <Button
+                        @click="addActivity(index)"
+                        variant="outline"
+                        size="sm"
+                        :style="{
+                          borderColor: getComponentColor(index),
+                          color: getComponentColor(index),
+                        }"
+                      >
+                        <Icon icon="lucide:plus" class="h-4 w-4" />
+                        اضافة فعالية
+                      </Button>
+                    </div>
+
+                    <!-- Activities List -->
+                    <div class="space-y-3">
+                      <div
+                        v-for="(activity, activityIndex) in component.activities || []"
+                        :key="activityIndex"
+                        class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700/50"
+                      >
+                        <div class="mb-4 flex items-center justify-between">
+                          <div class="flex items-center gap-2">
+                            <div
+                              class="h-2 w-2 rounded-full"
+                              :style="{ backgroundColor: getComponentColor(index) }"
+                            ></div>
+                            <span class="font-medium text-gray-900 dark:text-gray-100">
+                              الفعالية {{ activityIndex + 1 }}
+                            </span>
+                          </div>
+                          <Button
+                            @click="deleteActivity(index, activityIndex)"
+                            variant="ghost"
+                            size="sm"
+                            :disabled="store.form.isSaving"
+                            class="text-red-500 hover:text-red-600 dark:text-red-400"
+                          >
+                            <Icon
+                              v-if="store.form.isSaving"
+                              icon="lucide:loader-2"
+                              class="h-4 w-4 animate-spin"
+                            />
+                            <Icon v-else icon="lucide:trash" class="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <!-- Activity Fields -->
+                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                          <FormField label="اسم الفعالية">
+                            <CustomInput
+                              v-model="activity.name"
+                              dir="rtl"
+                              placeholder="ادخل اسم الفعالية"
+                              class="bg-white dark:bg-gray-800"
+                            />
+                          </FormField>
+                          <FormField label="المستهدف الكلي للفعالية">
+                            <NumberInput
+                              v-model="activity.targetPercentage"
+                              placeholder="ادخل المستهدف الكلي"
+                              unit="%"
+                              class="bg-white dark:bg-gray-800"
+                            />
+                          </FormField>
+                          <FormField label="ملاحظات" class="md:col-span-2">
+                            <Textarea
+                              v-model="activity.notes"
+                              dir="rtl"
+                              placeholder="ادخل الملاحظات"
+                              class="min-h-[80px] bg-white dark:bg-gray-800"
+                            />
+                          </FormField>
+                        </div>
+
+                        <!-- Activity Weeks/Months Selection -->
+                        <div class="mt-4">
+                          <FormField
+                            :label="
+                              store.form.periodType === 1 ? 'الاسابيع المحددة' : 'الاشهر المحددة'
+                            "
+                          >
+                            <div v-if="totalPeriods > 0" class="space-y-4">
+                              <div
+                                class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
+                              >
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                  {{
+                                    store.form.periodType === 1
+                                      ? `اختر الاسابيع (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
+                                      : `اختر الاشهر (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
+                                  }}
+                                </span>
+                                <button
+                                  v-if="activity.selectedPeriods?.length"
+                                  type="button"
+                                  class="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                                  @click="clearActivityPeriods(index, activityIndex)"
+                                >
+                                  مسح التحديد
+                                </button>
+                              </div>
+                              <div
+                                class="grid gap-2 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+                                :class="{
+                                  'grid-cols-4': totalPeriods <= 4,
+                                  'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
+                                  'grid-cols-12': totalPeriods > 8,
+                                }"
+                              >
+                                <div
+                                  v-for="period in totalPeriods"
+                                  :key="period"
+                                  class="flex flex-col items-center"
+                                >
+                                  <span
+                                    class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+                                  >
+                                    {{ period }}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
+                                    :class="[
+                                      activity.selectedPeriods?.includes(period)
+                                        ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
+                                        : 'border-gray-200 bg-white hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600',
+                                    ]"
+                                    @click.prevent="
+                                      toggleActivityPeriod(index, activityIndex, period)
+                                    "
+                                  >
+                                    <span
+                                      class="absolute inset-0 flex items-center justify-center text-xs font-medium"
+                                      :class="[
+                                        activity.selectedPeriods?.includes(period)
+                                          ? 'text-white'
+                                          : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
+                                      ]"
+                                    >
+                                      {{ store.form.periodType === 1 ? 'اسبوع' : 'شهر' }}
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              v-else
+                              class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                            >
+                              <div class="space-y-1">
+                                <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
+                                <div class="text-xs"
+                                  >قم بتحديد المدة ونوع الفترة في القسم السابق</div
+                                >
+                              </div>
+                            </div>
+                          </FormField>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add Component Button -->
+              <Button
+                @click="addNewComponent"
+                variant="outline"
+                class="w-full border-dashed py-6 hover:border-gray-400 dark:hover:border-gray-600"
+              >
+                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                اضافة مكون جديد
+              </Button>
+            </div>
+          </FormSection>
+
+          <!-- Schedule Timeline Section -->
+          <ScheduleTimeLine
+            :components="store.form.components"
+            :duration="store.form.duration"
+            :periodType="store.form.periodType"
+          />
 
           <ProjectPreview />
         </div>
 
-        <div v-if="!projectSaved" class="sticky bottom-6 left-0 right-0">
+        <div class="sticky bottom-6 left-0 right-0">
           <div class="rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
             <Button
-              @click="saveProjectInitial"
+              @click="saveProjectWithComponents"
               class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="store.isSaving"
             >
@@ -636,61 +562,111 @@
   };
 
   // Save the initial project data (without components)
-  const saveProjectInitial = async () => {
+  const saveProjectWithComponents = async () => {
     if (!validateProjectBasicInfo()) {
       return;
     }
 
     try {
       prepareFormData();
+      store.isSaving = true;
 
-      console.log(
-        'Before API call - isGovernment:',
-        store.form.isGovernment,
-        typeof store.form.isGovernment
-      );
+      console.log('1. Saving project...');
+      // First, save only the project using direct axios call
+      const projectResponse = await axiosInstance.post('/api/project', {
+        fundingType: store.form.fundingType,
+        periodType: store.form.periodType,
+        duration: parseInt(store.form.duration) || 0,
+        name: store.form.name,
+        isGovernment: store.form.isGovernment,
+        executingDepartment: store.form.executingDepartment,
+        implementingEntity: store.form.implementingEntity,
+        grantingEntity: store.form.grantingEntity,
+        lng: store.form.longitude ? parseFloat(store.form.longitude) : 0,
+        lat: store.form.latitude ? parseFloat(store.form.latitude) : 0,
+        beneficiaryEntities: store.form.beneficiaryEntities,
+        projectStatus: store.form.projectStatus || 1,
+        cost: parseFloat(store.form.cost) || 0,
+        actualStartDate: store.form.actualStartDate,
+        projectObjectives: store.form.projectObjectives || '',
+        financialAchievement: Number(store.form.financialAchievement) || 0,
+      });
 
-      // Save with empty components array
-      store.form.components = [];
-
-      const response = await store.saveProject();
-      if (response.success) {
-        console.log('Project saved, server response:', response.data);
-        console.log(
-          'isGovernment in response:',
-          response.data.isGovernment,
-          typeof response.data.isGovernment
-        );
-
-        projectSaved.value = true;
-        projectId.value = response.data.id;
-        store.form.id = response.data.id;
-
-        // Ensure isGovernment is set correctly from response
-        if (response.data.hasOwnProperty('isGovernment')) {
-          store.form.isGovernment = Boolean(response.data.isGovernment);
-          console.log('isGovernment set from response:', store.form.isGovernment);
-        }
-
-        toast.success('تم حفظ بيانات المشروع بنجاح', {
-          description: 'يمكنك الآن إضافة المكونات والفعاليات للمشروع',
-        });
+      if (!projectResponse.data?.id) {
+        throw new Error('Failed to get project ID after creation');
       }
+
+      const projectId = projectResponse.data.id;
+      console.log('Project saved with ID:', projectId);
+
+      // Then save each component and its activities sequentially
+      if (store.form.components && store.form.components.length > 0) {
+        for (const component of store.form.components) {
+          console.log('2. Saving component:', component.name);
+          // Save component first using direct axios call
+          const componentResponse = await axiosInstance.post('/api/Component', {
+            projectId: projectId,
+            name: component.name,
+            targetPercentage: component.targetPercentage || 0,
+          });
+
+          if (!componentResponse.data?.id) {
+            throw new Error('Failed to get component ID after creation');
+          }
+
+          const componentId = componentResponse.data.id;
+          console.log('Component saved with ID:', componentId);
+
+          // Then save each activity for this component
+          if (component.activities && component.activities.length > 0) {
+            for (const activity of component.activities) {
+              console.log('3. Saving activity:', activity.name, 'for component:', componentId);
+              // Save activity using direct axios call
+              const activityResponse = await axiosInstance.post('/api/Activity', {
+                componentId: componentId,
+                name: activity.name,
+                targetPercentage: activity.targetPercentage || 0,
+                notes: activity.notes || '',
+                selectedPeriods: activity.selectedPeriods || [],
+                periodType: store.form.periodType,
+              });
+
+              if (!activityResponse.data) {
+                throw new Error('Failed to save activity');
+              }
+              console.log('Activity saved successfully');
+            }
+          }
+        }
+      }
+
+      // Show success message
+      toast.success('تم حفظ المشروع بنجاح');
+
+      // Wait a moment before redirecting to ensure the toast is visible
+      setTimeout(() => {
+        router.push({
+          name: 'done',
+          params: {
+            id: projectId.toString(),
+            name: encodeURIComponent(store.form.name),
+          },
+        });
+      }, 1000);
     } catch (error) {
+      console.error('Error in saveProjectWithComponents:', error);
       handleSaveError(error);
+    } finally {
+      store.isSaving = false;
     }
   };
 
-  // Add a new ref to track which component is currently being saved
-  const isSavingComponent = ref(null);
-
-  // Function to add a new component to the local state (not saved yet)
+  // Keep the helper functions for adding/removing components and activities
   const addNewComponent = () => {
     const newComponent = {
-      projectId: projectId.value,
       name: '',
       targetPercentage: 0,
-      activities: [], // Initialize empty activities array
+      activities: [],
     };
 
     if (!store.form.components) {
@@ -701,113 +677,57 @@
     store.hasUnsavedChanges = true;
   };
 
-  // Function to remove a component locally
   const removeComponent = (index) => {
     store.form.components.splice(index, 1);
     store.hasUnsavedChanges = true;
   };
 
-  // Function to save an individual component with its activities
-  const saveComponent = async (component, index) => {
-    if (!component.name) {
-      toast.error('يرجى إدخال اسم المكون');
-      return;
+  const addActivity = (componentIndex) => {
+    const newActivity = {
+      name: '',
+      targetPercentage: 0,
+      notes: '',
+      selectedPeriods: [],
+      periodType: store.form.periodType,
+    };
+
+    if (!store.form.components[componentIndex].activities) {
+      store.form.components[componentIndex].activities = [];
     }
 
-    try {
-      isSavingComponent.value = index;
+    store.form.components[componentIndex].activities.push(newActivity);
+    store.hasUnsavedChanges = true;
+  };
 
-      // Save or update the component first
-      let savedComponent;
-
-      if (component.id) {
-        // Update existing component
-        const response = await store.updateProjectComponent(
-          projectId.value,
-          component.id,
-          component
-        );
-
-        if (response.success) {
-          savedComponent = response.data;
-
-          // Update the component in our local state with returned data
-          // but preserve the activities array
-          store.form.components[index] = {
-            ...component,
-            ...savedComponent,
-            activities: component.activities || [],
-          };
-
-          toast.success('تم تحديث المكون بنجاح');
-        }
-      } else {
-        // Add new component
-        const response = await store.addProjectComponent(projectId.value, component);
-
-        if (response.success) {
-          savedComponent = response.data;
-
-          // Update the component in our local state with returned data
-          // including the new ID, but preserve the activities array
-          store.form.components[index] = {
-            ...component,
-            ...savedComponent,
-            activities: component.activities || [],
-          };
-
-          toast.success('تم إضافة المكون بنجاح');
-        }
-      }
-    } catch (error) {
-      handleSaveError(error);
-    } finally {
-      isSavingComponent.value = null;
+  const removeActivity = (componentIndex, activityIndex) => {
+    if (store.form.components[componentIndex].activities) {
+      store.form.components[componentIndex].activities.splice(activityIndex, 1);
+      store.hasUnsavedChanges = true;
     }
   };
 
-  // Original save function now redirects to Done page
-  const saveProject = async () => {
-    try {
-      prepareFormData();
+  const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
+    const activity = store.form.components[componentIndex].activities[activityIndex];
 
-      const response = await store.saveProject();
-      if (response.success) {
-        router.push({
-          name: 'done',
-          params: {
-            id: response.data.id,
-            name: store.form.name,
-          },
-        });
-      }
-    } catch (error) {
-      handleSaveError(error);
+    if (!activity.selectedPeriods) {
+      activity.selectedPeriods = [];
     }
+
+    const periodIndex = activity.selectedPeriods.indexOf(period);
+    if (periodIndex === -1) {
+      activity.selectedPeriods.push(period);
+    } else {
+      activity.selectedPeriods.splice(periodIndex, 1);
+    }
+
+    activity.selectedPeriods.sort((a, b) => a - b);
+    store.hasUnsavedChanges = true;
   };
 
-  // Handle API errors
-  const handleSaveError = (error) => {
-    console.error('API Error:', error);
-    let errorMessage = 'يرجى المحاولة مرة أخرى';
-
-    if (error.response) {
-      console.error('Error status:', error.response.status);
-      console.error('Error data:', error.response.data);
-
-      // Handle specific error codes
-      if (error.response.status === 400) {
-        errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
-      } else if (error.response.status === 401) {
-        errorMessage = 'غير مصرح لك بإضافة مشروع';
-      } else if (error.response.status === 500) {
-        errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
-      }
-    }
-
-    toast.error('حدث خطأ أثناء الحفظ', {
-      description: error.response?.data?.message || errorMessage,
-    });
+  const clearActivityPeriods = (componentIndex, activityIndex) => {
+    const activity = store.form.components[componentIndex].activities[activityIndex];
+    activity.selectedPeriods = [];
+    store.hasUnsavedChanges = true;
   };
 
   const formatDate = (dateString) => {
@@ -889,221 +809,29 @@
     store.hasUnsavedChanges = true;
   };
 
-  // Function to add a new activity to a component
-  const addActivity = (componentIndex) => {
-    const newActivity = {
-      name: '',
-      targetPercentage: 0,
-      notes: '',
-      selectedPeriods: [], // Initialize empty selectedPeriods array
-    };
+  // Handle API errors
+  const handleSaveError = (error) => {
+    console.error('API Error:', error);
+    let errorMessage = 'يرجى المحاولة مرة أخرى';
 
-    if (!store.form.components[componentIndex].activities) {
-      store.form.components[componentIndex].activities = [];
-    }
+    if (error.response) {
+      console.error('Error status:', error.response.status);
+      console.error('Error data:', error.response.data);
 
-    store.form.components[componentIndex].activities.push(newActivity);
-    store.hasUnsavedChanges = true;
-  };
-
-  // Function to remove an activity from a component
-  const removeActivity = (componentIndex, activityIndex) => {
-    if (store.form.components[componentIndex].activities) {
-      store.form.components[componentIndex].activities.splice(activityIndex, 1);
-      store.hasUnsavedChanges = true;
-    }
-  };
-
-  // Function to toggle a period for an activity
-  const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
-    const activity = store.form.components[componentIndex].activities[activityIndex];
-
-    if (!activity.selectedPeriods) {
-      activity.selectedPeriods = [];
-    }
-
-    // No need to validate here - we're showing the user only valid periods in the UI
-    // The period buttons shown are already limited to totalPeriods
-
-    const periodIndex = activity.selectedPeriods.indexOf(period);
-    if (periodIndex === -1) {
-      // Add the period if it's not already selected
-      activity.selectedPeriods.push(period);
-    } else {
-      // Remove the period if it's already selected
-      activity.selectedPeriods.splice(periodIndex, 1);
-    }
-
-    // Sort the periods in ascending order
-    activity.selectedPeriods.sort((a, b) => a - b);
-    store.hasUnsavedChanges = true;
-  };
-
-  // Function to clear all selected periods for an activity
-  const clearActivityPeriods = (componentIndex, activityIndex) => {
-    const activity = store.form.components[componentIndex].activities[activityIndex];
-    activity.selectedPeriods = [];
-    store.hasUnsavedChanges = true;
-  };
-
-  // Update function to save an activity
-  const saveActivity = async (componentIndex, activityIndex) => {
-    const component = store.form.components[componentIndex];
-    const activity = component.activities[activityIndex];
-
-    if (!component.id) {
-      toast.error('يجب حفظ المكون أولاً قبل إضافة الفعاليات');
-      return;
-    }
-
-    if (!activity.name) {
-      toast.error('يرجى إدخال اسم الفعالية');
-      return;
-    }
-
-    try {
-      store.form.isSaving = true;
-
-      // The key change - transform the period numbers based on periodType
-      // For weekly periods (periodType === 1), no transformation needed
-      // For monthly periods (periodType === 2), transform to the correct format expected by the API
-      let selectedPeriods = [...(activity.selectedPeriods || [])];
-
-      // Log the raw periods before any transformation
-      console.log('Original selected periods:', selectedPeriods);
-      console.log('Project period type:', store.form.periodType);
-      console.log('Total project periods:', totalPeriods.value);
-
-      // Prepare activity data with component ID
-      const activityData = {
-        componentId: component.id,
-        name: activity.name,
-        targetPercentage: activity.targetPercentage || 0,
-        notes: activity.notes || '',
-        selectedPeriods: selectedPeriods,
-        // Add period type information to help the backend interpret the periods correctly
-        periodType: store.form.periodType,
-      };
-
-      // Add a console log to debug the request
-      console.log('Sending activity data:', JSON.stringify(activityData));
-
-      let response;
-
-      if (activity.id) {
-        // Update existing activity
-        response = await store.updateProjectActivity(activity.id, activityData);
-      } else {
-        // Add new activity
-        response = await store.createProjectActivity(component.id, activityData);
+      // Handle specific error codes
+      if (error.response.status === 400) {
+        errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
+      } else if (error.response.status === 401) {
+        errorMessage = 'غير مصرح لك بإضافة مشروع';
+      } else if (error.response.status === 500) {
+        errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
       }
-
-      if (response && response.success) {
-        // Update the activity in the local state with returned data
-        store.form.components[componentIndex].activities[activityIndex] = {
-          ...activity,
-          ...response.data,
-        };
-
-        toast.success(activity.id ? 'تم تحديث الفعالية بنجاح' : 'تم إضافة الفعالية بنجاح');
-      } else {
-        toast.error('حدث خطأ أثناء حفظ الفعالية');
-      }
-    } catch (error) {
-      console.error('Error saving activity:', error);
-
-      let errorMessage = 'يرجى المحاولة مرة أخرى';
-      if (error.response) {
-        if (error.response.data && typeof error.response.data === 'string') {
-          errorMessage = error.response.data;
-        } else if (error.response.data && error.response.data.message) {
-          errorMessage = error.response.data.message;
-        } else if (error.response.status === 400) {
-          // More specific error message for this exact issue
-          errorMessage = 'الفترات المحددة غير صالحة. تأكد من أن الفترات لا تتجاوز مدة المشروع';
-        } else if (error.response.status === 404) {
-          errorMessage = 'لم يتم العثور على المكون المحدد';
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      toast.error('حدث خطأ أثناء حفظ الفعالية', {
-        description: errorMessage,
-      });
-    } finally {
-      store.form.isSaving = false;
     }
+
+    toast.error('حدث خطأ أثناء الحفظ', {
+      description: error.response?.data?.message || errorMessage,
+    });
   };
-
-  // Update function to delete an activity
-  const deleteActivity = async (componentIndex, activityIndex) => {
-    const activity = store.form.components[componentIndex].activities[activityIndex];
-
-    if (activity.id) {
-      try {
-        store.form.isSaving = true;
-        console.log(`Deleting activity with ID: ${activity.id}`);
-
-        // Use the renamed method
-        const response = await store.deleteProjectActivity(activity.id);
-
-        if (response && response.success) {
-          console.log('Activity deleted successfully');
-          // Remove the activity from local state
-          store.form.components[componentIndex].activities.splice(activityIndex, 1);
-          toast.success('تم حذف الفعالية بنجاح');
-        } else {
-          console.error('No success response from activity delete:', response);
-          toast.error('حدث خطأ أثناء حذف الفعالية');
-        }
-      } catch (error) {
-        console.error('Detailed error deleting activity:', error);
-
-        // More specific error handling for activity deletion
-        let errorMessage = 'يرجى المحاولة مرة أخرى';
-        if (error.response) {
-          console.error('Error response:', error.response);
-          if (error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          } else if (error.response.status === 404) {
-            errorMessage = 'لم يتم العثور على الفعالية المحددة';
-            // If the activity doesn't exist on the server, remove it locally anyway
-            store.form.components[componentIndex].activities.splice(activityIndex, 1);
-          }
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-
-        toast.error('حدث خطأ أثناء حذف الفعالية', {
-          description: errorMessage,
-        });
-      } finally {
-        store.form.isSaving = false;
-      }
-    } else {
-      // If activity doesn't have an ID, just remove it locally
-      removeActivity(componentIndex, activityIndex);
-      toast.success('تم حذف الفعالية');
-    }
-  };
-
-  // Add an explicit console log when passing the form to ProjectDetails
-  const projectFormWithGovernment = computed(() => {
-    const isGov = Boolean(store.form.isGovernment);
-    console.log('Computing projectFormWithGovernment:');
-    console.log(
-      '- store.form.isGovernment:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-    console.log('- converted to Boolean:', isGov, typeof isGov);
-
-    return {
-      ...store.form,
-      isGovernment: isGov,
-    };
-  });
 
   const handleCurrencyChange = (newCurrency) => {
     if (store.form.cost && selectedCurrency.value !== newCurrency) {
@@ -1150,6 +878,23 @@
       return `${formattedValue} د.ع`;
     }
   };
+
+  // Add an explicit console log when passing the form to ProjectDetails
+  const projectFormWithGovernment = computed(() => {
+    const isGov = Boolean(store.form.isGovernment);
+    console.log('Computing projectFormWithGovernment:');
+    console.log(
+      '- store.form.isGovernment:',
+      store.form.isGovernment,
+      typeof store.form.isGovernment
+    );
+    console.log('- converted to Boolean:', isGov, typeof isGov);
+
+    return {
+      ...store.form,
+      isGovernment: isGov,
+    };
+  });
 </script>
 
 <style scoped>

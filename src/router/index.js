@@ -188,7 +188,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 
   window.scrollTo({top: 0, behavior: 'smooth'});
-  
+
   const authStore = useAuthStore();
 
   // If the route requires auth and user is not authenticated

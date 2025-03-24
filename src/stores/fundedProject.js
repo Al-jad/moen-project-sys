@@ -229,7 +229,7 @@ export const useFundedProjectStore = defineStore(
           targetPercentage: component.targetPercentage || 0,
         };
 
-        const response = await axiosInstance.post(`/api/Component`, payload);
+        const response = await axiosInstance.post('/api/Component', payload);
 
         if (response.status >= 400) {
           throw new Error('Failed to add component');
@@ -283,9 +283,10 @@ export const useFundedProjectStore = defineStore(
           targetPercentage: activity.targetPercentage || 0,
           notes: activity.notes || '',
           selectedPeriods: activity.selectedPeriods || [],
+          periodType: activity.periodType || 1,
         };
 
-        const response = await axiosInstance.post(`/api/Activity`, payload);
+        const response = await axiosInstance.post('/api/Activity', payload);
 
         console.log('API response for activity creation:', response);
 
