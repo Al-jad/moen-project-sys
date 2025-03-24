@@ -43,6 +43,7 @@
   import ViewLogModal from '@/components/ViewLogModal.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
+  import * as XLSX from 'xlsx';
 
   // State
   const showDetailsDialog = ref(false);
@@ -102,6 +103,10 @@
   };
 
   const getTableName = (tableName) => {
+    if (tableName === null || tableName === undefined) {
+      return 'غير محدد'; // "Not specified" for null values
+    }
+    
     const translations = {
       'AppUser': 'المستخدمين',
       'Project': 'المشاريع',
@@ -115,7 +120,8 @@
       'Task': 'المهام',
       'Document': 'المستندات',
       'Report': 'التقارير',
-      'Dashboard': 'لوحة القيادة'
+      'Dashboard': 'لوحة القيادة',
+      'Beneficiary': 'الجهات المستفيدة',
     };
     return translations[tableName] || tableName;
   };
@@ -130,8 +136,10 @@
       logs.value = response.data.map(log => ({
         ...log,
         createdAt: formatDate(log.createdAt),
-        // Translate action types to Arabic
+        // Translate action types to Arabic and handle null values
         action: translateAction(log.action),
+        // Ensure tableName is never null in the UI
+        tableName: log.tableName
       }));
     } catch (error) {
       console.error('Error fetching logs:', error);
@@ -207,7 +215,39 @@
 
   // Methods
   const exportToExcel = () => {
-    // Implement Excel export functionality
+    // Create formatted data for Excel export
+    const headerLabels = [
+      'رقم العملية',
+      'اسم الجدول',
+      'نوع العملية',
+      'تاريخ العملية',
+      'اسم المستخدم'
+    ];
+    
+    const formattedData = logs.value.map(log => ({
+      'رقم العملية': log.id || '',
+      'اسم الجدول': getTableName(log.tableName) || 'غير محدد',
+      'نوع العملية': log.action || '',
+      'تاريخ العملية': log.createdAt || '',
+      'اسم المستخدم': log.user?.name || 'غير معروف'
+    }));
+    
+    // Use the exportToExcel method from CustomTable if it exists
+    if (typeof CustomTable?.exportToExcel === 'function') {
+      CustomTable.exportToExcel(formattedData, headerLabels, 'سجل الاحداث');
+    } else {
+      // Fallback implementation if CustomTable doesn't provide the export method
+      
+      // Convert data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(formattedData);
+      
+      // Create workbook and add the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'سجل الاحداث');
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, 'سجل الاحداث.xlsx');
+    }
   };
 
   const viewDetails = (log) => {
