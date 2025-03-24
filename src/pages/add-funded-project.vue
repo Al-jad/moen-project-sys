@@ -332,34 +332,6 @@
             </Button>
           </div>
         </div>
-
-        <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-          <h3 class="mb-6 text-lg font-medium">تفاصيل التمويل</h3>
-          <div class="grid gap-6 md:grid-cols-2">
-            <FormField label="نوع التمويل">
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                دولي
-              </div>
-            </FormField>
-            <FormField label="كلفة المشروع">
-              <div class="flex gap-2">
-                <div class="flex-1">
-                  <NumberInput v-model="store.form.cost" placeholder="165,000" :unit="selectedCurrency" />
-                </div>
-                <div class="w-24">
-                  <CustomSelect
-                    v-model="selectedCurrency"
-                    :options="currencyOptions"
-                    placeholder="العملة"
-                    @update:model-value="handleCurrencyChange"
-                  />
-                </div>
-              </div>
-            </FormField>
-          </div>
-        </div>
       </div>
     </div>
   </DefaultLayout>
