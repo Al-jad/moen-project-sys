@@ -361,4 +361,21 @@
   onMounted(function () {
     Promise.all([fetchProjects(), fetchBeneficiaries()]);
   });
+
+  // Add this mapping function somewhere in your script setup
+  const getTableNameInArabic = (tableName) => {
+    if (!tableName) return 'غير محدد'; // "Not specified" for null values
+    
+    const tableNameMap = {
+      'Project': 'المشروع',
+      'Attachment': 'المرفقات',
+      'Activity': 'النشاط',
+      'Beneficiary': 'الجهة المستفيدة',
+      'Component': 'المكون',
+      'User': 'المستخدم',
+      // Add any other table names that might appear in your system
+    };
+    
+    return tableNameMap[tableName] || tableName;
+  };
 </script>
