@@ -169,52 +169,78 @@
               </div>
             </div>
             <div class="p-6">
-              <div v-if="!isLoading" class="grid grid-cols-1 gap-6">
-                <FundedProjectCard
-                  v-for="project in paginatedProjects"
-                  :key="project.id"
-                  :project="project"
-                  :selectedCurrency="selectedCurrency"
-                  @attachment-added="fetchProjects"
-                />
-
-                <div class="mt-4 flex justify-center">
-                  <CustomPagination
-                    v-model="currentPage"
-                    :total="filteredProjects.length"
-                    :per-page="itemsPerPage"
-                  />
-                </div>
-              </div>
-              <div v-else class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              <!-- Loading Skeleton -->
+              <div v-if="isLoading" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 <div
                   v-for="n in 6"
                   :key="n"
                   class="h-[280px] animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800"
                 />
               </div>
-              <div
-                v-if="!isLoading && projects.length === 0"
-                class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
-              >
-                <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                  <Icon
-                    icon="lucide:folder-open"
-                    class="h-8 w-8 text-gray-400 dark:text-gray-500"
-                  />
+
+              <!-- Content Area (after loading) -->
+              <div v-else>
+                <!-- Case 1: No Projects Initially -->
+                <div
+                  v-if="projects.length === 0"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
+                >
+                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
+                    <Icon
+                      icon="lucide:folder-open"
+                      class="h-8 w-8 text-gray-400 dark:text-gray-500"
+                    />
+                  </div>
+                  <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
+                    >لا توجد مشاريع</h3
+                  >
+                  <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
+                    >قم بإضافة مشروع جديد للبدء</p
+                  >
+                  <RouterLink to="/add-funded-project">
+                    <Button variant="outline" size="sm">
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                      اضافة مشروع
+                    </Button>
+                  </RouterLink>
                 </div>
-                <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
-                  >لا توجد مشاريع</h3
+
+                <!-- Case 2: Projects exist, but filter yields no results -->
+                <div
+                  v-else-if="filteredProjects.length === 0"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
                 >
-                <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
-                  >قم بإضافة مشروع جديد للبدء</p
-                >
-                <RouterLink to="/add-funded-project">
-                  <Button variant="outline" size="sm">
-                    <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-                    اضافة مشروع
-                  </Button>
-                </RouterLink>
+                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
+                    <Icon icon="lucide:search-x" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                  </div>
+                  <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
+                    لا توجد نتائج تطابق الفلتر
+                  </h3>
+                  <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                    حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
+                  </p>
+                  <!-- Optional: Add a button to reset filters if needed -->
+                  <!-- <PrimaryButton variant="outline" @click="resetFilters">Reset Filters</PrimaryButton> -->
+                </div>
+
+                <!-- Case 3: Projects exist and filters yield results -->
+                <div v-else class="grid grid-cols-1 gap-6">
+                  <FundedProjectCard
+                    v-for="project in paginatedProjects"
+                    :key="project.id"
+                    :project="project"
+                    :selectedCurrency="selectedCurrency"
+                    @attachment-added="fetchProjects"
+                  />
+
+                  <div class="mt-4 flex justify-center">
+                    <CustomPagination
+                      v-model="currentPage"
+                      :total="filteredProjects.length"
+                      :per-page="itemsPerPage"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
