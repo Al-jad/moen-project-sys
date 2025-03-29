@@ -42,11 +42,7 @@
             @click="toggleOption(option.value)"
           >
             <div class="flex w-full items-center gap-2">
-              <Checkbox
-                :checked="isSelected(option.value)"
-                @update:checked="() => toggleOption(option.value)"
-                class="dark:border-gray-600"
-              />
+              <Checkbox :checked="isSelected(option.value)" class="dark:border-gray-600" />
               <span class="truncate">{{ option.label }}</span>
             </div>
           </button>
