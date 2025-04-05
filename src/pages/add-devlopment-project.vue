@@ -69,7 +69,8 @@
 
           <FormField label="الجهات الساندة" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.supportingEntities"
+              v-model="currentSupportingEntity"
+              v-model:items="form.supportingEntities"
               placeholder="ادخل اسم الجهة الساندة"
             />
           </FormField>
@@ -100,8 +101,6 @@
           <FormField label="تاريخ الانجاز الفعلي">
             <DateInput v-model="form.actualCompletionDate" />
           </FormField>
-
-          <p class="text-right">الانحراف الزمني = التاريخ الفعلي - التاريخ المخطط</p>
         </FormSection>
         <FormSection title="تفاصيل العقد">
           <div class="space-y-6 md:col-span-2">
@@ -372,103 +371,38 @@
 
           <FormField label="اسباب الانحراف" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.executionDetails.deviationReasons"
+              v-model="currentDeviationReason"
+              v-model:items="form.executionDetails.deviationReasons"
               placeholder="ادخل سبب الانحراف"
               buttonText="اضافة"
             />
-            <div
-              v-if="form.executionDetails.deviationReasons.length > 0"
-              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800 dark:text-gray-100"
-            >
-              <div
-                v-for="(reason, index) in form.executionDetails.deviationReasons"
-                :key="index"
-                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
-              >
-                <span>{{ reason }}</span>
-                <button
-                  @click="removeDeviationReason(index)"
-                  class="text-gray-500 hover:text-red-500"
-                >
-                  <Icon icon="lucide:x" class="h-3 w-3" />
-                </button>
-              </div>
-            </div>
           </FormField>
 
           <FormField label="مدد التوقفات" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.executionDetails.stoppagePeriods"
+              v-model="currentStoppagePeriod"
+              v-model:items="form.executionDetails.stoppagePeriods"
               placeholder="ادخل مدة التوقف"
               buttonText="اضافة"
             />
-            <div
-              v-if="form.executionDetails.stoppagePeriods.length > 0"
-              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
-            >
-              <div
-                v-for="(period, index) in form.executionDetails.stoppagePeriods"
-                :key="index"
-                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
-              >
-                <span>{{ period }}</span>
-                <button
-                  @click="removeStoppagePeriod(index)"
-                  class="text-gray-500 hover:text-red-500"
-                >
-                  <Icon icon="lucide:x" class="h-3 w-3" />
-                </button>
-              </div>
-            </div>
           </FormField>
 
           <FormField label="اوامر الغيار" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.executionDetails.changeOrders"
+              v-model="currentChangeOrder"
+              v-model:items="form.executionDetails.changeOrders"
               placeholder="ادخل امر الغيار"
               buttonText="اضافة"
             />
-            <div
-              v-if="form.executionDetails.changeOrders.length > 0"
-              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
-            >
-              <div
-                v-for="(order, index) in form.executionDetails.changeOrders"
-                :key="index"
-                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
-              >
-                <span>{{ order }}</span>
-                <button @click="removeChangeOrder(index)" class="text-gray-500 hover:text-red-500">
-                  <Icon icon="lucide:x" class="h-3 w-3" />
-                </button>
-              </div>
-            </div>
           </FormField>
 
           <FormField label="المدد الاضافية" class="md:col-span-2">
             <InputWithAddButton
-              v-model="form.executionDetails.additionalPeriods"
+              v-model="currentAdditionalPeriod"
+              v-model:items="form.executionDetails.additionalPeriods"
               placeholder="ادخل المدة الاضافية"
               buttonText="اضافة"
             />
-            <div
-              v-if="form.executionDetails.additionalPeriods.length > 0"
-              class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800"
-            >
-              <div
-                v-for="(period, index) in form.executionDetails.additionalPeriods"
-                :key="index"
-                class="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100"
-              >
-                <span>{{ period }}</span>
-                <button
-                  @click="removeAdditionalPeriod(index)"
-                  class="text-gray-500 hover:text-red-500"
-                >
-                  <Icon icon="lucide:x" class="h-3 w-3" />
-                </button>
-              </div>
-            </div>
           </FormField>
 
           <FormField label="الملاحظات" class="md:col-span-2">
@@ -602,6 +536,7 @@
   const currentStoppagePeriod = ref('');
   const currentChangeOrder = ref('');
   const currentAdditionalPeriod = ref('');
+  const currentSupportingEntity = ref('');
   const sustainableDevelopmentGoals = [
     { value: '1', label: 'القضاء على الفقر' },
     { value: '2', label: 'القضاء التام على الجوع' },
