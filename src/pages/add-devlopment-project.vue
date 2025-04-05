@@ -74,11 +74,14 @@
             />
           </FormField>
 
-          <FormField label="الفترة الزمنية لتنفيذ المشروع" class="md:col-span-2">
+          <FormField label="الفترة الزمنية لتنفيذ المشروع">
             <div class="flex items-center gap-4">
               <NumberInput v-model="form.duration" placeholder="ادخل المدة" />
               <Label class="text-sm dark:text-gray-300">يوم</Label>
             </div>
+          </FormField>
+          <FormField label="عدد العقود">
+            <NumberInput :model-value="form.contracts.length" readonly disabled />
           </FormField>
         </FormSection>
         <FormSection title="التاريخ المخطط والفعلي">
@@ -108,15 +111,19 @@
               class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
               <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-lg font-medium dark:text-gray-100"
-                  >عقد رقم {{ contractIndex + 1 }}</h3
-                >
+                <h3 class="text-lg font-medium dark:text-gray-100">
+                  {{ contract.title ? contract.title : `عقد رقم ${contractIndex + 1}` }}
+                </h3>
                 <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
                   <Icon icon="lucide:x" class="h-4 w-4" />
                 </Button>
               </div>
 
               <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                <FormField label="عنوان العقد">
+                  <CustomInput v-model="contract.title" dir="rtl" placeholder="ادخل عنوان العقد" />
+                </FormField>
+
                 <FormField label="اسم الجهة المنفذة \ الشركة">
                   <CustomInput
                     v-model="contract.executingCompany"
@@ -138,7 +145,12 @@
                 </FormField>
 
                 <FormField label="رقم العقد">
-                  <CustomInput v-model="contract.number" dir="rtl" placeholder="ادخل رقم العقد" />
+                  <CustomInput
+                    :value="contract.number"
+                    @input="updateContractNumber(contractIndex, $event)"
+                    dir="rtl"
+                    placeholder="ادخل رقم العقد"
+                  />
                 </FormField>
 
                 <FormField label="عدد الاجراءات التنفيذية">
@@ -169,6 +181,14 @@
                     </div>
 
                     <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                      <FormField label="عنوان الاجراء">
+                        <CustomInput
+                          v-model="procedure.title"
+                          dir="rtl"
+                          placeholder="ادخل عنوان الاجراء"
+                        />
+                      </FormField>
+
                       <FormField label="وزن الاجراء">
                         <NumberInput
                           v-model="procedure.weight"
@@ -502,12 +522,15 @@
   import { Icon } from '@iconify/vue';
 
   import { toast } from 'vue-sonner';
+
+  const contractCounter = ref(1);
+
   const form = ref({
     projectName: '',
     plan: '',
     projectGoal: '',
     sustainableDevelopmentGoal: [],
-    beneficiary: '',
+    beneficiaryEntities: [],
     supportingEntities: [],
     address: '',
     location: '',
@@ -520,24 +543,13 @@
     actualCompletionDate: null,
     contracts: [
       {
+        title: '',
         executingCompany: '',
         cost: '',
         referralDate: null,
         signingDate: null,
-        number: '',
-        executionProcedures: [
-          {
-            weight: '',
-            duration: '',
-            executionDate: null,
-            completionDate: null,
-            plannedTechnicalProgress: '',
-            actualTechnicalProgress: '',
-            technicalDeviation: '',
-            plannedFinancialProgress: '',
-            actualFinancialProgress: '',
-          },
-        ],
+        number: '1',
+        executionProcedures: [],
       },
     ],
     financials: {
@@ -558,6 +570,34 @@
       notes: '',
     },
   });
+
+  const addContract = () => {
+    form.value.contracts.push({
+      title: '',
+      executingCompany: '',
+      cost: '',
+      referralDate: null,
+      signingDate: null,
+      number: contractCounter.value.toString(),
+      executionProcedures: [],
+    });
+    contractCounter.value++;
+  };
+
+  const removeContract = (contractIndex) => {
+    form.value.contracts.splice(contractIndex, 1);
+    if (form.value.contracts.length === 0) {
+      contractCounter.value = 1;
+      addContract();
+    }
+  };
+
+  const updateContractNumber = (contractIndex, newNumber) => {
+    if (form.value.contracts[contractIndex]) {
+      form.value.contracts[contractIndex].number = newNumber;
+    }
+  };
+
   const currentDeviationReason = ref('');
   const currentStoppagePeriod = ref('');
   const currentChangeOrder = ref('');
@@ -601,21 +641,9 @@
       day: 'numeric',
     });
   };
-  const addContract = () => {
-    form.value.contracts.push({
-      executingCompany: '',
-      cost: '',
-      referralDate: null,
-      signingDate: null,
-      number: '',
-      executionProcedures: [],
-    });
-  };
-  const removeContract = (contractIndex) => {
-    form.value.contracts.splice(contractIndex, 1);
-  };
   const addExecutionProcedure = (contractIndex) => {
     form.value.contracts[contractIndex].executionProcedures.push({
+      title: '',
       weight: '',
       duration: '',
       executionDate: null,
