@@ -3,6 +3,7 @@
     <div class="flex flex-1">
       <ProjectsFilter
         :isFundedProjects="true"
+        :showFundingTypeFilter="false"
         @filter-applied="applyFilters"
         :searchQuery="searchQuery"
         :budgetRange="budgetRange"

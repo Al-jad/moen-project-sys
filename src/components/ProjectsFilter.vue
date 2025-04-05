@@ -42,7 +42,7 @@
         />
 
         <!-- Funding Type -->
-        <div class="space-y-3" v-if="!isFundedProjects">
+        <div v-if="showFundingTypeFilter" class="space-y-3">
           <label class="text-sm text-gray-600 dark:text-gray-300">نوع التمويل</label>
           <div class="space-y-2">
             <CustomCheckbox
@@ -54,44 +54,29 @@
               @update:model-value="handleAllFundingChange"
             />
             <CustomCheckbox
-              v-model="localSelectedFunding.government"
-              id="government"
-              label="البرنامج الحكومي"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
+              v-model="localSelectedFunding.fund"
+              id="fund"
+              label="مشروع ممول"
+              :disabled="disabled || localSelectedFunding.all"
+              :class="{ 'cursor-not-allowed': disabled || localSelectedFunding.all }"
               @update:model-value="handleIndividualFundingChange"
-            />
-            <CustomCheckbox
-              v-model="localSelectedFunding.investment"
-              id="investment"
-              label="الموازنة الاستثمارية"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-            />
-            <CustomCheckbox
-              v-model="localSelectedFunding.operational"
-              id="operational"
-              label="الموازنة التشغيلية"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-            />
-            <CustomCheckbox
-              v-model="localSelectedFunding.environment"
-              id="environment"
-              label="الممولة دوليا"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-            />
+            >
+              <div class="mx-1 h-2.5 w-2.5 rounded-full bg-purple-500"></div>
+            </CustomCheckbox>
             <CustomCheckbox
               v-model="localSelectedFunding.regional"
               id="regional"
-              label="تنمية الاقاليم"
-              :disabled="disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-            />
+              label="مشروع تنمية الأقاليم"
+              :disabled="disabled || localSelectedFunding.all"
+              :class="{ 'cursor-not-allowed': disabled || localSelectedFunding.all }"
+              @update:model-value="handleIndividualFundingChange"
+            >
+              <div class="mx-1 h-2.5 w-2.5 rounded-full bg-teal-500"></div>
+            </CustomCheckbox>
           </div>
         </div>
-        <div>
+
+        <div v-if="showFundingTypeFilter">
           <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
         </div>
 
@@ -305,6 +290,10 @@
       type: Boolean,
       default: false,
     },
+    showFundingTypeFilter: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -365,10 +354,7 @@
   const localShowGovernmentProjects = ref(false);
   const localSelectedFunding = ref({
     all: true,
-    government: false,
-    investment: false,
-    operational: false,
-    environment: false,
+    fund: false,
     regional: false,
   });
 
@@ -525,10 +511,8 @@
     );
     localSelectedFunding.value = {
       all: true,
-      government: false,
-      investment: false,
-      operational: false,
-      environment: false,
+      fund: false,
+      regional: false,
     };
     localSelectedYear.value = null;
     localSelectedStatus.value = {
@@ -554,11 +538,10 @@
   };
 
   const applyFilters = () => {
-    // Send all filters to parent
     const filters = {
       searchQuery: localSearchQuery.value,
       budgetRange: isBudgetFilterEnabled.value ? localBudgetRange.value : null,
-      selectedFunding: localSelectedFunding.value,
+      selectedFunding: { ...localSelectedFunding.value },
       selectedYear: localSelectedYear.value,
       selectedStatus: localSelectedStatus.value,
       selectedBeneficiaries: localSelectedBeneficiaries.value,
@@ -568,6 +551,16 @@
 
     emit('filter-applied', filters);
     showSuccess('تم تطبيق الفلتر بنجاح', 'تم تحديث قائمة المشاريع حسب المعايير المحددة');
+  };
+
+  // Add this function to check if a project matches the funding filter
+  const projectMatchesFundingFilter = (project) => {
+    if (localSelectedFunding.value.all) return true;
+
+    if (localSelectedFunding.value.fund && project.isFunded) return true;
+    if (localSelectedFunding.value.regional && !project.isFunded) return true;
+
+    return false;
   };
 
   // Add these formatting functions after the other utility functions
