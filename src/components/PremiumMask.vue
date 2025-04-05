@@ -3,7 +3,7 @@
     class="relative cursor-pointer space-y-2 rounded-lg bg-red-50/90 p-4 py-6 dark:bg-red-950/40"
     @click="showPremiumModal"
   >
-    <div class="absolute inset-0 z-10 flex items-center justify-center">
+    <div class="absolute inset-0 flex items-center justify-center">
       <div class="space-y-2 text-center">
         <Icon icon="lucide:lock" class="mx-auto h-8 w-8 text-red-500 dark:text-red-400" />
         <p class="text-sm font-medium text-red-600 dark:text-red-300">ميزة مميزة</p>
