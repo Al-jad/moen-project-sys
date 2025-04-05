@@ -9,10 +9,10 @@
           modelValue && 'text-gray-900 dark:text-gray-100',
         ]"
       >
-        <Icon icon="lucide:calendar" class="h-4 w-4 dark:text-gray-400" />
         <span class="text-right text-gray-900 dark:text-white">
           {{ modelValue ? formatDate(modelValue) : placeholder }}
         </span>
+        <Icon icon="lucide:calendar" class="h-4 w-4 dark:text-gray-400" />
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 dark:border-gray-700 dark:bg-gray-800" align="start">
