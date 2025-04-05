@@ -29,11 +29,11 @@
           </FormField>
 
           <FormField label="اسم الجهة المستفيدة">
-            <CustomSelect
-              v-model="form.beneficiary"
+            <CustomMultiSelect
+              v-model="form.beneficiaryEntities"
               :options="beneficiaries"
-              placeholder="اختر الجهة المستفيدة"
-              :triggerClass="'flex flex-row-reverse w-full'"
+              placeholder="اختر الجهات المستفيدة"
+              :triggerClass="'flex  flex-row-reverse w-full'"
             />
           </FormField>
 
@@ -77,24 +77,7 @@
           <FormField label="الفترة الزمنية لتنفيذ المشروع" class="md:col-span-2">
             <div class="flex items-center gap-4">
               <NumberInput v-model="form.duration" placeholder="ادخل المدة" />
-              <RadioGroup v-model="form.durationType" class="flex gap-4">
-                <div class="flex items-center gap-2">
-                  <RadioGroupItem value="days" id="duration-days" class="dark:border-gray-700" />
-                  <Label for="duration-days" class="text-sm dark:text-gray-300">يوم</Label>
-                </div>
-                <div class="flex items-center gap-2">
-                  <RadioGroupItem
-                    value="months"
-                    id="duration-months"
-                    class="dark:border-gray-700"
-                  />
-                  <Label for="duration-months" class="text-sm dark:text-gray-300">شهر</Label>
-                </div>
-                <div class="flex items-center gap-2">
-                  <RadioGroupItem value="years" id="duration-years" class="dark:border-gray-700" />
-                  <Label for="duration-years" class="text-sm dark:text-gray-300">سنة</Label>
-                </div>
-              </RadioGroup>
+              <Label class="text-sm dark:text-gray-300">يوم</Label>
             </div>
           </FormField>
         </FormSection>
@@ -116,7 +99,6 @@
           </FormField>
 
           <p class="text-right">الانحراف الزمني = التاريخ الفعلي - التاريخ المخطط</p>
-          <p class="text-right">88</p>
         </FormSection>
         <FormSection title="تفاصيل العقد">
           <div class="space-y-6 md:col-span-2">
@@ -227,19 +209,25 @@
                       </FormField>
 
                       <FormField label="نسبة الانجاز الفني الفعلي">
-                        <NumberInput
-                          v-model="procedure.actualTechnicalProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
+                        <PremiumMask>
+                          <NumberInput
+                            v-model="procedure.actualTechnicalProgress"
+                            placeholder="ادخل النسبة"
+                            unit="%"
+                            disabled
+                          />
+                        </PremiumMask>
                       </FormField>
 
                       <FormField label="نسبة الانحراف الفني">
-                        <NumberInput
-                          v-model="procedure.technicalDeviation"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
+                        <PremiumMask>
+                          <NumberInput
+                            v-model="procedure.technicalDeviation"
+                            placeholder="ادخل النسبة"
+                            unit="%"
+                            disabled
+                          />
+                        </PremiumMask>
                       </FormField>
 
                       <FormField label="نسبة الانجاز المالي المخطط">
@@ -321,11 +309,14 @@
           </FormField>
 
           <FormField label="نسبة الانجاز المالي التراكمي">
-            <NumberInput
-              v-model="form.financials.cumulativeProgress"
-              placeholder="ادخل نسبة الانجاز"
-              unit="%"
-            />
+            <PremiumMask>
+              <NumberInput
+                v-model="form.financials.cumulativeProgress"
+                placeholder="ادخل نسبة الانجاز"
+                unit="%"
+                disabled
+              />
+            </PremiumMask>
           </FormField>
         </FormSection>
         <FormSection title="تفاصيل موقف تنفيذ المشروع">
@@ -339,19 +330,25 @@
           </FormField>
 
           <FormField label="نسبة الانجاز الفني التراكمي">
-            <NumberInput
-              v-model="form.executionDetails.cumulativeTechnicalProgress"
-              placeholder="ادخل النسبة"
-              unit="%"
-            />
+            <PremiumMask>
+              <NumberInput
+                v-model="form.executionDetails.cumulativeTechnicalProgress"
+                placeholder="ادخل النسبة"
+                unit="%"
+                disabled
+              />
+            </PremiumMask>
           </FormField>
 
           <FormField label="نسبة الانحراف الفني التراكمي">
-            <NumberInput
-              v-model="form.executionDetails.cumulativeTechnicalDeviation"
-              placeholder="ادخل النسبة"
-              unit="%"
-            />
+            <PremiumMask>
+              <NumberInput
+                v-model="form.executionDetails.cumulativeTechnicalDeviation"
+                placeholder="ادخل النسبة"
+                unit="%"
+                disabled
+              />
+            </PremiumMask>
           </FormField>
 
           <FormField label="اسباب الانحراف" class="md:col-span-2">
@@ -484,6 +481,7 @@
       :initial-location="form.coordinates.lat ? form.coordinates : undefined"
       @location-selected="handleLocationSelected"
     />
+    <PremiumModal v-model:open="isPremiumModalOpen" />
   </DefaultLayout>
 </template>
 <script setup>
@@ -496,9 +494,10 @@
   import InputWithAddButton from '@/components/InputWithAddButton.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
   import NumberInput from '@/components/NumberInput.vue';
+  import PremiumMask from '@/components/PremiumMask.vue';
+  import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Label } from '@/components/ui/label';
-  import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
   import { Textarea } from '@/components/ui/textarea';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
@@ -590,9 +589,10 @@
     { value: 'basra', label: 'مديرية تربية البصرة' },
   ];
   const projectStatuses = [
-    { value: 'ongoing', label: 'قيد التنفيذ' },
-    { value: 'completed', label: 'منجز' },
-    { value: 'stopped', label: 'متوقف' },
+    { value: 1, label: 'قيد التنفيذ' },
+    { value: 2, label: 'منجزة' },
+    { value: 3, label: 'متلكئة' },
+    { value: 0, label: 'ملغاة' },
   ];
   const formatDate = (date) => {
     if (!date) return '';
@@ -709,5 +709,11 @@
       .catch(() => {
         toast.error('حدث خطأ في تحديد العنوان');
       });
+  };
+
+  // Add this to the script section
+  const isPremiumModalOpen = ref(false);
+  const showPremiumModal = () => {
+    isPremiumModalOpen.value = true;
   };
 </script>

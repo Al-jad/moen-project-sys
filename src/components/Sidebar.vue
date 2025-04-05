@@ -172,12 +172,16 @@
 
     { path: '/funded-projects', icon: 'lucide:dollar-sign', label: 'المشاريع الممولة' },
     {
+      path: '/region-development-projects',
+      icon: 'oui:vis-map-region',
+      label: 'مشاريع تنمية الأقاليم',
+    },
+    {
       path: '/demo-projects/investment',
       icon: 'flowbite:chart-outline',
       label: 'المشاريع الإستثمارية',
     },
     { path: '/demo-projects/operational', icon: 'hugeicons:tools', label: 'المشاريع التشغيلية' },
-    { path: '/demo-projects/regional', icon: 'oui:vis-map-region', label: 'مشاريع تنمية الأقاليم' },
 
     { type: 'separator' },
 

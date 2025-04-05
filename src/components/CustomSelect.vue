@@ -6,11 +6,11 @@
   >
     <SelectTrigger
       :class="triggerClass"
-      class="flex-row-reverse border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+      class="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-white"
     >
       <Icon :icon="TriggerIcon" class="h-4 w-4" />
       <SelectValue :placeholder="placeholder">
-        <div class="flex items-center gap-2">
+        <div class="flex gap-2">
           <span :class="{ 'text-muted-foreground': !modelValue }">
             {{ modelValue === 'all' ? placeholder : selectedLabel || placeholder }}
           </span>
@@ -18,7 +18,7 @@
       </SelectValue>
     </SelectTrigger>
     <SelectContent
-      class="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+      class="flex items-center justify-end border-gray-200 bg-white text-right dark:border-gray-700 dark:bg-gray-800 dark:text-white"
     >
       <SelectGroup>
         <SelectLabel v-if="label">{{ label }}</SelectLabel>

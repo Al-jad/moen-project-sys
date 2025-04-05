@@ -8,7 +8,7 @@
     >
       <div class="flex w-full flex-row-reverse items-start gap-2">
         <slot name="icon"></slot>
-        <div class="flex max-h-[80px] w-full flex-wrap justify-end gap-1 overflow-y-auto">
+        <div class="flex max-h-[80px] w-full flex-wrap justify-start gap-1 overflow-y-auto">
           <span v-if="!selectedLabels.length" class="text-muted-foreground dark:text-gray-400">{{
             placeholder
           }}</span>
