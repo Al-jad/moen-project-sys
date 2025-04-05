@@ -149,13 +149,6 @@
               <div class="mt-6">
                 <div class="mb-4 flex items-center justify-between">
                   <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
-                  <PrimaryButton
-                    variant="outline"
-                    @click="addExecutionProcedure(contractIndex)"
-                    size="sm"
-                  >
-                    اضافة اجراء تنفيذي
-                  </PrimaryButton>
                 </div>
 
                 <div class="space-y-4">
@@ -171,7 +164,7 @@
                         size="sm"
                         @click="removeExecutionProcedure(contractIndex, procedureIndex)"
                       >
-                        <Icon icon="lucide:x" class="h-4 w-4" />
+                        حذف الاجراء
                       </Button>
                     </div>
 
@@ -208,6 +201,21 @@
                         />
                       </FormField>
 
+                      <FormField label="نسبة الانجاز المالي المخطط">
+                        <NumberInput
+                          v-model="procedure.plannedFinancialProgress"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField class="col-span-2" label="نسبة الانجاز المالي الفعلي">
+                        <NumberInput
+                          v-model="procedure.actualFinancialProgress"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
+                      </FormField>
                       <FormField label="نسبة الانجاز الفني الفعلي">
                         <PremiumMask>
                           <NumberInput
@@ -229,28 +237,21 @@
                           />
                         </PremiumMask>
                       </FormField>
-
-                      <FormField label="نسبة الانجاز المالي المخطط">
-                        <NumberInput
-                          v-model="procedure.plannedFinancialProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
-                      </FormField>
-
-                      <FormField label="نسبة الانجاز المالي الفعلي">
-                        <NumberInput
-                          v-model="procedure.actualFinancialProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
-                      </FormField>
                     </div>
                   </div>
                 </div>
               </div>
+              <div class="mt-4 flex w-full items-center justify-center">
+                <PrimaryButton
+                  variant="secondary"
+                  @click="addExecutionProcedure(contractIndex)"
+                  class="w-1/2 dark:bg-slate-600 dark:text-white"
+                >
+                  اضافة اجراء تنفيذي
+                </PrimaryButton>
+              </div>
             </div>
-            <PrimaryButton @click="addContract" variant="outline" class="w-full"
+            <PrimaryButton @click="addContract" variant="primary" class="w-full"
               >اضافة عقد جديد</PrimaryButton
             >
           </div>
@@ -309,18 +310,16 @@
           </FormField>
 
           <FormField label="نسبة الانجاز المالي التراكمي">
-            <PremiumMask>
-              <NumberInput
-                v-model="form.financials.cumulativeProgress"
-                placeholder="ادخل نسبة الانجاز"
-                unit="%"
-                disabled
-              />
-            </PremiumMask>
+            <NumberInput
+              v-model="form.financials.cumulativeProgress"
+              placeholder="ادخل نسبة الانجاز"
+              unit="%"
+              disabled
+            />
           </FormField>
         </FormSection>
         <FormSection title="تفاصيل موقف تنفيذ المشروع">
-          <FormField label="حالة المشروع الحالية">
+          <FormField class="col-span-2" label="حالة المشروع الحالية">
             <CustomSelect
               v-model="form.executionDetails.currentStatus"
               :options="projectStatuses"
