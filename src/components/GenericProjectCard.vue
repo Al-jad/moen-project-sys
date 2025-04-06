@@ -156,7 +156,7 @@
               <div class="flex flex-col">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">الكلفة</h3>
                 <p class="text-sm font-semibold text-gray-600 dark:text-gray-100">
-                  {{ formatCost(getProjectCost) }} د.ع
+                  {{ formatCost(getProjectCost) }} {{ selectedCurrency === 'USD' ? '$' : 'د.ع' }}
                 </p>
               </div>
             </div>
@@ -191,19 +191,20 @@
       type: Boolean,
       default: false,
     },
+    selectedCurrency: {
+      type: String,
+      default: 'IQD',
+    },
   });
 
   // Compute the project type once
   const projectType = computed(() => {
-    console.log('Project data:', props.project);
     const type = determineFundingType(props.project);
-    console.log('Determined project type:', type);
     return type;
   });
 
   const isFundedProject = computed(() => {
     const isFunded = projectType.value === ProjectType.FUNDED;
-    console.log('Is funded project?', isFunded);
     return isFunded;
   });
 
@@ -255,22 +256,36 @@
   }
   const getProjectCost = computed(() => {
     if (!props.project) return 0;
-    return props.project.cost || 0;
+    const cost = props.project.cost || 0;
+
+    // Convert if needed
+    if (props.selectedCurrency === 'USD') {
+      return Number(cost) / 1450; // Convert to USD
+    }
+    return Number(cost); // Keep as IQD
   });
   function formatCost(value) {
     if (!value) return '0';
-    return value.toLocaleString('ar-IQ');
+
+    // Format based on currency
+    if (props.selectedCurrency === 'USD') {
+      return value.toLocaleString('ar-IQ', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    // For IQD, no decimals
+    return Math.round(value).toLocaleString('ar-IQ');
   }
 
   function getFundingTypeText() {
     const text = getProjectTypeText(projectType.value);
-    console.log('Getting funding type text:', { type: projectType.value, text });
     return text;
   }
 
   function getFundingTypeClass() {
     const classes = getProjectTypeClass(projectType.value);
-    console.log('Getting funding type class:', { type: projectType.value, classes });
     return classes;
   }
 </script>

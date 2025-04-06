@@ -7,6 +7,7 @@
         @filter-applied="applyFilters"
         :searchQuery="searchQuery"
         :budgetRange="budgetRange"
+        :isBudgetFilterEnabled="isBudgetFilterEnabled"
         :selectedStatus="selectedStatus"
         :selectedBeneficiaries="selectedBeneficiaries"
         :showGovernmentProjects="showGovernmentProjects"
@@ -30,6 +31,19 @@
           </div>
 
           <div class="flex items-center gap-3">
+            <!-- Currency Selector -->
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 dark:text-gray-300">العملة:</span>
+              <CustomSelect
+                v-model="selectedCurrency"
+                :options="currencyOptions"
+                placeholder="اختر العملة"
+                :triggerClass="'w-[120px]'"
+                icon="lucide:currency-dollar"
+                @update:model-value="handleCurrencyChange"
+              />
+            </div>
+
             <div class="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -109,9 +123,32 @@
           </div>
         </div>
 
+        <!-- Projects List -->
+        <div v-if="!isLoading && !error" class="grid grid-cols-1 gap-6">
+          <GenericProjectCard
+            v-for="project in filteredProjects"
+            :key="project.id"
+            :project="project"
+            :selectedCurrency="selectedCurrency"
+          />
+          <div v-if="filteredProjects.length > itemsPerPage" class="mt-4 flex justify-center">
+            <CustomPagination
+              v-model="currentPage"
+              :total="filteredProjects.length"
+              :per-page="itemsPerPage"
+            />
+          </div>
+        </div>
+
         <!-- Loading State -->
         <div v-if="isLoading" class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <GenericProjectCard v-for="i in 4" :key="i" :project="{}" :isLoading="true" />
+          <GenericProjectCard
+            v-for="i in 4"
+            :key="i"
+            :project="{}"
+            :isLoading="true"
+            :selectedCurrency="selectedCurrency"
+          />
         </div>
 
         <!-- Error State -->
@@ -141,18 +178,15 @@
           >
           <PrimaryButton @click="clearFilters" icon="lucide:x"> مسح الفلترة </PrimaryButton>
         </div>
-
-        <!-- Projects List -->
-        <ProjectsList v-else :projects="filteredProjects" />
       </div>
     </div>
   </DefaultLayout>
 </template>
 
 <script setup lang="ts">
+  import CustomSelect from '@/components/CustomSelect.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ProjectsFilter from '@/components/ProjectsFilter.vue';
-  import ProjectsList from '@/components/ProjectsList.vue';
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -192,6 +226,46 @@
   const error = computed(() => projectStore.error);
   const beneficiaries = ref([]);
 
+  // Add this helper function to convert Arabic numerals to English
+  const convertArabicToEnglish = (str) => {
+    if (!str) return '0';
+    // If it's already a number, return it as string
+    if (typeof str === 'number') return str.toString();
+
+    return str
+      .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - '٠'.charCodeAt(0))
+      .replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - '۰'.charCodeAt(0))
+      .replace(/[,٬]/g, '')
+      .replace(/د\.ع|IQD|USD|\s/g, '')
+      .trim();
+  };
+
+  // Add this helper function to normalize currency codes
+  const normalizeCurrency = (currency) => {
+    if (!currency) return 'IQD';
+    // If currency is a number, convert to string code
+    if (currency === 1) return 'IQD';
+    if (currency === 2) return 'USD';
+    return currency;
+  };
+
+  // Update minMaxBudgetRange computed
+  const minMaxBudgetRange = computed(() => {
+    if (!allProjects.value.length) return [0, 0];
+
+    const costs = allProjects.value
+      .map((project) => {
+        const cost = project.cost || 0;
+        // Convert to current selected currency if needed
+        return selectedCurrency.value === 'USD' ? Number(cost) / 1450 : Number(cost);
+      })
+      .filter((cost) => cost > 0);
+
+    if (!costs.length) return [0, 0];
+
+    return [Math.floor(Math.min(...costs)), Math.ceil(Math.max(...costs))];
+  });
+
   // Filter states
   const searchQuery = ref('');
   const selectedFunding = ref({
@@ -199,7 +273,8 @@
     fund: false,
     regional: false,
   });
-  const budgetRange = ref([100000, 9000000]);
+  const budgetRange = ref([0, 0]); // Initialize with zeros
+  const isBudgetFilterEnabled = ref(false);
   const selectedYear = ref('all');
   const selectedStatus = ref({
     all: true,
@@ -210,14 +285,14 @@
   });
   const selectedBeneficiaries = ref({ all: true });
 
-  // Add currency selection state with localStorage initialization
-  const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
-
   // Add currency options
   const currencyOptions = [
     { value: 'IQD', label: UNITS.CURRENCY.IQD },
     { value: 'USD', label: UNITS.CURRENCY.USD },
   ];
+
+  // Add currency selection state with localStorage initialization
+  const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
 
   const route = useRoute();
   const router = useRouter();
@@ -252,11 +327,20 @@
     { deep: true }
   );
 
+  // Watch for changes in budget range and currency
+  watch(
+    [minMaxBudgetRange, selectedCurrency],
+    ([newRange]) => {
+      budgetRange.value = [newRange[0], newRange[1]];
+    },
+    { immediate: true }
+  );
+
   const applyFilters = (filters) => {
     console.log('Applying filters:', filters);
 
     if (!allProjects.value.length) {
-      projectStore.applyFilters([]);
+      filteredProjects.value = [];
       return;
     }
 
@@ -301,20 +385,23 @@
       const [minBudget, maxBudget] = filters.budgetRange;
       console.log(`Budget filter (enabled): Min=${minBudget}, Max=${maxBudget}`);
 
-      const beforeCount = result.length;
       result = result.filter((project) => {
-        const cost = parseFloat(project.cost) || 0;
-        const isInRange = cost >= minBudget && cost <= maxBudget;
+        const cost = project.cost || 0;
+        // Convert cost to match current selected currency
+        const convertedCost = selectedCurrency.value === 'USD' ? Number(cost) / 1450 : Number(cost);
 
-        if (project.id < 5) {
-          console.log(
-            `Project ${project.id} cost: ${cost}, Range: ${minBudget}-${maxBudget}, In range: ${isInRange}`
-          );
-        }
+        console.log(
+          'Project cost:',
+          cost,
+          'Converted:',
+          convertedCost,
+          'Currency:',
+          selectedCurrency.value
+        );
 
+        const isInRange = convertedCost >= minBudget && convertedCost <= maxBudget;
         return isInRange;
       });
-      console.log(`Budget filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
     // Apply status filter - match to projectStatus value
@@ -395,19 +482,36 @@
   };
 
   const handleCurrencyChange = (newCurrency) => {
+    const oldCurrency = selectedCurrency.value;
     selectedCurrency.value = newCurrency;
     localStorage.setItem('selectedCurrency', newCurrency);
 
-    // Recalculate budget range when currency changes
-    if (budgetRange.value) {
-      budgetRange.value = budgetRange.value.map((value) => {
-        if (newCurrency === 'USD') {
-          return value * CURRENCY_CONVERSION.IQD_TO_USD;
-        } else {
-          return value * CURRENCY_CONVERSION.USD_TO_IQD;
-        }
-      });
+    // Convert budget range if it's enabled
+    if (isBudgetFilterEnabled.value && budgetRange.value) {
+      if (newCurrency === 'USD' && oldCurrency === 'IQD') {
+        budgetRange.value = budgetRange.value.map((value) => value / 1450);
+      } else if (newCurrency === 'IQD' && oldCurrency === 'USD') {
+        budgetRange.value = budgetRange.value.map((value) => value * 1450);
+      }
     }
+
+    // Show success message
+    showSuccess(
+      'تم تغيير العملة',
+      newCurrency === 'USD'
+        ? 'تم تغيير العملة إلى الدولار الأمريكي'
+        : 'تم تغيير العملة إلى الدينار العراقي'
+    );
+
+    // Reapply filters with new currency
+    applyFilters({
+      searchQuery: searchQuery.value,
+      budgetRange: budgetRange.value,
+      selectedStatus: selectedStatus.value,
+      selectedBeneficiaries: selectedBeneficiaries.value,
+      showGovernmentProjects: showGovernmentProjects.value,
+      isBudgetFilterEnabled: isBudgetFilterEnabled.value,
+    });
   };
 
   // Fetch projects from API
@@ -453,18 +557,6 @@
   // Fetch projects and beneficiaries when component is mounted
   onMounted(async () => {
     try {
-      // Update government projects from route
-      showGovernmentProjects.value = route.query.showGovernmentProjects === 'true';
-
-      // Update status from route
-      selectedStatus.value = {
-        all: !route.query.status,
-        completed: route.query.status === '2',
-        inProgress: route.query.status === '1',
-        delayed: route.query.status === '3',
-        cancelled: route.query.status === '0',
-      };
-
       // Get saved currency from localStorage
       const savedCurrency = localStorage.getItem('selectedCurrency');
       if (savedCurrency) {
@@ -503,7 +595,7 @@
 
         applyFilters({
           searchQuery: '',
-          budgetRange: budgetRange.value,
+          budgetRange: minMaxBudgetRange.value,
           selectedStatus: selectedStatus.value,
           selectedBeneficiaries: { all: true },
           showGovernmentProjects: route.query.showGovernmentProjects === 'true',
@@ -559,4 +651,15 @@
   };
 
   const { showSuccess } = useToast();
+
+  // Add these near the top of the script section
+  const currentPage = ref(1);
+  const itemsPerPage = ref(10);
+
+  // Add this computed property
+  const paginatedProjects = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredProjects.value.slice(start, end);
+  });
 </script>
