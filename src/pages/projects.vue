@@ -15,7 +15,7 @@
         :selectedCurrency="selectedCurrency"
         @currency-changed="handleCurrencyChange"
       />
-
+      <PremiumModal v-model:open="showPremiumModalOpen" />
       <div class="flex-1 bg-gray-200 p-6 dark:bg-darkmode">
         <!-- Projects Header -->
         <div class="mb-6 flex items-center justify-between">
@@ -45,45 +45,9 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <PrimaryButton variant="outline" icon="lucide:align-left"> ترتيب </PrimaryButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
-                  align="end"
-                >
-                  <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                    <h3 class="text-right text-base font-medium text-gray-900 dark:text-white">
-                      ترتيب
-                    </h3>
-                  </div>
-                  <div class="flex flex-col">
-                    <DropdownMenuItem
-                      v-for="option in sortOptions"
-                      :key="option.id"
-                      class="flex w-full items-center justify-between border-b px-4 py-2.5 text-right text-sm transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/50 dark:focus:bg-gray-700/50"
-                      :class="{ 'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id }"
-                      @click="handleSort(option.id)"
-                    >
-                      <Icon :icon="option.icon" class="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                      <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div
-                v-if="selectedSort"
-                class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-              >
-                <span>{{ getSelectedSortLabel }}</span>
-                <button
-                  class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
-                  @click="clearSort"
-                >
-                  <Icon icon="lucide:x" class="h-3 w-3" />
-                </button>
-              </div>
+              <PrimaryButton @click="showPremiumModal" variant="destructive" icon="mdi:lock">
+                ترتيب
+              </PrimaryButton>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -185,6 +149,7 @@
 
 <script setup lang="ts">
   import CustomSelect from '@/components/CustomSelect.vue';
+  import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ProjectsFilter from '@/components/ProjectsFilter.vue';
   import {
@@ -202,22 +167,6 @@
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-
-  interface SortOption {
-    id: string;
-    label: string;
-    icon: string;
-  }
-
-  // Sort Options Configuration
-  const sortOptions: SortOption[] = [
-    { id: 'price-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-0-1' },
-    { id: 'price-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-0-1' },
-    { id: 'period-high', label: 'من الفترة الاعلى', icon: 'lucide:arrow-down-narrow-wide' },
-    { id: 'period-low', label: 'من الفترة الادنى', icon: 'lucide:arrow-up-narrow-wide' },
-    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-down-0-1' },
-    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-up-0-1' },
-  ];
 
   const projectStore = useProjectStore();
   const allProjects = computed(() => projectStore.projects);
@@ -524,25 +473,10 @@
 
   const selectedSort = ref('');
 
-  const handleSort = (sortId) => {
-    selectedSort.value = sortId;
-    projectStore.applySorting(sortId);
-  };
+  const showPremiumModalOpen = ref(false);
 
-  const getSelectedSortLabel = computed(() => {
-    let selectedLabel = '';
-    for (let i = 0; i < sortOptions.length; i++) {
-      if (sortOptions[i].id === selectedSort.value) {
-        selectedLabel = sortOptions[i].label;
-        break;
-      }
-    }
-    return selectedLabel;
-  });
-
-  const clearSort = () => {
-    selectedSort.value = '';
-    projectStore.clearSort();
+  const showPremiumModal = () => {
+    showPremiumModalOpen.value = true;
   };
 
   const fetchBeneficiaries = async () => {

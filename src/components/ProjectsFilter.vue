@@ -187,7 +187,7 @@
             <CustomCheckbox
               v-model="localSelectedStatus.inProgress"
               id="status-in-progress"
-              label="قيد الانجاز"
+              label="قيد التنفيذ"
               :disabled="disabled"
               :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleIndividualStatusChange"
