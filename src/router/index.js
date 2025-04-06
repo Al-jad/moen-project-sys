@@ -20,6 +20,7 @@ import Settings from '@/pages/settings.vue';
 import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
+import RegionalProjects from '@/pages/regional-projects.vue';
 import { useAuthStore } from '@/stores/authStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -154,6 +155,12 @@ const routes = [
     name: 'funded-projects-details',
     component: () => import('@/pages/funded-projects-details.vue'),
     props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/regional-projects',
+    name: 'regional-projects',
+    component: RegionalProjects,
     meta: { requiresAuth: true },
   },
   {
