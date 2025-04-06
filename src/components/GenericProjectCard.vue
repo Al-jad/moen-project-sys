@@ -61,9 +61,10 @@
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <div
-              :class="['rounded-full px-3 py-1 text-xs font-medium', getFundingTypeClass(project)]"
+              :class="[getFundingTypeClass()]"
+              class="rounded-full px-3 py-1 text-xs font-medium"
             >
-              {{ getFundingTypeText(project) }}
+              {{ getFundingTypeText() }}
             </div>
             <div
               v-if="isFundedProject && project.isGovernment"
@@ -166,9 +167,16 @@
   </div>
 </template>
 <script setup>
+  import {
+    determineFundingType,
+    getProjectTypeClass,
+    getProjectTypeText,
+    ProjectType,
+  } from '@/services/projectTypeService';
   import { Icon } from '@iconify/vue';
   import { computed } from 'vue';
   import { useRouter } from 'vue-router';
+
   const router = useRouter();
   const props = defineProps({
     project: {
@@ -184,7 +192,21 @@
       default: false,
     },
   });
-  const isFundedProject = computed(() => props.project?.isFunded === true);
+
+  // Compute the project type once
+  const projectType = computed(() => {
+    console.log('Project data:', props.project);
+    const type = determineFundingType(props.project);
+    console.log('Determined project type:', type);
+    return type;
+  });
+
+  const isFundedProject = computed(() => {
+    const isFunded = projectType.value === ProjectType.FUNDED;
+    console.log('Is funded project?', isFunded);
+    return isFunded;
+  });
+
   const hasBeneficiaries = computed(() => {
     if (!props.project) return false;
     return (
@@ -239,16 +261,16 @@
     if (!value) return '0';
     return value.toLocaleString('ar-IQ');
   }
-  function getFundingTypeText(project) {
-    if (project.isFunded === true) {
-      return 'مشروع ممول';
-    }
-    return 'مشروع تنمية الأقاليم';
+
+  function getFundingTypeText() {
+    const text = getProjectTypeText(projectType.value);
+    console.log('Getting funding type text:', { type: projectType.value, text });
+    return text;
   }
-  function getFundingTypeClass(project) {
-    if (project.isFunded === true) {
-      return 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-300';
-    }
-    return 'bg-teal-500/10 text-teal-600 dark:bg-teal-500/20 dark:text-teal-300';
+
+  function getFundingTypeClass() {
+    const classes = getProjectTypeClass(projectType.value);
+    console.log('Getting funding type class:', { type: projectType.value, classes });
+    return classes;
   }
 </script>

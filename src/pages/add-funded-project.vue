@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-6xl space-y-8">
-        <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
+      <div class="w-full max-w-6xl mx-auto space-y-8">
+        <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100"> اضافة مشروع - ممول </h1>
         </div>
 
@@ -24,16 +24,16 @@
               <div
                 v-for="(component, index) in store.form.components"
                 :key="component.id || index"
-                class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+                class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
               >
-                <div class="mb-6 flex items-center justify-between">
+                <div class="flex items-center justify-between mb-6">
                   <div class="flex items-center gap-3">
                     <div
-                      class="h-8 w-8 rounded-lg"
+                      class="w-8 h-8 rounded-lg"
                       :style="{ backgroundColor: getComponentColor(index, true) }"
                     >
                       <div
-                        class="flex h-full w-full items-center justify-center text-sm font-medium"
+                        class="flex items-center justify-center w-full h-full text-sm font-medium"
                         :style="{ color: getComponentColor(index) }"
                       >
                         {{ index + 1 }}
@@ -49,7 +49,7 @@
                     size="sm"
                     class="text-red-500 hover:text-red-600 dark:text-red-400"
                   >
-                    <Icon icon="lucide:trash" class="h-4 w-4" />
+                    <Icon icon="lucide:trash" class="w-4 h-4" />
                   </Button>
                 </div>
 
@@ -83,12 +83,12 @@
                       <div
                         v-for="(activity, activityIndex) in component.activities || []"
                         :key="activityIndex"
-                        class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700/50"
+                        class="p-4 border rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-700/50"
                       >
-                        <div class="mb-4 flex items-center justify-between">
+                        <div class="flex items-center justify-between mb-4">
                           <div class="flex items-center gap-2">
                             <div
-                              class="h-2 w-2 rounded-full"
+                              class="w-2 h-2 rounded-full"
                               :style="{ backgroundColor: getComponentColor(index) }"
                             ></div>
                             <span class="font-medium text-gray-900 dark:text-gray-100">
@@ -105,9 +105,9 @@
                             <Icon
                               v-if="store.form.isSaving"
                               icon="lucide:loader-2"
-                              class="h-4 w-4 animate-spin"
+                              class="w-4 h-4 animate-spin"
                             />
-                            <Icon v-else icon="lucide:trash" class="h-4 w-4" />
+                            <Icon v-else icon="lucide:trash" class="w-4 h-4" />
                           </Button>
                         </div>
 
@@ -148,7 +148,7 @@
                           >
                             <div v-if="totalPeriods > 0" class="space-y-4">
                               <div
-                                class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
+                                class="flex items-center justify-between px-4 py-2 border rounded-lg bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50"
                               >
                                 <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
                                   {{
@@ -167,7 +167,7 @@
                                 </button>
                               </div>
                               <div
-                                class="grid gap-2 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+                                class="grid gap-2 p-4 bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
                                 :class="{
                                   'grid-cols-4': totalPeriods <= 4,
                                   'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
@@ -186,7 +186,7 @@
                                   </span>
                                   <button
                                     type="button"
-                                    class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
+                                    class="relative w-full h-12 transition-all duration-200 border rounded-md cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
                                     :class="[
                                       activity.selectedPeriods?.includes(period)
                                         ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
@@ -212,7 +212,7 @@
                             </div>
                             <div
                               v-else
-                              class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                              class="flex items-center justify-center p-6 text-center text-gray-500 border border-gray-200 rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                             >
                               <div class="space-y-1">
                                 <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
@@ -237,7 +237,7 @@
                       }"
                       class="w-full"
                     >
-                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                      <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
                       اضافة فعالية
                     </Button>
                   </div>
@@ -248,9 +248,9 @@
               <Button
                 @click="addNewComponent"
                 variant="outline"
-                class="w-full border-dashed py-6 hover:border-gray-400 dark:hover:border-gray-600"
+                class="w-full py-6 border-dashed hover:border-gray-400 dark:hover:border-gray-600"
               >
-                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
                 اضافة مكون جديد
               </Button>
             </div>
@@ -266,19 +266,19 @@
           <ProjectPreview />
         </div>
 
-        <div class="sticky bottom-6 left-0 right-0">
-          <div class="rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+        <div class="sticky left-0 right-0 bottom-6">
+          <div class="p-4 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
             <Button
               @click="saveProjectWithComponents"
-              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="store.isSaving"
             >
               <Icon
                 v-if="store.isSaving"
                 icon="lucide:loader-2"
-                class="ml-2 h-4 w-4 animate-spin"
+                class="w-4 h-4 ml-2 animate-spin"
               />
-              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
+              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>

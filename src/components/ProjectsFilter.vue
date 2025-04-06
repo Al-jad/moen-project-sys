@@ -57,8 +57,8 @@
               v-model="localSelectedFunding.fund"
               id="fund"
               label="مشروع ممول"
-              :disabled="disabled || localSelectedFunding.all"
-              :class="{ 'cursor-not-allowed': disabled || localSelectedFunding.all }"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleIndividualFundingChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-purple-500"></div>
@@ -67,8 +67,8 @@
               v-model="localSelectedFunding.regional"
               id="regional"
               label="مشروع تنمية الأقاليم"
-              :disabled="disabled || localSelectedFunding.all"
-              :class="{ 'cursor-not-allowed': disabled || localSelectedFunding.all }"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
               @update:model-value="handleIndividualFundingChange"
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-teal-500"></div>
@@ -385,9 +385,13 @@
     // Set government projects filter from props
     localShowGovernmentProjects.value = props.showGovernmentProjects || false;
 
-    if (props.selectedFunding) {
-      localSelectedFunding.value = { ...props.selectedFunding };
-    }
+    // Initialize funding with "all" selected and others unchecked
+    localSelectedFunding.value = {
+      all: true,
+      fund: false,
+      regional: false,
+      ...(props.selectedFunding || {}),
+    };
 
     getBeneficiaries();
   });
@@ -465,6 +469,14 @@
   const handleIndividualFundingChange = () => {
     // If any individual funding option is selected, uncheck "All"
     localSelectedFunding.value.all = false;
+
+    // If no individual options are selected, select "All"
+    const hasSelectedOption = Object.entries(localSelectedFunding.value).some(
+      ([key, value]) => key !== 'all' && value
+    );
+    if (!hasSelectedOption) {
+      localSelectedFunding.value.all = true;
+    }
   };
 
   const handleAllBeneficiaryChange = (value) => {

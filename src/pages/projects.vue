@@ -163,6 +163,7 @@
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
+  import { determineFundingType, ProjectType } from '@/services/projectTypeService';
   import { useProjectStore } from '@/stores/projectStore';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
@@ -263,14 +264,17 @@
 
     // Apply funding type filter
     if (filters.selectedFunding && !filters.selectedFunding.all) {
+      console.log('Applying funding type filter:', filters.selectedFunding);
       result = result.filter((project) => {
+        const projectType = determineFundingType(project);
+
         // For funded projects
         if (filters.selectedFunding.fund) {
-          return project.isFunded === true;
+          return projectType === ProjectType.FUNDED;
         }
         // For regional projects
         if (filters.selectedFunding.regional) {
-          return project.isFunded === false;
+          return projectType === ProjectType.REGIONAL;
         }
         return false;
       });
