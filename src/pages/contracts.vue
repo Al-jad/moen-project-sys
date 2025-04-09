@@ -1,238 +1,292 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-200 dark:bg-darkmode">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-6">
+    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mb-6 flex items-center justify-between">
+        <div class="flex items-center gap-4">
           <BackToMainButton />
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">العقود</h1>
+          <h1 class="text-xl font-bold dark:text-white">العقود</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <PrimaryButton @click="handleAdd">
+            <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
+            اضافة عقد جديد
+          </PrimaryButton>
         </div>
       </div>
-
-      <!-- Notification Banner -->
-      <Premium />
-
-      <!-- Controls Container -->
-      <div
-        class="p-6 bg-white border border-gray-100 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:shadow-none"
-      >
-        <div class="flex items-center justify-between gap-4 mb-6">
-          <div class="flex items-center gap-6">
-            <PrimaryButton size="lg" class="px-2">
-              <Icon icon="lucide:file-spreadsheet" class="w-4 h-4 ml-2" />
-              تصدير Excel
-            </PrimaryButton>
-
-            <div class="min-w-[200px]">
-              <CustomSelect
-                v-model="selectedProject"
-                :options="[
-                  { value: 'all', label: 'الكل' },
-                  ...projects.map((p) => ({ value: p.id, label: p.name })),
-                ]"
-                placeholder="اختر المشروع"
-                :triggerClass="'flex flex-row-reverse w-full'"
-                icon="lucide:folder"
-              />
-            </div>
-
-            <div class="min-w-[200px]">
-              <CustomSelect
-                v-model="selectedContract"
-                :options="[
-                  { value: 'all', label: 'الكل' },
-                  ...contractsList.map((c) => ({ value: c.id, label: c.name })),
-                ]"
-                placeholder="اختر العقد"
-                :triggerClass="'flex flex-row-reverse w-full'"
-                icon="lucide:file-text"
-              />
-            </div>
-
-            <DateInput class="flex-row" v-model="date" placeholder="اختر التاريخ" />
-          </div>
-
-          <!-- Search -->
-          <div class="relative min-w-[240px]">
-            <FormField>
-              <div class="relative">
-                <CustomInput v-model="searchQuery" placeholder="بحث سريع" icon="lucide:search" />
+      <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div class="p-6">
+          <CustomTable
+            ref="tableRef"
+            :columns="columns"
+            :data="contractsWithProjects"
+            @export="exportToExcel"
+            :loading="loading"
+            :showDateFilter="false"
+            :showSearch="true"
+            :showExport="true"
+            :isExportPremium="false"
+            @edit="handleEdit"
+            @delete="handleDelete"
+          >
+            <template #contractNumber="{ item }">
+              <span class="dark:text-gray-300">#{{ item.contractNumber }}</span>
+            </template>
+            <template #name="{ item }">
+              <span class="dark:text-gray-300">{{ item.name }}</span>
+            </template>
+            <template #projectName="{ item }">
+              <div class="flex items-center gap-2">
+                <span class="dark:text-gray-300">{{ item.project?.name || 'غير محدد' }}</span>
+                <button
+                  v-if="item.project"
+                  @click="router.push(`/project/${item.project.id}`)"
+                  class="rounded p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/50"
+                >
+                  <Icon icon="lucide:external-link" class="h-4 w-4" />
+                </button>
               </div>
-            </FormField>
-          </div>
-        </div>
-
-        <!-- Cards Grid -->
-        <div class="space-y-3">
-          <ContractCard
-            v-for="contract in filteredContracts"
-            :key="contract.id"
-            :contract="contract"
-            @show-details="$router.push(`/contract-details/${contract.id}`)"
-          />
-        </div>
-
-        <!-- Pagination -->
-        <div class="flex items-center justify-center mt-6">
-          <Pagination :totalPages="totalPages" :currentPage="currentPage" />
+            </template>
+            <template #executingDepartment="{ item }">
+              <span class="dark:text-gray-300">{{ item.executingDepartment }}</span>
+            </template>
+            <template #cost="{ item }">
+              <span class="dark:text-gray-300" v-html="formatCurrency(item.cost)" />
+            </template>
+            <template #signingDate="{ item }">
+              <span class="dark:text-gray-300">{{ formatDate(item.signingDate) }}</span>
+            </template>
+            <template #referralDate="{ item }">
+              <span class="dark:text-gray-300">{{ formatDate(item.referralDate) }}</span>
+            </template>
+            <template #action="{ item }">
+              <div class="flex items-center justify-center gap-4">
+                <button
+                  @click="handleEdit(item)"
+                  class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                >
+                  <Icon icon="lucide:edit" class="h-4 w-4" />
+                </button>
+                <button
+                  @click="handleDelete(item)"
+                  :disabled="isDeleting"
+                  class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <Icon icon="lucide:trash" class="h-4 w-4" />
+                </button>
+                <button
+                  @click="handleView(item)"
+                  class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  <Icon icon="lucide:eye" class="h-4 w-4" />
+                </button>
+              </div>
+            </template>
+          </CustomTable>
         </div>
       </div>
+      <AddContractModal
+        v-model:open="showModal"
+        :edit-data="editingContract"
+        :projects="projects"
+        @save="handleSave"
+      />
+      <DeleteModal
+        v-model:open="isDeleteModalOpen"
+        :loading="isDeleting"
+        title="حذف العقد"
+        description="تأكيد حذف العقد"
+        :message="
+          selectedContract?.contractNumber
+            ? 'هل أنت متأكد من حذف العقد رقم ' + selectedContract.contractNumber + '؟'
+            : ''
+        "
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+      />
     </main>
   </DefaultLayout>
 </template>
-
 <script setup lang="ts">
+  import AddContractModal from '@/components/AddContractModal.vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
-  import ContractCard from '@/components/ContractCard.vue';
-  import CustomInput from '@/components/CustomInput.vue';
-  import CustomSelect from '@/components/CustomSelect.vue';
-  import DateInput from '@/components/DateInput.vue';
-  import FormField from '@/components/FormField.vue';
-  import Premium from '@/components/Premium.vue';
-  import Pagination from '@/components/CustomPagination.vue';
+  import CustomTable from '@/components/CustomTable.vue';
+  import DeleteModal from '@/components/DeleteModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
   import { Icon } from '@iconify/vue';
-  import { DateFormatter } from '@internationalized/date';
-  import { format } from 'date-fns';
-  import { ar } from 'date-fns/locale';
-  import { computed, ref } from 'vue';
-
-  interface Project {
-    id: string;
-    name: string;
+  import { computed, onMounted, ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
+  interface Column {
+    key: string;
+    label: string;
+    type: 'text' | 'button' | 'action' | 'actions' | 'custom';
   }
-
-  interface ContractListItem {
-    id: string;
-    name: string;
-  }
-
   interface Contract {
     id: number;
-    number: string;
-    company: string;
-    amount: number;
-    signDate: string;
+    name: string;
+    contractNumber: number;
+    executingDepartment: string;
+    cost: number;
+    signingDate: string;
     referralDate: string;
-    changeOrders: number;
-    projectId?: string;
+    projectId: number;
+    project?: {
+      id: number;
+      name: string;
+    };
   }
-
-  const searchQuery = ref('');
-  const currentPage = ref(1);
-  const selectedProject = ref<string>('all');
-  const selectedContract = ref<string>('all');
-  const date = ref<string | null>(null);
-  const itemsPerPage = 7;
-
-  const df = new DateFormatter('ar', { dateStyle: 'medium' });
-
-  const dateRangeText = computed(() => {
-    if (!date.value) return '';
-    return df.format(new Date(date.value));
-  });
-
-  // Mock data for dropdowns
-  const projects = ref<Project[]>([
-    { id: '1', name: 'مشروع A' },
-    { id: '2', name: 'مشروع B' },
-    { id: '3', name: 'مشروع C' },
-  ]);
-
-  const contractsList = ref<ContractListItem[]>([
-    { id: '1', name: 'عقد A' },
-    { id: '2', name: 'عقد B' },
-    { id: '3', name: 'عقد C' },
-  ]);
-
-  // Update the contracts data with projectId
-  const contracts = ref<Contract[]>([
-    {
-      id: 1,
-      number: '23/2025',
-      company: 'شركة الاتحاد الجاد للبرمجيات',
-      amount: 23333000,
-      signDate: '8/07/2025',
-      referralDate: '6/07/2025',
-      changeOrders: 6,
-      projectId: '1',
-    },
-    {
-      id: 2,
-      number: '24/2025',
-      company: 'شركة الاتحاد الجاد للبرمجيات',
-      amount: 23333000,
-      signDate: '8/07/2025',
-      referralDate: '6/07/2025',
-      changeOrders: 6,
-      projectId: '2',
-    },
-    {
-      id: 3,
-      number: '25/2025',
-      company: 'شركة الاتحاد الجاد للبرمجيات',
-      amount: 23333000,
-      signDate: '8/07/2025',
-      referralDate: '6/07/2025',
-      changeOrders: 6,
-      projectId: '3',
-    },
-  ]);
-
-  // Methods
-  const formatDate = (dateString: string | null) => {
+  const columns: Column[] = [
+    { key: 'contractNumber', label: 'رقم العقد', type: 'text' },
+    { key: 'name', label: 'اسم العقد', type: 'text' },
+    { key: 'projectName', label: 'اسم المشروع', type: 'text' },
+    { key: 'executingDepartment', label: 'الجهة المنفذة', type: 'text' },
+    { key: 'cost', label: 'الكلفة', type: 'text' },
+    { key: 'signingDate', label: 'تاريخ التوقيع', type: 'text' },
+    { key: 'referralDate', label: 'تاريخ الإحالة', type: 'text' },
+    { key: 'action', label: 'الإجراءات', type: 'action' },
+  ];
+  const showModal = ref(false);
+  const editingContract = ref<Contract | null>(null);
+  const isDeleting = ref(false);
+  const isDeleteModalOpen = ref(false);
+  const selectedContract = ref<Contract | null>(null);
+  const tableRef = ref();
+  const regionalProjectStore = useRegionalProjectStore();
+  const contracts = computed<Contract[]>(() => regionalProjectStore.contracts);
+  const projects = computed(() => regionalProjectStore.projects);
+  const loading = computed(() => regionalProjectStore.loading);
+  const router = useRouter();
+  const formatDate = (dateString: string) => {
     if (!dateString) return '';
-    return format(new Date(dateString), 'dd/MM/yyyy', { locale: ar });
-  };
-
-  const getProjectName = (id) => {
-    const project = projects.value.find((p) => p.id === id);
-    return project ? project.name : '';
-  };
-
-  const getContractName = (id) => {
-    const contract = contractsList.value.find((c) => c.id === id);
-    return contract ? contract.name : '';
-  };
-
-  // Update the filteredContracts computed to handle type checking
-  const filteredContracts = computed(() => {
-    let filtered = contracts.value;
-
-    if (searchQuery.value) {
-      const searchTerm = searchQuery.value.toLowerCase();
-      filtered = filtered.filter(
-        (contract) =>
-          contract.number.toLowerCase().includes(searchTerm) ||
-          contract.company.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    if (selectedProject.value !== 'all') {
-      filtered = filtered.filter((contract) => contract.projectId === selectedProject.value);
-    }
-
-    if (selectedContract.value !== 'all') {
-      filtered = filtered.filter((contract) => contract.id === Number(selectedContract.value));
-    }
-
-    if (date.value) {
-      const selectedDate = new Date(date.value).toISOString().split('T')[0];
-      filtered = filtered.filter((contract) => {
-        const contractDate = new Date(contract.signDate).toISOString().split('T')[0];
-        return contractDate === selectedDate;
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-IQ', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
     }
+  };
+  const formatCurrency = (value: number) => {
+    if (!value) return '0';
+    const formattedNumber = new Intl.NumberFormat('ar-IQ', {
+      style: 'decimal',
+      maximumFractionDigits: 0,
+    }).format(value);
+    return `${formattedNumber} د.ع`;
+  };
+  const handleSave = async (data: Partial<Contract>) => {
+    try {
+      const payload = {
+        name: data.name || '',
+        projectId: data.projectId,
+        executingDepartment: data.executingDepartment,
+        cost: data.cost,
+        referralDate: data.referralDate,
+        signingDate: data.signingDate,
+        contractNumber: data.contractNumber,
+      };
 
-    return filtered;
+      if (editingContract.value?.id) {
+        // Edit existing contract
+        await regionalProjectStore.updateContract(editingContract.value.id, payload);
+        toast.success('تم تحديث العقد بنجاح');
+      } else {
+        // Add new contract
+        await regionalProjectStore.createContract(payload);
+        toast.success('تمت إضافة العقد بنجاح');
+      }
+
+      // Close modal first
+      showModal.value = false;
+
+      // Then refresh the data
+      await Promise.all([
+        regionalProjectStore.fetchAllContracts(),
+        regionalProjectStore.fetchAllProjects(),
+      ]);
+    } catch (error) {
+      console.error('Error saving contract:', error);
+      toast.error('حدث خطأ أثناء حفظ بيانات العقد');
+    }
+  };
+  const handleEdit = (contract: Contract) => {
+    editingContract.value = { ...contract };
+    showModal.value = true;
+  };
+  const handleAdd = () => {
+    editingContract.value = null;
+    showModal.value = true;
+  };
+  const handleDelete = (contract: Contract) => {
+    selectedContract.value = contract;
+    isDeleteModalOpen.value = true;
+  };
+  const handleView = (contract: Contract) => {
+    router.push(`/contracts/${contract.id}`);
+  };
+  const confirmDelete = async () => {
+    try {
+      isDeleting.value = true;
+      await regionalProjectStore.deleteContract(selectedContract.value?.id!);
+      toast.success('تم حذف العقد', {
+        description: `تم حذف العقد رقم "${selectedContract.value?.contractNumber}" بنجاح`,
+      });
+      await regionalProjectStore.fetchAllContracts();
+      isDeleteModalOpen.value = false;
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      toast.error('خطأ في حذف العقد', {
+        description: 'حدث خطأ أثناء محاولة حذف العقد',
+      });
+    } finally {
+      isDeleting.value = false;
+      selectedContract.value = null;
+    }
+  };
+  const cancelDelete = () => {
+    isDeleteModalOpen.value = false;
+    selectedContract.value = null;
+  };
+  const contractsWithProjects = computed(() => {
+    return contracts.value.map((contract) => ({
+      ...contract,
+      project: regionalProjectStore.projects.find((p) => p.id === contract.projectId),
+    }));
   });
-
-  const totalPages = computed(() => {
-    const total = Math.ceil(filteredContracts.value.length / itemsPerPage);
-    return total > 0 ? total : 1;
+  const exportToExcel = () => {
+    const headerLabels = [
+      'رقم العقد',
+      'اسم العقد',
+      'اسم المشروع',
+      'الجهة المنفذة',
+      'الكلفة',
+      'تاريخ التوقيع',
+      'تاريخ الإحالة',
+    ];
+    const formattedData = contractsWithProjects.value.map((contract) => ({
+      'رقم العقد': `#${contract.contractNumber}` || '',
+      'اسم العقد': contract.name || '',
+      'اسم المشروع': contract.project?.name || 'غير محدد',
+      'الجهة المنفذة': contract.executingDepartment || '',
+      الكلفة: formatCurrency(contract.cost),
+      'تاريخ التوقيع': formatDate(contract.signingDate),
+      'تاريخ الإحالة': formatDate(contract.referralDate),
+    }));
+    tableRef.value?.exportToExcel(formattedData, headerLabels, 'العقود');
+  };
+  onMounted(async () => {
+    await Promise.all([
+      regionalProjectStore.fetchAllContracts(),
+      regionalProjectStore.fetchAllProjects(),
+    ]);
   });
 </script>
-
 <style scoped>
   .rtl {
     direction: rtl;

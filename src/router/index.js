@@ -21,6 +21,7 @@ import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
 import RegionalProjects from '@/pages/regional-projects.vue';
+
 import { useAuthStore } from '@/stores/authStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -116,7 +117,7 @@ const routes = [
   },
   {
     path: '/contracts/:id',
-    name: 'contract-details',
+    name: 'contract-detail',
     component: ContractDetails,
     meta: { requiresAuth: true },
   },

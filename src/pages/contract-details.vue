@@ -1,47 +1,50 @@
 <template>
   <DefaultLayout>
-    <main class="bg-gray-200 p-6 dark:bg-gray-900">
+    <main class="p-6 bg-gray-200 dark:bg-gray-900">
       <!-- Header -->
-      <div class="mb-6 flex items-center justify-start gap-2">
+      <div class="flex items-center justify-start gap-2 mb-6">
         <BackButton />
-        <h1 class="text-xl font-medium">صفحة تفاصيل العقد</h1>
+        <h1 class="text-xl font-medium">تفاصيل العقد - {{ contract.name }}</h1>
       </div>
 
       <!-- Contract Details Card -->
-      <div class="rounded-lg bg-white dark:border dark:border-gray-700 dark:bg-gray-800">
+      <div class="bg-white rounded-lg dark:border dark:border-gray-700 dark:bg-gray-800">
         <!-- Basic Info -->
         <div class="border-b dark:border-gray-700">
           <div class="p-6">
             <div class="grid grid-cols-[auto_1fr] gap-x-12 gap-y-4 text-right">
+              <div class="text-gray-500 dark:text-gray-400">اسم العقد</div>
+              <div class="mr-4">{{ contract.name }}</div>
+
               <div class="text-gray-500 dark:text-gray-400">اسم المشروع</div>
               <div class="mr-4">{{ contract.projectName }}</div>
 
               <div class="text-gray-500 dark:text-gray-400">الجهة المنفذة للعقد</div>
-              <div class="mr-4">{{ contract.company }}</div>
+              <div class="mr-4">{{ contract.executingDepartment }}</div>
 
               <div class="text-gray-500 dark:text-gray-400">كلفة العقد</div>
-              <div class="mr-4">{{ contract.amount }} دينار عراقي</div>
+              <div class="mr-4">{{ formatCurrency(contract.cost) }}</div>
 
               <div class="text-gray-500 dark:text-gray-400">تاريخ الاحالة</div>
-              <div class="mr-4">{{ contract.referralDate }}</div>
+              <div class="mr-4">{{ formatDate(contract.referralDate) }}</div>
 
               <div class="text-gray-500 dark:text-gray-400">تاريخ توقيع العقد</div>
-              <div class="mr-4">{{ contract.signDate }}</div>
+              <div class="mr-4">{{ formatDate(contract.signingDate) }}</div>
 
               <div class="text-gray-500 dark:text-gray-400">رقم العقد</div>
-              <div class="mr-4">{{ contract.number }}</div>
+              <div class="mr-4">#{{ contract.contractNumber }}</div>
             </div>
           </div>
         </div>
 
         <!-- Execution Procedures -->
         <div class="p-6">
-          <div class="mb-4 flex justify-between">
+          <div class="flex justify-between mb-4">
             <h2 class="text-lg font-medium">الاجراءات التنفيذية (٥)</h2>
             <Tooltip>
               <TooltipTrigger asChild>
-                <PrimaryButton variant="ghost" size="icon" class="h-8 w-8" @click="openAddModal">
-                  <Icon icon="lucide:plus" class="h-4 w-4" />
+                <PrimaryButton variant="ghost" size="icon" class="w-8 h-8" @click="openAddModal">
+                  <Icon icon="lucide:plus" class="w-4 h-4" />
                 </PrimaryButton>
               </TooltipTrigger>
               <TooltipContent
@@ -89,20 +92,82 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
 
-  import { useRoute } from 'vue-router';
+  import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
+  import { onMounted, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const route = useRoute();
+  const router = useRouter();
   const contractId = route.params.id;
+  const regionalProjectStore = useRegionalProjectStore();
 
-  // Mock data - replace with actual API call
+  // Contract data
   const contract = ref({
-    projectName: 'مشروع A',
-    company: 'شركة المتحدة للبرامجيات',
-    amount: '125487',
-    referralDate: '15.01.2025',
-    signDate: '25.02.2025',
-    number: '152 / و / ي',
+    projectName: '',
+    executingDepartment: '',
+    cost: 0,
+    referralDate: '',
+    signingDate: '',
+    contractNumber: '',
+    name: '',
   });
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-IQ', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  };
+
+  const formatCurrency = (value) => {
+    if (!value) return '0';
+    const formattedNumber = new Intl.NumberFormat('ar-IQ', {
+      style: 'decimal',
+      maximumFractionDigits: 0,
+    }).format(value);
+    return `${formattedNumber} د.ع`;
+  };
+
+  // Fetch contract data
+  const fetchContractDetails = async () => {
+    try {
+      const response = await regionalProjectStore.fetchAllContracts();
+      const contractData = regionalProjectStore.contracts.find((c) => c.id === Number(contractId));
+
+      if (!contractData) {
+        toast.error('لم يتم العثور على العقد');
+        router.push('/contracts');
+        return;
+      }
+
+      const projectData = await regionalProjectStore.fetchAllProjects();
+      const project = regionalProjectStore.projects.find((p) => p.id === contractData.projectId);
+
+      contract.value = {
+        projectName: project?.name || 'غير محدد',
+        executingDepartment: contractData.executingDepartment,
+        cost: contractData.cost,
+        referralDate: contractData.referralDate,
+        signingDate: contractData.signingDate,
+        contractNumber: contractData.contractNumber,
+        name: contractData.name,
+      };
+    } catch (error) {
+      console.error('Error fetching contract details:', error);
+      toast.error('حدث خطأ أثناء جلب بيانات العقد');
+    }
+  };
+
+  onMounted(fetchContractDetails);
 
   const executionProcedures = ref([
     {
