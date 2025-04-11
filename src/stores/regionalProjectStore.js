@@ -72,6 +72,20 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     }
   };
 
+  const fetchContractById = async (id) => {
+    try {
+      loading.value = true;
+      error.value = null;
+      const response = await axiosInstance.get(`/api/RegionalProject/Contract/${id}`);
+      return response.data;
+    } catch (err) {
+      error.value = err.message || 'Failed to fetch contract';
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const deleteContract = async (id) => {
     try {
       loading.value = true;
@@ -86,16 +100,87 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     }
   };
 
-  const fetchAllProcedures = async () => {
+  const fetchAllProcedures = async (contractId) => {
     try {
       loading.value = true;
-      const response = await axiosInstance.get('/api/RegionalProject/Procedure');
+      const response = await axiosInstance.get(
+        `/api/RegionalProject/Procedure?contractId=${contractId}`
+      );
       procedures.value = response.data;
       proceduresCount.value = procedures.value.length;
+      return response.data;
     } catch (err) {
       error.value = err.message || 'Failed to fetch procedures';
       procedures.value = [];
       proceduresCount.value = 0;
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const createProcedure = async (procedureData) => {
+    try {
+      loading.value = true;
+      error.value = null;
+      const response = await axiosInstance.post('/api/RegionalProject/Procedure', procedureData);
+      // Find the contract and update its procedures
+      const contract = await fetchContractById(procedureData.contractId);
+      if (contract) {
+        const index = contracts.value.findIndex((c) => c.id === procedureData.contractId);
+        if (index !== -1) {
+          contracts.value[index] = contract;
+        }
+      }
+      return response.data;
+    } catch (err) {
+      error.value = err.message || 'Failed to create procedure';
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const deleteProcedure = async (id, contractId) => {
+    try {
+      loading.value = true;
+      await axiosInstance.delete(`/api/RegionalProject/Procedure/${id}`);
+      // Fetch updated contract data to get fresh procedures
+      const contract = await fetchContractById(contractId);
+      if (contract) {
+        const index = contracts.value.findIndex((c) => c.id === contractId);
+        if (index !== -1) {
+          contracts.value[index] = contract;
+        }
+      }
+    } catch (err) {
+      error.value = err.message || 'Failed to delete procedure';
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const updateProcedure = async (id, procedureData) => {
+    try {
+      loading.value = true;
+      error.value = null;
+      const response = await axiosInstance.put(
+        `/api/RegionalProject/Procedure/${id}`,
+        procedureData
+      );
+      // Fetch updated contract data to get fresh procedures
+      const contract = await fetchContractById(procedureData.contractId);
+      if (contract) {
+        const index = contracts.value.findIndex((c) => c.id === procedureData.contractId);
+        if (index !== -1) {
+          contracts.value[index] = contract;
+        }
+      }
+      return response.data;
+    } catch (err) {
+      error.value = err.message || 'Failed to update procedure';
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -117,9 +202,13 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     fetchAllProjects,
     applyFilters,
     fetchAllContracts,
+    fetchContractById,
     fetchAllProcedures,
     deleteContract,
     createContract,
     updateContract,
+    createProcedure,
+    deleteProcedure,
+    updateProcedure,
   };
 });

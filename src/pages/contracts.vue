@@ -29,7 +29,7 @@
             @delete="handleDelete"
           >
             <template #contractNumber="{ item }">
-              <span class="dark:text-gray-300">#{{ item.contractNumber }}</span>
+              <span class="dark:text-gray-300">{{ item.contractNumber }}</span>
             </template>
             <template #name="{ item }">
               <span class="dark:text-gray-300">{{ item.name }}</span>
@@ -58,6 +58,10 @@
             <template #referralDate="{ item }">
               <span class="dark:text-gray-300">{{ formatDate(item.referralDate) }}</span>
             </template>
+            <template #proceduresCount="{ item }">
+              <span class="dark:text-gray-300">{{ item.proceduresCount || 0 }}</span>
+            </template>
+            <template> عدد الاجراءات </template>
             <template #action="{ item }">
               <div class="flex items-center justify-center gap-4">
                 <button
@@ -145,6 +149,7 @@
     { key: 'cost', label: 'الكلفة', type: 'text' },
     { key: 'signingDate', label: 'تاريخ التوقيع', type: 'text' },
     { key: 'referralDate', label: 'تاريخ الإحالة', type: 'text' },
+    { key: 'proceduresCount', label: 'عدد الاجراءات', type: 'text' },
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
   const showModal = ref(false);
@@ -257,6 +262,8 @@
     return contracts.value.map((contract) => ({
       ...contract,
       project: regionalProjectStore.projects.find((p) => p.id === contract.projectId),
+      proceduresCount: regionalProjectStore.procedures.filter((p) => p.contractId === contract.id)
+        .length,
     }));
   });
   const exportToExcel = () => {
@@ -284,6 +291,7 @@
     await Promise.all([
       regionalProjectStore.fetchAllContracts(),
       regionalProjectStore.fetchAllProjects(),
+      regionalProjectStore.fetchAllProcedures(),
     ]);
   });
 </script>
