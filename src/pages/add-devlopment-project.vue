@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="flex min-h-screen flex-col gap-4 bg-gray-200 p-6 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-6xl">
-        <h1 class="py-4 pb-6 text-right text-2xl font-bold text-gray-900 dark:text-gray-100"
+    <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200 dark:bg-gray-900">
+      <div class="w-full max-w-6xl mx-auto">
+        <h1 class="py-4 pb-6 text-2xl font-bold text-right text-gray-900 dark:text-gray-100"
           >اضافة مشروع - تنمية الأقاليم
         </h1>
 
@@ -61,7 +61,7 @@
                 variant="outline"
                 class="flex items-center gap-2 dark:border-gray-700 dark:text-gray-100"
               >
-                <Icon icon="lucide:map-pin" class="h-4 w-4" />
+                <Icon icon="lucide:map-pin" class="w-4 h-4" />
                 اختر على الخريطة
               </Button>
             </div>
@@ -102,179 +102,7 @@
             <DateInput v-model="form.actualCompletionDate" />
           </FormField>
         </FormSection>
-        <FormSection title="تفاصيل العقد">
-          <div class="space-y-6 md:col-span-2">
-            <div
-              v-for="(contract, contractIndex) in form.contracts"
-              :key="contractIndex"
-              class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
-              <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-lg font-medium dark:text-gray-100">
-                  {{ contract.title ? contract.title : `عقد رقم ${contractIndex + 1}` }}
-                </h3>
-                <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
-                  <Icon icon="lucide:x" class="h-4 w-4" />
-                </Button>
-              </div>
 
-              <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                <FormField label="عنوان العقد">
-                  <CustomInput v-model="contract.title" dir="rtl" placeholder="ادخل عنوان العقد" />
-                </FormField>
-
-                <FormField label="اسم الجهة المنفذة \ الشركة">
-                  <CustomInput
-                    v-model="contract.executingCompany"
-                    dir="rtl"
-                    placeholder="ادخل اسم الشركة"
-                  />
-                </FormField>
-
-                <FormField label="كلفة العقد">
-                  <NumberInput v-model="contract.cost" placeholder="ادخل كلفة العقد" unit="د.ع" />
-                </FormField>
-
-                <FormField label="تاريخ الاحالة">
-                  <DateInput v-model="contract.referralDate" />
-                </FormField>
-
-                <FormField label="تاريخ توقيع العقد">
-                  <DateInput v-model="contract.signingDate" />
-                </FormField>
-
-                <FormField label="رقم العقد">
-                  <CustomInput
-                    :value="contract.number"
-                    @input="updateContractNumber(contractIndex, $event)"
-                    dir="rtl"
-                    placeholder="ادخل رقم العقد"
-                  />
-                </FormField>
-
-                <FormField label="عدد الاجراءات التنفيذية">
-                  <NumberInput v-model="contract.executionProcedures.length" readonly disabled />
-                </FormField>
-              </div>
-
-              <div class="mt-6">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
-                </div>
-
-                <div class="space-y-4">
-                  <div
-                    v-for="(procedure, procedureIndex) in contract.executionProcedures"
-                    :key="procedureIndex"
-                    class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
-                  >
-                    <div class="mb-4 flex items-center justify-between">
-                      <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        @click="removeExecutionProcedure(contractIndex, procedureIndex)"
-                      >
-                        حذف الاجراء
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
-                      <FormField label="عنوان الاجراء">
-                        <CustomInput
-                          v-model="procedure.title"
-                          dir="rtl"
-                          placeholder="ادخل عنوان الاجراء"
-                        />
-                      </FormField>
-
-                      <FormField label="وزن الاجراء">
-                        <NumberInput
-                          v-model="procedure.weight"
-                          placeholder="ادخل وزن الاجراء"
-                          unit="%"
-                        />
-                      </FormField>
-
-                      <FormField label="مدة الاجراء">
-                        <NumberInput
-                          v-model="procedure.duration"
-                          placeholder="ادخل مدة الاجراء"
-                          unit="يوم"
-                        />
-                      </FormField>
-
-                      <FormField label="تاريخ تنفيذ الاجراء">
-                        <DateInput v-model="procedure.executionDate" />
-                      </FormField>
-
-                      <FormField label="تاريخ انجاز تنفيذ الاجراء">
-                        <DateInput v-model="procedure.completionDate" />
-                      </FormField>
-
-                      <FormField label="نسبة الانجاز الفني المخطط">
-                        <NumberInput
-                          v-model="procedure.plannedTechnicalProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
-                      </FormField>
-
-                      <FormField label="نسبة الانجاز المالي المخطط">
-                        <NumberInput
-                          v-model="procedure.plannedFinancialProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
-                      </FormField>
-
-                      <FormField class="col-span-2" label="نسبة الانجاز المالي الفعلي">
-                        <NumberInput
-                          v-model="procedure.actualFinancialProgress"
-                          placeholder="ادخل النسبة"
-                          unit="%"
-                        />
-                      </FormField>
-                      <FormField label="نسبة الانجاز الفني الفعلي">
-                        <PremiumMask>
-                          <NumberInput
-                            v-model="procedure.actualTechnicalProgress"
-                            placeholder="ادخل النسبة"
-                            unit="%"
-                            disabled
-                          />
-                        </PremiumMask>
-                      </FormField>
-
-                      <FormField label="نسبة الانحراف الفني">
-                        <PremiumMask>
-                          <NumberInput
-                            v-model="procedure.technicalDeviation"
-                            placeholder="ادخل النسبة"
-                            unit="%"
-                            disabled
-                          />
-                        </PremiumMask>
-                      </FormField>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-4 flex w-full items-center justify-center">
-                <PrimaryButton
-                  variant="secondary"
-                  @click="addExecutionProcedure(contractIndex)"
-                  class="w-1/2 dark:bg-slate-600 dark:text-white"
-                >
-                  اضافة اجراء تنفيذي
-                </PrimaryButton>
-              </div>
-            </div>
-            <PrimaryButton @click="addContract" variant="primary" class="w-full"
-              >اضافة عقد جديد</PrimaryButton
-            >
-          </div>
-        </FormSection>
         <FormSection title="تفاصيل الموقف المالي">
           <FormField
             :label="
@@ -414,15 +242,187 @@
             />
           </FormField>
         </FormSection>
-        <div class="sticky bottom-6 left-0 right-0 mt-6">
-          <div class="mx-auto max-w-6xl px-6">
+        <FormSection title="تفاصيل العقد">
+          <div class="space-y-6 md:col-span-2">
+            <div
+              v-for="(contract, contractIndex) in form.contracts"
+              :key="contractIndex"
+              class="p-4 border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium dark:text-gray-100">
+                  {{ contract.name ? contract.name : `عقد رقم ${contractIndex + 1}` }}
+                </h3>
+                <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
+                  <Icon icon="lucide:x" class="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                <FormField label="عنوان العقد">
+                  <CustomInput v-model="contract.name" dir="rtl" placeholder="ادخل عنوان العقد" />
+                </FormField>
+
+                <FormField label="اسم الجهة المنفذة \ الشركة">
+                  <CustomInput
+                    v-model="contract.executingDepartment"
+                    dir="rtl"
+                    placeholder="ادخل اسم الشركة"
+                  />
+                </FormField>
+
+                <FormField label="كلفة العقد">
+                  <NumberInput v-model="contract.cost" placeholder="ادخل كلفة العقد" unit="د.ع" />
+                </FormField>
+
+                <FormField label="تاريخ الاحالة">
+                  <DateInput v-model="contract.referralDate" />
+                </FormField>
+
+                <FormField label="تاريخ توقيع العقد">
+                  <DateInput v-model="contract.signingDate" />
+                </FormField>
+
+                <FormField label="رقم العقد">
+                  <NumberInput
+                    v-model="contract.contractNumber"
+                    dir="rtl"
+                    placeholder="ادخل رقم العقد"
+                  />
+                </FormField>
+
+                <FormField label="عدد الاجراءات التنفيذية">
+                  <NumberInput v-model="contract.procedures.length" readonly disabled />
+                </FormField>
+              </div>
+
+              <div class="mt-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
+                </div>
+
+                <div class="space-y-4">
+                  <div
+                    v-for="(procedure, procedureIndex) in contract.procedures"
+                    :key="procedureIndex"
+                    class="p-4 border rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <div class="flex items-center justify-between mb-4">
+                      <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        @click="removeExecutionProcedure(contractIndex, procedureIndex)"
+                      >
+                        حذف الاجراء
+                      </Button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                      <FormField label="عنوان الاجراء">
+                        <CustomInput
+                          v-model="procedure.name"
+                          dir="rtl"
+                          placeholder="ادخل عنوان الاجراء"
+                        />
+                      </FormField>
+
+                      <FormField label="وزن الاجراء">
+                        <NumberInput
+                          v-model="procedure.weight"
+                          placeholder="ادخل وزن الاجراء"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="مدة الاجراء">
+                        <NumberInput
+                          v-model="procedure.duration"
+                          placeholder="ادخل مدة الاجراء"
+                          unit="يوم"
+                        />
+                      </FormField>
+
+                      <FormField label="تاريخ تنفيذ الاجراء">
+                        <DateInput v-model="procedure.startDate" />
+                      </FormField>
+
+                      <FormField label="تاريخ انجاز تنفيذ الاجراء">
+                        <DateInput v-model="procedure.endDate" />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز الفني المخطط">
+                        <NumberInput
+                          v-model="procedure.plannedCompletionPercentage"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز المالي المخطط">
+                        <NumberInput
+                          v-model="procedure.plannedFinancialProgress"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField class="col-span-2" label="نسبة الانجاز المالي الفعلي">
+                        <NumberInput
+                          v-model="procedure.actualFinancialProgress"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
+                      </FormField>
+                      <FormField label="نسبة الانجاز الفني الفعلي">
+                        <PremiumMask>
+                          <NumberInput
+                            v-model="procedure.actualCompletionPercentage"
+                            placeholder="ادخل النسبة"
+                            unit="%"
+                            disabled
+                          />
+                        </PremiumMask>
+                      </FormField>
+
+                      <FormField label="نسبة الانحراف الفني">
+                        <PremiumMask>
+                          <NumberInput
+                            v-model="procedure.technicalDeviation"
+                            placeholder="ادخل النسبة"
+                            unit="%"
+                            disabled
+                          />
+                        </PremiumMask>
+                      </FormField>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-center w-full mt-4">
+                <PrimaryButton
+                  variant="secondary"
+                  @click="addExecutionProcedure(contractIndex)"
+                  class="w-1/2 dark:bg-slate-600 dark:text-white"
+                >
+                  اضافة اجراء تنفيذي
+                </PrimaryButton>
+              </div>
+            </div>
+            <PrimaryButton @click="addContract" variant="primary" class="w-full"
+              >اضافة عقد جديد</PrimaryButton
+            >
+          </div>
+        </FormSection>
+        <div class="sticky left-0 right-0 mt-6 bottom-6">
+          <div class="max-w-6xl px-6 mx-auto">
             <Button
               @click="saveProject"
-              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="isSaving"
             >
-              <Icon v-if="isSaving" icon="lucide:loader-2" class="ml-2 h-4 w-4 animate-spin" />
-              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 ml-2 animate-spin" />
+              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
               {{ isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -455,9 +455,11 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
 
+  import axiosInstance from '@/plugins/axios';
+  import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
 
-  const contractCounter = ref(1);
+  const router = useRouter();
 
   const form = ref({
     projectName: '',
@@ -475,17 +477,7 @@
     actualStartDate: null,
     plannedCompletionDate: null,
     actualCompletionDate: null,
-    contracts: [
-      {
-        title: '',
-        executingCompany: '',
-        cost: '',
-        referralDate: null,
-        signingDate: null,
-        number: '1',
-        executionProcedures: [],
-      },
-    ],
+    contracts: [],
     financials: {
       plannedCost: '',
       totalBudget: '',
@@ -507,29 +499,18 @@
 
   const addContract = () => {
     form.value.contracts.push({
-      title: '',
-      executingCompany: '',
+      name: '',
+      executingDepartment: '',
       cost: '',
       referralDate: null,
       signingDate: null,
-      number: contractCounter.value.toString(),
-      executionProcedures: [],
+      contractNumber: '',
+      procedures: [],
     });
-    contractCounter.value++;
   };
 
   const removeContract = (contractIndex) => {
     form.value.contracts.splice(contractIndex, 1);
-    if (form.value.contracts.length === 0) {
-      contractCounter.value = 1;
-      addContract();
-    }
-  };
-
-  const updateContractNumber = (contractIndex, newNumber) => {
-    if (form.value.contracts[contractIndex]) {
-      form.value.contracts[contractIndex].number = newNumber;
-    }
   };
 
   const currentDeviationReason = ref('');
@@ -568,30 +549,27 @@
     { value: 3, label: 'متلكئة' },
     { value: 0, label: 'ملغاة' },
   ];
-  const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('ar-US', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-    });
+  const formatDateToISO = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toISOString();
   };
   const addExecutionProcedure = (contractIndex) => {
-    form.value.contracts[contractIndex].executionProcedures.push({
-      title: '',
+    form.value.contracts[contractIndex].procedures.push({
+      name: '',
       weight: '',
       duration: '',
-      executionDate: null,
-      completionDate: null,
-      plannedTechnicalProgress: '',
-      actualTechnicalProgress: '',
+      startDate: null,
+      endDate: null,
+      plannedCompletionPercentage: '',
+      actualCompletionPercentage: '',
       technicalDeviation: '',
       plannedFinancialProgress: '',
       actualFinancialProgress: '',
     });
   };
   const removeExecutionProcedure = (contractIndex, procedureIndex) => {
-    form.value.contracts[contractIndex].executionProcedures.splice(procedureIndex, 1);
+    form.value.contracts[contractIndex].procedures.splice(procedureIndex, 1);
   };
   const addDeviationReason = () => {
     if (currentDeviationReason.value.trim()) {
@@ -633,23 +611,141 @@
   const saveProject = async () => {
     try {
       isSaving.value = true;
-      if (!form.value.projectName) {
-        toast.error('يرجى ادخال اسم المشروع', {
-          description: 'الرجاء ملء جميع الحقول المطلوبة',
-        });
+
+      // Validate required fields
+      if (!validateProjectBasicInfo()) {
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Prepare project data - send directly without nesting
+      const projectData = {
+        name: form.value.projectName,
+        directorate: form.value.plan,
+        goals: form.value.projectGoal,
+        sustainableDevelopment: form.value.sustainableDevelopmentGoal
+          .map((goal) => goal.value)
+          .filter(Boolean),
+        beneficiaryEntities: form.value.beneficiaryEntities
+          .map((entity) => entity.value)
+          .filter(Boolean),
+        supportingEntities: form.value.supportingEntities,
+        address: form.value.address,
+        duration: parseInt(form.value.duration) || 0,
+        plannedStartDate: formatDateToISO(form.value.plannedStartDate),
+        actualStartDate: formatDateToISO(form.value.actualStartDate),
+        plannedEndDate: formatDateToISO(form.value.plannedCompletionDate),
+        actualEndDate: formatDateToISO(form.value.actualCompletionDate),
+        cumulativeExpenditure: form.value.financials.cumulativeExpenses?.toString() || '0',
+        cumulativeFinancialProgress: parseFloat(form.value.financials.cumulativeProgress) || 0,
+        projectStatus: parseInt(form.value.executionDetails.currentStatus?.value) || 1,
+        notes: form.value.executionDetails.notes || '',
+        lng: form.value.coordinates.lng || 0,
+        lat: form.value.coordinates.lat || 0,
+        cost: parseFloat(form.value.financials.totalBudget) || 0,
+        isGovernment: true,
+      };
+
+      // 1. First save the project - send data directly
+      const projectResponse = await axiosInstance.post('/api/RegionalProject', projectData);
+
+      const projectId = projectResponse.data.id;
+
+      // 2. Then save each contract
+      for (const contract of form.value.contracts) {
+        const contractData = {
+          name: contract.name,
+          projectId: projectId,
+          executingDepartment: contract.executingDepartment,
+          cost: parseFloat(contract.cost) || 0,
+          referralDate: formatDateToISO(contract.referralDate),
+          signingDate: formatDateToISO(contract.signingDate),
+          contractNumber: contract.contractNumber,
+        };
+
+        const contractResponse = await axiosInstance.post(
+          '/api/RegionalProject/Contract',
+          contractData
+        );
+        const contractId = contractResponse.data.id;
+
+        // 3. Save procedures for each contract
+        for (const procedure of contract.procedures) {
+          const procedureData = {
+            name: procedure.name,
+            weight: parseFloat(procedure.weight) || 0,
+            duration: parseInt(procedure.duration) || 0,
+            startDate: formatDateToISO(procedure.startDate),
+            endDate: formatDateToISO(procedure.endDate),
+            plannedCompletionPercentage: parseFloat(procedure.plannedCompletionPercentage) || 0,
+            actualCompletionPercentage: parseFloat(procedure.actualCompletionPercentage) || 0,
+            technicalDeviation: parseFloat(procedure.technicalDeviation) || 0,
+            plannedFinancialProgress: parseFloat(procedure.plannedFinancialProgress) || 0,
+            actualFinancialProgress: parseFloat(procedure.actualFinancialProgress) || 0,
+            contractId: contractId,
+          };
+
+          await axiosInstance.post('/api/RegionalProject/Procedure', procedureData);
+        }
+      }
+
       toast.success('تم حفظ المشروع بنجاح', {
-        description: 'تم حفظ جميع بيانات المشروع',
+        description: 'تم حفظ جميع بيانات المشروع والعقود والاجراءات',
       });
+
+      // Navigate to the projects list after successful save
+      router.push('/projects');
     } catch (error) {
+      console.error('Error saving project:', error);
+      let errorMessage = 'يرجى المحاولة مرة أخرى';
+
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        const errorMessages = [];
+        for (const key in errors) {
+          errorMessages.push(...errors[key]);
+        }
+        errorMessage = errorMessages.join('\n');
+      }
+
       toast.error('حدث خطأ اثناء الحفظ', {
-        description: 'لم يتم حفظ المشروع، يرجى المحاولة مرة أخرى',
+        description: errorMessage,
       });
     } finally {
       isSaving.value = false;
     }
+  };
+
+  // Add validation function
+  const validateProjectBasicInfo = () => {
+    if (!form.value.projectName) {
+      toast.error('يرجى ادخال اسم المشروع');
+      return false;
+    }
+    if (!form.value.plan) {
+      toast.error('يرجى ادخال الخطة');
+      return false;
+    }
+    if (!form.value.projectGoal) {
+      toast.error('يرجى ادخال هدف المشروع');
+      return false;
+    }
+    if (!form.value.beneficiaryEntities?.length) {
+      toast.error('يرجى اختيار الجهات المستفيدة');
+      return false;
+    }
+    if (!form.value.duration) {
+      toast.error('يرجى تحديد المدة الزمنية');
+      return false;
+    }
+    if (!form.value.financials.totalBudget) {
+      toast.error('يرجى ادخال ميزانية المشروع');
+      return false;
+    }
+    if (!form.value.coordinates.lat || !form.value.coordinates.lng) {
+      toast.error('يرجى تحديد الموقع الجغرافي');
+      return false;
+    }
+    return true;
   };
 
   // Add new refs for location picker
