@@ -270,13 +270,13 @@
       'تاريخ الإحالة',
     ];
     const formattedData = contractsWithProjects.value.map((contract) => ({
-      'رقم العقد': `#${contract.contractNumber}` || '',
+      'رقم العقد': contract.contractNumber ? `#${contract.contractNumber}` : '',
       'اسم العقد': contract.name || '',
       'اسم المشروع': contract.project?.name || 'غير محدد',
       'الجهة المنفذة': contract.executingDepartment || '',
-      الكلفة: formatCurrency(contract.cost),
-      'تاريخ التوقيع': formatDate(contract.signingDate),
-      'تاريخ الإحالة': formatDate(contract.referralDate),
+      الكلفة: contract.cost ? formatCurrency(contract.cost) : '',
+      'تاريخ التوقيع': contract.signingDate ? formatDate(contract.signingDate) : '',
+      'تاريخ الإحالة': contract.referralDate ? formatDate(contract.referralDate) : '',
     }));
     tableRef.value?.exportToExcel(formattedData, headerLabels, 'العقود');
   };
