@@ -84,6 +84,17 @@
           <FormField label="عدد العقود">
             <NumberInput :model-value="form.contracts.length" readonly disabled />
           </FormField>
+          <div class="flex items-center gap-4">
+            <Label class="text-sm font-medium">ضمن البرنامج الحكومي</Label>
+            <div class="flex items-center gap-2">
+              <Switch
+                id="is-government"
+                :checked="form.isGovernment"
+                @update:checked="form.isGovernment = $event"
+              />
+              <Label for="is-government" class="mb-0 text-sm">نعم</Label>
+            </div>
+          </div>
         </FormSection>
         <FormSection title="التاريخ المخطط والفعلي">
           <FormField label="تاريخ المباشرة المخطط له">
@@ -441,6 +452,7 @@
   import CustomInput from '@/components/CustomInput.vue';
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
+  import Switch from '@/components/CustomSwitch.vue';
   import DateInput from '@/components/DateInput.vue';
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
@@ -460,7 +472,6 @@
   import { toast } from 'vue-sonner';
 
   const router = useRouter();
-
   const form = ref({
     projectName: '',
     plan: '',
@@ -495,6 +506,7 @@
       additionalPeriods: [],
       notes: '',
     },
+    isGovernment: true,
   });
 
   const addContract = () => {
@@ -642,7 +654,7 @@
         lng: form.value.coordinates.lng || 0,
         lat: form.value.coordinates.lat || 0,
         cost: parseFloat(form.value.financials.totalBudget) || 0,
-        isGovernment: true,
+        isGovernment: form.value.isGovernment,
       };
 
       // 1. First save the project - send data directly
