@@ -90,7 +90,7 @@
         <!-- Projects List -->
         <div v-if="!isLoading && !error" class="grid grid-cols-1 gap-6">
           <GenericProjectCard
-            v-for="project in filteredProjects"
+            v-for="project in paginatedProjects"
             :key="project.id"
             :project="project"
             :selectedCurrency="selectedCurrency"
@@ -468,8 +468,10 @@
     await projectStore.fetchAllProjects();
   };
 
-  const totalProjects = computed(() => allProjects.value.length);
-  const paginatedCount = computed(() => Math.min(10, filteredProjects.value.length));
+  const totalProjects = computed(() => filteredProjects.value.length);
+  const paginatedCount = computed(() =>
+    Math.min(itemsPerPage.value, filteredProjects.value.length)
+  );
 
   const selectedSort = ref('');
 
@@ -586,11 +588,11 @@
 
   const { showSuccess } = useToast();
 
-  // Add these near the top of the script section
+  // Update these near the top of the script section where other refs are defined
   const currentPage = ref(1);
-  const itemsPerPage = ref(10);
+  const itemsPerPage = ref(5); // Changed from 10 to 5
 
-  // Add this computed property
+  // Update the paginatedProjects computed property
   const paginatedProjects = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;

@@ -7,136 +7,164 @@
 
       <div class="mt-[6%] p-6">
         <h1 class="mb-4 text-right text-2xl font-bold text-gray-900 dark:text-white"> المشاريع </h1>
-        <!-- Stats Cards -->
-        <div class="mb-8 grid grid-cols-5 gap-4">
-          <ProjectStatCard
-            title="كل المشاريع"
-            :count="allProjects.length"
-            icon="lucide:folder"
-            color="blue"
-            to="/funded-projects"
-          />
-          <ProjectStatCard
-            title="المنجزة"
-            :count="completedProjects.length"
-            icon="lucide:folder-check"
-            color="green"
-            to="/funded-projects?status=2"
-          />
-          <ProjectStatCard
-            title="قيد التنفيذ"
-            :count="inProgressProjects.length"
-            icon="lucide:folder-symlink"
-            color="yellow"
-            to="/funded-projects?status=1"
-          />
-          <ProjectStatCard
-            title="المتلكئة"
-            :count="delayedProjects.length"
-            icon="lucide:folder-x"
-            color="red"
-            to="/funded-projects?status=3"
-          />
-          <ProjectStatCard
-            title="الملغاة"
-            :count="cancelledProjects.length"
-            icon="lucide:folder-closed"
-            color="gray"
-            to="/funded-projects?status=0"
-          />
-        </div>
-        <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
-        <!-- Shortcuts Cards -->
-        <div class="mb-8 grid grid-cols-4 gap-4">
-          <ShortcutCard
-            title="البرنامج الحكومي"
-            icon="lucide:users"
-            color="sky"
-            to="/funded-projects?showGovernmentProjects=true"
-          />
 
-          <ShortcutCard
-            title="الإجراءات الإدارية"
-            icon="eos-icons:admin"
-            to="/modifications"
-            color="sky"
-          />
-
-          <ShortcutCard title="المهام" to="/tasks" icon="lucide:check-circle" color="green" />
-
-          <ShortcutCard title="بيانات على الخارطة" icon="lucide:map-pin" to="/map" color="yellow" />
+        <!-- Loading State -->
+        <div v-if="projectStore.loading" class="flex items-center justify-center py-8">
+          <div class="flex flex-col items-center gap-4">
+            <div
+              class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
+            ></div>
+            <p class="text-gray-600 dark:text-gray-300">جاري تحميل المشاريع...</p>
+          </div>
         </div>
 
-        <!-- Chart Section -->
+        <!-- Error State -->
         <div
-          class="relative w-full overflow-hidden rounded-lg border border-red-200 bg-white p-6 shadow dark:border-red-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+          v-else-if="projectStore.error"
+          class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
         >
-          <!-- Demo Version Ribbon -->
-          <div
-            class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-red-600 to-red-500 py-1 text-center text-xs shadow-md"
-          >
-            <span class="text-xs font-semibold tracking-wide text-white"> DEMO VERSION </span>
+          <p class="text-red-600 dark:text-red-400">{{ projectStore.error }}</p>
+        </div>
+
+        <!-- Content -->
+        <template v-else>
+          <!-- Stats Cards -->
+          <div class="mb-8 grid grid-cols-5 gap-4">
+            <ProjectStatCard
+              title="كل المشاريع"
+              :count="allProjects.length"
+              icon="lucide:folder"
+              color="blue"
+              to="/projects"
+            />
+            <ProjectStatCard
+              title="المنجزة"
+              :count="completedProjects.length"
+              icon="lucide:folder-check"
+              color="green"
+              to="/projects?status=2"
+            />
+            <ProjectStatCard
+              title="قيد التنفيذ"
+              :count="inProgressProjects.length"
+              icon="lucide:folder-symlink"
+              color="yellow"
+              to="/projects?status=1"
+            />
+            <ProjectStatCard
+              title="المتلكئة"
+              :count="delayedProjects.length"
+              icon="lucide:folder-x"
+              color="red"
+              to="/projects?status=3"
+            />
+            <ProjectStatCard
+              title="الملغاة"
+              :count="cancelledProjects.length"
+              icon="lucide:folder-closed"
+              color="gray"
+              to="/projects?status=0"
+            />
           </div>
 
-          <div class="mb-4 mr-20 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <CustomSelect
-                v-model="selectedYear"
-                :options="[
-                  { value: '2024 - 2025', label: '2024 - 2025' },
-                  { value: '2023 - 2024', label: '2023 - 2024' },
-                  { value: '2022 - 2023', label: '2022 - 2023' },
-                ]"
-                label="السنة"
-                class="w-[140px]"
-              />
+          <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
+          <!-- Shortcuts Cards -->
+          <div class="mb-8 grid grid-cols-4 gap-4">
+            <ShortcutCard
+              title="البرنامج الحكومي"
+              icon="lucide:users"
+              color="sky"
+              to="/funded-projects?showGovernmentProjects=true"
+            />
+
+            <ShortcutCard
+              title="الإجراءات الإدارية"
+              icon="eos-icons:admin"
+              to="/modifications"
+              color="sky"
+            />
+
+            <ShortcutCard title="المهام" to="/tasks" icon="lucide:check-circle" color="green" />
+
+            <ShortcutCard
+              title="بيانات على الخارطة"
+              icon="lucide:map-pin"
+              to="/map"
+              color="yellow"
+            />
+          </div>
+
+          <!-- Chart Section -->
+          <div
+            class="relative w-full overflow-hidden rounded-lg border border-red-200 bg-white p-6 shadow dark:border-red-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+          >
+            <!-- Demo Version Ribbon -->
+            <div
+              class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-red-600 to-red-500 py-1 text-center text-xs shadow-md"
+            >
+              <span class="text-xs font-semibold tracking-wide text-white"> DEMO VERSION </span>
+            </div>
+
+            <div class="mb-4 mr-20 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <CustomSelect
+                  v-model="selectedYear"
+                  :options="[
+                    { value: '2024 - 2025', label: '2024 - 2025' },
+                    { value: '2023 - 2024', label: '2023 - 2024' },
+                    { value: '2022 - 2023', label: '2022 - 2023' },
+                  ]"
+                  label="السنة"
+                  class="w-[140px]"
+                />
+              </div>
+            </div>
+            <div class="w-full">
+              <ProjectsChart :selected-year="selectedYear" />
             </div>
           </div>
-          <div class="w-full">
-            <ProjectsChart :selected-year="selectedYear" />
-          </div>
-        </div>
 
-        <div class="mt-8">
-          <Tabs default-value="projects" class="w-full">
-            <TabsList
-              class="w-full justify-end rounded-none border-b border-gray-200 bg-transparent p-0 dark:border-gray-700"
-            >
-              <TabsTrigger
-                value="users"
-                class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
+          <div class="mt-8">
+            <Tabs default-value="projects" class="w-full">
+              <TabsList
+                class="w-full justify-end rounded-none border-b border-gray-200 bg-transparent p-0 dark:border-gray-700"
               >
-                المستخدمين
-              </TabsTrigger>
-              <TabsTrigger
-                value="projects"
-                class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
-              >
-                كل المشاريع
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent dir="rtl" value="projects" class="mt-4">
-              <ProjectsList :projects="allProjects" />
-            </TabsContent>
-            <TabsContent value="users" class="mt-4">
-              <div v-if="isLoadingUsers" class="flex items-center justify-center py-8">
-                <div class="flex flex-col items-center gap-4">
-                  <div
-                    class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
-                  ></div>
-                  <p class="text-gray-600 dark:text-gray-300">جاري تحميل المستخدمين...</p>
+                <TabsTrigger
+                  value="users"
+                  class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
+                >
+                  المستخدمين
+                </TabsTrigger>
+                <TabsTrigger
+                  value="projects"
+                  class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
+                >
+                  كل المشاريع
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent dir="rtl" value="projects" class="mt-4">
+                <ProjectsList :projects="allProjects" />
+              </TabsContent>
+              <TabsContent value="users" class="mt-4">
+                <div v-if="isLoadingUsers" class="flex items-center justify-center py-8">
+                  <div class="flex flex-col items-center gap-4">
+                    <div
+                      class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
+                    ></div>
+                    <p class="text-gray-600 dark:text-gray-300">جاري تحميل المستخدمين...</p>
+                  </div>
                 </div>
-              </div>
-              <div
-                v-else-if="userError"
-                class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
-              >
-                <p class="text-red-600 dark:text-red-400">{{ userError }}</p>
-              </div>
-              <UsersList v-else :users="users" />
-            </TabsContent>
-          </Tabs>
-        </div>
+                <div
+                  v-else-if="userError"
+                  class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
+                >
+                  <p class="text-red-600 dark:text-red-400">{{ userError }}</p>
+                </div>
+                <UsersList v-else :users="users" />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </template>
       </div>
     </main>
   </div>
@@ -156,16 +184,19 @@
   import { useToast } from '@/composables/useToast';
   import axiosInstance from '@/plugins/axios';
   import { useAuthStore } from '@/stores/authStore';
+  import { useProjectStore } from '@/stores/projectStore';
   import { computed, onMounted, ref } from 'vue';
 
   const selectedYear = ref('2024 - 2025');
   const router = useRouter();
-  const allProjects = ref([]);
   const users = ref([]);
-  const isLoading = ref(true);
   const isLoadingUsers = ref(true);
-  const error = ref(null);
   const userError = ref(null);
+
+  const projectStore = useProjectStore();
+
+  // Computed properties for all projects (both funded and regional)
+  const allProjects = computed(() => projectStore.projects);
 
   const completedProjects = computed(() => allProjects.value.filter((p) => p.projectStatus === 2));
 
@@ -183,60 +214,6 @@
       month: 'long',
       day: 'numeric',
     });
-  };
-
-  const fetchProjects = async () => {
-    try {
-      isLoading.value = true;
-      const response = await axiosInstance.get('/api/project');
-      console.log('API Response:', response.data); // Debug log
-      // Transform the data to match ProjectCard props
-      allProjects.value = response.data.map((project) => {
-        const transformed = {
-          id: project.id,
-          title: project.name || project.title,
-          department: project.executingDepartment || project.department,
-          startDate: formatDate(project.actualStartDate || project.startDate),
-          endDate: formatDate(project.endDate),
-          projectStatus: project.projectStatus,
-          status:
-            project.projectStatus === 2
-              ? 'منجز'
-              : project.projectStatus === 1
-                ? 'قيد التنفيذ'
-                : project.projectStatus === 3
-                  ? 'متلكئ'
-                  : project.projectStatus === 0
-                    ? 'ملغي'
-                    : 'غير محدد',
-          statusVariant:
-            project.projectStatus === 2
-              ? 'success'
-              : project.projectStatus === 1
-                ? 'warning'
-                : project.projectStatus === 3
-                  ? 'destructive'
-                  : project.projectStatus === 0
-                    ? 'secondary'
-                    : 'default',
-          duration: project.duration || '12',
-        };
-        console.log('Transformed project:', transformed); // Debug log
-        return transformed;
-      });
-      console.log('All projects:', allProjects.value); // Debug log
-      console.log('Stats:', {
-        completed: completedProjects.value.length,
-        inProgress: inProgressProjects.value.length,
-        delayed: delayedProjects.value.length,
-        cancelled: cancelledProjects.value.length,
-      }); // Debug log
-    } catch (err) {
-      console.error('Error fetching projects:', err);
-      error.value = err.response?.data?.message || 'حدث خطأ في تحميل المشاريع';
-    } finally {
-      isLoading.value = false;
-    }
   };
 
   const fetchUsers = async () => {
@@ -292,7 +269,7 @@
   const { showSuccess } = useToast();
 
   onMounted(async () => {
-    await Promise.all([fetchProjects(), fetchUsers()]);
+    await Promise.all([projectStore.fetchAllProjects(), fetchUsers()]);
     // Show welcome toast if user just logged in
     if (router.currentRoute.value.query.from === 'login') {
       showSuccess('تم تسجيل الدخول بنجاح');

@@ -592,9 +592,10 @@
           directorate: newProject.directorate || '',
           goals: newProject.goals || '',
           projectType: newProject.projectType,
-          sustainableDevelopment: sustainableDevelopmentGoals.filter((goal) =>
-            newProject.sustainableDevelopment?.includes(goal.label)
-          ),
+          sustainableDevelopment: (newProject.sustainableDevelopment || []).map((goal) => {
+            const foundGoal = sustainableDevelopmentGoals.find((g) => g.label === goal);
+            return foundGoal ? foundGoal.value : goal;
+          }),
           supportingEntities: newProject.supportingEntities || [],
           address: newProject.address || '',
           location: newProject.location || '',
@@ -622,10 +623,7 @@
           cost: newProject.cost,
           isGovernment: newProject.isGovernment || false,
           contracts: contracts.value,
-          beneficiaries: (newProject.beneficiaries || []).map((b) => ({
-            value: b.id,
-            label: b.name,
-          })),
+          beneficiaries: newProject.beneficiaries?.map((b) => b.id) || [],
           id: newProject.id,
           createdAt: newProject.createdAt,
           updatedAt: newProject.updatedAt,
@@ -683,8 +681,11 @@
         name: form.name,
         directorate: form.directorate,
         goals: form.goals,
-        sustainableDevelopment: form.sustainableDevelopment.map((goal) => goal.label),
-        beneficiaryEntities: form.beneficiaries.map((b) => b.value),
+        sustainableDevelopment: form.sustainableDevelopment.map((value) => {
+          const goal = sustainableDevelopmentGoals.find((g) => g.value === value);
+          return goal ? goal.label : value;
+        }),
+        beneficiaryEntities: form.beneficiaries,
         supportingEntities: form.supportingEntities || [],
         address: form.address,
         duration: parseInt(form.duration) || 0,

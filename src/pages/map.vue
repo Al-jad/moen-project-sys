@@ -4,134 +4,62 @@
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { useToast } from '@/composables/useToast';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { projectService } from '@/services/projectService';
+  import { useProjectStore } from '@/stores/projectStore';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
+
   const selected = ref('all');
-  const projects = ref([]);
   const loading = ref(true);
   const error = ref(null);
-  const mockupProjects = [
-    {
-      fundingType: 1,
-      periodType: 1,
-      duration: 36,
-      name: 'Baghdad Green Belt Initiative',
-      executingDepartment: 'Ministry of Environment',
-      implementingEntity: 'Baghdad Urban Planning Authority',
-      grantingEntity: 'UN Environment Programme',
-      cost: 8500000,
-      actualStartDate: '2024-05-10T08:00:00Z',
-      projectObjectives: 'Create green spaces and improve air quality',
-      lng: 44.4275,
-      lat: 33.3425,
-      projectStatus: 1,
-      id: 101,
-    },
-    {
-      fundingType: 2,
-      periodType: 1,
-      duration: 24,
-      name: 'Al-Rasheed Street Renovation',
-      executingDepartment: 'Ministry of Culture',
-      implementingEntity: 'Baghdad Heritage Committee',
-      grantingEntity: 'UNESCO',
-      cost: 5200000,
-      actualStartDate: '2024-03-22T08:00:00Z',
-      projectObjectives: 'Restore historic buildings and improve infrastructure',
-      lng: 44.4061,
-      lat: 33.3352,
-      projectStatus: 1,
-      id: 102,
-    },
-    {
-      fundingType: 1,
-      periodType: 2,
-      duration: 18,
-      name: 'Tigris River Cleanup Campaign',
-      executingDepartment: 'Ministry of Water Resources',
-      implementingEntity: 'Baghdad Environmental Protection Agency',
-      grantingEntity: 'World Bank',
-      cost: 3800000,
-      actualStartDate: '2023-11-15T08:00:00Z',
-      projectObjectives: 'Reduce water pollution and restore river ecosystem',
-      lng: 44.39,
-      lat: 33.31,
-      projectStatus: 2,
-      id: 103,
-    },
-    {
-      fundingType: 2,
-      periodType: 1,
-      duration: 12,
-      name: 'Al-Karkh Solar Power Installation',
-      executingDepartment: 'Ministry of Electricity',
-      implementingEntity: 'Baghdad Renewable Energy Department',
-      grantingEntity: 'International Renewable Energy Agency',
-      cost: 7500000,
-      actualStartDate: '2024-01-05T08:00:00Z',
-      projectObjectives: 'Install solar panels in western Baghdad district',
-      lng: 44.3461,
-      lat: 33.3252,
-      projectStatus: 3,
-      id: 104,
-    },
-    {
-      fundingType: 1,
-      periodType: 1,
-      duration: 30,
-      name: 'Baghdad Metro Line Extension',
-      executingDepartment: 'Ministry of Transportation',
-      implementingEntity: 'Baghdad Public Transport Authority',
-      grantingEntity: 'Asian Development Bank',
-      cost: 125000000,
-      actualStartDate: '2023-08-20T08:00:00Z',
-      projectObjectives: 'Extend metro line to southern districts',
-      lng: 44.3861,
-      lat: 33.2752,
-      projectStatus: 0,
-      id: 105,
-    },
-    {
-      fundingType: 2,
-      periodType: 2,
-      duration: 24,
-      name: 'Al-Zawraa Park Rehabilitation',
-      executingDepartment: 'Ministry of Youth and Sports',
-      implementingEntity: 'Baghdad Parks and Recreation',
-      grantingEntity: 'Local Government',
-      cost: 4200000,
-      actualStartDate: '2024-02-10T08:00:00Z',
-      projectObjectives: 'Renovate facilities and add recreational areas',
-      lng: 44.3561,
-      lat: 33.3352,
-      projectStatus: 1,
-      id: 106,
-    },
-  ];
+  const projectStore = useProjectStore();
+
+  // Computed property to get all projects from store
+  const projects = computed(() => {
+    // Filter out projects without coordinates
+    return projectStore.projects.filter((project) => project.lat && project.lng);
+  });
+
   const { showSuccess, showError } = useToast();
+
   onMounted(async () => {
     try {
-      const response = await projectService.getAllProjects();
-      projects.value = [...response.data, ...mockupProjects];
+      loading.value = true;
+      // Ensure projects are fetched if not already present
+      if (projectStore.projects.length === 0) {
+        await projectStore.fetchAllProjects();
+      }
+
+      // Check if there are any projects with coordinates after fetching
+      if (projects.value.length === 0 && !projectStore.error) {
+        error.value = 'لم يتم العثور على مشاريع تحتوي على إحداثيات.';
+        showError(
+          'لا توجد بيانات',
+          'لم يتم العثور على مشاريع تحتوي على إحداثيات لعرضها على الخارطة.'
+        );
+      } else if (projectStore.error) {
+        // Handle potential errors from the store fetch
+        error.value = projectStore.error;
+        showError('فشل تحميل المشاريع', projectStore.error);
+      }
     } catch (err) {
-      console.error('Error fetching projects:', err);
-      projects.value = [...mockupProjects];
-      error.value = 'Failed to load API projects. Showing mockup data only.';
-      showError('فشل تحميل المشاريع', 'تم عرض بيانات تجريبية بدلاً من البيانات الفعلية');
+      console.error('Error in map component mount:', err);
+      // Catch any unexpected errors during the mount process
+      error.value = 'حدث خطأ غير متوقع أثناء تحميل بيانات الخارطة.';
+      showError('خطأ غير متوقع', 'حدث خطأ أثناء تحميل بيانات الخارطة.');
     } finally {
       loading.value = false;
     }
   });
+
   const statusCounts = computed(() => {
-    const counts = {
+    return {
       completed: projects.value.filter((p) => p.projectStatus === 2).length,
       inProgress: projects.value.filter((p) => p.projectStatus === 1).length,
       delayed: projects.value.filter((p) => p.projectStatus === 3).length,
       cancelled: projects.value.filter((p) => p.projectStatus === 0).length,
     };
-    return counts;
   });
+
   const getStatusLabel = (status) => {
     switch (status) {
       case 'all':

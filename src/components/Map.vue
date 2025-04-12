@@ -30,61 +30,99 @@
               <div class="space-y-4 p-4">
                 <div class="flex items-start justify-between gap-4">
                   <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{
-                    project.name
+                    project.name || 'لا يوجد اسم'
                   }}</h3>
                   <div
                     :class="getStatusBadgeClass(project.projectStatus)"
-                    class="rounded-full px-3 py-1 text-xs font-medium dark:bg-opacity-20"
+                    class="flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium dark:bg-opacity-20"
                   >
                     {{ getStatusText(project.projectStatus) }}
                   </div>
                 </div>
-
-                <div class="space-y-3 border-t border-gray-100 pt-3 dark:border-gray-700">
-                  <div class="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p class="text-gray-500 dark:text-gray-400">الجهة المنفذة</p>
-                      <p class="font-medium text-gray-900 dark:text-white">
-                        {{ project.implementingEntity || 'غير متوفر' }}
-                      </p>
-                    </div>
-                    <div>
-                      <p class="text-gray-500 dark:text-gray-400">الجهة المستفيدة</p>
-                      <p class="font-medium text-gray-900 dark:text-white">
-                        {{ project.executingDepartment || 'غير متوفر' }}
-                      </p>
-                    </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+                  <div :class="[getMapFundingTypeClass(project)]" class="rounded-full px-3 py-1">
+                    {{ getMapFundingTypeText(project) }}
                   </div>
-
-                  <div class="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p class="text-gray-500 dark:text-gray-400">التكلفة</p>
-                      <p class="font-medium text-gray-900 dark:text-white">{{
-                        formatCurrency(project.cost)
-                      }}</p>
-                    </div>
-                    <div>
-                      <p class="text-gray-500 dark:text-gray-400">المدة</p>
-                      <p class="font-medium text-gray-900 dark:text-white"
-                        >{{ project.duration }} شهر</p
-                      >
-                    </div>
+                  <div
+                    v-if="checkIsFunded(project) && project.isGovernment"
+                    class="rounded-full bg-blue-500/10 px-3 py-1 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                  >
+                    ضمن البرنامج الحكومي
                   </div>
+                </div>
 
-                  <div class="text-sm">
-                    <p class="text-gray-500 dark:text-gray-400">الأهداف</p>
-                    <p class="line-clamp-2 font-medium text-gray-900 dark:text-white">
-                      {{ project.projectObjectives || 'غير متوفر' }}
-                    </p>
+                <div class="space-y-4 border-t border-gray-100 pt-4 dark:border-gray-700">
+                  <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                    <!-- Start Date -->
+                    <div class="flex items-center gap-2">
+                      <Icon
+                        icon="lucide:calendar-days"
+                        class="h-4 w-4 flex-shrink-0 text-gray-400"
+                      />
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">تاريخ البدء</p>
+                        <p class="font-medium text-gray-800 dark:text-gray-100">
+                          {{ formatDate(project.actualStartDate) }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="flex items-center gap-2">
+                      <Icon icon="lucide:timer" class="h-4 w-4 flex-shrink-0 text-gray-400" />
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">فترة التنفيذ</p>
+                        <p class="font-medium text-gray-800 dark:text-gray-100">
+                          {{ project.duration }} {{ getPeriodTypeText(project.periodType) }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Cost -->
+                    <div class="flex items-center gap-2">
+                      <Icon icon="lucide:wallet" class="h-4 w-4 flex-shrink-0 text-gray-400" />
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">الكلفة</p>
+                        <p class="font-medium text-gray-800 dark:text-gray-100">
+                          {{ formatCost(project.cost) }} دينار
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Financial Progress -->
+                    <div class="flex items-center gap-2">
+                      <Icon icon="lucide:trending-up" class="h-4 w-4 flex-shrink-0 text-gray-400" />
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ checkIsFunded(project) ? 'الانجاز المالي' : 'التقدم المالي' }}
+                        </p>
+                        <div class="flex items-center gap-2">
+                          <div
+                            class="relative h-1.5 w-16 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600"
+                          >
+                            <div
+                              class="absolute inset-0 h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out dark:from-blue-400 dark:to-blue-500"
+                              :style="{
+                                width: `${checkIsFunded(project) ? project.financialAchievement || 0 : project.cumulativeFinancialProgress || 0}%`,
+                              }"
+                            ></div>
+                          </div>
+                          <p class="font-medium text-gray-900 dark:text-white">
+                            {{
+                              checkIsFunded(project)
+                                ? project.financialAchievement || 0
+                                : project.cumulativeFinancialProgress || 0
+                            }}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div
-                  class="flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-700"
+                  class="flex items-center justify-end border-t border-gray-100 pt-3 dark:border-gray-700"
                 >
-                  <div class="text-xs text-gray-500 dark:text-gray-400">
-                    تاريخ البدء: {{ formatDate(project.actualStartDate) }}
-                  </div>
                   <button
                     class="inline-flex items-center justify-center gap-1 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30"
                     @click="viewProjectDetails(project.id)"
@@ -136,6 +174,13 @@
 </template>
 
 <script setup>
+  import {
+    determineFundingType,
+    getProjectTypeClass,
+    getProjectTypeText,
+    ProjectType,
+  } from '@/services/projectTypeService';
+  import { Icon } from '@iconify/vue';
   import { LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
@@ -265,26 +310,72 @@
 
   function getStatusBadgeClass(status) {
     const statusClasses = {
-      0: 'bg-gray-100 text-gray-700 dark:bg-gray-500 dark:text-gray-100',
-      1: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500 dark:text-yellow-100',
-      2: 'bg-green-100 text-green-700 dark:bg-green-500 dark:text-green-100',
-      3: 'bg-red-100 text-red-700 dark:bg-red-500 dark:text-red-100',
+      0: 'bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-300',
+      1: 'bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300',
+      2: 'bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-300',
+      3: 'bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-300',
     };
     return statusClasses[status] || '';
   }
 
   function formatDate(dateString) {
-    if (!dateString) return 'غير متوفر';
-    return new Date(dateString).toLocaleDateString('ar-IQ', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    if (!dateString) return 'غير محدد';
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid before formatting
+      if (isNaN(date.getTime())) {
+        return 'تاريخ غير صالح';
+      }
+      return date.toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch (e) {
+      console.error('Error formatting date:', dateString, e);
+      return 'تاريخ غير صالح';
+    }
   }
 
   function viewProjectDetails(projectId) {
     // Navigate to project details page
     router.push(`/funded-projects/${projectId}`);
+  }
+
+  // Determine project type logic (similar to GenericProjectCard)
+  const projectType = computed(() => {
+    // Need to determine type based on the *specific project* being hovered/clicked.
+    // This logic needs refinement as we don't have a single 'current' project here.
+    // For now, we might need to pass the project to helper functions or compute inside the loop.
+    // Let's define helper functions that accept the project object.
+    return null; // Placeholder
+  });
+
+  // Helper function to determine if a specific project is funded
+  function checkIsFunded(project) {
+    return determineFundingType(project) === ProjectType.FUNDED;
+  }
+
+  // Renaming to avoid conflict if imported later
+  function getMapFundingTypeText(project) {
+    const type = determineFundingType(project);
+    return getProjectTypeText(type); // Use imported function
+  }
+
+  function getMapFundingTypeClass(project) {
+    const type = determineFundingType(project);
+    return getProjectTypeClass(type); // Use imported function
+  }
+
+  function getPeriodTypeText(periodType) {
+    if (!periodType) return '';
+    return periodType === 1 ? 'أسبوع' : 'شهر';
+  }
+
+  function formatCost(value) {
+    if (value === null || value === undefined) return 'غير متوفر';
+    // Simple formatting, adjust as needed (e.g., locale, currency symbol)
+    return value.toLocaleString();
   }
 </script>
 
