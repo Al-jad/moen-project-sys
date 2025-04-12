@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200 dark:bg-gray-900">
-      <div class="w-full max-w-6xl mx-auto">
-        <h1 class="py-4 pb-6 text-2xl font-bold text-right text-gray-900 dark:text-gray-100"
+    <div class="flex min-h-screen flex-col gap-4 bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-6xl">
+        <h1 class="py-4 pb-6 text-right text-2xl font-bold text-gray-900 dark:text-gray-100"
           >اضافة مشروع - تنمية الأقاليم
         </h1>
 
@@ -61,7 +61,7 @@
                 variant="outline"
                 class="flex items-center gap-2 dark:border-gray-700 dark:text-gray-100"
               >
-                <Icon icon="lucide:map-pin" class="w-4 h-4" />
+                <Icon icon="lucide:map-pin" class="h-4 w-4" />
                 اختر على الخريطة
               </Button>
             </div>
@@ -95,6 +95,15 @@
               <Label for="is-government" class="mb-0 text-sm">نعم</Label>
             </div>
           </div>
+
+          <FormField label="حالة المشروع">
+            <CustomSelect
+              v-model="form.projectStatus"
+              :options="projectStatuses"
+              placeholder="اختر حالة المشروع"
+              :triggerClass="'flex flex-row-reverse w-full'"
+            />
+          </FormField>
         </FormSection>
         <FormSection title="التاريخ المخطط والفعلي">
           <FormField label="تاريخ المباشرة المخطط له">
@@ -258,14 +267,14 @@
             <div
               v-for="(contract, contractIndex) in form.contracts"
               :key="contractIndex"
-              class="p-4 border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+              class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
-              <div class="flex items-center justify-between mb-4">
+              <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-medium dark:text-gray-100">
                   {{ contract.name ? contract.name : `عقد رقم ${contractIndex + 1}` }}
                 </h3>
                 <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
-                  <Icon icon="lucide:x" class="w-4 h-4" />
+                  <Icon icon="lucide:x" class="h-4 w-4" />
                 </Button>
               </div>
 
@@ -308,7 +317,7 @@
               </div>
 
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-4">
+                <div class="mb-4 flex items-center justify-between">
                   <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
                 </div>
 
@@ -316,9 +325,9 @@
                   <div
                     v-for="(procedure, procedureIndex) in contract.procedures"
                     :key="procedureIndex"
-                    class="p-4 border rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+                    class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
                   >
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="mb-4 flex items-center justify-between">
                       <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
                       <Button
                         variant="destructive"
@@ -410,7 +419,7 @@
                   </div>
                 </div>
               </div>
-              <div class="flex items-center justify-center w-full mt-4">
+              <div class="mt-4 flex w-full items-center justify-center">
                 <PrimaryButton
                   variant="secondary"
                   @click="addExecutionProcedure(contractIndex)"
@@ -425,15 +434,15 @@
             >
           </div>
         </FormSection>
-        <div class="sticky left-0 right-0 mt-6 bottom-6">
-          <div class="max-w-6xl px-6 mx-auto">
+        <div class="sticky bottom-6 left-0 right-0 mt-6">
+          <div class="mx-auto max-w-6xl px-6">
             <Button
               @click="saveProject"
-              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="isSaving"
             >
-              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 ml-2 animate-spin" />
-              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="ml-2 h-4 w-4 animate-spin" />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -507,6 +516,7 @@
       notes: '',
     },
     isGovernment: true,
+    projectStatus: 1,
   });
 
   const addContract = () => {
@@ -530,30 +540,25 @@
   const currentChangeOrder = ref('');
   const currentAdditionalPeriod = ref('');
   const currentSupportingEntity = ref('');
+  const beneficiaries = ref([]);
   const sustainableDevelopmentGoals = [
-    { value: '1', label: 'القضاء على الفقر' },
-    { value: '2', label: 'القضاء التام على الجوع' },
-    { value: '3', label: 'الصحة الجيدة والرفاه' },
-    { value: '4', label: 'التعليم الجيد' },
-    { value: '5', label: 'المساواة بين الجنسين' },
-    { value: '6', label: 'المياه النظيفة والنظافة الصحية' },
-    { value: '7', label: 'طاقة نظيفة وبأسعار معقولة' },
-    { value: '8', label: 'العمل اللائق ونمو الاقتصاد' },
-    { value: '9', label: 'الصناعة والابتكار والهياكل الأساسية' },
-    { value: '10', label: 'الحد من أوجه عدم المساواة' },
-    { value: '11', label: 'مدن ومجتمعات محلية مستدامة' },
-    { value: '12', label: 'الاستهلاك والإنتاج المسؤولان' },
-    { value: '13', label: 'العمل المناخي' },
-    { value: '14', label: 'الحياة تحت الماء' },
-    { value: '15', label: 'الحياة في البر' },
-    { value: '16', label: 'السلام والعدل والمؤسسات القوية' },
-    { value: '17', label: 'عقد الشراكات لتحقيق الأهداف' },
-  ];
-  const beneficiaries = [
-    { value: 'baghdad', label: 'مديرية تربية بغداد' },
-    { value: 'environment', label: 'دائرة حماية تحسين بيئة' },
-    { value: 'najaf', label: 'مديرية تربية النجف' },
-    { value: 'basra', label: 'مديرية تربية البصرة' },
+    { value: 'القضاء على الفقر', label: 'القضاء على الفقر' },
+    { value: 'القضاء التام على الجوع', label: 'القضاء التام على الجوع' },
+    { value: 'الصحة الجيدة والرفاه', label: 'الصحة الجيدة والرفاه' },
+    { value: 'التعليم الجيد', label: 'التعليم الجيد' },
+    { value: 'المساواة بين الجنسين', label: 'المساواة بين الجنسين' },
+    { value: 'المياه النظيفة والنظافة الصحية', label: 'المياه النظيفة والنظافة الصحية' },
+    { value: 'طاقة نظيفة وبأسعار معقولة', label: 'طاقة نظيفة وبأسعار معقولة' },
+    { value: 'العمل اللائق ونمو الاقتصاد', label: 'العمل اللائق ونمو الاقتصاد' },
+    { value: 'الصناعة والابتكار والهياكل الأساسية', label: 'الصناعة والابتكار والهياكل الأساسية' },
+    { value: 'الحد من أوجه عدم المساواة', label: 'الحد من أوجه عدم المساواة' },
+    { value: 'مدن ومجتمعات محلية مستدامة', label: 'مدن ومجتمعات محلية مستدامة' },
+    { value: 'الاستهلاك والإنتاج المسؤولان', label: 'الاستهلاك والإنتاج المسؤولان' },
+    { value: 'العمل المناخي', label: 'العمل المناخي' },
+    { value: 'الحياة تحت الماء', label: 'الحياة تحت الماء' },
+    { value: 'الحياة في البر', label: 'الحياة في البر' },
+    { value: 'السلام والعدل والمؤسسات القوية', label: 'السلام والعدل والمؤسسات القوية' },
+    { value: 'عقد الشراكات لتحقيق الأهداف', label: 'عقد الشراكات لتحقيق الأهداف' },
   ];
   const projectStatuses = [
     { value: 1, label: 'قيد التنفيذ' },
@@ -634,12 +639,8 @@
         name: form.value.projectName,
         directorate: form.value.plan,
         goals: form.value.projectGoal,
-        sustainableDevelopment: form.value.sustainableDevelopmentGoal
-          .map((goal) => goal.value)
-          .filter(Boolean),
-        beneficiaryEntities: form.value.beneficiaryEntities
-          .map((entity) => entity.value)
-          .filter(Boolean),
+        sustainableDevelopment: form.value.sustainableDevelopmentGoal,
+        beneficiaryEntities: form.value.beneficiaryEntities,
         supportingEntities: form.value.supportingEntities,
         address: form.value.address,
         duration: parseInt(form.value.duration) || 0,
@@ -649,7 +650,7 @@
         actualEndDate: formatDateToISO(form.value.actualCompletionDate),
         cumulativeExpenditure: form.value.financials.cumulativeExpenses?.toString() || '0',
         cumulativeFinancialProgress: parseFloat(form.value.financials.cumulativeProgress) || 0,
-        projectStatus: parseInt(form.value.executionDetails.currentStatus?.value) || 1,
+        projectStatus: parseInt(form.value.projectStatus) || 1,
         notes: form.value.executionDetails.notes || '',
         lng: form.value.coordinates.lng || 0,
         lat: form.value.coordinates.lat || 0,
@@ -786,4 +787,22 @@
   const showPremiumModal = () => {
     isPremiumModalOpen.value = true;
   };
+
+  // Add this before the saveProject function
+  const fetchBeneficiaries = async () => {
+    try {
+      const response = await axiosInstance.get('/api/Beneficiary');
+      beneficiaries.value = response.data.map((beneficiary) => ({
+        value: beneficiary.id,
+        label: beneficiary.name,
+      }));
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+      toast.error('حدث خطأ في تحميل الجهات المستفيدة');
+    }
+  };
+
+  onMounted(() => {
+    fetchBeneficiaries();
+  });
 </script>

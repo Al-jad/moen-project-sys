@@ -190,6 +190,20 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     filteredProjects.value = filtered;
   };
 
+  const fetchProjectById = async (id) => {
+    try {
+      loading.value = true;
+      error.value = null;
+      const response = await axiosInstance.get(`/api/RegionalProject/${id}`);
+      return response.data;
+    } catch (err) {
+      error.value = err.message || 'Failed to fetch project';
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     projects,
     loading,
@@ -200,6 +214,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     procedures,
     proceduresCount,
     fetchAllProjects,
+    fetchProjectById,
     applyFilters,
     fetchAllContracts,
     fetchContractById,

@@ -1,38 +1,29 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="space-y-2">
     <div class="flex gap-2">
-      <Input
-        v-model="inputValue"
-        :dir="dir"
+      <CustomInput
+        v-model="localValue"
+        dir="rtl"
         :placeholder="placeholder"
-        class="flex-1 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
-        @input="handleInput"
-        @keypress.enter="handleAdd"
+        class="flex-1"
+        @keydown.enter.prevent="addItem"
       />
-      <Button
-        @click="handleAdd"
-        type="button"
-        class="bg-slate-700 text-white hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
-      >
-        {{ buttonText }}
+      <Button @click="addItem" variant="outline" class="dark:border-gray-700 dark:text-gray-100">
+        {{ buttonText || 'اضافة' }}
       </Button>
     </div>
-    <div
-      v-if="items.length > 0"
-      class="mt-2 flex flex-wrap gap-2 rounded-md bg-gray-50 p-2 dark:bg-gray-800/50"
-    >
+    <div v-if="items?.length > 0" class="flex flex-wrap gap-2">
       <div
         v-for="(item, index) in items"
         :key="index"
-        class="flex items-center gap-2 rounded-md bg-white px-3 py-1.5 text-sm shadow-sm transition-colors dark:bg-gray-800 dark:text-gray-100 dark:shadow-gray-900/10"
+        class="flex items-center gap-1 rounded-lg border bg-gray-50 px-3 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
       >
-        <span>{{ item }}</span>
+        <span class="text-gray-900 dark:text-gray-100">{{ item }}</span>
         <button
-          @click="handleRemove(index)"
-          class="text-gray-500 transition-colors hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
-          aria-label="Remove item"
+          @click="removeItem(index)"
+          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         >
-          <Icon icon="lucide:x" class="h-3.5 w-3.5" />
+          <Icon icon="lucide:x" class="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -40,9 +31,10 @@
 </template>
 
 <script setup>
-  import { Input } from '@/components/ui/input';
+  import CustomInput from '@/components/CustomInput.vue';
+  import Button from '@/components/ui/button/Button.vue';
   import { Icon } from '@iconify/vue';
-  import { ref, watch } from 'vue';
+  import { ref } from 'vue';
 
   const props = defineProps({
     modelValue: {
@@ -51,7 +43,7 @@
     },
     items: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     placeholder: {
       type: String,
@@ -59,45 +51,26 @@
     },
     buttonText: {
       type: String,
-      default: 'اضافة',
-    },
-    dir: {
-      type: String,
-      default: 'rtl',
+      default: '',
     },
   });
 
   const emit = defineEmits(['update:modelValue', 'update:items']);
-  const inputRef = ref(null);
-  const inputValue = ref('');
 
-  const handleInput = (e) => {
-    const value = e.target.value;
-    inputValue.value = value;
-    emit('update:modelValue', value);
-  };
+  const localValue = ref('');
 
-  const handleAdd = () => {
-    if (inputValue.value?.trim()) {
-      emit('update:items', [...props.items, inputValue.value.trim()]);
-      inputValue.value = '';
-      emit('update:modelValue', '');
-      inputRef.value?.focus();
+  const addItem = () => {
+    if (localValue.value.trim()) {
+      const newItems = [...props.items];
+      newItems.push(localValue.value.trim());
+      emit('update:items', newItems);
+      localValue.value = '';
     }
   };
 
-  const handleRemove = (index) => {
+  const removeItem = (index) => {
     const newItems = [...props.items];
     newItems.splice(index, 1);
     emit('update:items', newItems);
   };
-
-  // Watch for external value changes
-  watch(
-    () => props.modelValue,
-    (newValue) => {
-      inputValue.value = newValue;
-    },
-    { immediate: true }
-  );
 </script>

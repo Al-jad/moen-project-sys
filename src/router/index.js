@@ -15,12 +15,12 @@ import Map from '@/pages/map.vue';
 import ProjectDetails from '@/pages/project-details.vue';
 import ProjectModifications from '@/pages/project-modifications.vue';
 import Projects from '@/pages/projects.vue';
+import RegionalProjects from '@/pages/regional-projects.vue';
 import Reports from '@/pages/reports.vue';
 import Settings from '@/pages/settings.vue';
 import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
-import RegionalProjects from '@/pages/regional-projects.vue';
 
 import { useAuthStore } from '@/stores/authStore';
 import { createRouter, createWebHistory } from 'vue-router';
@@ -165,6 +165,13 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/regional-projects/:id',
+    name: 'regional-project-details',
+    component: () => import('@/pages/regional-project-details.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/done',
     name: 'done',
     component: () => import('@/pages/done.vue'),
@@ -194,8 +201,7 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
-
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const authStore = useAuthStore();
 
