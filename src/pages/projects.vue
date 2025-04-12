@@ -292,8 +292,6 @@
   );
 
   const applyFilters = (filters) => {
-    console.log('Applying filters:', filters);
-
     if (!allProjects.value.length) {
       filteredProjectsList.value = [];
       return;
@@ -303,7 +301,6 @@
 
     // Apply funding type filter
     if (filters.selectedFunding && !filters.selectedFunding.all) {
-      console.log('Applying funding type filter:', filters.selectedFunding);
       result = result.filter((project) => {
         const projectType = determineFundingType(project);
 
@@ -322,9 +319,6 @@
     // Apply search filter if exists
     if (filters.searchQuery && filters.searchQuery.trim() !== '') {
       const query = filters.searchQuery.toLowerCase().trim();
-      console.log('Searching for:', query); // Debugging line
-
-      const beforeCount = result.length; // Debugging line
 
       result = result.filter((project) => {
         const projectName = project.name || project.title; // Use name, fallback to title if name doesn't exist
@@ -343,35 +337,18 @@
           (project.goals && project.goals.toLowerCase().includes(query)) ||
           (project.description && project.description.toLowerCase().includes(query)); // Add description back just in case
 
-        // Log matches for debugging
-        // if (matches) {
-        //   console.log('Match found:', { id: project.id, name: projectName });
-        // }
-
         return matches;
       });
-
-      console.log(`Search filter applied. Before: ${beforeCount}, After: ${result.length}`); // Debugging line
     }
 
     // Apply budget range filter only if it's enabled
     if (filters.isBudgetFilterEnabled && filters.budgetRange && filters.budgetRange.length === 2) {
       const [minBudget, maxBudget] = filters.budgetRange;
-      console.log(`Budget filter (enabled): Min=${minBudget}, Max=${maxBudget}`);
 
       result = result.filter((project) => {
         const cost = project.cost || 0;
         // Convert cost to match current selected currency
         const convertedCost = selectedCurrency.value === 'USD' ? Number(cost) / 1450 : Number(cost);
-
-        console.log(
-          'Project cost:',
-          cost,
-          'Converted:',
-          convertedCost,
-          'Currency:',
-          selectedCurrency.value
-        );
 
         const isInRange = convertedCost >= minBudget && convertedCost <= maxBudget;
         return isInRange;
@@ -380,9 +357,6 @@
 
     // Apply status filter - match to projectStatus value
     if (filters.selectedStatus && !filters.selectedStatus.all) {
-      console.log('Status filter:', filters.selectedStatus);
-
-      const beforeCount = result.length;
       result = result.filter((project) => {
         const statusMatches =
           (filters.selectedStatus.completed && project.projectStatus === 2) ||
@@ -390,36 +364,20 @@
           (filters.selectedStatus.delayed && project.projectStatus === 3) ||
           (filters.selectedStatus.cancelled && project.projectStatus === 0);
 
-        if (project.id < 5) {
-          console.log(
-            `Status check: Project ${project.id}, Status=${project.projectStatus}, Matches=${statusMatches}`
-          );
-        }
-
         return statusMatches;
       });
-      console.log(`Status filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
     // Apply government projects filter
     if (filters.showGovernmentProjects) {
-      console.log('Filtering for government projects only');
-      const beforeCount = result.length;
       result = result.filter((project) => {
         const isGovernment = Boolean(project.isGovernment);
-        if (project.id < 5) {
-          console.log(`Project ${project.id}: isGovernment = ${isGovernment}`);
-        }
         return isGovernment;
       });
-      console.log(`Government filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
     // Apply beneficiary filter
     if (filters.selectedBeneficiaries && !filters.selectedBeneficiaries.all) {
-      console.log('Beneficiary filter:', filters.selectedBeneficiaries);
-
-      const beforeCount = result.length;
       result = result.filter((project) => {
         if (!project.beneficiaries || project.beneficiaries.length === 0) {
           return false;
@@ -429,13 +387,11 @@
           (beneficiary) => filters.selectedBeneficiaries[beneficiary.id]
         );
       });
-      console.log(`Beneficiary filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
     // Update filtered projects LOCALLY instead of through store
     filteredProjectsList.value = result;
     currentPage.value = 1; // Reset pagination when filters change
-    console.log('Final filtered projects count (local):', result.length);
   };
 
   // Add currency conversion function
@@ -578,19 +534,12 @@
   });
 
   // Watch the source of projects (allProjects) to reset local filter list if needed
-  watch(
-    allProjects,
-    (newProjects) => {
-      console.log('All projects changed, resetting local filter list.');
-      // Re-apply current filters or reset to all
-      // For simplicity, let's reset to all for now. You might want to re-apply existing filters.
-      filteredProjectsList.value = [...newProjects];
-      // Optionally re-apply filters based on current filter state refs (searchQuery, selectedStatus etc.)
-      // applyFilters({ ... current filter values ... });
-      currentPage.value = 1; // Reset pagination
-    },
-    { deep: true }
-  );
+  watch(allProjects, (newProjects) => {
+    // Re-apply current filters or reset to all
+    // For simplicity, let's reset to all for now. You might want to re-apply existing filters.
+    filteredProjectsList.value = [...newProjects];
+    currentPage.value = 1; // Reset pagination
+  });
 
   // Add this mapping function somewhere in your script setup
   const getTableNameInArabic = (tableName) => {

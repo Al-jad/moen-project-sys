@@ -1,6 +1,6 @@
 <template>
   <div
-    @click="!disabled && router.push(`/projects/${project.id}`)"
+    @click="navigateToProjectDetails"
     class="group relative overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
     :class="[
       disabled
@@ -287,5 +287,20 @@
   function getFundingTypeClass() {
     const classes = getProjectTypeClass(projectType.value);
     return classes;
+  }
+
+  // Navigation function
+  function navigateToProjectDetails() {
+    if (props.disabled) return;
+
+    const projectId = props.project?.id;
+    if (!projectId) return;
+
+    if (projectType.value === ProjectType.FUNDED) {
+      router.push(`/funded-projects/${projectId}`);
+    } else if (projectType.value === ProjectType.REGIONAL) {
+      router.push(`/regional-projects/${projectId}`);
+    }
+    // Add other project types if needed
   }
 </script>
