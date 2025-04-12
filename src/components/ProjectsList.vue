@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div class="grid grid-cols-1 gap-4">
+    <div class="grid grid-cols-4 gap-4">
       <GenericProjectCard
         v-for="project in paginatedProjects"
         :key="project.id"

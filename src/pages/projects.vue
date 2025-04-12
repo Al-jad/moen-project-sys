@@ -25,7 +25,7 @@
               {{
                 isLoading
                   ? 'جاري التحميل...'
-                  : `النتائج: عرض ${paginatedCount} مشروع من اصل ${totalProjects} مشروع`
+                  : `النتائج: عرض ${paginatedProjects.length} مشروع من اصل ${totalProjects} مشروع`
               }}
             </p>
           </div>
@@ -88,17 +88,20 @@
         </div>
 
         <!-- Projects List -->
-        <div v-if="!isLoading && !error" class="grid grid-cols-1 gap-6">
+        <div
+          v-if="!isLoading && !error && paginatedProjects.length > 0"
+          class="grid grid-cols-1 gap-6"
+        >
           <GenericProjectCard
             v-for="project in paginatedProjects"
             :key="project.id"
             :project="project"
             :selectedCurrency="selectedCurrency"
           />
-          <div v-if="filteredProjects.length > itemsPerPage" class="mt-4 flex justify-center">
+          <div v-if="totalProjects > itemsPerPage" class="mt-4 flex justify-center">
             <CustomPagination
               v-model="currentPage"
-              :total="filteredProjects.length"
+              :total="totalProjects"
               :per-page="itemsPerPage"
             />
           </div>
@@ -132,7 +135,7 @@
 
         <!-- Empty State -->
         <div
-          v-else-if="!filteredProjects.length"
+          v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
           class="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50"
         >
           <Icon icon="lucide:folder" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
@@ -174,6 +177,9 @@
   const isLoading = computed(() => projectStore.loading);
   const error = computed(() => projectStore.error);
   const beneficiaries = ref([]);
+
+  // Add a local ref for filtered projects
+  const filteredProjectsList = ref([]);
 
   // Add this helper function to convert Arabic numerals to English
   const convertArabicToEnglish = (str) => {
@@ -289,7 +295,7 @@
     console.log('Applying filters:', filters);
 
     if (!allProjects.value.length) {
-      filteredProjects.value = [];
+      filteredProjectsList.value = [];
       return;
     }
 
@@ -316,17 +322,36 @@
     // Apply search filter if exists
     if (filters.searchQuery && filters.searchQuery.trim() !== '') {
       const query = filters.searchQuery.toLowerCase().trim();
+      console.log('Searching for:', query); // Debugging line
+
+      const beforeCount = result.length; // Debugging line
+
       result = result.filter((project) => {
-        return (
-          (project.title && project.title.toLowerCase().includes(query)) ||
-          (project.description && project.description.toLowerCase().includes(query)) ||
+        const projectName = project.name || project.title; // Use name, fallback to title if name doesn't exist
+        const matches =
+          // Core fields
+          (projectName && projectName.toLowerCase().includes(query)) ||
           (project.executingDepartment &&
             project.executingDepartment.toLowerCase().includes(query)) ||
           (project.implementingEntity &&
             project.implementingEntity.toLowerCase().includes(query)) ||
-          (project.id && project.id.toString().includes(query))
-        );
+          (project.id && project.id.toString().includes(query)) ||
+          // Additional fields from other types (check existence first)
+          (project.grantingEntity && project.grantingEntity.toLowerCase().includes(query)) ||
+          (project.projectObjectives && project.projectObjectives.toLowerCase().includes(query)) ||
+          (project.directorate && project.directorate.toLowerCase().includes(query)) ||
+          (project.goals && project.goals.toLowerCase().includes(query)) ||
+          (project.description && project.description.toLowerCase().includes(query)); // Add description back just in case
+
+        // Log matches for debugging
+        // if (matches) {
+        //   console.log('Match found:', { id: project.id, name: projectName });
+        // }
+
+        return matches;
       });
+
+      console.log(`Search filter applied. Before: ${beforeCount}, After: ${result.length}`); // Debugging line
     }
 
     // Apply budget range filter only if it's enabled
@@ -407,9 +432,10 @@
       console.log(`Beneficiary filter applied. Before: ${beforeCount}, After: ${result.length}`);
     }
 
-    // Update filtered projects through store
-    projectStore.applyFilters(result);
-    console.log('Final filtered projects count:', result.length);
+    // Update filtered projects LOCALLY instead of through store
+    filteredProjectsList.value = result;
+    currentPage.value = 1; // Reset pagination when filters change
+    console.log('Final filtered projects count (local):', result.length);
   };
 
   // Add currency conversion function
@@ -468,10 +494,12 @@
     await projectStore.fetchAllProjects();
   };
 
-  const totalProjects = computed(() => filteredProjects.value.length);
-  const paginatedCount = computed(() =>
-    Math.min(itemsPerPage.value, filteredProjects.value.length)
-  );
+  const totalProjects = computed(() => filteredProjectsList.value.length);
+  const paginatedCount = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return Math.min(itemsPerPage.value, filteredProjectsList.value.length - start);
+  });
 
   const selectedSort = ref('');
 
@@ -529,6 +557,7 @@
           showSuccess('تم تطبيق الفلتر', 'تم تطبيق فلتر البرنامج الحكومي');
         }
 
+        // Initial filter application should also update the local list
         applyFilters({
           searchQuery: '',
           budgetRange: minMaxBudgetRange.value,
@@ -537,11 +566,31 @@
           showGovernmentProjects: route.query.showGovernmentProjects === 'true',
           isBudgetFilterEnabled: false,
         });
+      } else {
+        // Initialize local list if no filters are applied via query
+        filteredProjectsList.value = [...allProjects.value];
       }
     } catch (error) {
       console.error('Error initializing component:', error);
+      // Ensure local list is also cleared on error
+      filteredProjectsList.value = [];
     }
   });
+
+  // Watch the source of projects (allProjects) to reset local filter list if needed
+  watch(
+    allProjects,
+    (newProjects) => {
+      console.log('All projects changed, resetting local filter list.');
+      // Re-apply current filters or reset to all
+      // For simplicity, let's reset to all for now. You might want to re-apply existing filters.
+      filteredProjectsList.value = [...newProjects];
+      // Optionally re-apply filters based on current filter state refs (searchQuery, selectedStatus etc.)
+      // applyFilters({ ... current filter values ... });
+      currentPage.value = 1; // Reset pagination
+    },
+    { deep: true }
+  );
 
   // Add this mapping function somewhere in your script setup
   const getTableNameInArabic = (tableName) => {
@@ -596,6 +645,6 @@
   const paginatedProjects = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
-    return filteredProjects.value.slice(start, end);
+    return filteredProjectsList.value.slice(start, end);
   });
 </script>
