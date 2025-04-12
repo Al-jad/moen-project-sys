@@ -541,9 +541,10 @@
         value: b.id,
         label: b.name,
       }));
+      toast.success('تم تحميل الجهات المستفيدة بنجاح');
     } catch (error) {
       console.error('Error fetching beneficiaries:', error);
-      toast.error('حدث خطأ في تحميل الجهات المستفيدة');
+      toast.error('فشل في تحميل الجهات المستفيدة');
     }
   };
 
@@ -556,11 +557,11 @@
         `/api/RegionalProject/Contract/Project/${props.project.id}`
       );
       contracts.value = response.data;
-
       form.contracts = response.data;
+      toast.success(`تم تحميل ${response.data.length} عقد بنجاح`);
     } catch (error) {
       console.error('Error fetching contracts:', error);
-      toast.error('حدث خطأ في تحميل العقود');
+      toast.error('فشل في تحميل العقود');
     } finally {
       isLoadingContracts.value = false;
     }
@@ -643,6 +644,7 @@
       cancelEdit();
     } else {
       isEditing.value = true;
+      toast.info('تم تفعيل وضع التحرير');
     }
   };
 
@@ -650,6 +652,7 @@
     isEditing.value = false;
     Object.assign(form, props.project);
     emit('cancel');
+    toast.info('تم إلغاء التعديلات');
   };
 
   const formatDateToISO = (date) => {
@@ -660,7 +663,17 @@
 
   const saveChanges = async () => {
     if (!form.name) {
-      toast.error('يرجى ادخال اسم المشروع');
+      toast.error('يجب إدخال اسم المشروع');
+      return;
+    }
+
+    if (!form.directorate) {
+      toast.error('يجب إدخال اسم المديرية');
+      return;
+    }
+
+    if (!form.goals) {
+      toast.error('يجب إدخال هدف المشروع');
       return;
     }
 
@@ -696,9 +709,10 @@
 
       emit('save', projectData);
       isEditing.value = false;
+      toast.success('تم حفظ المشروع بنجاح! 🎉');
     } catch (error) {
       console.error('Error saving changes:', error);
-      toast.error('حدث خطأ أثناء الحفظ');
+      toast.error('حدث خطأ أثناء حفظ المشروع');
     } finally {
       isSaving.value = false;
     }
@@ -715,10 +729,11 @@
       .then((data) => {
         if (data.display_name) {
           form.location = data.display_name;
+          toast.success('تم تحديد العنوان بنجاح');
         }
       })
       .catch(() => {
-        toast.error('حدث خطأ في تحديد العنوان');
+        toast.error('تعذر تحديد العنوان');
       });
   };
 </script>

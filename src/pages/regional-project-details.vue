@@ -29,13 +29,6 @@
           <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-                  <div
-                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
-                  >
-                    {{ project?.id }}
-                  </div>
-                </div>
                 <div>
                   <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {{ project?.name }}
@@ -66,7 +59,6 @@
                 </div>
               </div>
             </div>
-
             <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
                 <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
@@ -83,7 +75,6 @@
                 </div>
               </div>
             </div>
-
             <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
                 <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
@@ -100,7 +91,6 @@
                 </div>
               </div>
             </div>
-
             <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
                 <div class="rounded-lg bg-orange-500/10 p-3 dark:bg-orange-500/20">
@@ -126,7 +116,7 @@
                 <Icon icon="lucide:file-text" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <h4 class="font-medium text-gray-900 dark:text-gray-100">العقود والاجراءات</h4>
               </div>
-              <Button @click="handleAdd" variant="ghost" size="sm">
+              <Button @click="handleAdd" size="sm">
                 <Icon icon="lucide:plus" class="h-4 w-4" />
                 اضافة عقد
               </Button>
@@ -140,385 +130,17 @@
                 ></div>
               </div>
               <div v-else-if="contracts.length > 0" class="space-y-6">
-                <div
+                <ContractCard
                   v-for="contract in contracts"
                   :key="contract.id"
-                  class="overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
-                >
-                  <!-- Contract Header -->
-                  <div class="border-b p-4 dark:border-gray-700">
-                    <div class="mb-4 flex items-center justify-between">
-                      <div class="flex items-center gap-3">
-                        <div class="rounded-lg bg-blue-500/10 p-2 dark:bg-blue-500/20">
-                          <span class="text-lg font-bold text-blue-600 dark:text-blue-400"
-                            >#{{ contract.contractNumber }}</span
-                          >
-                        </div>
-                        <div>
-                          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{
-                            contract.name
-                          }}</h3>
-                          <p class="text-sm text-gray-500 dark:text-gray-400">{{
-                            contract.executingDepartment
-                          }}</p>
-                        </div>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <Button @click="handleEdit(contract)" variant="ghost" size="sm">
-                          <Icon icon="lucide:edit" class="h-4 w-4" />
-                        </Button>
-                        <Button @click="handleDelete(contract)" variant="ghost" size="sm">
-                          <Icon icon="lucide:trash" class="h-4 w-4 text-red-500" />
-                        </Button>
-                        <Button @click="handleView(contract)" variant="ghost" size="sm">
-                          <Icon icon="lucide:eye" class="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                      <div class="flex items-center gap-2">
-                        <Icon icon="lucide:calendar" class="h-4 w-4 text-gray-500" />
-                        <span class="text-sm text-gray-600 dark:text-gray-300"
-                          >تاريخ التوقيع: {{ formatDate(contract.signingDate) }}</span
-                        >
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <Icon icon="lucide:calendar-check" class="h-4 w-4 text-gray-500" />
-                        <span class="text-sm text-gray-600 dark:text-gray-300"
-                          >تاريخ الإحالة: {{ formatDate(contract.referralDate) }}</span
-                        >
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <Icon icon="lucide:wallet" class="h-4 w-4 text-gray-500" />
-                        <span class="text-sm text-gray-600 dark:text-gray-300"
-                          >الكلفة: {{ formatCurrency(contract.cost) }}</span
-                        >
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <Icon icon="lucide:list-checks" class="h-4 w-4 text-gray-500" />
-                        <span class="text-sm text-gray-600 dark:text-gray-300"
-                          >عدد الاجراءات: {{ contract.procedures?.length || 0 }}</span
-                        >
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Procedures Section -->
-                  <div class="p-4">
-                    <div class="mb-4 flex items-center justify-between">
-                      <h4 class="font-medium text-gray-900 dark:text-gray-100"
-                        >الاجراءات التنفيذية</h4
-                      >
-                      <Button @click="handleAddProcedure(contract)" variant="ghost" size="sm">
-                        <Icon icon="lucide:plus" class="h-4 w-4" />
-                        اضافة اجراء
-                      </Button>
-                    </div>
-
-                    <div
-                      v-if="contract.procedures && contract.procedures.length > 0"
-                      class="space-y-4"
-                    >
-                      <div
-                        v-for="procedure in contract.procedures"
-                        :key="procedure.id"
-                        class="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50"
-                      >
-                        <!-- Upper Section -->
-                        <div class="relative">
-                          <!-- Header -->
-                          <div
-                            class="flex items-center justify-between border-b p-4 dark:border-gray-700"
-                          >
-                            <div class="flex items-center gap-3">
-                              <div
-                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20"
-                              >
-                                <span
-                                  class="text-lg font-semibold text-blue-600 dark:text-blue-400"
-                                >
-                                  {{ procedure.weight }}%
-                                </span>
-                              </div>
-                              <div>
-                                <h5 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                  {{ procedure.name }}
-                                </h5>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                  {{ formatDate(procedure.startDate) }} -
-                                  {{ formatDate(procedure.endDate) }}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div class="flex items-center gap-3">
-                              <div
-                                class="flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 dark:bg-gray-800"
-                              >
-                                <Icon icon="lucide:clock" class="h-4 w-4 text-gray-500" />
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                  مدة الاجراء: {{ procedure.duration }} يوم
-                                </span>
-                              </div>
-                              <div
-                                class="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100"
-                              >
-                                <Button
-                                  @click="handleEditProcedure(procedure, contract)"
-                                  variant="ghost"
-                                  size="icon"
-                                  class="h-8 w-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                                >
-                                  <Icon icon="lucide:edit" class="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  @click="handleDeleteProcedure(procedure)"
-                                  variant="ghost"
-                                  size="icon"
-                                  class="h-8 w-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
-                                >
-                                  <Icon icon="lucide:trash" class="h-4 w-4 text-red-500" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Progress Grid -->
-                        <div class="p-4">
-                          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                            <!-- Financial Progress -->
-                            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-                              <div class="flex items-center justify-between">
-                                <h6
-                                  class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300"
-                                >
-                                  <Icon icon="lucide:trending-up" class="h-4 w-4 text-blue-500" />
-                                  المعلومات المالية
-                                </h6>
-                                <span class="text-sm text-gray-500"
-                                  >{{ procedure.plannedFinancialProgress }}%</span
-                                >
-                              </div>
-
-                              <!-- Progress Bars -->
-                              <div class="space-y-3">
-                                <div>
-                                  <div class="mb-1 flex items-center justify-between text-xs">
-                                    <span class="text-gray-500 dark:text-gray-400">
-                                      نسبة الإنجاز المالي المخطط له
-                                    </span>
-                                    <span class="font-medium text-blue-600"
-                                      >{{ procedure.plannedFinancialProgress }}%</span
-                                    >
-                                  </div>
-                                  <div
-                                    class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
-                                  >
-                                    <div
-                                      class="h-full rounded-full bg-blue-500 transition-all duration-300"
-                                      :style="{ width: `${procedure.plannedFinancialProgress}%` }"
-                                    ></div>
-                                  </div>
-                                </div>
-
-                                <PremiumMask>
-                                  <div>
-                                    <div class="mb-1 flex items-center justify-between text-xs">
-                                      <span class="text-gray-500 dark:text-gray-400">
-                                        نسبة الإنجاز المالي الفعلي
-                                      </span>
-                                      <span
-                                        class="font-medium"
-                                        :class="{
-                                          'text-green-600':
-                                            procedure.actualFinancialProgress >=
-                                            procedure.plannedFinancialProgress,
-                                          'text-red-600':
-                                            procedure.actualFinancialProgress <
-                                            procedure.plannedFinancialProgress,
-                                        }"
-                                      >
-                                        {{ procedure.actualFinancialProgress }}%
-                                      </span>
-                                    </div>
-                                    <div
-                                      class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
-                                    >
-                                      <div
-                                        class="h-full rounded-full transition-all duration-300"
-                                        :class="{
-                                          'bg-green-500':
-                                            procedure.actualFinancialProgress >=
-                                            procedure.plannedFinancialProgress,
-                                          'bg-red-500':
-                                            procedure.actualFinancialProgress <
-                                            procedure.plannedFinancialProgress,
-                                        }"
-                                        :style="{ width: `${procedure.actualFinancialProgress}%` }"
-                                      ></div>
-                                    </div>
-                                  </div>
-                                </PremiumMask>
-                              </div>
-                            </div>
-
-                            <!-- Technical Progress -->
-                            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-                              <div class="flex items-center justify-between">
-                                <h6
-                                  class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300"
-                                >
-                                  <Icon icon="lucide:settings" class="h-4 w-4 text-purple-500" />
-                                  المعلومات الفنية
-                                </h6>
-                                <!-- <PremiumMask>
-                                  <span
-                                    class="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
-                                    :class="{
-                                      'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400':
-                                        procedure.technicalDeviation >= 0,
-                                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400':
-                                        procedure.technicalDeviation < 0,
-                                    }"
-                                  >
-                                    <Icon
-                                      :icon="
-                                        procedure.technicalDeviation >= 0
-                                          ? 'lucide:trending-up'
-                                          : 'lucide:trending-down'
-                                      "
-                                      class="h-3 w-3"
-                                    />
-                                    {{ procedure.technicalDeviation >= 0 ? '+' : ''
-                                    }}{{ procedure.technicalDeviation }}%
-                                  </span>
-                                </PremiumMask> -->
-                              </div>
-
-                              <!-- Progress Bars -->
-                              <div class="space-y-3">
-                                <div>
-                                  <div class="mb-1 flex items-center justify-between text-xs">
-                                    <span class="text-gray-500 dark:text-gray-400">
-                                      نسبة الإنجاز الفني المخطط له
-                                    </span>
-                                    <span class="font-medium text-purple-600"
-                                      >{{ procedure.plannedCompletionPercentage }}%</span
-                                    >
-                                  </div>
-                                  <div
-                                    class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
-                                  >
-                                    <div
-                                      class="h-full rounded-full bg-purple-500 transition-all duration-300"
-                                      :style="{
-                                        width: `${procedure.plannedCompletionPercentage}%`,
-                                      }"
-                                    ></div>
-                                  </div>
-                                </div>
-
-                                <PremiumMask>
-                                  <div>
-                                    <div class="mb-1 flex items-center justify-between text-xs">
-                                      <span class="text-gray-500 dark:text-gray-400">الفعلي</span>
-                                      <span
-                                        class="font-medium"
-                                        :class="{
-                                          'text-green-600':
-                                            procedure.actualCompletionPercentage >=
-                                            procedure.plannedCompletionPercentage,
-                                          'text-red-600':
-                                            procedure.actualCompletionPercentage <
-                                            procedure.plannedCompletionPercentage,
-                                        }"
-                                      >
-                                        {{ procedure.actualCompletionPercentage }}%
-                                      </span>
-                                    </div>
-                                    <div
-                                      class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
-                                    >
-                                      <div
-                                        class="h-full rounded-full transition-all duration-300"
-                                        :class="{
-                                          'bg-green-500':
-                                            procedure.actualCompletionPercentage >=
-                                            procedure.plannedCompletionPercentage,
-                                          'bg-red-500':
-                                            procedure.actualCompletionPercentage <
-                                            procedure.plannedCompletionPercentage,
-                                        }"
-                                        :style="{
-                                          width: `${procedure.actualCompletionPercentage}%`,
-                                        }"
-                                      ></div>
-                                    </div>
-                                    <div class="mt-4 flex items-center justify-between text-xs">
-                                      <span class="text-gray-500 dark:text-gray-400">
-                                        نسبة الإنحراف الفني
-                                      </span>
-                                      <span
-                                        class="font-medium"
-                                        :class="{
-                                          'text-green-600': procedure.technicalDeviation >= 0,
-                                          'text-red-600': procedure.technicalDeviation < 0,
-                                        }"
-                                      >
-                                        {{ procedure.technicalDeviation >= 0 ? '+' : ''
-                                        }}{{ procedure.technicalDeviation }}%
-                                      </span>
-                                    </div>
-                                    <div
-                                      class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
-                                    >
-                                      <div
-                                        class="h-full rounded-full transition-all duration-300"
-                                        :class="{
-                                          'bg-green-500':
-                                            procedure.actualCompletionPercentage >=
-                                            procedure.plannedCompletionPercentage,
-                                          'bg-red-500':
-                                            procedure.actualCompletionPercentage <
-                                            procedure.plannedCompletionPercentage,
-                                        }"
-                                        :style="{
-                                          width: `${procedure.actualCompletionPercentage}%`,
-                                        }"
-                                      ></div>
-                                    </div>
-                                  </div>
-                                </PremiumMask>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-else
-                      class="flex flex-col items-center justify-center rounded-lg border border-dashed py-6 text-center dark:border-gray-700"
-                    >
-                      <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                        <Icon
-                          icon="lucide:list-checks"
-                          class="h-6 w-6 text-gray-400 dark:text-gray-500"
-                        />
-                      </div>
-                      <h3 class="mb-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        لا توجد اجراءات تنفيذية
-                      </h3>
-                      <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                        قم بإضافة اجراءات تنفيذية للعقد
-                      </p>
-                      <Button @click="handleAddProcedure(contract)" variant="outline" size="sm">
-                        <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
-                        إضافة اجراء
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                  :contract="contract"
+                  @edit="handleEdit"
+                  @delete="handleDelete"
+                  @view="handleView"
+                  @add-procedure="handleAddProcedure"
+                  @edit-procedure="handleEditProcedure"
+                  @delete-procedure="handleDeleteProcedure"
+                />
               </div>
               <div
                 v-else
@@ -605,7 +227,7 @@
   import AddContractModal from '@/components/AddContractModal.vue';
   import DeleteModal from '@/components/DeleteModal.vue';
   import EditProcedureModal from '@/components/EditProcedureModal.vue';
-  import PremiumMask from '@/components/PremiumMask.vue';
+  import ContractCard from '@/components/regional-project/ContractCard.vue';
   import RegionalProjectDetails from '@/components/regional-project/RegionalProjectDetails.vue';
   import Badge from '@/components/ui/badge/Badge.vue';
   import { Button } from '@/components/ui/button';
@@ -616,7 +238,6 @@
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
-
   const route = useRoute();
   const router = useRouter();
   const store = useRegionalProjectStore();
@@ -636,10 +257,8 @@
   const isProcedureModalOpen = ref(false);
   const selectedProcedure = ref(null);
   const isDeleteProcedureModalOpen = ref(false);
-
   const fetchContracts = async () => {
     if (!project.value?.id) return;
-
     try {
       isLoadingContracts.value = true;
       const response = await axiosInstance.get(
@@ -653,7 +272,6 @@
       isLoadingContracts.value = false;
     }
   };
-
   const fetchProject = async () => {
     try {
       const projectId = parseInt(route.params.id);
@@ -661,16 +279,12 @@
         error.value = 'معرف المشروع غير صالح';
         return;
       }
-
       const response = await axiosInstance.get(`/api/RegionalProject/${projectId}`);
       project.value = response.data;
-
       if (!project.value) {
         error.value = 'المشروع غير موجود';
         return;
       }
-
-      // Fetch contracts after project is loaded
       await fetchContracts();
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -679,11 +293,9 @@
       loading.value = false;
     }
   };
-
   onMounted(() => {
     fetchProject();
   });
-
   const handleSaveProject = async (updatedProject) => {
     isSaving.value = true;
     try {
@@ -691,7 +303,6 @@
         ...updatedProject,
         projectStatus: parseInt(updatedProject.projectStatus) || 1,
       };
-
       const response = await axiosInstance.put(
         `/api/RegionalProject/${project.value.id}`,
         projectData
@@ -715,11 +326,9 @@
       isSaving.value = false;
     }
   };
-
   const handleCancelEdit = () => {
     fetchProject();
   };
-
   const formatDate = (dateString) => {
     if (!dateString) return '';
     try {
@@ -734,7 +343,6 @@
       return dateString;
     }
   };
-
   const formatCurrency = (value) => {
     if (!value) return '0';
     const formattedNumber = new Intl.NumberFormat('ar-IQ', {
@@ -743,21 +351,17 @@
     }).format(value);
     return `${formattedNumber} د.ع`;
   };
-
   const handleAdd = () => {
     selectedContract.value = null;
     isContractDialogOpen.value = true;
   };
-
   const handleEdit = (contract) => {
     selectedContract.value = { ...contract };
     isContractDialogOpen.value = true;
   };
-
   const handleView = (contract) => {
     router.push(`/contracts/${contract.id}`);
   };
-
   const handleContractSubmit = async (data) => {
     try {
       isSaving.value = true;
@@ -765,22 +369,18 @@
         ...data,
         projectId: project.value.id,
       };
-
       if (selectedContract.value?.id) {
-        // Edit existing contract
         await axiosInstance.put(
           `/api/RegionalProject/Contract/${selectedContract.value.id}`,
           payload
         );
         toast.success('تم تعديل العقد بنجاح');
       } else {
-        // Create new contract
         await axiosInstance.post('/api/RegionalProject/Contract', payload);
         toast.success('تم اضافة العقد بنجاح');
       }
-
       closeContractDialog();
-      await fetchContracts(); // Refresh contracts
+      await fetchContracts();
     } catch (error) {
       console.error('Error in contract process:', error);
       toast.error('حدث خطأ أثناء معالجة العقد');
@@ -788,17 +388,14 @@
       isSaving.value = false;
     }
   };
-
   const closeContractDialog = () => {
     selectedContract.value = null;
     isContractDialogOpen.value = false;
   };
-
   const handleDelete = (contract) => {
     selectedContract.value = contract;
     isDeleteContractModalOpen.value = true;
   };
-
   const confirmDeleteContract = async () => {
     try {
       isDeleting.value = true;
@@ -814,17 +411,14 @@
       selectedContract.value = null;
     }
   };
-
   const cancelDeleteContract = () => {
     isDeleteContractModalOpen.value = false;
     selectedContract.value = null;
   };
-
   const showDeleteConfirmation = () => {
     if (!project.value) return;
     showDeleteModal.value = true;
   };
-
   const confirmDeleteProject = async () => {
     isDeleting.value = true;
     try {
@@ -839,18 +433,15 @@
       showDeleteModal.value = false;
     }
   };
-
   const handleEditProcedure = (procedure, contract) => {
     selectedProcedure.value = { ...procedure };
     selectedContract.value = contract;
     isProcedureModalOpen.value = true;
   };
-
   const handleDeleteProcedure = (procedure) => {
     selectedProcedure.value = procedure;
     isDeleteProcedureModalOpen.value = true;
   };
-
   const handleProcedureSubmit = async (data) => {
     try {
       isSaving.value = true;
@@ -858,19 +449,15 @@
         ...data,
         contractId: selectedContract.value.id,
       };
-
       if (selectedProcedure.value?.id) {
-        // Edit existing procedure
         await store.updateProcedure(selectedProcedure.value.id, procedureData);
         toast.success('تم تعديل الاجراء بنجاح');
       } else {
-        // Add new procedure
         await store.createProcedure(procedureData);
         toast.success('تم اضافة الاجراء بنجاح');
       }
-
       closeProcedureDialog();
-      await fetchContracts(); // Refresh contracts to get updated procedures
+      await fetchContracts();
     } catch (error) {
       console.error('Error in procedure process:', error);
       toast.error('حدث خطأ أثناء معالجة الاجراء');
@@ -878,18 +465,16 @@
       isSaving.value = false;
     }
   };
-
   const closeProcedureDialog = () => {
     selectedProcedure.value = null;
     selectedContract.value = null;
     isProcedureModalOpen.value = false;
   };
-
   const confirmDeleteProcedure = async () => {
     try {
       isDeleting.value = true;
       await store.deleteProcedure(selectedProcedure.value.id, selectedProcedure.value.contractId);
-      await fetchContracts(); // Refresh contracts to get updated procedures
+      await fetchContracts();
       toast.success('تم حذف الاجراء بنجاح');
     } catch (error) {
       console.error('Error deleting procedure:', error);
@@ -900,45 +485,39 @@
       selectedProcedure.value = null;
     }
   };
-
   const cancelDeleteProcedure = () => {
     isDeleteProcedureModalOpen.value = false;
     selectedProcedure.value = null;
   };
-
   const handleAddProcedure = (contract) => {
     selectedProcedure.value = null;
     selectedContract.value = contract;
     isProcedureModalOpen.value = true;
   };
-
   const projectStatuses = [
     { value: 1, label: 'قيد التنفيذ' },
     { value: 2, label: 'منجزة' },
     { value: 3, label: 'متلكئة' },
     { value: 0, label: 'ملغاة' },
   ];
-
   const getStatusLabel = (status) => {
     const statusObj = projectStatuses.find((s) => s.value === status);
     return statusObj ? statusObj.label : 'غير محدد';
   };
-
   const getStatusVariant = (status) => {
     switch (status) {
       case 1:
-        return 'warning'; // قيد التنفيذ
+        return 'warning';
       case 2:
-        return 'success'; // منجزة
+        return 'success';
       case 3:
-        return 'destructive'; // متلكئة
+        return 'destructive';
       case 0:
-        return 'outline'; // ملغاة
+        return 'outline';
       default:
         return 'secondary';
     }
   };
-
   const totalProcedures = computed(() => {
     return contracts.value.reduce((total, contract) => {
       return total + (contract.procedures?.length || 0);
