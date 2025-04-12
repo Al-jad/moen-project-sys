@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
-    <main class="p-6 bg-gray-100 dark:bg-gray-900">
-      <div class="w-full mx-auto space-y-6 max-w-7xl">
+    <main class="bg-gray-100 p-6 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-7xl space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -15,10 +15,10 @@
 
         <!-- Stats Grid -->
         <div class="grid gap-4 md:grid-cols-4">
-          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center gap-4">
-              <div class="p-3 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-                <Icon icon="lucide:file-text" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
+                <Icon icon="lucide:file-text" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -29,10 +29,10 @@
             </div>
           </div>
 
-          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center gap-4">
-              <div class="p-3 rounded-lg bg-green-500/10 dark:bg-green-500/20">
-                <Icon icon="lucide:building" class="w-6 h-6 text-green-600 dark:text-green-400" />
+              <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
+                <Icon icon="lucide:building" class="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -43,12 +43,12 @@
             </div>
           </div>
 
-          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center gap-4">
-              <div class="p-3 rounded-lg bg-purple-500/10 dark:bg-purple-500/20">
+              <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
                 <Icon
                   icon="lucide:list-checks"
-                  class="w-6 h-6 text-purple-600 dark:text-purple-400"
+                  class="h-6 w-6 text-purple-600 dark:text-purple-400"
                 />
               </div>
               <div>
@@ -60,12 +60,12 @@
             </div>
           </div>
 
-          <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center gap-4">
-              <div class="p-3 rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
+              <div class="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
                 <Icon
                   icon="lucide:dollar-sign"
-                  class="w-6 h-6 text-amber-600 dark:text-amber-400"
+                  class="h-6 w-6 text-amber-600 dark:text-amber-400"
                 />
               </div>
               <div>
@@ -79,9 +79,9 @@
         </div>
 
         <!-- Contract Details Card -->
-        <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
           <!-- Basic Info -->
-          <div class="p-6 border-b dark:border-gray-700">
+          <div class="border-b p-6 dark:border-gray-700">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">معلومات العقد</h2>
@@ -103,8 +103,8 @@
         </div>
 
         <!-- Execution Procedures Card -->
-        <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-          <div class="p-6 border-b dark:border-gray-700">
+        <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+          <div class="border-b p-6 dark:border-gray-700">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100"
@@ -115,7 +115,7 @@
                 </Badge>
               </div>
               <PrimaryButton @click="openAddModal">
-                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                 اضافة اجراء جديد
               </PrimaryButton>
             </div>
@@ -127,19 +127,19 @@
               <div
                 v-for="n in 3"
                 :key="n"
-                class="h-32 bg-gray-100 rounded-lg animate-pulse dark:bg-gray-800"
+                class="h-32 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800"
               />
             </div>
 
             <!-- Empty State -->
             <div
               v-else-if="executionProcedures.length === 0"
-              class="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg dark:border-gray-700"
+              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
             >
-              <div class="p-3 mb-3 bg-gray-100 rounded-full dark:bg-gray-800">
+              <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
                 <Icon
                   icon="lucide:clipboard-list"
-                  class="w-8 h-8 text-gray-400 dark:text-gray-500"
+                  class="h-8 w-8 text-gray-400 dark:text-gray-500"
                 />
               </div>
               <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
@@ -149,7 +149,7 @@
                 >قم بإضافة اجراء جديد للبدء</p
               >
               <PrimaryButton variant="outline" size="sm" @click="openAddModal">
-                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                 اضافة اجراء
               </PrimaryButton>
             </div>
@@ -159,12 +159,12 @@
               <div
                 v-for="(procedure, index) in executionProcedures"
                 :key="procedure.id"
-                class="relative p-6 transition-all bg-white border rounded-lg shadow-sm hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                class="relative rounded-lg border bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
               >
                 <!-- Header -->
-                <div class="flex items-center justify-between mb-4">
+                <div class="mb-4 flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                    <div class="rounded-lg bg-blue-500/10 p-2 dark:bg-blue-500/20">
                       <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{
                         index + 1
                       }}</span>
@@ -175,18 +175,18 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <PrimaryButton variant="ghost" size="sm" @click="openEditModal(procedure)">
-                      <Icon icon="lucide:edit" class="w-4 h-4" />
+                      <Icon icon="lucide:edit" class="h-4 w-4" />
                     </PrimaryButton>
                     <PrimaryButton variant="ghost" size="sm" @click="handleDelete(procedure.id)">
-                      <Icon icon="lucide:trash" class="w-4 h-4 text-red-500" />
+                      <Icon icon="lucide:trash" class="h-4 w-4 text-red-500" />
                     </PrimaryButton>
                   </div>
                 </div>
 
                 <!-- Content Grid -->
-                <div class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
+                <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <!-- Basic Info Section -->
-                  <div class="p-4 space-y-4 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                  <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
                     <h4 class="font-medium text-gray-900 dark:text-gray-100">المعلومات الأساسية</h4>
                     <div class="grid grid-cols-2 gap-4">
                       <div>
@@ -217,7 +217,7 @@
                   </div>
 
                   <!-- Dates Section -->
-                  <div class="p-4 space-y-4 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                  <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
                     <h4 class="font-medium text-gray-900 dark:text-gray-100">التواريخ</h4>
                     <div class="grid grid-cols-2 gap-4">
                       <div>
@@ -235,127 +235,156 @@
                     </div>
                   </div>
 
-                  <!-- Completion Progress Section -->
-                  <div class="p-4 space-y-4 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-                    <h4 class="font-medium text-gray-900 dark:text-gray-100">نسب الإنجاز</h4>
-                    <div class="grid gap-4">
-                      <div>
-                        <div class="flex items-center justify-between mb-2">
-                          <span class="text-sm text-gray-500 dark:text-gray-400"
-                            >نسبة الإنجاز المخطط</span
-                          >
-                          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {{ procedure.plannedCompletionPercentage }}%
-                          </span>
-                        </div>
-                        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
-                          <div
-                            class="h-2 bg-blue-500 rounded-full"
-                            :style="{ width: `${procedure.plannedCompletionPercentage}%` }"
-                          ></div>
+                  <!-- Completion and Financial Progress Section -->
+                  <div class="col-span-2 space-y-6">
+                    <!-- Regular Progress Section -->
+                    <div class="grid grid-cols-2 gap-6">
+                      <!-- Planned Technical Progress -->
+                      <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
+                        <h4 class="font-medium text-gray-900 dark:text-gray-100"
+                          >نسب الإنجاز الفني المخطط له</h4
+                        >
+                        <div>
+                          <div class="mb-2 flex items-center justify-between">
+                            <span class="text-sm text-gray-500 dark:text-gray-400"
+                              >نسبة الإنجاز الفني المخطط له</span
+                            >
+                            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {{ procedure.plannedCompletionPercentage }}%
+                            </span>
+                          </div>
+                          <div class="h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                            <div
+                              class="h-2 rounded-full bg-blue-500"
+                              :style="{ width: `${procedure.plannedCompletionPercentage}%` }"
+                            ></div>
+                          </div>
                         </div>
                       </div>
 
-                      <div
-                        class="grid grid-cols-2 gap-4 p-4 mt-2 border border-red-200 rounded-lg bg-red-50/30 dark:border-red-900/50 dark:bg-red-950/20"
-                      >
-                        <div class="space-y-4">
-                          <div class="flex items-center gap-2">
-                            <Icon icon="lucide:crown" class="w-5 h-5 text-red-500" />
-                            <span class="text-sm font-medium text-red-600 dark:text-red-400"
-                              >ميزات متقدمة</span
+                      <!-- Planned Financial Progress -->
+                      <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
+                        <h4 class="font-medium text-gray-900 dark:text-gray-100"
+                          >التقدم المالي المخطط له</h4
+                        >
+                        <div>
+                          <div class="mb-2 flex items-center justify-between">
+                            <span class="text-sm text-gray-500 dark:text-gray-400"
+                              >التقدم المالي المخطط له</span
                             >
+                            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {{ procedure.plannedFinancialProgress }}%
+                            </span>
                           </div>
-                          <PremiumMask>
-                            <div>
-                              <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-500 dark:text-gray-400"
-                                  >نسبة الإنجاز الفعلي</span
-                                >
-                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                  {{ procedure.actualCompletionPercentage }}%
-                                </span>
-                              </div>
-                              <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
-                                <div
-                                  class="h-2 bg-green-500 rounded-full"
-                                  :style="{ width: `${procedure.actualCompletionPercentage}%` }"
-                                ></div>
-                              </div>
-                            </div>
-                          </PremiumMask>
-                        </div>
-
-                        <div class="space-y-4">
-                          <div class="h-6"></div>
-                          <PremiumMask>
-                            <div>
-                              <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-500 dark:text-gray-400"
-                                  >الانحراف الفني</span
-                                >
-                                <span
-                                  class="text-sm font-medium"
-                                  :class="{
-                                    'text-red-500': procedure.technicalDeviation < 0,
-                                    'text-green-500': procedure.technicalDeviation >= 0,
-                                  }"
-                                >
-                                  {{ procedure.technicalDeviation }}%
-                                </span>
-                              </div>
-                              <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
-                                <div
-                                  class="h-2 rounded-full"
-                                  :class="{
-                                    'bg-red-500': procedure.technicalDeviation < 0,
-                                    'bg-green-500': procedure.technicalDeviation >= 0,
-                                  }"
-                                  :style="{ width: `${Math.abs(procedure.technicalDeviation)}%` }"
-                                ></div>
-                              </div>
-                            </div>
-                          </PremiumMask>
+                          <div class="h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                            <div
+                              class="h-2 rounded-full bg-blue-500"
+                              :style="{ width: `${procedure.plannedFinancialProgress}%` }"
+                            ></div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Financial Progress Section -->
-                  <div class="p-4 space-y-4 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-                    <h4 class="font-medium text-gray-900 dark:text-gray-100">التقدم المالي</h4>
-                    <div class="grid gap-4">
-                      <div>
-                        <div class="flex items-center justify-between mb-2">
-                          <span class="text-sm text-gray-500 dark:text-gray-400"
-                            >التقدم المالي المخطط</span
-                          >
-                          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {{ procedure.plannedFinancialProgress }}%
-                          </span>
-                        </div>
-                        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
-                          <div
-                            class="h-2 bg-blue-500 rounded-full"
-                            :style="{ width: `${procedure.plannedFinancialProgress}%` }"
-                          ></div>
-                        </div>
+                    <!-- Premium Features Section -->
+                    <div
+                      class="rounded-lg border border-red-200 bg-red-50/30 p-6 dark:border-red-900/50 dark:bg-red-950/20"
+                    >
+                      <div class="mb-4 flex items-center gap-2">
+                        <Icon icon="lucide:crown" class="h-5 w-5 text-red-500" />
+                        <span class="text-sm font-medium text-red-600 dark:text-red-400"
+                          >ميزات متقدمة</span
+                        >
                       </div>
 
-                      <div>
-                        <div class="flex items-center justify-between mb-2">
-                          <span class="text-sm text-gray-500 dark:text-gray-400"
-                            >التقدم المالي الفعلي</span
-                          >
-                          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {{ procedure.actualFinancialProgress }}%
-                          </span>
+                      <div class="grid grid-cols-2 gap-6">
+                        <!-- Actual Technical Progress -->
+                        <div class="space-y-4">
+                          <PremiumMask>
+                            <div>
+                              <h4 class="mb-4 font-medium text-gray-900 dark:text-gray-100"
+                                >نسب الإنجاز الفني الفعلي</h4
+                              >
+                              <div class="space-y-6">
+                                <div>
+                                  <div class="mb-2 flex items-center justify-between">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"
+                                      >نسبة الإنجاز الفني الفعلي</span
+                                    >
+                                    <span
+                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                    >
+                                      {{ procedure.actualCompletionPercentage }}%
+                                    </span>
+                                  </div>
+                                  <div class="h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                                    <div
+                                      class="h-2 rounded-full bg-green-500"
+                                      :style="{ width: `${procedure.actualCompletionPercentage}%` }"
+                                    ></div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <div class="mb-2 flex items-center justify-between">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"
+                                      >نسبة الانحراف الفني</span
+                                    >
+                                    <span
+                                      class="text-sm font-medium"
+                                      :class="{
+                                        'text-red-500': procedure.technicalDeviation < 0,
+                                        'text-green-500': procedure.technicalDeviation >= 0,
+                                      }"
+                                    >
+                                      {{ procedure.technicalDeviation }}%
+                                    </span>
+                                  </div>
+                                  <div class="h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                                    <div
+                                      class="h-2 rounded-full"
+                                      :class="{
+                                        'bg-red-500': procedure.technicalDeviation < 0,
+                                        'bg-green-500': procedure.technicalDeviation >= 0,
+                                      }"
+                                      :style="{
+                                        width: `${Math.abs(procedure.technicalDeviation)}%`,
+                                      }"
+                                    ></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </PremiumMask>
                         </div>
-                        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
-                          <div
-                            class="h-2 bg-green-500 rounded-full"
-                            :style="{ width: `${procedure.actualFinancialProgress}%` }"
-                          ></div>
+
+                        <!-- Actual Financial Progress -->
+                        <div class="space-y-4">
+                          <PremiumMask>
+                            <div>
+                              <h4 class="mb-4 font-medium text-gray-900 dark:text-gray-100"
+                                >التقدم المالي الفعلي</h4
+                              >
+                              <div>
+                                <div class="mb-2 flex items-center justify-between">
+                                  <span class="text-sm text-gray-500 dark:text-gray-400"
+                                    >التقدم المالي الفعلي</span
+                                  >
+                                  <span
+                                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  >
+                                    {{ procedure.actualFinancialProgress }}%
+                                  </span>
+                                </div>
+                                <div class="h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                                  <div
+                                    class="h-2 rounded-full bg-green-500"
+                                    :style="{ width: `${procedure.actualFinancialProgress}%` }"
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                          </PremiumMask>
                         </div>
                       </div>
                     </div>

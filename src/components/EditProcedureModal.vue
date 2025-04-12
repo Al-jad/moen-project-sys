@@ -7,9 +7,9 @@
         }}</DialogTitle>
       </DialogHeader>
 
-      <div class="flex-1 overflow-y-auto custom-scrollbar">
+      <div class="custom-scrollbar flex-1 overflow-y-auto">
         <!-- Non-editable fields -->
-        <div class="grid grid-cols-2 gap-4 py-4 mx-4 border-b dark:border-gray-700">
+        <div class="mx-4 grid grid-cols-2 gap-4 border-b py-4 dark:border-gray-700">
           <div class="grid items-center gap-2">
             <Label class="text-right text-gray-500 dark:text-gray-400">العقد</Label>
             <div class="text-right">{{ contractInfo.name }}</div>
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Editable fields -->
-        <div class="grid py-4 mx-4 gap-y-6">
+        <div class="mx-4 grid gap-y-6 py-4">
           <!-- Basic Information -->
           <div class="grid grid-cols-2 gap-4">
             <FormField label="اسم الاجراء">
@@ -63,7 +63,7 @@
           <!-- Progress Section -->
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-4">
-              <h3 class="font-medium text-right">التقدم المالي</h3>
+              <h3 class="text-right font-medium">التقدم المالي</h3>
               <FormField label="التقدم المالي المخطط">
                 <div class="flex items-center gap-2">
                   <CustomInput v-model="form.plannedFinancialProgress" type="number" dir="rtl" />
@@ -71,15 +71,31 @@
                 </div>
               </FormField>
 
-              <FormField label="التقدم المالي الفعلي">
-                <div class="flex items-center gap-2">
-                  <CustomInput v-model="form.actualFinancialProgress" type="number" dir="rtl" />
-                  <span class="dark:text-gray-400">%</span>
+              <div
+                class="mt-6 grid grid-cols-1 gap-6 rounded-lg border border-red-200 bg-red-50/30 p-6 dark:border-red-900/50 dark:bg-red-950/20"
+              >
+                <div class="space-y-4">
+                  <div class="mb-4 flex items-center gap-2">
+                    <Icon icon="lucide:crown" class="h-5 w-5 text-red-500" />
+                    <h3 class="font-medium text-red-600 dark:text-red-400">الميزات المتقدمة</h3>
+                  </div>
+                  <PremiumMask>
+                    <FormField label="التقدم المالي الفعلي">
+                      <div class="flex items-center gap-2">
+                        <CustomInput
+                          v-model="form.actualFinancialProgress"
+                          type="number"
+                          dir="rtl"
+                        />
+                        <span class="dark:text-gray-400">%</span>
+                      </div>
+                    </FormField>
+                  </PremiumMask>
                 </div>
-              </FormField>
+              </div>
             </div>
             <div class="space-y-4">
-              <h3 class="font-medium text-right">نسب الإنجاز</h3>
+              <h3 class="text-right font-medium">نسب الإنجاز</h3>
               <FormField label="نسبة الانجاز المخطط">
                 <div class="flex items-center gap-2">
                   <CustomInput
@@ -96,11 +112,11 @@
 
           <!-- Premium Features Section -->
           <div
-            class="grid grid-cols-2 gap-6 p-6 mt-6 border border-red-200 rounded-lg bg-red-50/30 dark:border-red-900/50 dark:bg-red-950/20"
+            class="mt-6 grid grid-cols-2 gap-6 rounded-lg border border-red-200 bg-red-50/30 p-6 dark:border-red-900/50 dark:bg-red-950/20"
           >
             <div class="space-y-4">
-              <div class="flex items-center gap-2 mb-4">
-                <Icon icon="lucide:crown" class="w-5 h-5 text-red-500" />
+              <div class="mb-4 flex items-center gap-2">
+                <Icon icon="lucide:crown" class="h-5 w-5 text-red-500" />
                 <h3 class="font-medium text-red-600 dark:text-red-400">الميزات المتقدمة</h3>
               </div>
               <PremiumMask>
@@ -138,12 +154,12 @@
         </div>
       </div>
 
-      <DialogFooter class="flex justify-between pt-4 mt-4 border-t dark:border-gray-700">
+      <DialogFooter class="mt-4 flex justify-between border-t pt-4 dark:border-gray-700">
         <PrimaryButton variant="outline" @click="$emit('update:isOpen', false)">
           الغاء
         </PrimaryButton>
         <PrimaryButton type="submit" @click="handleSubmit">
-          <Icon icon="lucide:check" class="w-4 h-4 ml-2" />
+          <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
           {{ isEdit ? 'تعديل' : 'إضافة' }}
         </PrimaryButton>
       </DialogFooter>
