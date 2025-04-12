@@ -449,6 +449,60 @@
     { value: 0, label: 'ملغاة' },
   ];
 
+  const getProjectStatusText = (status) => {
+    const statusObj = projectStatuses.find((s) => s.value === status);
+    return statusObj ? statusObj.label : 'غير محدد';
+  };
+
+  const getProjectStatusVariant = (status) => {
+    switch (status) {
+      case 1:
+        return 'warning';
+      case 2:
+        return 'success';
+      case 3:
+        return 'destructive';
+      case 0:
+        return 'outline';
+      default:
+        return 'secondary';
+    }
+  };
+
+  const getSustainableDevelopmentLabel = (value) => {
+    const goal = sustainableDevelopmentGoals.find((g) => g.value === value);
+    return goal ? goal.label : value;
+  };
+
+  const getBeneficiaryLabel = (value) => {
+    const beneficiary = beneficiaries.find((b) => b.value === parseInt(value));
+    return beneficiary ? beneficiary.label : value;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-IQ', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  };
+
+  const formatCurrency = (value) => {
+    if (!value) return '0';
+    const formattedNumber = new Intl.NumberFormat('ar-IQ', {
+      style: 'decimal',
+      maximumFractionDigits: 0,
+    }).format(value);
+    return `${formattedNumber} د.ع`;
+  };
+
   const form = reactive({
     name: '',
     directorate: '',
@@ -466,7 +520,7 @@
     actualEndDate: null,
     cumulativeExpenditure: '',
     cumulativeFinancialProgress: 0,
-    projectStatus: 1,
+    projectStatus: projectStatuses.find((s) => s.value === 1),
     notes: '',
     lng: null,
     lat: null,
@@ -483,7 +537,6 @@
     additionalPeriods: [],
   });
 
-  // Watch for changes in project prop
   watch(
     () => props.project,
     (newProject) => {
@@ -508,14 +561,22 @@
           actualEndDate: newProject.actualEndDate || null,
           cumulativeExpenditure: newProject.cumulativeExpenditure || '',
           cumulativeFinancialProgress: newProject.cumulativeFinancialProgress || 0,
-          projectStatus: newProject.projectStatus || 1,
+          projectStatus:
+            typeof newProject.projectStatus === 'number'
+              ? {
+                  value: newProject.projectStatus,
+                  label: getProjectStatusText(newProject.projectStatus),
+                }
+              : projectStatuses.find((s) => s.value === 1),
           notes: newProject.notes || '',
           lng: newProject.lng,
           lat: newProject.lat,
           cost: newProject.cost,
           isGovernment: newProject.isGovernment || false,
           contracts: newProject.contracts || [],
-          beneficiaries: newProject.beneficiaries || [],
+          beneficiaries: (newProject.beneficiaries || [])
+            .map((b) => (typeof b === 'number' ? b : parseInt(b)))
+            .filter((b) => !isNaN(b)),
           id: newProject.id,
           createdAt: newProject.createdAt,
           updatedAt: newProject.updatedAt,
@@ -558,28 +619,36 @@
     try {
       isSaving.value = true;
       const projectData = {
-        projectForCreation: {
-          name: form.name,
-          directorate: form.directorate,
-          goals: form.goals,
-          sustainableDevelopment: form.sustainableDevelopment.map((goal) => goal.value || goal),
-          beneficiaryEntities: form.beneficiaries,
-          supportingEntities: form.supportingEntities || [],
-          address: form.address,
-          duration: parseInt(form.duration) || 0,
-          plannedStartDate: formatDateToISO(form.plannedStartDate),
-          actualStartDate: formatDateToISO(form.actualStartDate),
-          plannedEndDate: formatDateToISO(form.plannedEndDate),
-          actualEndDate: formatDateToISO(form.actualEndDate),
-          cumulativeExpenditure: form.cumulativeExpenditure?.toString() || '0',
-          cumulativeFinancialProgress: parseFloat(form.cumulativeFinancialProgress) || 0,
-          projectStatus: parseInt(form.projectStatus?.value || form.projectStatus) || 1,
-          notes: form.notes || '',
-          lng: form.coordinates.lng || 0,
-          lat: form.coordinates.lat || 0,
-          cost: parseFloat(form.cost) || 0,
-          isGovernment: Boolean(form.isGovernment),
-        },
+        name: form.name,
+        directorate: form.directorate,
+        goals: form.goals,
+        sustainableDevelopment: form.sustainableDevelopment.map((goal) => goal.value || goal),
+        beneficiaryEntities: form.beneficiaries
+          .map((b) => {
+            const value = parseInt(b.value || b);
+            return isNaN(value) ? null : value;
+          })
+          .filter((v) => v !== null),
+        supportingEntities: form.supportingEntities || [],
+        address: form.address,
+        duration: parseInt(form.duration) || 0,
+        plannedStartDate: formatDateToISO(form.plannedStartDate),
+        actualStartDate: formatDateToISO(form.actualStartDate),
+        plannedEndDate: formatDateToISO(form.plannedEndDate),
+        actualEndDate: formatDateToISO(form.actualEndDate),
+        cumulativeExpenditure: form.cumulativeExpenditure?.toString() || '0',
+        cumulativeFinancialProgress: parseFloat(form.cumulativeFinancialProgress) || 0,
+        projectStatus:
+          form.projectStatus?.value !== undefined
+            ? form.projectStatus.value
+            : typeof form.projectStatus === 'number'
+              ? form.projectStatus
+              : 1,
+        notes: form.notes || '',
+        lng: form.coordinates?.lng || 0,
+        lat: form.coordinates?.lat || 0,
+        cost: parseFloat(form.cost) || 0,
+        isGovernment: Boolean(form.isGovernment),
       };
 
       emit('save', projectData);
@@ -608,59 +677,5 @@
       .catch(() => {
         toast.error('حدث خطأ في تحديد العنوان');
       });
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('ar-IQ', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return dateString;
-    }
-  };
-
-  const formatCurrency = (value) => {
-    if (!value) return '0';
-    const formattedNumber = new Intl.NumberFormat('ar-IQ', {
-      style: 'decimal',
-      maximumFractionDigits: 0,
-    }).format(value);
-    return `${formattedNumber} د.ع`;
-  };
-
-  const getProjectStatusText = (status) => {
-    const statusObj = projectStatuses.find((s) => s.value === status);
-    return statusObj ? statusObj.label : 'غير محدد';
-  };
-
-  const getProjectStatusVariant = (status) => {
-    switch (status) {
-      case 1:
-        return 'warning';
-      case 2:
-        return 'success';
-      case 3:
-        return 'destructive';
-      case 0:
-        return 'outline';
-      default:
-        return 'secondary';
-    }
-  };
-
-  const getSustainableDevelopmentLabel = (value) => {
-    const goal = sustainableDevelopmentGoals.find((g) => g.value === value);
-    return goal ? goal.label : value;
-  };
-
-  const getBeneficiaryLabel = (value) => {
-    const beneficiary = beneficiaries.find((b) => b.value === value);
-    return beneficiary ? beneficiary.label : value;
   };
 </script>

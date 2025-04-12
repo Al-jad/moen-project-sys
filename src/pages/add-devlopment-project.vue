@@ -15,19 +15,6 @@
             <CustomInput v-model="form.plan" dir="rtl" placeholder="ادخل الخطة" />
           </FormField>
 
-          <FormField label="هدف المشروع">
-            <CustomInput v-model="form.projectGoal" dir="rtl" placeholder="ادخل هدف المشروع" />
-          </FormField>
-
-          <FormField label="ربط المشروع بأهداف التنمية المستدامة">
-            <CustomMultiSelect
-              v-model="form.sustainableDevelopmentGoal"
-              :options="sustainableDevelopmentGoals"
-              placeholder="اختر الهدف"
-              :triggerClass="'flex flex-row-reverse w-full'"
-            />
-          </FormField>
-
           <FormField label="اسم الجهة المستفيدة">
             <CustomMultiSelect
               v-model="form.beneficiaryEntities"
@@ -66,7 +53,14 @@
               </Button>
             </div>
           </FormField>
-
+          <FormField label="ربط المشروع بأهداف التنمية المستدامة">
+            <CustomMultiSelect
+              v-model="form.sustainableDevelopmentGoal"
+              :options="sustainableDevelopmentGoals"
+              placeholder="اختر الهدف"
+              :triggerClass="'flex flex-row-reverse w-full'"
+            />
+          </FormField>
           <FormField label="الجهات الساندة" class="md:col-span-2">
             <InputWithAddButton
               v-model="currentSupportingEntity"
@@ -103,6 +97,10 @@
               placeholder="اختر حالة المشروع"
               :triggerClass="'flex flex-row-reverse w-full'"
             />
+          </FormField>
+
+          <FormField label="هدف المشروع" class="md:col-span-2">
+            <Textarea v-model="form.projectGoal" dir="rtl" placeholder="ادخل هدف المشروع" />
           </FormField>
         </FormSection>
         <FormSection title="التاريخ المخطط والفعلي">
@@ -181,19 +179,10 @@
               v-model="form.financials.cumulativeProgress"
               placeholder="ادخل نسبة الانجاز"
               unit="%"
-              disabled
             />
           </FormField>
         </FormSection>
         <FormSection title="تفاصيل موقف تنفيذ المشروع">
-          <FormField class="col-span-2" label="حالة المشروع الحالية">
-            <CustomSelect
-              v-model="form.executionDetails.currentStatus"
-              :options="projectStatuses"
-              placeholder="اختر حالة المشروع"
-              :triggerClass="'flex flex-row-reverse w-full'"
-            />
-          </FormField>
 
           <FormField label="نسبة الانجاز الفني التراكمي">
             <PremiumMask>
@@ -459,26 +448,26 @@
 </template>
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
-  import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
-  import CustomSelect from '@/components/CustomSelect.vue';
-  import Switch from '@/components/CustomSwitch.vue';
-  import DateInput from '@/components/DateInput.vue';
-  import FormField from '@/components/FormField.vue';
-  import FormSection from '@/components/FormSection.vue';
-  import InputWithAddButton from '@/components/InputWithAddButton.vue';
-  import LocationPicker from '@/components/LocationPicker.vue';
-  import NumberInput from '@/components/NumberInput.vue';
-  import PremiumMask from '@/components/PremiumMask.vue';
-  import PremiumModal from '@/components/PremiumModal.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
-  import { Label } from '@/components/ui/label';
-  import { Textarea } from '@/components/ui/textarea';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Icon } from '@iconify/vue';
+import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
+import CustomSelect from '@/components/CustomSelect.vue';
+import Switch from '@/components/CustomSwitch.vue';
+import DateInput from '@/components/DateInput.vue';
+import FormField from '@/components/FormField.vue';
+import FormSection from '@/components/FormSection.vue';
+import InputWithAddButton from '@/components/InputWithAddButton.vue';
+import LocationPicker from '@/components/LocationPicker.vue';
+import NumberInput from '@/components/NumberInput.vue';
+import PremiumMask from '@/components/PremiumMask.vue';
+import PremiumModal from '@/components/PremiumModal.vue';
+import PrimaryButton from '@/components/PrimaryButton.vue';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import { Icon } from '@iconify/vue';
 
   import axiosInstance from '@/plugins/axios';
-  import { useRouter } from 'vue-router';
-  import { toast } from 'vue-sonner';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const form = ref({

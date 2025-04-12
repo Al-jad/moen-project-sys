@@ -307,9 +307,14 @@
   const handleSaveProject = async (updatedProject) => {
     isSaving.value = true;
     try {
+      const projectData = {
+        ...updatedProject,
+        projectStatus: parseInt(updatedProject.projectStatus) || 1,
+      };
+
       const response = await axiosInstance.put(
         `/api/RegionalProject/${project.value.id}`,
-        updatedProject
+        projectData
       );
       project.value = { ...project.value, ...response.data };
       await fetchProject();
