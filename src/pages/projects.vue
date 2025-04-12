@@ -71,12 +71,14 @@
                   مشروع تنمية الاقاليم
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  disabled
                   class="dark:focus:bg-gray-700/50"
                   @click="$router.push('/add-project?type=investment')"
                 >
                   مشروع استثمارية
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  disabled
                   class="dark:focus:bg-gray-700/50"
                   @click="$router.push('/add-project?type=operational')"
                 >
@@ -133,15 +135,30 @@
           </PrimaryButton>
         </div>
 
-        <!-- Empty State -->
+        <!-- Empty State - No Projects in System -->
+        <div
+          v-else-if="!isLoading && !error && allProjects.length === 0"
+          class="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50"
+        >
+          <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+          <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">لا توجد مشاريع</h3>
+          <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
+            >لا توجد مشاريع في النظام حالياً. قم باضافة مشروع جديد.</p
+          >
+          <!-- You might want a button here to add a project -->
+        </div>
+
+        <!-- Empty State - No Filter Match -->
         <div
           v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
           class="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50"
         >
-          <Icon icon="lucide:folder" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-          <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">لا توجد مشاريع</h3>
+          <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+          <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100"
+            >لا توجد نتائج مطابقة</h3
+          >
           <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
-            >لم يتم العثور على اي مشاريع تطابق معايير البحث</p
+            >لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.</p
           >
           <PrimaryButton @click="clearFilters" icon="lucide:x"> مسح الفلترة </PrimaryButton>
         </div>

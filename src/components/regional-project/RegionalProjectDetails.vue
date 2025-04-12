@@ -151,7 +151,7 @@
           </FormField>
 
           <FormField label="هدف المشروع">
-            <CustomInput v-model="form.goals" dir="rtl" placeholder="ادخل هدف المشروع" />
+            <Textarea v-model="form.goals" dir="rtl" placeholder="ادخل هدف المشروع" />
           </FormField>
 
           <FormField label="ربط المشروع بأهداف التنمية المستدامة">
@@ -249,15 +249,16 @@
             />
           </FormField>
 
-          <div class="flex items-center gap-4">
-            <Label class="text-sm font-medium">ضمن البرنامج الحكومي</Label>
+          <div class="flex items-center gap-4 md:col-span-2">
+            <Label class="text-sm font-medium dark:text-gray-100">ضمن البرنامج الحكومي</Label>
             <div class="flex items-center gap-2">
               <Switch
-                id="is-government"
+                id="is-government-edit"
                 :checked="form.isGovernment"
                 @update:checked="form.isGovernment = $event"
+                class="dark:data-[state=checked]:bg-green-500"
               />
-              <Label for="is-government" class="mb-0 text-sm">نعم</Label>
+              <Label for="is-government-edit" class="mb-0 text-sm dark:text-gray-300">نعم</Label>
             </div>
           </div>
         </FormSection>
