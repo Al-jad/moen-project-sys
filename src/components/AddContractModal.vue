@@ -3,7 +3,7 @@
     <DialogContent class="sm:max-w-[500px]">
       <div class="flex flex-col gap-6">
         <DialogHeader>
-          <DialogTitle class="text-xl font-semibold text-right text-gray-900 dark:text-white">
+          <DialogTitle class="text-right text-xl font-semibold text-gray-900 dark:text-white">
             {{ editData ? 'تعديل العقد' : 'اضافة عقد جديد' }}
           </DialogTitle>
         </DialogHeader>
@@ -66,7 +66,7 @@
           </div>
 
           <!-- Project Selection -->
-          <div class="space-y-2">
+          <div class="space-y-2" v-if="false">
             <Label class="text-right">المشروع</Label>
             <CustomSelect
               v-model="formData.projectId"
@@ -253,11 +253,6 @@
       isValid = false;
     } else if (Number(formData.value.cost) <= 0) {
       errors.cost = 'الكلفة يجب ان تكون اكبر من 0';
-      isValid = false;
-    }
-
-    if (!formData.value.projectId) {
-      errors.projectId = 'المشروع مطلوب';
       isValid = false;
     }
 

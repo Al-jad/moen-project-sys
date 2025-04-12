@@ -71,7 +71,7 @@
               <div class="relative z-10">
                 <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد العقود</div>
                 <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                  {{ project?.contracts?.length || 0 }}
+                  {{ contracts.length || 0 }}
                 </div>
               </div>
               <div
@@ -127,7 +127,7 @@
                   :columns="contractColumns"
                   :data="contractsWithProjects"
                   @export="exportToExcel"
-                  :loading="loading"
+                  :loading="isLoadingContracts"
                   :showDateFilter="false"
                   :showSearch="true"
                   :showExport="true"
@@ -211,20 +211,19 @@
       </div>
     </div>
   </DefaultLayout>
-  <ContractEditModal
+  <AddContractModal
     v-model:open="isContractDialogOpen"
-    :loading="isSaving"
-    :contract="selectedContract"
-    :project-id="project?.id"
-    @confirm="handleContractSubmit"
-    @cancel="closeContractDialog"
+    :edit-data="selectedContract"
+    @save="handleContractSubmit"
   />
   <DeleteModal
     v-model:open="isDeleteContractModalOpen"
     title="حذف العقد"
     description="تأكيد حذف العقد"
     :message="
-      selectedContract?.title ? 'هل أنت متأكد من حذف العقد ' + selectedContract.title + '؟' : ''
+      selectedContract?.contractNumber
+        ? 'هل أنت متأكد من حذف العقد رقم ' + selectedContract.contractNumber + '؟'
+        : ''
     "
     :loading="isDeleting"
     @confirm="confirmDeleteContract"
@@ -241,10 +240,10 @@
   />
 </template>
 <script setup>
+  import AddContractModal from '@/components/AddContractModal.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import DeleteModal from '@/components/DeleteModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
-  import ContractEditModal from '@/components/regional-project/ContractEditModal.vue';
   import RegionalProjectDetails from '@/components/regional-project/RegionalProjectDetails.vue';
   import Badge from '@/components/ui/badge/Badge.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -258,9 +257,10 @@
   const router = useRouter();
   const store = useRegionalProjectStore();
   const project = ref(null);
-  const loading = computed(() => store.loading);
-  const error = computed(() => store.error);
-  const contracts = computed(() => store.contracts);
+  const loading = ref(true);
+  const error = ref(null);
+  const contracts = ref([]);
+  const isLoadingContracts = ref(false);
   const contractsCount = computed(() => store.contractsCount);
   const proceduresCount = computed(() => store.proceduresCount);
   const isSaving = ref(false);
@@ -280,6 +280,22 @@
     { key: 'proceduresCount', label: 'عدد الاجراءات', type: 'text' },
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
+  const fetchContracts = async () => {
+    if (!project.value?.id) return;
+
+    try {
+      isLoadingContracts.value = true;
+      const response = await axiosInstance.get(
+        `/api/RegionalProject/Contract/Project/${project.value.id}`
+      );
+      contracts.value = response.data;
+    } catch (err) {
+      console.error('Error fetching contracts:', err);
+      toast.error('حدث خطأ في تحميل العقود');
+    } finally {
+      isLoadingContracts.value = false;
+    }
+  };
   const fetchProject = async () => {
     try {
       const projectId = parseInt(route.params.id);
@@ -288,17 +304,21 @@
         return;
       }
 
-      project.value = await store.fetchProjectById(projectId);
+      const response = await axiosInstance.get(`/api/RegionalProject/${projectId}`);
+      project.value = response.data;
 
       if (!project.value) {
         error.value = 'المشروع غير موجود';
         return;
       }
 
-      await store.fetchAllContracts();
+      // Fetch contracts after project is loaded
+      await fetchContracts();
     } catch (err) {
       console.error('Error fetching project:', err);
       error.value = err.message || 'حدث خطأ في تحميل بيانات المشروع';
+    } finally {
+      loading.value = false;
     }
   };
   onMounted(() => {
@@ -365,7 +385,7 @@
     isContractDialogOpen.value = true;
   };
   const handleEdit = (contract) => {
-    selectedContract.value = contract;
+    selectedContract.value = { ...contract };
     isContractDialogOpen.value = true;
   };
   const handleView = (contract) => {
@@ -374,7 +394,7 @@
   const contractsWithProjects = computed(() => {
     return contracts.value.map((contract) => ({
       ...contract,
-      proceduresCount: store.procedures.filter((p) => p.contractId === contract.id).length,
+      proceduresCount: contract.procedures?.length || 0,
     }));
   });
   const exportToExcel = () => {
@@ -398,18 +418,29 @@
     }));
     tableRef.value?.exportToExcel(formattedData, headerLabels, 'العقود');
   };
-  const handleContractSubmit = async (formData) => {
+  const handleContractSubmit = async (data) => {
     try {
       isSaving.value = true;
-      if (selectedContract.value) {
-        await store.updateContract(selectedContract.value.id, formData);
+      const payload = {
+        ...data,
+        projectId: project.value.id,
+      };
+
+      if (selectedContract.value?.id) {
+        // Edit existing contract
+        await axiosInstance.put(
+          `/api/RegionalProject/Contract/${selectedContract.value.id}`,
+          payload
+        );
         toast.success('تم تعديل العقد بنجاح');
       } else {
-        await store.createContract(formData);
+        // Create new contract
+        await axiosInstance.post('/api/RegionalProject/Contract', payload);
         toast.success('تم إضافة العقد بنجاح');
       }
+
       closeContractDialog();
-      await store.fetchAllContracts();
+      await fetchContracts(); // Refresh contracts
     } catch (error) {
       console.error('Error in contract process:', error);
       toast.error('حدث خطأ أثناء معالجة العقد');
@@ -428,8 +459,8 @@
   const confirmDeleteContract = async () => {
     try {
       isDeleting.value = true;
-      await store.deleteContract(selectedContract.value.id);
-      await store.fetchAllContracts();
+      await axiosInstance.delete(`/api/RegionalProject/Contract/${selectedContract.value.id}`);
+      await fetchContracts();
       toast.success('تم حذف العقد بنجاح');
     } catch (error) {
       console.error('Error deleting contract:', error);

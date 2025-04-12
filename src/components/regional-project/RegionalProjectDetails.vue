@@ -393,8 +393,9 @@
   import Button from '@/components/ui/button/Button.vue';
   import { Label } from '@/components/ui/label';
   import { Textarea } from '@/components/ui/textarea';
+  import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { reactive, ref, watch } from 'vue';
+  import { onMounted, reactive, ref, watch } from 'vue';
   import { toast } from 'vue-sonner';
 
   const props = defineProps({
@@ -414,6 +415,9 @@
   const currentStoppagePeriod = ref('');
   const currentChangeOrder = ref('');
   const currentAdditionalPeriod = ref('');
+  const beneficiaries = ref([]);
+  const contracts = ref([]);
+  const isLoadingContracts = ref(false);
 
   const sustainableDevelopmentGoals = [
     { value: '1', label: 'القضاء على الفقر' },
@@ -433,13 +437,6 @@
     { value: '15', label: 'الحياة في البر' },
     { value: '16', label: 'السلام والعدل والمؤسسات القوية' },
     { value: '17', label: 'عقد الشراكات لتحقيق الأهداف' },
-  ];
-
-  const beneficiaries = [
-    { value: 1, label: 'مديرية تربية بغداد' },
-    { value: 2, label: 'دائرة حماية تحسين بيئة' },
-    { value: 3, label: 'مديرية تربية النجف' },
-    { value: 4, label: 'مديرية تربية البصرة' },
   ];
 
   const projectStatuses = [
@@ -475,7 +472,7 @@
   };
 
   const getBeneficiaryLabel = (value) => {
-    const beneficiary = beneficiaries.find((b) => b.value === parseInt(value));
+    const beneficiary = beneficiaries.value.find((b) => b.value === parseInt(value));
     return beneficiary ? beneficiary.label : value;
   };
 
@@ -537,6 +534,54 @@
     additionalPeriods: [],
   });
 
+  const fetchBeneficiaries = async () => {
+    try {
+      const response = await axiosInstance.get('/api/Beneficiary');
+      beneficiaries.value = response.data.map((b) => ({
+        value: b.id,
+        label: b.name,
+      }));
+    } catch (error) {
+      console.error('Error fetching beneficiaries:', error);
+      toast.error('حدث خطأ في تحميل الجهات المستفيدة');
+    }
+  };
+
+  const fetchContracts = async () => {
+    if (!props.project?.id) return;
+
+    try {
+      isLoadingContracts.value = true;
+      const response = await axiosInstance.get(
+        `/api/RegionalProject/Contract/Project/${props.project.id}`
+      );
+      contracts.value = response.data;
+
+      form.contracts = response.data;
+    } catch (error) {
+      console.error('Error fetching contracts:', error);
+      toast.error('حدث خطأ في تحميل العقود');
+    } finally {
+      isLoadingContracts.value = false;
+    }
+  };
+
+  onMounted(() => {
+    fetchBeneficiaries();
+    if (props.project?.id) {
+      fetchContracts();
+    }
+  });
+
+  watch(
+    () => props.project?.id,
+    (newId) => {
+      if (newId) {
+        fetchContracts();
+      }
+    }
+  );
+
   watch(
     () => props.project,
     (newProject) => {
@@ -546,7 +591,9 @@
           directorate: newProject.directorate || '',
           goals: newProject.goals || '',
           projectType: newProject.projectType,
-          sustainableDevelopment: newProject.sustainableDevelopment || [],
+          sustainableDevelopment: sustainableDevelopmentGoals.filter((goal) =>
+            newProject.sustainableDevelopment?.includes(goal.label)
+          ),
           supportingEntities: newProject.supportingEntities || [],
           address: newProject.address || '',
           location: newProject.location || '',
@@ -573,10 +620,11 @@
           lat: newProject.lat,
           cost: newProject.cost,
           isGovernment: newProject.isGovernment || false,
-          contracts: newProject.contracts || [],
-          beneficiaries: (newProject.beneficiaries || [])
-            .map((b) => (typeof b === 'number' ? b : parseInt(b)))
-            .filter((b) => !isNaN(b)),
+          contracts: contracts.value,
+          beneficiaries: (newProject.beneficiaries || []).map((b) => ({
+            value: b.id,
+            label: b.name,
+          })),
           id: newProject.id,
           createdAt: newProject.createdAt,
           updatedAt: newProject.updatedAt,
@@ -622,13 +670,8 @@
         name: form.name,
         directorate: form.directorate,
         goals: form.goals,
-        sustainableDevelopment: form.sustainableDevelopment.map((goal) => goal.value || goal),
-        beneficiaryEntities: form.beneficiaries
-          .map((b) => {
-            const value = parseInt(b.value || b);
-            return isNaN(value) ? null : value;
-          })
-          .filter((v) => v !== null),
+        sustainableDevelopment: form.sustainableDevelopment.map((goal) => goal.label),
+        beneficiaryEntities: form.beneficiaries.map((b) => b.value),
         supportingEntities: form.supportingEntities || [],
         address: form.address,
         duration: parseInt(form.duration) || 0,

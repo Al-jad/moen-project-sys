@@ -123,9 +123,9 @@
           value: computed(() => `${props.project.duration} يوم`),
         },
         {
-          title: 'الجهات الساندة',
-          icon: 'lucide:building',
-          value: computed(() => props.project.supportingEntities?.length || 0),
+          title: 'العقود',
+          icon: 'lucide:file-text',
+          value: computed(() => props.project.contracts?.length || 0),
         },
       ],
     },
@@ -152,9 +152,15 @@
           value: computed(() => props.project.cumulativeFinancialProgress || 0),
         },
         {
-          title: 'أهداف التنمية المستدامة',
+          title: 'الإجراءات التنفيذية',
           icon: 'lucide:wallet',
-          value: computed(() => props.project.sustainableDevelopment?.length || 0),
+          value: computed(() => {
+            return (
+              props.project.contracts?.reduce((total, contract) => {
+                return total + (contract.procedures?.length || 0);
+              }, 0) || 0
+            );
+          }),
         },
       ],
     },
