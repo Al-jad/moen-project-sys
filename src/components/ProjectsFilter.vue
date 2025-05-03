@@ -359,6 +359,7 @@
     inProgress: false,
     delayed: false,
     cancelled: false,
+    proposed: false,
   });
   const localSelectedBeneficiaries = ref({ all: true });
   const localShowGovernmentProjects = ref(false);
@@ -543,6 +544,7 @@
       inProgress: false,
       delayed: false,
       cancelled: false,
+      proposed: false,
     };
 
     // Reset beneficiaries to only "all" selected

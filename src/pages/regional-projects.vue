@@ -14,9 +14,9 @@
         :selectedCurrency="selectedCurrency"
         @currency-changed="handleCurrencyChange"
       />
-      <div class="flex-1 min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
-        <div class="w-full mx-auto space-y-8 max-w-7xl">
-          <div class="flex justify-end mb-4">
+      <div class="min-h-screen flex-1 bg-gray-100 p-6 dark:bg-gray-900">
+        <div class="mx-auto w-full max-w-7xl space-y-8">
+          <div class="mb-4 flex justify-end">
             <div class="flex items-center gap-2">
               <span class="text-sm text-gray-600 dark:text-gray-300">العملة:</span>
               <CustomSelect
@@ -30,10 +30,10 @@
             </div>
           </div>
           <div class="grid gap-4 md:grid-cols-4">
-            <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
-                <div class="p-3 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-                  <Icon icon="lucide:folders" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
+                  <Icon icon="lucide:folders" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
                   <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -43,10 +43,10 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
-                <div class="p-3 rounded-lg bg-green-500/10 dark:bg-green-500/20">
-                  <Icon icon="lucide:file" class="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
+                  <Icon icon="lucide:file" class="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
                   <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -56,12 +56,12 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
-                <div class="p-3 rounded-lg bg-purple-500/10 dark:bg-purple-500/20">
+                <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
                   <Icon
                     icon="lucide:check-circle"
-                    class="w-6 h-6 text-purple-600 dark:text-purple-400"
+                    class="h-6 w-6 text-purple-600 dark:text-purple-400"
                   />
                 </div>
                 <div>
@@ -72,12 +72,12 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <div class="flex items-center gap-4">
-                <div class="p-3 rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
+                <div class="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
                   <Icon
                     icon="lucide:dollar-sign"
-                    class="w-6 h-6 text-amber-600 dark:text-amber-400"
+                    class="h-6 w-6 text-amber-600 dark:text-amber-400"
                   />
                 </div>
                 <div>
@@ -89,8 +89,8 @@
               </div>
             </div>
           </div>
-          <div class="bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-            <div class="p-6 border-b dark:border-gray-700">
+          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div class="border-b p-6 dark:border-gray-700">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100"
@@ -112,9 +112,9 @@
                         class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
                         align="end"
                       >
-                        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
                           <h3
-                            class="text-base font-medium text-right text-gray-900 dark:text-white"
+                            class="text-right text-base font-medium text-gray-900 dark:text-white"
                           >
                             ترتيب
                           </h3>
@@ -131,7 +131,7 @@
                           >
                             <Icon
                               :icon="option.icon"
-                              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                              class="h-4 w-4 text-gray-500 dark:text-gray-400"
                             />
                             <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
                           </DropdownMenuItem>
@@ -147,7 +147,7 @@
                         class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
                         @click="clearSort"
                       >
-                        <Icon icon="lucide:x" class="w-3 h-3" />
+                        <Icon icon="lucide:x" class="h-3 w-3" />
                       </button>
                     </div>
                   </div>
@@ -161,7 +161,7 @@
                     >
                       <Icon
                         icon="lucide:plus"
-                        class="w-4 h-4 ml-2 text-gray-900 dark:text-gray-100"
+                        class="ml-2 h-4 w-4 text-gray-900 dark:text-gray-100"
                       />
                       <span class="text-gray-900 dark:text-gray-100">اضافة مشروع جديد</span>
                     </Button>
@@ -184,12 +184,12 @@
                 <!-- Case 1: No Projects Initially -->
                 <div
                   v-if="projects.length === 0"
-                  class="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg dark:border-gray-700"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
                 >
-                  <div class="p-3 mb-3 bg-gray-100 rounded-full dark:bg-gray-800">
+                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
                     <Icon
                       icon="lucide:folder-open"
-                      class="w-8 h-8 text-gray-400 dark:text-gray-500"
+                      class="h-8 w-8 text-gray-400 dark:text-gray-500"
                     />
                   </div>
                   <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
@@ -200,7 +200,7 @@
                   >
                   <RouterLink to="/add-devlopment-project">
                     <Button variant="outline" size="sm">
-                      <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                       اضافة مشروع
                     </Button>
                   </RouterLink>
@@ -209,10 +209,10 @@
                 <!-- Case 2: Projects exist, but filter yields no results -->
                 <div
                   v-else-if="filteredProjects.length === 0"
-                  class="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg dark:border-gray-700"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
                 >
-                  <div class="p-3 mb-3 bg-gray-100 rounded-full dark:bg-gray-800">
-                    <Icon icon="lucide:search-x" class="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
+                    <Icon icon="lucide:search-x" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
                   </div>
                   <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
                     لا توجد نتائج تطابق الفلتر
@@ -232,7 +232,7 @@
                     @attachment-added="fetchProjects"
                   />
 
-                  <div class="flex justify-center mt-4">
+                  <div class="mt-4 flex justify-center">
                     <CustomPagination
                       v-model="currentPage"
                       :total="filteredProjects.length"
@@ -347,6 +347,7 @@
     inProgress: route.query.status === '1',
     delayed: route.query.status === '3',
     cancelled: route.query.status === '0',
+    proposed: route.query.status === '4',
   });
 
   // Watch for route changes to update the filters
@@ -360,6 +361,7 @@
         inProgress: newQuery.status === '1',
         delayed: newQuery.status === '3',
         cancelled: newQuery.status === '0',
+        proposed: newQuery.status === '4',
       };
     },
     { deep: true }
@@ -436,7 +438,8 @@
           (filters.selectedStatus.completed && project.projectStatus === 2) ||
           (filters.selectedStatus.inProgress && project.projectStatus === 1) ||
           (filters.selectedStatus.delayed && project.projectStatus === 3) ||
-          (filters.selectedStatus.cancelled && project.projectStatus === 0)
+          (filters.selectedStatus.cancelled && project.projectStatus === 0) ||
+          (filters.selectedStatus.proposed && project.projectStatus === 4)
         );
       });
     }
@@ -618,6 +621,7 @@
             inProgress: newQuery.status === '1',
             delayed: newQuery.status === '3',
             cancelled: newQuery.status === '0',
+            proposed: newQuery.status === '4',
           },
           selectedBeneficiaries: { all: true },
           showGovernmentProjects: newQuery.showGovernmentProjects === 'true',
