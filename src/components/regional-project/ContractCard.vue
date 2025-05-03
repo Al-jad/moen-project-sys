@@ -86,14 +86,130 @@
           اضافة اجراء
         </Button>
       </div>
-      <div v-if="contract.procedures && contract.procedures.length > 0" class="space-y-4">
-        <ProcedureCard
+      <div v-if="contract.procedures && contract.procedures.length > 0" class="mt-4 space-y-4">
+        <div
           v-for="procedure in contract.procedures"
           :key="procedure.id"
-          :procedure="procedure"
-          @edit="(p) => $emit('editProcedure', p, contract)"
-          @delete="(p) => $emit('deleteProcedure', p)"
-        />
+          class="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ procedure.name }}</h4>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ procedure.details }}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                @click="$emit('edit-procedure', procedure, contract)"
+              >
+                <Icon icon="lucide:edit" class="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" @click="$emit('delete-procedure', procedure)">
+                <Icon icon="lucide:trash" class="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-4">
+            <!-- Manual Values -->
+            <div class="space-y-2">
+              <h6 class="text-sm font-medium text-gray-700 dark:text-gray-300">القيم المدخلة</h6>
+              <div class="grid gap-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز الفني المخطط:</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.plannedCompletionPercentage }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز الفني الفعلي:</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.actualCompletionPercentage }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز المالي المخطط:</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.plannedFinancialProgress }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز المالي الفعلي:</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.actualFinancialProgress }}%</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculated Values -->
+            <div class="space-y-2">
+              <h6 class="text-sm font-medium text-gray-700 dark:text-gray-300">القيم المحسوبة</h6>
+              <div class="grid gap-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >نسبة الإنجاز الفني المخطط المحسوب:</span
+                  >
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.calculatedPlannedCompletionPercentage }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >نسبة الإنجاز الفني الفعلي المحسوب:</span
+                  >
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.calculatedActualCompletionPercentage }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنحراف الفني المحسوب:</span>
+                  <span
+                    class="font-medium"
+                    :class="{
+                      'text-green-600': procedure.calculatedTechnicalDeviation >= 0,
+                      'text-red-600': procedure.calculatedTechnicalDeviation < 0,
+                    }"
+                    >{{ procedure.calculatedTechnicalDeviation }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >نسبة الإنجاز المالي المخطط المحسوب:</span
+                  >
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.calculatedPlannedFinancialProgress }}%</span
+                  >
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >نسبة الإنجاز المالي الفعلي المحسوب:</span
+                  >
+                  <span class="font-medium text-gray-900 dark:text-gray-100"
+                    >{{ procedure.calculatedActualFinancialProgress }}%</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between border-t pt-4 dark:border-gray-700">
+            <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+              <div class="flex items-center gap-1">
+                <Icon icon="lucide:clock" class="h-4 w-4" />
+                {{ procedure.duration }} يوم
+              </div>
+              <div class="flex items-center gap-1">
+                <Icon icon="lucide:percent" class="h-4 w-4" />
+                الوزن: {{ procedure.weight }}%
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              {{ formatDate(procedure.startDate) }} - {{ formatDate(procedure.endDate) }}
+            </div>
+          </div>
+        </div>
       </div>
       <div
         v-else
@@ -118,7 +234,6 @@
 <script setup>
   import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
-  import ProcedureCard from './ProcedureCard.vue';
 
   const props = defineProps({
     contract: {

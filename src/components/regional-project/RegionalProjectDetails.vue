@@ -136,6 +136,31 @@
           {{ project?.notes || 'لا توجد ملاحظات' }}
         </div>
       </div>
+
+      <!-- New Calculated Values Section -->
+      <div class="flex flex-col gap-2 p-4">
+        <div class="mb-2">
+          <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100">القيم المحسوبة</h4>
+        </div>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-400"
+              >نسبة الإنجاز المالي التراكمي المحسوب</div
+            >
+            <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+              {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 dark:text-gray-400"
+              >نسبة الإنجاز المالي التراكمي المدخل</div
+            >
+            <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+              {{ project?.cumulativeFinancialProgress || 0 }}%
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Edit Mode -->
@@ -249,6 +274,19 @@
             />
           </FormField>
 
+          <!-- New Calculated Fields Section -->
+          <FormSection title="القيم المحسوبة" class="dark:border-gray-700">
+            <FormField label="نسبة الإنجاز المالي التراكمي المحسوب">
+              <NumberInput
+                v-model="form.calculatedCumulativeFinancialProgress"
+                placeholder="القيمة المحسوبة"
+                unit="%"
+                min="0"
+                max="100"
+              />
+            </FormField>
+          </FormSection>
+
           <div class="flex items-center gap-4 md:col-span-2">
             <Label class="text-sm font-medium dark:text-gray-100">ضمن البرنامج الحكومي</Label>
             <div class="flex items-center gap-2">
@@ -292,25 +330,21 @@
           </FormField>
 
           <FormField label="نسبة الانجاز الفني التراكمي">
-            <PremiumMask>
-              <NumberInput
-                v-model="form.cumulativeTechnicalProgress"
-                placeholder="ادخل النسبة"
-                unit="%"
-                disabled
-              />
-            </PremiumMask>
+            <NumberInput
+              v-model="form.cumulativeTechnicalProgress"
+              placeholder="ادخل النسبة"
+              unit="%"
+              disabled
+            />
           </FormField>
 
           <FormField label="نسبة الانحراف الفني التراكمي">
-            <PremiumMask>
-              <NumberInput
-                v-model="form.cumulativeTechnicalDeviation"
-                placeholder="ادخل النسبة"
-                unit="%"
-                disabled
-              />
-            </PremiumMask>
+            <NumberInput
+              v-model="form.cumulativeTechnicalDeviation"
+              placeholder="ادخل النسبة"
+              unit="%"
+              disabled
+            />
           </FormField>
 
           <FormField label="اسباب الانحراف" class="md:col-span-2">
@@ -445,6 +479,7 @@
     { value: 2, label: 'منجزة' },
     { value: 3, label: 'متلكئة' },
     { value: 0, label: 'ملغاة' },
+    { value: 4, label: 'مقترح' },
   ];
 
   const getProjectStatusText = (status) => {
@@ -518,6 +553,7 @@
     actualEndDate: null,
     cumulativeExpenditure: '',
     cumulativeFinancialProgress: 0,
+    calculatedCumulativeFinancialProgress: 0,
     projectStatus: projectStatuses.find((s) => s.value === 1),
     notes: '',
     lng: null,
@@ -611,6 +647,8 @@
           actualEndDate: newProject.actualEndDate || null,
           cumulativeExpenditure: newProject.cumulativeExpenditure || '',
           cumulativeFinancialProgress: newProject.cumulativeFinancialProgress || 0,
+          calculatedCumulativeFinancialProgress:
+            newProject.calculatedCumulativeFinancialProgress || 0,
           projectStatus:
             typeof newProject.projectStatus === 'number'
               ? {
@@ -696,6 +734,8 @@
         actualEndDate: formatDateToISO(form.actualEndDate),
         cumulativeExpenditure: form.cumulativeExpenditure?.toString() || '0',
         cumulativeFinancialProgress: parseFloat(form.cumulativeFinancialProgress) || 0,
+        calculatedCumulativeFinancialProgress:
+          parseFloat(form.calculatedCumulativeFinancialProgress) || 0,
         projectStatus:
           form.projectStatus?.value !== undefined
             ? form.projectStatus.value

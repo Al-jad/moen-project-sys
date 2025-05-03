@@ -230,6 +230,7 @@
       1: 'bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300',
       2: 'bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-300',
       3: 'bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-300',
+      4: 'bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-300',
     };
     return statusClasses[status] || '';
   }
@@ -239,6 +240,7 @@
       1: 'قيد التنفيذ',
       2: 'منجزة',
       3: 'متلكئة',
+      4: 'مقترح',
     };
     return statusMap[status] || 'غير معروف';
   }

@@ -214,6 +214,16 @@
             >
               <div class="mx-1 h-2.5 w-2.5 rounded-full bg-gray-500"></div>
             </CustomCheckbox>
+            <CustomCheckbox
+              v-model="localSelectedStatus.proposed"
+              id="status-proposed"
+              label="مقترح"
+              :disabled="disabled"
+              :class="{ 'cursor-not-allowed': disabled }"
+              @update:model-value="handleIndividualStatusChange"
+            >
+              <div class="mx-1 h-2.5 w-2.5 rounded-full bg-blue-500"></div>
+            </CustomCheckbox>
           </div>
         </div>
 

@@ -181,29 +181,30 @@
               unit="%"
             />
           </FormField>
+
+          <FormField label="نسبة الانجاز المالي التراكمي المحسوب">
+            <NumberInput
+              v-model="form.financials.calculatedCumulativeFinancialProgress"
+              placeholder="القيمة المحسوبة"
+              unit="%"
+            />
+          </FormField>
         </FormSection>
         <FormSection title="تفاصيل موقف تنفيذ المشروع">
-
           <FormField label="نسبة الانجاز الفني التراكمي">
-            <PremiumMask>
-              <NumberInput
-                v-model="form.executionDetails.cumulativeTechnicalProgress"
-                placeholder="ادخل النسبة"
-                unit="%"
-                disabled
-              />
-            </PremiumMask>
+            <NumberInput
+              v-model="form.executionDetails.cumulativeTechnicalProgress"
+              placeholder="ادخل النسبة"
+              unit="%"
+            />
           </FormField>
 
           <FormField label="نسبة الانحراف الفني التراكمي">
-            <PremiumMask>
-              <NumberInput
-                v-model="form.executionDetails.cumulativeTechnicalDeviation"
-                placeholder="ادخل النسبة"
-                unit="%"
-                disabled
-              />
-            </PremiumMask>
+            <NumberInput
+              v-model="form.executionDetails.cumulativeTechnicalDeviation"
+              placeholder="ادخل النسبة"
+              unit="%"
+            />
           </FormField>
 
           <FormField label="اسباب الانحراف" class="md:col-span-2">
@@ -389,7 +390,6 @@
                             v-model="procedure.actualCompletionPercentage"
                             placeholder="ادخل النسبة"
                             unit="%"
-                            disabled
                           />
                         </PremiumMask>
                       </FormField>
@@ -400,9 +400,48 @@
                             v-model="procedure.technicalDeviation"
                             placeholder="ادخل النسبة"
                             unit="%"
-                            disabled
                           />
                         </PremiumMask>
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز الفني المخطط المحسوب">
+                        <NumberInput
+                          v-model="procedure.calculatedPlannedCompletionPercentage"
+                          placeholder="القيمة المحسوبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز الفني الفعلي المحسوب">
+                        <NumberInput
+                          v-model="procedure.calculatedActualCompletionPercentage"
+                          placeholder="القيمة المحسوبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="نسبة الانحراف الفني المحسوب">
+                        <NumberInput
+                          v-model="procedure.calculatedTechnicalDeviation"
+                          placeholder="القيمة المحسوبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز المالي المخطط المحسوب">
+                        <NumberInput
+                          v-model="procedure.calculatedPlannedFinancialProgress"
+                          placeholder="القيمة المحسوبة"
+                          unit="%"
+                        />
+                      </FormField>
+
+                      <FormField label="نسبة الانجاز المالي الفعلي المحسوب">
+                        <NumberInput
+                          v-model="procedure.calculatedActualFinancialProgress"
+                          placeholder="القيمة المحسوبة"
+                          unit="%"
+                        />
                       </FormField>
                     </div>
                   </div>
@@ -448,26 +487,26 @@
 </template>
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
-import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
-import CustomSelect from '@/components/CustomSelect.vue';
-import Switch from '@/components/CustomSwitch.vue';
-import DateInput from '@/components/DateInput.vue';
-import FormField from '@/components/FormField.vue';
-import FormSection from '@/components/FormSection.vue';
-import InputWithAddButton from '@/components/InputWithAddButton.vue';
-import LocationPicker from '@/components/LocationPicker.vue';
-import NumberInput from '@/components/NumberInput.vue';
-import PremiumMask from '@/components/PremiumMask.vue';
-import PremiumModal from '@/components/PremiumModal.vue';
-import PrimaryButton from '@/components/PrimaryButton.vue';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { Icon } from '@iconify/vue';
+  import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
+  import CustomSelect from '@/components/CustomSelect.vue';
+  import Switch from '@/components/CustomSwitch.vue';
+  import DateInput from '@/components/DateInput.vue';
+  import FormField from '@/components/FormField.vue';
+  import FormSection from '@/components/FormSection.vue';
+  import InputWithAddButton from '@/components/InputWithAddButton.vue';
+  import LocationPicker from '@/components/LocationPicker.vue';
+  import NumberInput from '@/components/NumberInput.vue';
+  import PremiumMask from '@/components/PremiumMask.vue';
+  import PremiumModal from '@/components/PremiumModal.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
+  import { Label } from '@/components/ui/label';
+  import { Textarea } from '@/components/ui/textarea';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { Icon } from '@iconify/vue';
 
   import axiosInstance from '@/plugins/axios';
-import { useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
+  import { useRouter } from 'vue-router';
+  import { toast } from 'vue-sonner';
 
   const router = useRouter();
   const form = ref({
@@ -493,6 +532,7 @@ import { toast } from 'vue-sonner';
       actualWorkValue: '',
       cumulativeExpenses: '',
       cumulativeProgress: '',
+      calculatedCumulativeFinancialProgress: null,
     },
     executionDetails: {
       currentStatus: '',
@@ -554,6 +594,7 @@ import { toast } from 'vue-sonner';
     { value: 2, label: 'منجزة' },
     { value: 3, label: 'متلكئة' },
     { value: 0, label: 'ملغاة' },
+    { value: 4, label: 'مقترح' },
   ];
   const formatDateToISO = (date) => {
     if (!date) return null;
@@ -572,6 +613,11 @@ import { toast } from 'vue-sonner';
       technicalDeviation: '',
       plannedFinancialProgress: '',
       actualFinancialProgress: '',
+      calculatedPlannedCompletionPercentage: null,
+      calculatedActualCompletionPercentage: null,
+      calculatedTechnicalDeviation: null,
+      calculatedPlannedFinancialProgress: null,
+      calculatedActualFinancialProgress: null,
     });
   };
   const removeExecutionProcedure = (contractIndex, procedureIndex) => {
@@ -639,6 +685,8 @@ import { toast } from 'vue-sonner';
         actualEndDate: formatDateToISO(form.value.actualCompletionDate),
         cumulativeExpenditure: form.value.financials.cumulativeExpenses?.toString() || '0',
         cumulativeFinancialProgress: parseFloat(form.value.financials.cumulativeProgress) || 0,
+        calculatedCumulativeFinancialProgress:
+          form.value.financials.calculatedCumulativeFinancialProgress,
         projectStatus: parseInt(form.value.projectStatus) || 1,
         notes: form.value.executionDetails.notes || '',
         lng: form.value.coordinates.lng || 0,
@@ -683,6 +731,11 @@ import { toast } from 'vue-sonner';
             technicalDeviation: parseFloat(procedure.technicalDeviation) || 0,
             plannedFinancialProgress: parseFloat(procedure.plannedFinancialProgress) || 0,
             actualFinancialProgress: parseFloat(procedure.actualFinancialProgress) || 0,
+            calculatedPlannedCompletionPercentage: procedure.calculatedPlannedCompletionPercentage,
+            calculatedActualCompletionPercentage: procedure.calculatedActualCompletionPercentage,
+            calculatedTechnicalDeviation: procedure.calculatedTechnicalDeviation,
+            calculatedPlannedFinancialProgress: procedure.calculatedPlannedFinancialProgress,
+            calculatedActualFinancialProgress: procedure.calculatedActualFinancialProgress,
             contractId: contractId,
           };
 
