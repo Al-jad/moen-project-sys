@@ -57,6 +57,37 @@
           </div>
         </div>
         <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400"
+            >نسبة الإنجاز المالي التراكمي المحسوب</div
+          >
+          <div class="mt-1 flex items-center gap-2">
+            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
+            </span>
+            <Icon
+              :icon="
+                project?.calculatedCumulativeFinancialProgress ===
+                project?.cumulativeFinancialProgress
+                  ? 'lucide:check-circle'
+                  : 'lucide:alert-circle'
+              "
+              :class="[
+                'h-4 w-4',
+                project?.calculatedCumulativeFinancialProgress ===
+                project?.cumulativeFinancialProgress
+                  ? 'text-green-500'
+                  : 'text-amber-500',
+              ]"
+              :title="
+                project?.calculatedCumulativeFinancialProgress ===
+                project?.cumulativeFinancialProgress
+                  ? 'القيمة المحسوبة تطابق القيمة المدخلة'
+                  : 'القيمة المحسوبة لا تطابق القيمة المدخلة'
+              "
+            />
+          </div>
+        </div>
+        <div>
           <div class="text-sm text-gray-500 dark:text-gray-400">حالة المشروع الحالية</div>
           <div class="mt-1">
             <Badge :variant="getProjectStatusVariant(project?.projectStatus)">
@@ -143,20 +174,115 @@
           <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100">القيم المحسوبة</h4>
         </div>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <div class="text-sm text-gray-500 dark:text-gray-400"
-              >نسبة الإنجاز المالي التراكمي المحسوب</div
-            >
-            <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-              {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
+          <!-- Financial Progress -->
+          <div class="space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-500 dark:text-gray-400"
+                >نسبة الإنجاز المالي التراكمي</div
+              >
+              <div class="flex items-center gap-2">
+                <span
+                  :class="[
+                    'text-xs font-medium',
+                    project?.calculatedCumulativeFinancialProgress ===
+                    project?.cumulativeFinancialProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                >
+                  {{
+                    project?.calculatedCumulativeFinancialProgress ===
+                    project?.cumulativeFinancialProgress
+                      ? 'مطابق'
+                      : 'غير مطابق'
+                  }}
+                </span>
+                <Icon
+                  :icon="
+                    project?.calculatedCumulativeFinancialProgress ===
+                    project?.cumulativeFinancialProgress
+                      ? 'lucide:check-circle'
+                      : 'lucide:alert-circle'
+                  "
+                  :class="[
+                    'h-4 w-4',
+                    project?.calculatedCumulativeFinancialProgress ===
+                    project?.cumulativeFinancialProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">المدخل</div>
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.cumulativeFinancialProgress || 0 }}%
+                </div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">المحسوب</div>
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
+                </div>
+              </div>
             </div>
           </div>
-          <div>
-            <div class="text-sm text-gray-500 dark:text-gray-400"
-              >نسبة الإنجاز المالي التراكمي المدخل</div
-            >
-            <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-              {{ project?.cumulativeFinancialProgress || 0 }}%
+
+          <!-- Technical Progress -->
+          <div class="space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-500 dark:text-gray-400"
+                >نسبة الإنجاز الفني التراكمي</div
+              >
+              <div class="flex items-center gap-2">
+                <span
+                  :class="[
+                    'text-xs font-medium',
+                    project?.calculatedCumulativeTechnicalProgress ===
+                    project?.cumulativeTechnicalProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                >
+                  {{
+                    project?.calculatedCumulativeTechnicalProgress ===
+                    project?.cumulativeTechnicalProgress
+                      ? 'مطابق'
+                      : 'غير مطابق'
+                  }}
+                </span>
+                <Icon
+                  :icon="
+                    project?.calculatedCumulativeTechnicalProgress ===
+                    project?.cumulativeTechnicalProgress
+                      ? 'lucide:check-circle'
+                      : 'lucide:alert-circle'
+                  "
+                  :class="[
+                    'h-4 w-4',
+                    project?.calculatedCumulativeTechnicalProgress ===
+                    project?.cumulativeTechnicalProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">المدخل</div>
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.cumulativeTechnicalProgress || 0 }}%
+                </div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">المحسوب</div>
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ project?.calculatedCumulativeTechnicalProgress || 0 }}%
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -430,7 +556,7 @@
   import { Textarea } from '@/components/ui/textarea';
   import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
-  import { onMounted, reactive, ref, watch } from 'vue';
+  import { computed, onMounted, reactive, ref, watch } from 'vue';
   import { toast } from 'vue-sonner';
 
   const props = defineProps({
@@ -778,4 +904,38 @@
         toast.error('تعذر تحديد العنوان');
       });
   };
+
+  const formatNumber = (value) => {
+    if (value === null || value === undefined) return 0;
+    return parseFloat(Number(value).toFixed(2));
+  };
+
+  const valueComparisons = computed(() => {
+    const tolerance = 0.01; // 0.01% tolerance for floating point comparison
+
+    const compareValues = (val1, val2) => {
+      const num1 = formatNumber(val1);
+      const num2 = formatNumber(val2);
+      return Math.abs(num1 - num2) <= tolerance;
+    };
+
+    return {
+      financialProgress: {
+        calculated: formatNumber(props.project?.calculatedCumulativeFinancialProgress),
+        actual: formatNumber(props.project?.cumulativeFinancialProgress),
+        matches: compareValues(
+          props.project?.calculatedCumulativeFinancialProgress,
+          props.project?.cumulativeFinancialProgress
+        ),
+      },
+      technicalProgress: {
+        calculated: formatNumber(props.project?.calculatedCumulativeTechnicalProgress),
+        actual: formatNumber(props.project?.cumulativeTechnicalProgress),
+        matches: compareValues(
+          props.project?.calculatedCumulativeTechnicalProgress,
+          props.project?.cumulativeTechnicalProgress
+        ),
+      },
+    };
+  });
 </script>

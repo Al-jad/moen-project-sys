@@ -183,11 +183,47 @@
           </FormField>
 
           <FormField label="نسبة الانجاز المالي التراكمي المحسوب">
-            <NumberInput
-              v-model="form.financials.calculatedCumulativeFinancialProgress"
-              placeholder="القيمة المحسوبة"
-              unit="%"
-            />
+            <div class="flex items-center gap-2">
+              <NumberInput
+                v-model="form.financials.calculatedCumulativeFinancialProgress"
+                placeholder="القيمة المحسوبة"
+                unit="%"
+                readonly
+              />
+              <div class="flex items-center gap-1">
+                <Icon
+                  :icon="
+                    form.financials.calculatedCumulativeFinancialProgress ===
+                    form.financials.cumulativeProgress
+                      ? 'lucide:check-circle'
+                      : 'lucide:alert-circle'
+                  "
+                  :class="[
+                    'h-5 w-5',
+                    form.financials.calculatedCumulativeFinancialProgress ===
+                    form.financials.cumulativeProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                />
+                <span
+                  :class="[
+                    'text-xs font-medium',
+                    form.financials.calculatedCumulativeFinancialProgress ===
+                    form.financials.cumulativeProgress
+                      ? 'text-green-500'
+                      : 'text-amber-500',
+                  ]"
+                >
+                  {{
+                    form.financials.calculatedCumulativeFinancialProgress ===
+                    form.financials.cumulativeProgress
+                      ? 'مطابق'
+                      : 'غير مطابق'
+                  }}
+                </span>
+              </div>
+            </div>
           </FormField>
         </FormSection>
         <FormSection title="تفاصيل موقف تنفيذ المشروع">
@@ -385,23 +421,19 @@
                         />
                       </FormField>
                       <FormField label="نسبة الانجاز الفني الفعلي">
-                        <PremiumMask>
                           <NumberInput
                             v-model="procedure.actualCompletionPercentage"
                             placeholder="ادخل النسبة"
                             unit="%"
                           />
-                        </PremiumMask>
                       </FormField>
 
                       <FormField label="نسبة الانحراف الفني">
-                        <PremiumMask>
                           <NumberInput
                             v-model="procedure.technicalDeviation"
                             placeholder="ادخل النسبة"
                             unit="%"
                           />
-                        </PremiumMask>
                       </FormField>
 
                       <FormField label="نسبة الانجاز الفني المخطط المحسوب">
@@ -413,19 +445,47 @@
                       </FormField>
 
                       <FormField label="نسبة الانجاز الفني الفعلي المحسوب">
-                        <NumberInput
-                          v-model="procedure.calculatedActualCompletionPercentage"
-                          placeholder="القيمة المحسوبة"
-                          unit="%"
-                        />
-                      </FormField>
-
-                      <FormField label="نسبة الانحراف الفني المحسوب">
-                        <NumberInput
-                          v-model="procedure.calculatedTechnicalDeviation"
-                          placeholder="القيمة المحسوبة"
-                          unit="%"
-                        />
+                        <div class="flex items-center gap-2">
+                          <NumberInput
+                            v-model="procedure.calculatedActualCompletionPercentage"
+                            placeholder="القيمة المحسوبة"
+                            unit="%"
+                            readonly
+                          />
+                          <div class="flex items-center gap-1">
+                            <Icon
+                              :icon="
+                                procedure.calculatedActualCompletionPercentage ===
+                                procedure.actualCompletionPercentage
+                                  ? 'lucide:check-circle'
+                                  : 'lucide:alert-circle'
+                              "
+                              :class="[
+                                'h-5 w-5',
+                                procedure.calculatedActualCompletionPercentage ===
+                                procedure.actualCompletionPercentage
+                                  ? 'text-green-500'
+                                  : 'text-amber-500',
+                              ]"
+                            />
+                            <span
+                              :class="[
+                                'text-xs font-medium',
+                                procedure.calculatedActualCompletionPercentage ===
+                                procedure.actualCompletionPercentage
+                                  ? 'text-green-500'
+                                  : 'text-amber-500',
+                              ]"
+                            >
+                              {{
+                                procedure.calculatedActualCompletionPercentage ===
+                                procedure.actualCompletionPercentage
+                                  ? 'مطابق'
+                                  : 'غير مطابق'
+                              }}
+                            </span>
+                          </div>
+                        </div>
                       </FormField>
 
                       <FormField label="نسبة الانجاز المالي المخطط المحسوب">
@@ -437,11 +497,47 @@
                       </FormField>
 
                       <FormField label="نسبة الانجاز المالي الفعلي المحسوب">
-                        <NumberInput
-                          v-model="procedure.calculatedActualFinancialProgress"
-                          placeholder="القيمة المحسوبة"
-                          unit="%"
-                        />
+                        <div class="flex items-center gap-2">
+                          <NumberInput
+                            v-model="procedure.calculatedActualFinancialProgress"
+                            placeholder="القيمة المحسوبة"
+                            unit="%"
+                            readonly
+                          />
+                          <div class="flex items-center gap-1">
+                            <Icon
+                              :icon="
+                                procedure.calculatedActualFinancialProgress ===
+                                procedure.actualFinancialProgress
+                                  ? 'lucide:check-circle'
+                                  : 'lucide:alert-circle'
+                              "
+                              :class="[
+                                'h-5 w-5',
+                                procedure.calculatedActualFinancialProgress ===
+                                procedure.actualFinancialProgress
+                                  ? 'text-green-500'
+                                  : 'text-amber-500',
+                              ]"
+                            />
+                            <span
+                              :class="[
+                                'text-xs font-medium',
+                                procedure.calculatedActualFinancialProgress ===
+                                procedure.actualFinancialProgress
+                                  ? 'text-green-500'
+                                  : 'text-amber-500',
+                              ]"
+                            >
+                              {{
+                                procedure.calculatedActualFinancialProgress ===
+                                procedure.actualFinancialProgress
+                                  ? 'مطابق'
+                                  : 'غير مطابق'
+                              }}
+                            </span>
+                          </div>
+                        </div>
                       </FormField>
                     </div>
                   </div>

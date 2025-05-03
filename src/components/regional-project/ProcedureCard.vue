@@ -75,7 +75,6 @@
                 ></div>
               </div>
             </div>
-            <PremiumMask>
               <div>
                 <div class="mb-1 flex items-center justify-between text-xs">
                   <span class="text-gray-500 dark:text-gray-400"> نسبة الإنجاز المالي الفعلي </span>
@@ -104,7 +103,6 @@
                   ></div>
                 </div>
               </div>
-            </PremiumMask>
           </div>
         </div>
         <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
@@ -131,7 +129,6 @@
                 ></div>
               </div>
             </div>
-            <PremiumMask>
               <div>
                 <div class="mb-1 flex items-center justify-between text-xs">
                   <span class="text-gray-500 dark:text-gray-400">الفعلي</span>
@@ -195,7 +192,6 @@
                   ></div>
                 </div>
               </div>
-            </PremiumMask>
           </div>
         </div>
       </div>

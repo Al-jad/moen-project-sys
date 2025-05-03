@@ -112,82 +112,103 @@
           </div>
 
           <div class="mt-4 grid grid-cols-2 gap-4">
-            <!-- Manual Values -->
+            <!-- Financial Progress -->
             <div class="space-y-2">
-              <h6 class="text-sm font-medium text-gray-700 dark:text-gray-300">القيم المدخلة</h6>
-              <div class="grid gap-2">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز الفني المخطط:</span>
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.plannedCompletionPercentage }}%</span
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500 dark:text-gray-400">الإنجاز المالي</span>
+                <div class="flex items-center gap-2">
+                  <span
+                    :class="[
+                      'text-xs font-medium',
+                      procedure.calculatedActualFinancialProgress ===
+                      procedure.actualFinancialProgress
+                        ? 'text-green-500'
+                        : 'text-amber-500',
+                    ]"
                   >
+                    {{
+                      procedure.calculatedActualFinancialProgress ===
+                      procedure.actualFinancialProgress
+                        ? 'مطابق'
+                        : 'غير مطابق'
+                    }}
+                  </span>
+                  <Icon
+                    :icon="
+                      procedure.calculatedActualFinancialProgress ===
+                      procedure.actualFinancialProgress
+                        ? 'lucide:check-circle'
+                        : 'lucide:alert-circle'
+                    "
+                    :class="[
+                      'h-4 w-4',
+                      procedure.calculatedActualFinancialProgress ===
+                      procedure.actualFinancialProgress
+                        ? 'text-green-500'
+                        : 'text-amber-500',
+                    ]"
+                  />
                 </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز الفني الفعلي:</span>
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.actualCompletionPercentage }}%</span
-                  >
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span class="text-xs text-gray-500">المدخل</span>
+                  <div class="font-medium">{{ procedure.actualFinancialProgress }}%</div>
                 </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز المالي المخطط:</span>
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.plannedFinancialProgress }}%</span
-                  >
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنجاز المالي الفعلي:</span>
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.actualFinancialProgress }}%</span
-                  >
+                <div>
+                  <span class="text-xs text-gray-500">المحسوب</span>
+                  <div class="font-medium">{{ procedure.calculatedActualFinancialProgress }}%</div>
                 </div>
               </div>
             </div>
 
-            <!-- Calculated Values -->
+            <!-- Technical Progress -->
             <div class="space-y-2">
-              <h6 class="text-sm font-medium text-gray-700 dark:text-gray-300">القيم المحسوبة</h6>
-              <div class="grid gap-2">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400"
-                    >نسبة الإنجاز الفني المخطط المحسوب:</span
-                  >
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.calculatedPlannedCompletionPercentage }}%</span
-                  >
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400"
-                    >نسبة الإنجاز الفني الفعلي المحسوب:</span
-                  >
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.calculatedActualCompletionPercentage }}%</span
-                  >
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">نسبة الإنحراف الفني المحسوب:</span>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500 dark:text-gray-400">الإنجاز الفني</span>
+                <div class="flex items-center gap-2">
                   <span
-                    class="font-medium"
-                    :class="{
-                      'text-green-600': procedure.calculatedTechnicalDeviation >= 0,
-                      'text-red-600': procedure.calculatedTechnicalDeviation < 0,
-                    }"
-                    >{{ procedure.calculatedTechnicalDeviation }}%</span
+                    :class="[
+                      'text-xs font-medium',
+                      procedure.calculatedActualCompletionPercentage ===
+                      procedure.actualCompletionPercentage
+                        ? 'text-green-500'
+                        : 'text-amber-500',
+                    ]"
                   >
+                    {{
+                      procedure.calculatedActualCompletionPercentage ===
+                      procedure.actualCompletionPercentage
+                        ? 'مطابق'
+                        : 'غير مطابق'
+                    }}
+                  </span>
+                  <Icon
+                    :icon="
+                      procedure.calculatedActualCompletionPercentage ===
+                      procedure.actualCompletionPercentage
+                        ? 'lucide:check-circle'
+                        : 'lucide:alert-circle'
+                    "
+                    :class="[
+                      'h-4 w-4',
+                      procedure.calculatedActualCompletionPercentage ===
+                      procedure.actualCompletionPercentage
+                        ? 'text-green-500'
+                        : 'text-amber-500',
+                    ]"
+                  />
                 </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400"
-                    >نسبة الإنجاز المالي المخطط المحسوب:</span
-                  >
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.calculatedPlannedFinancialProgress }}%</span
-                  >
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span class="text-xs text-gray-500">المدخل</span>
+                  <div class="font-medium">{{ procedure.actualCompletionPercentage }}%</div>
                 </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400"
-                    >نسبة الإنجاز المالي الفعلي المحسوب:</span
-                  >
-                  <span class="font-medium text-gray-900 dark:text-gray-100"
-                    >{{ procedure.calculatedActualFinancialProgress }}%</span
+                <div>
+                  <span class="text-xs text-gray-500">المحسوب</span>
+                  <div class="font-medium"
+                    >{{ procedure.calculatedActualCompletionPercentage }}%</div
                   >
                 </div>
               </div>
