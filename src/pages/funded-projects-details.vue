@@ -606,9 +606,8 @@
   const fetchProject = async () => {
     isLoading.value = true;
     error.value = null;
-
     try {
-      const response = await axiosInstance.get(`/api/Project/${route.params.id}`);
+      const response = await fundedProjectService.getFundedProjectById(Number(route.params.id));
       project.value = response.data;
 
       // Initialize editForm with current project data
@@ -774,7 +773,10 @@
         lng: project.value.lng || 0,
       };
 
-      const response = await axiosInstance.put(`/api/Project/${project.value.id}`, projectData);
+      const response = await fundedProjectService.updateFundedProject(
+        project.value.id,
+        projectData
+      );
 
       if (response.status === 200 || response.status === 204) {
         // Update both project and editForm with new data
@@ -870,11 +872,11 @@
         let savedComponent;
         if (component.id) {
           // Update existing component
-          await axiosInstance.put(`/api/Component/${component.id}`, componentData);
+          await fundedProjectService.updateComponent(component.id, componentData);
           savedComponent = component;
         } else {
           // Create new component
-          const componentResponse = await axiosInstance.post('/api/Component', componentData);
+          const componentResponse = await fundedProjectService.createComponent(componentData);
           savedComponent = componentResponse.data;
         }
 

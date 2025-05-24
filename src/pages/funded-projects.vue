@@ -262,7 +262,8 @@
   import { useToast } from '@/composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
+  import beneficiaryService from '@/services/beneficiaryService';
+  import fundedProjectService from '@/services/fundedProjectService';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -580,7 +581,7 @@
   const fetchProjects = async () => {
     try {
       isLoading.value = true;
-      const response = await axiosInstance.get('api/Project');
+      const response = await fundedProjectService.getAllFundedProjects();
       const fetchedProjects = response.data || [];
 
       // No need to map status, use projectStatus directly
@@ -597,7 +598,7 @@
 
   const fetchBeneficiaries = async () => {
     try {
-      const response = await axiosInstance.get('/api/beneficiary');
+      const response = await beneficiaryService.getAllBeneficiaries();
       beneficiaries.value = response.data;
     } catch (error) {
       console.error('Error fetching beneficiaries:', error);

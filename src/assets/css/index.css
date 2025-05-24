@@ -1,73 +1,143 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --primary: 222.2 47.4% 11.2%;
+    --background: 210 40% 98%;
+    --background-surface: 0 0% 100%;
+    --background-card: 210 40% 96%;
+    --background-hover: 214 32% 91%;
+
+    --foreground: 222 84% 5%;
+    --foreground-heading: 222 84% 5%;
+    --foreground-body: 215 25% 27%;
+    --foreground-muted: 215 16% 47%;
+    --foreground-disabled: 215 20% 65%;
+
+    --primary: 200 95% 15%;
+    --primary-hover: 200 95% 18%;
+    --primary-disabled: 210 20% 70%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --ring: 222.2 84% 4.9%;
+
+    --accent: 32 95% 65%;
+    --accent-hover: 32 95% 60%;
+    --accent-foreground: 222 84% 5%;
+
+    --secondary: 270 50% 62%;
+    --secondary-hover: 270 70% 65%;
+    --secondary-foreground: 0 0% 100%;
+
+    --border: 214 32% 84%;
+    --input: 210 40% 96%;
+    --ring: 200 95% 15%;
+    --divider: 0 0% 87%;
+
+    --muted: 215 16% 47%;
+    --muted-foreground: 215 16% 47%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 5%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 5%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 84% 5%;
+
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
+
     --radius: 0.5rem;
   }
+
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 84% 5%;
+    --background-surface: 215 25% 27%;
+    --background-card: 215 25% 27%;
+    --background-hover: 215 25% 35%;
+
     --foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --foreground-heading: 210 40% 98%;
+    --foreground-body: 214 32% 91%;
+    --foreground-muted: 215 20% 65%;
+    --foreground-disabled: 215 16% 47%;
+
+    --primary: 199 89% 48%;
+    --primary-hover: 199 89% 60%;
+    --primary-disabled: 215 25% 27%;
+    --primary-foreground: 222 84% 5%;
+
+    --accent: 180 25% 73%;
+    --accent-hover: 180 25% 65%;
+    --accent-foreground: 222 84% 5%;
+
+    --secondary: 215 25% 35%;
+    --secondary-hover: 215 25% 45%;
     --secondary-foreground: 210 40% 98%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --ring: 212.7 26.8% 83.9%;
+
+    --border: 215 25% 35%;
+    --input: 215 25% 27%;
+    --ring: 199 89% 48%;
+    --divider: 215 25% 27%;
+
+    --muted: 215 20% 65%;
+    --muted-foreground: 215 20% 65%;
+
+    --popover: 215 25% 27%;
+    --popover-foreground: 210 40% 98%;
+
+    --card: 215 25% 27%;
+    --card-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 84% 5%;
+
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
   }
+
   ::-webkit-scrollbar {
     width: 0.6rem;
   }
+
   ::-webkit-scrollbar-track {
-    background: hsl(var(--secondary));
+    background: hsl(var(--background-card));
     border-radius: var(--radius);
   }
+
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground));
     border-radius: var(--radius);
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary));
   }
+
   * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--secondary));
+    scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background-card));
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Almarai', sans-serif;

@@ -247,7 +247,7 @@
             />
 
             <CustomCheckbox
-              v-for="beneficiary in beneficiaries"
+              v-for="beneficiary in props.beneficiaries"
               :key="beneficiary.id"
               v-model="localSelectedBeneficiaries[beneficiary.id]"
               :id="`beneficiary-${beneficiary.id}`"
@@ -289,7 +289,6 @@
 <script setup>
   import { useToast } from '@/composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
-  import axiosInstance from '@/plugins/axios';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import CustomSwitch from './CustomSwitch.vue';
@@ -404,7 +403,15 @@
       ...(props.selectedFunding || {}),
     };
 
-    getBeneficiaries();
+    if (props.beneficiaries && props.beneficiaries.length > 0) {
+      if (Object.keys(localSelectedBeneficiaries.value).length <= 1) {
+        const beneficiariesObj = { all: true };
+        props.beneficiaries.forEach((beneficiary) => {
+          beneficiariesObj[beneficiary.id] = false;
+        });
+        localSelectedBeneficiaries.value = beneficiariesObj;
+      }
+    }
   });
 
   const implementationYears = [
@@ -413,31 +420,6 @@
     { value: '2023', label: '2023' },
     { value: '2022', label: '2022' },
   ];
-
-  const beneficiaries = ref([]);
-  function getBeneficiaries() {
-    axiosInstance
-      .get('/api/beneficiary')
-      .then((res) => {
-        beneficiaries.value = res.data;
-
-        // Initialize the selection object with all beneficiaries set to false
-        if (Object.keys(localSelectedBeneficiaries.value).length <= 1) {
-          const beneficiariesObj = { all: true };
-
-          // Add each beneficiary with false initial value
-          beneficiaries.value.forEach((beneficiary) => {
-            beneficiariesObj[beneficiary.id] = false;
-          });
-
-          // Update the local selection object
-          localSelectedBeneficiaries.value = beneficiariesObj;
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching beneficiaries:', error);
-      });
-  }
 
   const handleGovernmentProjectsChange = (value) => {
     // Update the local state to match the checkbox
@@ -547,12 +529,7 @@
       proposed: false,
     };
 
-    // Reset beneficiaries to only "all" selected
-    const resetBeneficiaries = { all: true };
-    beneficiaries.value.forEach((beneficiary) => {
-      resetBeneficiaries[beneficiary.id] = false;
-    });
-    localSelectedBeneficiaries.value = resetBeneficiaries;
+    // Reset beneficiaries to only "all" selected    const resetBeneficiaries = { all: true };    props.beneficiaries.forEach((beneficiary) => {      resetBeneficiaries[beneficiary.id] = false;    });    localSelectedBeneficiaries.value = resetBeneficiaries;
 
     localShowGovernmentProjects.value = false;
 

@@ -2,11 +2,11 @@
   <div class="flex" dir="rtl">
     <Sidebar />
 
-    <main class="mr-[60px] flex-1 bg-gray-200 dark:bg-darkmode">
+    <main class="mr-[60px] flex-1 bg-background">
       <Header />
 
       <div class="mt-[6%] p-6">
-        <h1 class="mb-4 text-right text-2xl font-bold text-gray-900 dark:text-white"> المشاريع </h1>
+        <h1 class="text-foreground-heading mb-4 text-right text-2xl font-bold"> المشاريع </h1>
 
         <!-- Loading State -->
         <div v-if="projectStore.loading" class="flex items-center justify-center py-8">
@@ -14,16 +14,13 @@
             <div
               class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
             ></div>
-            <p class="text-gray-600 dark:text-gray-300">جاري تحميل المشاريع...</p>
+            <p class="text-foreground-muted">جاري تحميل المشاريع...</p>
           </div>
         </div>
 
         <!-- Error State -->
-        <div
-          v-else-if="projectStore.error"
-          class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
-        >
-          <p class="text-red-600 dark:text-red-400">{{ projectStore.error }}</p>
+        <div v-else-if="projectStore.error" class="rounded-lg bg-destructive/10 p-4 text-center">
+          <p class="text-destructive">{{ projectStore.error }}</p>
         </div>
 
         <!-- Content -->
@@ -67,7 +64,7 @@
             />
           </div>
 
-          <h1 class="mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
+          <h1 class="text-foreground-heading mb-4 text-right text-2xl font-bold"> الاختصارات </h1>
           <!-- Shortcuts Cards -->
           <div class="mb-8 grid grid-cols-4 gap-4">
             <ShortcutCard
@@ -96,13 +93,15 @@
 
           <!-- Chart Section -->
           <div
-            class="relative w-full overflow-hidden rounded-lg border border-red-200 bg-white p-6 shadow dark:border-red-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
+            class="bg-background-surface relative w-full overflow-hidden rounded-lg border border-destructive/20 p-6 shadow"
           >
             <!-- Demo Version Ribbon -->
             <div
-              class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-red-600 to-red-500 py-1 text-center text-xs shadow-md"
+              class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-destructive to-destructive/80 py-1 text-center text-xs shadow-md"
             >
-              <span class="text-xs font-semibold tracking-wide text-white"> DEMO VERSION </span>
+              <span class="text-xs font-semibold tracking-wide text-destructive-foreground">
+                DEMO VERSION
+              </span>
             </div>
 
             <div class="mb-4 mr-20 flex items-center justify-between">
@@ -127,17 +126,17 @@
           <div class="mt-8">
             <Tabs default-value="projects" class="w-full">
               <TabsList
-                class="w-full justify-end rounded-none border-b border-gray-200 bg-transparent p-0 dark:border-gray-700"
+                class="w-full justify-end rounded-none border-b border-border bg-transparent p-0"
               >
                 <TabsTrigger
                   value="users"
-                  class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
+                  class="text-foreground-muted rounded-none border-b-2 border-transparent hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent"
                 >
                   المستخدمين
                 </TabsTrigger>
                 <TabsTrigger
                   value="projects"
-                  class="rounded-none border-b-2 border-transparent text-gray-600 hover:text-gray-900 data-[state=active]:border-primary data-[state=active]:bg-transparent dark:text-gray-300 dark:hover:text-white"
+                  class="text-foreground-muted rounded-none border-b-2 border-transparent hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent"
                 >
                   كل المشاريع
                 </TabsTrigger>
@@ -151,14 +150,11 @@
                     <div
                       class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
                     ></div>
-                    <p class="text-gray-600 dark:text-gray-300">جاري تحميل المستخدمين...</p>
+                    <p class="text-foreground-muted">جاري تحميل المستخدمين...</p>
                   </div>
                 </div>
-                <div
-                  v-else-if="userError"
-                  class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20"
-                >
-                  <p class="text-red-600 dark:text-red-400">{{ userError }}</p>
+                <div v-else-if="userError" class="rounded-lg bg-destructive/10 p-4 text-center">
+                  <p class="text-destructive">{{ userError }}</p>
                 </div>
                 <UsersList v-else :users="users" />
               </TabsContent>

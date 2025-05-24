@@ -1,7 +1,6 @@
-import axiosInstance from '@/plugins/axios';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-
+import regionalProjectService from '../services/regionalProjectService';
 export const useRegionalProjectStore = defineStore('regionalProject', () => {
   const projects = ref([]);
   const loading = ref(false);
@@ -16,7 +15,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.get('/api/RegionalProject');
+      const response = await regionalProjectService.getAllRegionalProjects();
       projects.value = response.data;
       filteredProjects.value = response.data;
     } catch (err) {
@@ -32,7 +31,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.get('/api/RegionalProject/Contract');
+      const response = await regionalProjectService.getAllContracts();
       contracts.value = response.data;
       contractsCount.value = response.data.length;
     } catch (err) {
@@ -48,7 +47,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.post('/api/RegionalProject/Contract', contractData);
+      const response = await regionalProjectService.createContract(contractData);
       return response.data;
     } catch (err) {
       error.value = err.message || 'Failed to create contract';
@@ -62,7 +61,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.put(`/api/RegionalProject/Contract/${id}`, contractData);
+      const response = await regionalProjectService.updateContract(id, contractData);
       return response.data;
     } catch (err) {
       error.value = err.message || 'Failed to update contract';
@@ -76,7 +75,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.get(`/api/RegionalProject/Contract/${id}`);
+      const response = await regionalProjectService.getContractById(id);
       return response.data;
     } catch (err) {
       error.value = err.message || 'Failed to fetch contract';
@@ -89,7 +88,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
   const deleteContract = async (id) => {
     try {
       loading.value = true;
-      await axiosInstance.delete(`/api/RegionalProject/Contract/${id}`);
+      await regionalProjectService.deleteContract(id);
       contracts.value = contracts.value.filter((contract) => contract.id !== id);
       contractsCount.value = contracts.value.length;
     } catch (err) {
@@ -103,9 +102,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
   const fetchAllProcedures = async (contractId) => {
     try {
       loading.value = true;
-      const response = await axiosInstance.get(
-        `/api/RegionalProject/Procedure?contractId=${contractId}`
-      );
+      const response = await regionalProjectService.getProceduresByContract(contractId);
       procedures.value = response.data;
       proceduresCount.value = procedures.value.length;
       return response.data;
@@ -123,7 +120,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.post('/api/RegionalProject/Procedure', procedureData);
+      const response = await regionalProjectService.createProcedure(procedureData);
       // Find the contract and update its procedures
       const contract = await fetchContractById(procedureData.contractId);
       if (contract) {
@@ -144,7 +141,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
   const deleteProcedure = async (id, contractId) => {
     try {
       loading.value = true;
-      await axiosInstance.delete(`/api/RegionalProject/Procedure/${id}`);
+      await regionalProjectService.deleteProcedure(id);
       // Fetch updated contract data to get fresh procedures
       const contract = await fetchContractById(contractId);
       if (contract) {
@@ -165,10 +162,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.put(
-        `/api/RegionalProject/Procedure/${id}`,
-        procedureData
-      );
+      const response = await regionalProjectService.updateProcedure(id, procedureData);
       // Fetch updated contract data to get fresh procedures
       const contract = await fetchContractById(procedureData.contractId);
       if (contract) {
@@ -194,7 +188,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await axiosInstance.get(`/api/RegionalProject/${id}`);
+      const response = await regionalProjectService.getRegionalProjectById(id);
       return response.data;
     } catch (err) {
       error.value = err.message || 'Failed to fetch project';

@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-gray-50 hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:hover:bg-gray-800"
+    class="bg-background-surface hover:bg-background-hover flex items-center justify-between rounded-xl border border-border p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
     :class="{ 'cursor-pointer': to }"
     @click="handleClick"
   >
-    <span class="text-sm font-medium text-gray-700 dark:text-gray-100">{{ title }}</span>
+    <span class="text-foreground-body text-sm font-medium">{{ title }}</span>
     <div class="p-2">
       <Icon
         :icon="icon"

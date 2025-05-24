@@ -16,7 +16,7 @@
               v-model="formData.name"
               dir="rtl"
               placeholder="مديرية بلدية بابل"
-              class="border-gray-200"
+              class="border-border"
             />
           </div>
 
@@ -27,7 +27,7 @@
               v-model="formData.referenceEntity"
               dir="rtl"
               placeholder="دائرة حماية وتحسين البيئة في منطقة الوسط"
-              class="border-gray-200"
+              class="border-border"
             />
           </div>
 
@@ -38,7 +38,7 @@
               v-model="formData.location"
               dir="rtl"
               placeholder="الحلة شارع 0000"
-              class="border-gray-200"
+              class="border-border"
             />
           </div>
         </div>

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="cursor-pointer rounded-xl border border-gray-100 bg-white p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-gray-50 hover:shadow-md dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50 dark:hover:bg-gray-800"
+    class="bg-background-surface hover:bg-background-hover cursor-pointer rounded-xl border border-border p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
     @click="navigateToProjects"
   >
     <div class="flex items-center justify-between">
       <div class="flex flex-col gap-2 text-right">
-        <p class="text-sm text-gray-500 dark:text-gray-300">{{ title }}</p>
-        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ count }}</p>
+        <p class="text-foreground-muted text-sm">{{ title }}</p>
+        <p class="text-foreground-heading text-2xl font-bold">{{ count }}</p>
       </div>
       <div :class="backgroundColorClass">
         <Icon :icon="icon" class="h-8 w-8" :class="iconColorClass" />

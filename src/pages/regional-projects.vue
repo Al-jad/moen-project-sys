@@ -262,7 +262,6 @@
   import { useToast } from '@/composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
   import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
@@ -481,7 +480,7 @@
 
   const fetchBeneficiaries = async () => {
     try {
-      const response = await axiosInstance.get('/api/beneficiary');
+      const response = await beneficiaryService.getAllBeneficiaries();
       beneficiaries.value = response.data;
     } catch (error) {
       console.error('Error fetching beneficiaries:', error);
