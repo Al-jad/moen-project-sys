@@ -3,9 +3,10 @@
     :class="[
       buttonClass,
       'flex items-center gap-2',
-      variant === 'link' && 'text-blue-600 dark:text-blue-400',
-      variant === 'primary' &&
-        'border border-gray-200 bg-white text-black hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white hover:dark:bg-gray-900',
+      variant === 'link' && 'text-foreground-muted',
+      variant === 'primary' && 'hover:bg-primary-hover dark:text-foreground-heading border border-border bg-primary',
+      variant === 'outline' &&
+        'hover:bg-background-hover bg-background-surface border border-border',
     ]"
     :variant="variant === 'primary' ? 'default' : variant"
     :size="size"

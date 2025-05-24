@@ -1,29 +1,25 @@
 <template>
   <div
     :class="
-      disabled
-        ? 'cursor-not-allowed opacity-80'
-        : 'min-h-screen w-[400px] bg-gray-50 p-6 dark:bg-gray-800/50'
+      disabled ? 'cursor-not-allowed opacity-80' : '-mt-1 min-h-screen w-[400px] bg-background p-6'
     "
   >
     <div class="flex flex-col gap-6">
-      <div
-        class="rounded-md border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700/50 dark:bg-gray-800/95 dark:shadow-gray-900/50"
-      >
+      <div class="bg-background-surface rounded-md border border-border p-6 shadow-sm">
         <!-- Filter Header -->
-        <div class="bg-white dark:bg-gray-800/95">
+        <div class="bg-background-surface">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:filter" class="h-4 w-4 text-gray-500 dark:text-gray-400" />
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-200">فلتر</span>
+              <Icon icon="lucide:filter" class="text-foreground-muted h-4 w-4" />
+              <span class="text-foreground-heading text-sm font-medium">فلتر</span>
             </div>
           </div>
-          <hr class="my-2 w-full border-gray-200 dark:border-gray-700" />
+          <hr class="my-2 w-full border-border" />
         </div>
 
         <!-- Search Input -->
         <div class="my-4 rounded-md">
-          <label class="text-sm font-medium text-gray-700 dark:text-gray-200"> بحث </label>
+          <label class="text-foreground-heading text-sm font-medium"> بحث </label>
           <FormField label="">
             <CustomInput
               v-model="localSearchQuery"
@@ -36,14 +32,11 @@
           </FormField>
         </div>
 
-        <hr
-          v-if="!isFundedProjects"
-          class="my-4 border border-dashed border-gray-100 dark:border-gray-700"
-        />
+        <hr v-if="!isFundedProjects" class="my-4 border border-dashed border-border" />
 
         <!-- Funding Type -->
         <div v-if="showFundingTypeFilter" class="space-y-3">
-          <label class="text-sm text-gray-600 dark:text-gray-300">نوع التمويل</label>
+          <label class="text-foreground-muted text-sm">نوع التمويل</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedFunding.all"
@@ -77,13 +70,13 @@
         </div>
 
         <div v-if="showFundingTypeFilter">
-          <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
+          <hr class="my-4 border border-dashed border-border" />
         </div>
 
         <!-- Budget Range -->
         <div class="mt-4 space-y-3">
           <div class="flex items-center justify-between">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-200">المبلغ</label>
+            <label class="text-foreground-muted text-sm">المبلغ</label>
             <div class="flex items-center gap-4">
               <CustomSwitch
                 v-model="isBudgetFilterEnabled"
@@ -107,7 +100,7 @@
             />
             <div class="grid grid-cols-2 flex-row-reverse gap-4">
               <div class="space-y-2">
-                <label class="text-xs text-gray-500 dark:text-gray-400">الحد الادنى</label>
+                <label class="text-foreground-muted text-xs">الحد الادنى</label>
                 <NumberInput
                   v-model="localBudgetRange[0]"
                   :disabled="!isBudgetFilterEnabled || disabled"
@@ -117,7 +110,7 @@
                 />
               </div>
               <div class="space-y-2">
-                <label class="text-xs text-gray-500 dark:text-gray-400">الحد الاعلى</label>
+                <label class="text-foreground-muted text-xs">الحد الاعلى</label>
                 <NumberInput
                   v-model="localBudgetRange[1]"
                   :disabled="!isBudgetFilterEnabled || disabled"
@@ -132,9 +125,9 @@
 
         <!-- Implementation Years -->
         <div class="space-y-2" v-if="!isFundedProjects">
-          <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
-          <label class="text-sm text-gray-600 dark:text-gray-300">سنوات التنفيذ</label>
-          <div class="px-2 text-sm text-red-500">
+          <hr class="my-4 border border-dashed border-border" />
+          <label class="text-foreground-muted text-sm">سنوات التنفيذ</label>
+          <div class="px-2 text-sm text-destructive">
             <slot> الميزة غير متاحة، والبيانات الظاهرة للتوضيح فقط </slot>
           </div>
           <CustomSelect
@@ -150,7 +143,7 @@
 
         <!-- is Government Projects -->
         <div v-if="isFundedProjects" class="my-4 space-y-3">
-          <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
+          <hr class="my-4 border border-dashed border-border" />
           <CustomSwitch
             v-model="localShowGovernmentProjects"
             label="عرض البرامج الحكومية"
@@ -160,11 +153,11 @@
           />
         </div>
 
-        <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
+        <hr class="my-4 border border-dashed border-border" />
 
         <!-- Project Status -->
         <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700 dark:text-gray-200">حالة المشروع</label>
+          <label class="text-foreground-muted text-sm">حالة المشروع</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedStatus.all"
@@ -228,14 +221,12 @@
         </div>
 
         <div>
-          <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
+          <hr class="my-4 border border-dashed border-border" />
         </div>
 
         <!-- Beneficiary -->
         <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700 dark:text-gray-200"
-            >الجهة المستفيدة</label
-          >
+          <label class="text-foreground-muted text-sm">الجهة المستفيدة</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedBeneficiaries.all"
@@ -260,12 +251,12 @@
         </div>
 
         <div>
-          <hr class="my-4 border border-dashed border-gray-100 dark:border-gray-700" />
+          <hr class="my-4 border border-dashed border-border" />
         </div>
         <div class="mt-6 flex gap-3">
           <PrimaryButton
             variant="outline"
-            buttonClass="flex-1 text-gray-700 dark:text-gray-200"
+            buttonClass="flex-1 text-foreground-muted"
             :disabled="disabled"
             :class="{ 'cursor-not-allowed': disabled }"
             @click.prevent="resetFilters"
@@ -273,6 +264,7 @@
             الغاء
           </PrimaryButton>
           <PrimaryButton
+            variant="primary"
             buttonClass="flex-1"
             :disabled="disabled"
             :class="{ 'cursor-not-allowed': disabled }"

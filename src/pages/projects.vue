@@ -16,12 +16,12 @@
         @currency-changed="handleCurrencyChange"
       />
       <PremiumModal v-model:open="showPremiumModalOpen" />
-      <div class="flex-1 bg-gray-200 p-6 dark:bg-darkmode">
+      <div class="bg-background -mt-1 flex-1 p-6 dark:bg-darkmode">
         <!-- Projects Header -->
         <div class="mb-6 flex items-center justify-between">
           <div class="space-y-1">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">قائمة المشاريع</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <h1 class="text-foreground-heading text-2xl font-bold">قائمة المشاريع</h1>
+            <p class="text-foreground-muted text-sm">
               {{
                 isLoading
                   ? 'جاري التحميل...'
@@ -33,7 +33,7 @@
           <div class="flex items-center gap-3">
             <!-- Currency Selector -->
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-300">العملة:</span>
+              <span class="text-foreground-muted text-sm">العملة:</span>
               <CustomSelect
                 v-model="selectedCurrency"
                 :options="currencyOptions"
@@ -56,7 +56,7 @@
                 </PrimaryButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                class="w-[200px] border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
+                class="bg-background-surface w-[200px] border-border dark:border-gray-700 dark:bg-gray-800"
               >
                 <DropdownMenuItem
                   class="dark:focus:bg-gray-700/50"
@@ -123,13 +123,11 @@
         <!-- Error State -->
         <div
           v-else-if="error"
-          class="flex flex-col items-center justify-center rounded-lg border border-red-200 bg-red-50 p-8 text-center dark:border-red-800/30 dark:bg-red-900/20"
+          class="flex flex-col items-center justify-center rounded-lg border border-destructive bg-destructive/10 p-8 text-center"
         >
-          <Icon icon="lucide:alert-circle" class="mb-4 h-12 w-12 text-red-500 dark:text-red-400" />
-          <h3 class="mb-2 text-lg font-medium text-red-800 dark:text-red-200"
-            >حدث خطأ في تحميل المشاريع</h3
-          >
-          <p class="mb-4 text-sm text-red-600 dark:text-red-300">{{ error }}</p>
+          <Icon icon="lucide:alert-circle" class="mb-4 h-12 w-12 text-destructive" />
+          <h3 class="mb-2 text-lg font-medium text-destructive">حدث خطأ في تحميل المشاريع</h3>
+          <p class="mb-4 text-sm text-destructive">{{ error }}</p>
           <PrimaryButton @click="fetchProjects" icon="lucide:refresh-cw">
             اعادة المحاولة
           </PrimaryButton>
@@ -151,15 +149,13 @@
         <!-- Empty State - No Filter Match -->
         <div
           v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
-          class="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50"
+          class="bg-background-surface flex flex-col items-center justify-center rounded-lg border border-border p-8 text-center"
         >
-          <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-          <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100"
-            >لا توجد نتائج مطابقة</h3
-          >
-          <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
-            >لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.</p
-          >
+          <Icon icon="lucide:search-x" class="text-foreground-muted mb-4 h-12 w-12" />
+          <h3 class="text-foreground-heading mb-2 text-lg font-medium">لا توجد نتائج مطابقة</h3>
+          <p class="text-foreground-muted mb-4 text-sm">
+            لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.
+          </p>
           <PrimaryButton @click="clearFilters" icon="lucide:x"> مسح الفلترة </PrimaryButton>
         </div>
       </div>
@@ -168,25 +164,25 @@
 </template>
 
 <script setup lang="ts">
-  import CustomSelect from '@/components/CustomSelect.vue';
-  import PremiumModal from '@/components/PremiumModal.vue';
-  import PrimaryButton from '@/components/PrimaryButton.vue';
-  import ProjectsFilter from '@/components/ProjectsFilter.vue';
+  import { Icon } from '@iconify/vue';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import CustomSelect from '../components/CustomSelect.vue';
+  import PremiumModal from '../components/PremiumModal.vue';
+  import PrimaryButton from '../components/PrimaryButton.vue';
+  import ProjectsFilter from '../components/ProjectsFilter.vue';
   import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-  } from '@/components/ui/dropdown-menu';
-  import { useToast } from '@/composables/useToast';
-  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
-  import { determineFundingType, ProjectType } from '@/services/projectTypeService';
-  import { useProjectStore } from '@/stores/projectStore';
-  import { Icon } from '@iconify/vue';
-  import { computed, onMounted, ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  } from '../components/ui/dropdown-menu';
+  import { useToast } from '../composables/useToast';
+  import { CURRENCY_CONVERSION, UNITS } from '../constants';
+  import DefaultLayout from '../layouts/DefaultLayout.vue';
+  import axiosInstance from '../plugins/axios';
+  import { determineFundingType, ProjectType } from '../services/projectTypeService';
+  import { useProjectStore } from '../stores/projectStore';
 
   const projectStore = useProjectStore();
   const allProjects = computed(() => projectStore.projects);

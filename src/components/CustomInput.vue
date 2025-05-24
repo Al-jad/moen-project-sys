@@ -7,17 +7,17 @@
       :placeholder="placeholder"
       :class="[
         'w-full rounded-lg px-4 py-2 transition-colors',
-        'bg-white dark:bg-gray-800',
-        'border border-gray-200 dark:border-gray-700',
-        'text-gray-900 dark:text-white',
-        'placeholder:text-gray-400 dark:placeholder:text-gray-500',
-        'focus:border-gray-300 dark:focus:border-gray-600',
+        'bg-background-surface',
+        'border border-border',
+        'text-foreground-heading',
+        'placeholder:text-foreground-muted',
+        'focus:border-primary',
         'outline-none focus:ring-0',
         icon ? 'pr-10' : '',
       ]"
     />
     <div v-if="icon" class="absolute inset-y-0 right-0 flex items-center pr-3">
-      <Icon :icon="icon" class="h-5 w-5 text-gray-400 dark:text-gray-500" />
+      <Icon :icon="icon" class="text-foreground-muted h-5 w-5" />
     </div>
   </div>
 </template>

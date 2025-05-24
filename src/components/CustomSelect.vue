@@ -4,10 +4,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
     :disabled="disabled"
   >
-    <SelectTrigger
-      :class="triggerClass"
-      class="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-    >
+    <SelectTrigger :class="triggerClass" class="bg-background-surface border-border">
       <Icon :icon="TriggerIcon" class="h-4 w-4" />
       <SelectValue :placeholder="placeholder">
         <div class="flex gap-2">
@@ -17,16 +14,14 @@
         </div>
       </SelectValue>
     </SelectTrigger>
-    <SelectContent
-      class="flex items-center justify-end border-gray-200 bg-white text-right dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-    >
+    <SelectContent class="bg-background-surface border-border">
       <SelectGroup>
         <SelectLabel v-if="label">{{ label }}</SelectLabel>
         <SelectItem
           v-for="option in options"
           :key="option.value"
           :value="option.value"
-          class="flex items-center justify-end gap-2 border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+          class="hover:!bg-background-hover flex items-center justify-end gap-2 border-border"
         >
           <template v-if="isStatusSelect">
             <StatusBadge :status="option.value" :label="option.label" />
@@ -34,11 +29,7 @@
           <template v-else>
             <div class="flex w-full items-center justify-end gap-2">
               <span>{{ option.label }}</span>
-              <Icon
-                v-if="option.icon"
-                :icon="option.icon"
-                class="h-4 w-4 text-gray-400 dark:text-gray-500"
-              />
+              <Icon v-if="option.icon" :icon="option.icon" class="text-foreground-muted h-4 w-4" />
             </div>
           </template>
         </SelectItem>
@@ -98,7 +89,6 @@
       default: null,
     },
   });
-
   const selectedLabel = computed(() => {
     const label = props.options.find((opt) => opt.value === props.modelValue)?.label;
     return label;
