@@ -138,6 +138,7 @@
   import axiosInstance from '../plugins/axios';
   import { determineFundingType, ProjectType } from '../services/projectTypeService';
   import { useProjectStore } from '../stores/projectStore';
+  import CustomPagination from '../components/CustomPagination.vue';
   const projectStore = useProjectStore();
   const allProjects = computed(() => projectStore.projects);
   const filteredProjects = computed(() => projectStore.filteredProjects);

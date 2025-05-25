@@ -48,8 +48,8 @@
         <div class="mb-4 space-y-3">
           <div class="flex items-start justify-between">
             <h3
-              class="_font-semibold text-lg text-gray-900 transition-colors dark:text-gray-100"
-              :class="[disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400']"
+              class="text-lg font-semibold text-foreground-heading transition-colors"
+              :class="[disabled ? '' : 'group-hover:text-primary']"
             >
               {{ project.name || 'لا يوجد اسم' }}
             </h3>
@@ -76,36 +76,33 @@
             </div>
           </div>
         </div>
-        <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
-        <div class="flex flex-wrap gap-6 pt-4 dark:border-gray-700">
+        <hr class="mb-6 w-full border-border" />
+        <div class="flex flex-wrap gap-6 pt-4">
           <div
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-gray-200 pr-6 last:border-r-0 dark:border-gray-700"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-border pr-6 last:border-r-0"
           >
             <div class="flex items-center gap-2">
-              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
-                <Icon
-                  icon="lucide:calendar-days"
-                  class="h-4 w-4 text-gray-600 dark:text-gray-100"
-                />
+              <div class="rounded-full bg-background-hover p-2">
+                <Icon icon="lucide:calendar-days" class="h-4 w-4 text-foreground-muted" />
               </div>
               <div class="flex flex-col">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">تاريخ البدء</h3>
-                <p class="text-sm font-semibold text-gray-600 dark:text-gray-100">
+                <h3 class="text-sm font-medium text-foreground-heading">تاريخ البدء</h3>
+                <p class="text-sm font-semibold text-foreground-muted">
                   {{ formatDate(project.actualStartDate) }}
                 </p>
               </div>
             </div>
           </div>
           <div
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-gray-200 pr-6 last:border-r-0 dark:border-gray-700"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-border pr-6 last:border-r-0"
           >
             <div class="flex items-center gap-2">
-              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
-                <Icon icon="formkit:datetime" class="h-4 w-4 text-gray-600 dark:text-gray-100" />
+              <div class="rounded-full bg-background-hover p-2">
+                <Icon icon="formkit:datetime" class="h-4 w-4 text-foreground-muted" />
               </div>
               <div class="flex flex-col">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">فترة التنفيذ</h3>
-                <p class="text-sm font-semibold text-gray-600 dark:text-gray-100">
+                <h3 class="text-sm font-medium text-foreground-heading">فترة التنفيذ</h3>
+                <p class="text-sm font-semibold text-foreground-muted">
                   {{ project.duration }} {{ getPeriodTypeText(project.periodType) }}
                 </p>
               </div>
@@ -113,23 +110,21 @@
           </div>
 
           <div
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-gray-200 pr-6 last:border-r-0 dark:border-gray-700"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-border pr-6 last:border-r-0"
           >
             <div class="flex items-center gap-2">
-              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
+              <div class="rounded-full bg-background-hover p-2">
                 <Icon
                   icon="fluent:money-calculator-24-regular"
-                  class="h-4 w-4 text-gray-600 dark:text-gray-100"
+                  class="h-4 w-4 text-foreground-muted"
                 />
               </div>
               <div class="flex flex-col">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <h3 class="text-sm font-medium text-foreground-heading">
                   {{ isFundedProject ? 'الانجاز المالي' : 'التقدم المالي' }}
                 </h3>
                 <div class="flex items-center gap-2">
-                  <div
-                    class="relative h-1.5 w-16 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700"
-                  >
+                  <div class="relative h-1.5 w-16 overflow-hidden rounded-full bg-background-hover">
                     <div
                       class="absolute inset-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out dark:from-blue-400 dark:to-blue-500"
                       :style="{
@@ -137,7 +132,7 @@
                       }"
                     ></div>
                   </div>
-                  <p class="text-sm font-semibold text-gray-600 dark:text-gray-100">
+                  <p class="text-sm font-semibold text-foreground-muted">
                     {{
                       isFundedProject
                         ? project.financialAchievement || 0
@@ -149,15 +144,15 @@
             </div>
           </div>
           <div
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-x border-r border-gray-200 pr-6 dark:border-gray-700"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-x border-r border-border pr-6"
           >
             <div class="flex items-center gap-2">
-              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
-                <Icon icon="lucide:wallet" class="h-4 w-4 text-gray-600 dark:text-gray-100" />
+              <div class="rounded-full bg-background-hover p-2">
+                <Icon icon="lucide:wallet" class="h-4 w-4 text-foreground-muted" />
               </div>
               <div class="flex flex-col">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">الكلفة</h3>
-                <p class="text-sm font-semibold text-gray-600 dark:text-gray-100">
+                <h3 class="text-sm font-medium text-foreground-heading">الكلفة</h3>
+                <p class="text-sm font-semibold text-foreground-muted">
                   {{ formatCost(getProjectCost) }} {{ selectedCurrency === 'USD' ? '$' : 'د.ع' }}
                 </p>
               </div>

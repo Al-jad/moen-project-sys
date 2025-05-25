@@ -24,7 +24,11 @@
 
       <!-- Middle Pages -->
       <PaginationItem v-for="page in visiblePages" :key="page">
-        <PaginationLink :isActive="page === currentPage" @click="emit('update:modelValue', page)">
+        <PaginationLink
+          :class="page === currentPage ? '!bg-primary !text-primary-foreground' : ''"
+          :isActive="page === currentPage"
+          @click="emit('update:modelValue', page)"
+        >
           {{ page }}
         </PaginationLink>
       </PaginationItem>
