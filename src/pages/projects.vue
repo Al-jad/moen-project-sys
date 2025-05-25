@@ -21,7 +21,6 @@
         @close="handlePremiumModalClose"
       />
       <div class="dark:bg-darkmode -mt-1 flex-1 bg-background p-6">
-        <!-- Projects Header -->
         <div class="mb-6 flex items-center justify-between">
           <div class="space-y-1">
             <h1 class="text-2xl font-bold text-foreground-heading">قائمة المشاريع</h1>
@@ -33,9 +32,7 @@
               }}
             </p>
           </div>
-
           <div class="flex items-center gap-3">
-            <!-- Currency Selector -->
             <div class="flex items-center gap-2">
               <span class="text-sm text-foreground-muted">العملة:</span>
               <CustomSelect
@@ -47,84 +44,47 @@
                 @update:model-value="handleCurrencyChange"
               />
             </div>
-
             <div class="flex items-center gap-2">
               <PrimaryButton @click="showPremiumModal" variant="destructive" icon="mdi:lock">
                 ترتيب
               </PrimaryButton>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <PrimaryButton variant="primary" icon="lucide:plus">
-                  اضافة مشروع جديد
-                </PrimaryButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                class="w-[200px] border-border bg-background-surface dark:border-gray-700 dark:bg-gray-800"
-              >
-                <DropdownMenuItem
-                  class="dark:focus:bg-gray-700/50"
-                  @click="$router.push('/add-funded-project')"
-                >
-                  مشروع ممول
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  class="dark:focus:bg-gray-700/50"
-                  @click="$router.push('/add-devlopment-project')"
-                >
-                  مشروع تنمية الاقاليم
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  disabled
-                  class="dark:focus:bg-gray-700/50"
-                  @click="$router.push('/add-project?type=investment')"
-                >
-                  مشروع استثمارية
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  disabled
-                  class="dark:focus:bg-gray-700/50"
-                  @click="$router.push('/add-project?type=operational')"
-                >
-                  مشروع تشغيلية
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        <!-- Projects List -->
-        <div
-          v-if="!isLoading && !error && paginatedProjects.length > 0"
-          class="grid grid-cols-1 gap-6"
-        >
-          <GenericProjectCard
-            v-for="project in paginatedProjects"
-            :key="project.id"
-            :project="project"
-            :selectedCurrency="selectedCurrency"
-          />
-          <div v-if="totalProjects > itemsPerPage" class="mt-4 flex justify-center">
-            <CustomPagination
-              v-model="currentPage"
-              :total="totalProjects"
-              :per-page="itemsPerPage"
+            <CustomDrop
+              label="اضافة مشروع جديد"
+              icon="lucide:plus"
+              variant="primary"
+              :items="addProjectItems"
+              @select="handleAddProject"
             />
           </div>
         </div>
-
-        <!-- Loading State -->
-        <div v-if="isLoading" class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <GenericProjectCard
-            v-for="i in 4"
-            :key="i"
-            :project="{}"
-            :isLoading="true"
-            :selectedCurrency="selectedCurrency"
-          />
+        <div v-if="!error" class="grid grid-cols-1 gap-6">
+          <template v-if="isLoading">
+            <GenericProjectCard
+              v-for="i in itemsPerPage"
+              :key="`skeleton-${i}`"
+              :project="{}"
+              :isLoading="true"
+              :selectedCurrency="selectedCurrency"
+            />
+          </template>
+          <template v-else-if="paginatedProjects.length > 0">
+            <GenericProjectCard
+              v-for="project in paginatedProjects"
+              :key="project.id"
+              :project="project"
+              :selectedCurrency="selectedCurrency"
+              :isLoading="false"
+            />
+            <div v-if="totalProjects > itemsPerPage" class="mt-4 flex justify-center">
+              <CustomPagination
+                v-model="currentPage"
+                :total="totalProjects"
+                :per-page="itemsPerPage"
+              />
+            </div>
+          </template>
         </div>
-
-        <!-- Error State -->
         <div
           v-else-if="error"
           class="flex flex-col items-center justify-center rounded-lg border border-destructive bg-destructive/10 p-8 text-center"
@@ -132,25 +92,20 @@
           <Icon icon="lucide:alert-circle" class="mb-4 h-12 w-12 text-destructive" />
           <h3 class="mb-2 text-lg font-medium text-destructive">حدث خطأ في تحميل المشاريع</h3>
           <p class="mb-4 text-sm text-destructive">{{ error }}</p>
-          <PrimaryButton @click="fetchProjects" icon="lucide:refresh-cw">
+          <PrimaryButton @click="fetchProjects" variant="destructive" icon="lucide:refresh-cw">
             اعادة المحاولة
           </PrimaryButton>
         </div>
-
-        <!-- Empty State - No Projects in System -->
         <div
           v-else-if="!isLoading && !error && allProjects.length === 0"
-          class="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50"
+          class="flex flex-col items-center justify-center rounded-lg border border-border bg-background-surface p-8 text-center"
         >
-          <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-          <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">لا توجد مشاريع</h3>
-          <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
+          <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
+          <h3 class="mb-2 text-lg font-medium text-foreground-heading">لا توجد مشاريع</h3>
+          <p class="mb-4 text-sm text-foreground-muted"
             >لا توجد مشاريع في النظام حالياً. قم باضافة مشروع جديد.</p
           >
-          <!-- You might want a button here to add a project -->
         </div>
-
-        <!-- Empty State - No Filter Match -->
         <div
           v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
           class="flex flex-col items-center justify-center rounded-lg border border-border bg-background-surface p-8 text-center"
@@ -160,14 +115,16 @@
           <p class="mb-4 text-sm text-foreground-muted">
             لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.
           </p>
-          <PrimaryButton @click="clearFilters" icon="lucide:x"> مسح الفلترة </PrimaryButton>
+          <PrimaryButton @click="clearFilters" variant="secondary" icon="lucide:x">
+            مسح الفلترة
+          </PrimaryButton>
         </div>
       </div>
     </div>
   </DefaultLayout>
 </template>
-
-<script setup lang="ts">
+<script setup>
+  import CustomDrop from '@/components/CustomDrop.vue';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -175,35 +132,22 @@
   import PremiumModal from '../components/PremiumModal.vue';
   import PrimaryButton from '../components/PrimaryButton.vue';
   import ProjectsFilter from '../components/ProjectsFilter.vue';
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-  } from '../components/ui/dropdown-menu';
   import { useToast } from '../composables/useToast';
   import { CURRENCY_CONVERSION, UNITS } from '../constants';
   import DefaultLayout from '../layouts/DefaultLayout.vue';
   import axiosInstance from '../plugins/axios';
   import { determineFundingType, ProjectType } from '../services/projectTypeService';
   import { useProjectStore } from '../stores/projectStore';
-
   const projectStore = useProjectStore();
   const allProjects = computed(() => projectStore.projects);
   const filteredProjects = computed(() => projectStore.filteredProjects);
   const isLoading = computed(() => projectStore.loading);
   const error = computed(() => projectStore.error);
   const beneficiaries = ref([]);
-
-  // Add a local ref for filtered projects
   const filteredProjectsList = ref([]);
-
-  // Add this helper function to convert Arabic numerals to English
   const convertArabicToEnglish = (str) => {
     if (!str) return '0';
-    // If it's already a number, return it as string
     if (typeof str === 'number') return str.toString();
-
     return str
       .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - '٠'.charCodeAt(0))
       .replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - '۰'.charCodeAt(0))
@@ -211,41 +155,30 @@
       .replace(/د\.ع|IQD|USD|\s/g, '')
       .trim();
   };
-
-  // Add this helper function to normalize currency codes
   const normalizeCurrency = (currency) => {
     if (!currency) return 'IQD';
-    // If currency is a number, convert to string code
     if (currency === 1) return 'IQD';
     if (currency === 2) return 'USD';
     return currency;
   };
-
-  // Update minMaxBudgetRange computed
   const minMaxBudgetRange = computed(() => {
     if (!allProjects.value.length) return [0, 0];
-
     const costs = allProjects.value
       .map((project) => {
         const cost = project.cost || 0;
-        // Convert to current selected currency if needed
         return selectedCurrency.value === 'USD' ? Number(cost) / 1450 : Number(cost);
       })
       .filter((cost) => cost > 0);
-
     if (!costs.length) return [0, 0];
-
     return [Math.floor(Math.min(...costs)), Math.ceil(Math.max(...costs))];
   });
-
-  // Filter states
   const searchQuery = ref('');
   const selectedFunding = ref({
     all: true,
     fund: false,
     regional: false,
   });
-  const budgetRange = ref([0, 0]); // Initialize with zeros
+  const budgetRange = ref([0, 0]);
   const isBudgetFilterEnabled = ref(false);
   const selectedYear = ref('all');
   const selectedStatus = ref({
@@ -256,23 +189,14 @@
     cancelled: false,
   });
   const selectedBeneficiaries = ref({ all: true });
-
-  // Add currency options
   const currencyOptions = [
     { value: 'IQD', label: UNITS.CURRENCY.IQD },
     { value: 'USD', label: UNITS.CURRENCY.USD },
   ];
-
-  // Add currency selection state with localStorage initialization
   const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
-
   const route = useRoute();
   const router = useRouter();
-
-  // Initialize showGovernmentProjects from route query
   const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
-
-  // Watch for route changes to update the filters
   watch(
     () => route.query,
     (newQuery) => {
@@ -284,7 +208,6 @@
         delayed: newQuery.status === '3',
         cancelled: newQuery.status === '0',
       };
-
       if (newQuery.status || newQuery.showGovernmentProjects) {
         applyFilters({
           searchQuery: '',
@@ -298,8 +221,6 @@
     },
     { deep: true }
   );
-
-  // Watch for changes in budget range and currency
   watch(
     [minMaxBudgetRange, selectedCurrency],
     ([newRange]) => {
@@ -307,72 +228,52 @@
     },
     { immediate: true }
   );
-
   const applyFilters = (filters) => {
     if (!allProjects.value.length) {
       filteredProjectsList.value = [];
       return;
     }
-
     let result = [...allProjects.value];
-
-    // Apply funding type filter
     if (filters.selectedFunding && !filters.selectedFunding.all) {
       result = result.filter((project) => {
         const projectType = determineFundingType(project);
-
-        // For funded projects
         if (filters.selectedFunding.fund) {
           return projectType === ProjectType.FUNDED;
         }
-        // For regional projects
         if (filters.selectedFunding.regional) {
           return projectType === ProjectType.REGIONAL;
         }
         return false;
       });
     }
-
-    // Apply search filter if exists
     if (filters.searchQuery && filters.searchQuery.trim() !== '') {
       const query = filters.searchQuery.toLowerCase().trim();
-
       result = result.filter((project) => {
-        const projectName = project.name || project.title; // Use name, fallback to title if name doesn't exist
+        const projectName = project.name || project.title;
         const matches =
-          // Core fields
           (projectName && projectName.toLowerCase().includes(query)) ||
           (project.executingDepartment &&
             project.executingDepartment.toLowerCase().includes(query)) ||
           (project.implementingEntity &&
             project.implementingEntity.toLowerCase().includes(query)) ||
           (project.id && project.id.toString().includes(query)) ||
-          // Additional fields from other types (check existence first)
           (project.grantingEntity && project.grantingEntity.toLowerCase().includes(query)) ||
           (project.projectObjectives && project.projectObjectives.toLowerCase().includes(query)) ||
           (project.directorate && project.directorate.toLowerCase().includes(query)) ||
           (project.goals && project.goals.toLowerCase().includes(query)) ||
-          (project.description && project.description.toLowerCase().includes(query)); // Add description back just in case
-
+          (project.description && project.description.toLowerCase().includes(query));
         return matches;
       });
     }
-
-    // Apply budget range filter only if it's enabled
     if (filters.isBudgetFilterEnabled && filters.budgetRange && filters.budgetRange.length === 2) {
       const [minBudget, maxBudget] = filters.budgetRange;
-
       result = result.filter((project) => {
         const cost = project.cost || 0;
-        // Convert cost to match current selected currency
         const convertedCost = selectedCurrency.value === 'USD' ? Number(cost) / 1450 : Number(cost);
-
         const isInRange = convertedCost >= minBudget && convertedCost <= maxBudget;
         return isInRange;
       });
     }
-
-    // Apply status filter - match to projectStatus value
     if (filters.selectedStatus && !filters.selectedStatus.all) {
       result = result.filter((project) => {
         const statusMatches =
@@ -380,61 +281,45 @@
           (filters.selectedStatus.inProgress && project.projectStatus === 1) ||
           (filters.selectedStatus.delayed && project.projectStatus === 3) ||
           (filters.selectedStatus.cancelled && project.projectStatus === 0);
-
         return statusMatches;
       });
     }
-
-    // Apply government projects filter
     if (filters.showGovernmentProjects) {
       result = result.filter((project) => {
         const isGovernment = Boolean(project.isGovernment);
         return isGovernment;
       });
     }
-
-    // Apply beneficiary filter
     if (filters.selectedBeneficiaries && !filters.selectedBeneficiaries.all) {
       result = result.filter((project) => {
         if (!project.beneficiaries || project.beneficiaries.length === 0) {
           return false;
         }
-
         return project.beneficiaries.some(
           (beneficiary) => filters.selectedBeneficiaries[beneficiary.id]
         );
       });
     }
-
-    // Update filtered projects LOCALLY instead of through store
     filteredProjectsList.value = result;
-    currentPage.value = 1; // Reset pagination when filters change
+    currentPage.value = 1;
   };
-
-  // Add currency conversion function
   const convertCurrency = (value, fromCurrency, toCurrency) => {
     if (!value || isNaN(value)) return 0;
     const numValue = Number(value);
     if (fromCurrency === toCurrency) return numValue;
-
     let convertedValue;
     if (fromCurrency === 'USD') {
       convertedValue = numValue * CURRENCY_CONVERSION.USD_TO_IQD;
     } else {
       convertedValue = numValue * CURRENCY_CONVERSION.IQD_TO_USD;
     }
-
-    // Round to appropriate precision
     const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
     return Number(convertedValue.toFixed(precision));
   };
-
   const handleCurrencyChange = (newCurrency) => {
     const oldCurrency = selectedCurrency.value;
     selectedCurrency.value = newCurrency;
     localStorage.setItem('selectedCurrency', newCurrency);
-
-    // Convert budget range if it's enabled
     if (isBudgetFilterEnabled.value && budgetRange.value) {
       if (newCurrency === 'USD' && oldCurrency === 'IQD') {
         budgetRange.value = budgetRange.value.map((value) => value / 1450);
@@ -442,16 +327,12 @@
         budgetRange.value = budgetRange.value.map((value) => value * 1450);
       }
     }
-
-    // Show success message
     showSuccess(
       'تم تغيير العملة',
       newCurrency === 'USD'
         ? 'تم تغيير العملة إلى الدولار الأمريكي'
         : 'تم تغيير العملة إلى الدينار العراقي'
     );
-
-    // Reapply filters with new currency
     applyFilters({
       searchQuery: searchQuery.value,
       budgetRange: budgetRange.value,
@@ -461,31 +342,23 @@
       isBudgetFilterEnabled: isBudgetFilterEnabled.value,
     });
   };
-
-  // Fetch projects from API
   const fetchProjects = async function () {
     await projectStore.fetchAllProjects();
   };
-
   const totalProjects = computed(() => filteredProjectsList.value.length);
   const paginatedCount = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return Math.min(itemsPerPage.value, filteredProjectsList.value.length - start);
   });
-
   const selectedSort = ref('');
-
   const showPremiumModalOpen = ref(false);
-
   const showPremiumModal = () => {
     showPremiumModalOpen.value = true;
   };
-
   const handlePremiumModalClose = () => {
     showPremiumModalOpen.value = false;
   };
-
   const fetchBeneficiaries = async () => {
     try {
       const response = await axiosInstance.get('/api/beneficiary');
@@ -494,22 +367,14 @@
       console.error('Error fetching beneficiaries:', error);
     }
   };
-
-  // Fetch projects and beneficiaries when component is mounted
   onMounted(async () => {
     try {
-      // Get saved currency from localStorage
       const savedCurrency = localStorage.getItem('selectedCurrency');
       if (savedCurrency) {
         selectedCurrency.value = savedCurrency;
       }
-
-      // Fetch data
       await Promise.all([fetchProjects(), fetchBeneficiaries()]);
-
-      // Auto apply filters based on route query
       if (route.query.status || route.query.showGovernmentProjects) {
-        // Get status message based on query
         let statusMessage = '';
         if (route.query.status) {
           switch (route.query.status) {
@@ -528,13 +393,9 @@
           }
           showSuccess('تم تطبيق الفلتر', statusMessage);
         }
-
-        // Show government projects filter message
         if (route.query.showGovernmentProjects === 'true') {
           showSuccess('تم تطبيق الفلتر', 'تم تطبيق فلتر البرنامج الحكومي');
         }
-
-        // Initial filter application should also update the local list
         applyFilters({
           searchQuery: '',
           budgetRange: minMaxBudgetRange.value,
@@ -544,28 +405,19 @@
           isBudgetFilterEnabled: false,
         });
       } else {
-        // Initialize local list if no filters are applied via query
         filteredProjectsList.value = [...allProjects.value];
       }
     } catch (error) {
       console.error('Error initializing component:', error);
-      // Ensure local list is also cleared on error
       filteredProjectsList.value = [];
     }
   });
-
-  // Watch the source of projects (allProjects) to reset local filter list if needed
   watch(allProjects, (newProjects) => {
-    // Re-apply current filters or reset to all
-    // For simplicity, let's reset to all for now. You might want to re-apply existing filters.
     filteredProjectsList.value = [...newProjects];
-    currentPage.value = 1; // Reset pagination
+    currentPage.value = 1;
   });
-
-  // Add this mapping function somewhere in your script setup
   const getTableNameInArabic = (tableName) => {
-    if (!tableName) return 'غير محدد'; // "Not specified" for null values
-
+    if (!tableName) return 'غير محدد';
     const tableNameMap = {
       Project: 'المشروع',
       Attachment: 'المرفقات',
@@ -573,12 +425,9 @@
       Beneficiary: 'الجهة المستفيدة',
       Component: 'المكون',
       User: 'المستخدم',
-      // Add any other table names that might appear in your system
     };
-
     return tableNameMap[tableName] || tableName;
   };
-
   const clearFilters = () => {
     const defaultFilters = {
       searchQuery: '',
@@ -600,21 +449,43 @@
       isBudgetFilterEnabled: false,
       showGovernmentProjects: false,
     };
-
-    // Apply default filters
     applyFilters(defaultFilters);
   };
-
   const { showSuccess } = useToast();
-
-  // Update these near the top of the script section where other refs are defined
   const currentPage = ref(1);
-  const itemsPerPage = ref(5); // Changed from 10 to 5
-
-  // Update the paginatedProjects computed property
+  const itemsPerPage = ref(5);
   const paginatedProjects = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return filteredProjectsList.value.slice(start, end);
   });
+  const addProjectItems = [
+    {
+      label: 'مشروع ممول',
+      icon: 'lucide:banknote',
+      onClick: () => router.push('/add-funded-project'),
+    },
+    {
+      label: 'مشروع تنمية الاقاليم',
+      icon: 'lucide:landmark',
+      onClick: () => router.push('/add-devlopment-project'),
+    },
+    {
+      label: 'مشروع استثمارية',
+      icon: 'lucide:trending-up',
+      disabled: true,
+      onClick: () => router.push('/add-project?type=investment'),
+    },
+    {
+      label: 'مشروع تشغيلية',
+      icon: 'lucide:settings',
+      disabled: true,
+      onClick: () => router.push('/add-project?type=operational'),
+    },
+  ];
+  const handleAddProject = (item) => {
+    if (item.onClick) {
+      item.onClick();
+    }
+  };
 </script>

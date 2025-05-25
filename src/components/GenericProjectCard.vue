@@ -1,40 +1,42 @@
 <template>
   <div
     @click="navigateToProjectDetails"
-    class="group relative overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
+    class="group relative overflow-hidden rounded-lg border bg-background-surface transition-all duration-300"
     :class="[
       disabled
         ? 'cursor-not-allowed opacity-70'
-        : 'hover:cursor-pointer hover:border-blue-500/20 hover:shadow-lg',
+        : 'hover:cursor-pointer hover:border-primary/20 hover:shadow-lg',
     ]"
   >
     <template v-if="isLoading">
-      <div class="border-b border-gray-200 p-6 dark:border-gray-700">
-        <!-- Title Skeleton -->
+      <div class="border-b border-border p-6">
+        <!-- Title and Status Skeleton -->
         <div class="mb-4 space-y-3">
           <div class="flex items-start justify-between">
-            <div class="h-7 w-48 animate-pulse rounded-md bg-gray-200 dark:bg-gray-700"></div>
-            <div class="h-6 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div class="h-7 w-48 animate-pulse rounded-md bg-background-card"></div>
+            <div class="h-6 w-24 animate-pulse rounded-full bg-background-card"></div>
           </div>
           <!-- Badges Skeleton -->
           <div class="flex flex-wrap items-center gap-2">
-            <div class="h-6 w-32 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"></div>
-            <div class="h-6 w-36 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div class="h-6 w-32 animate-pulse rounded-full bg-background-card"></div>
+            <div class="h-6 w-36 animate-pulse rounded-full bg-background-card"></div>
           </div>
         </div>
-        <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
+        <hr class="mb-6 w-full border-border" />
         <!-- Info Grid Skeleton -->
-        <div class="flex flex-wrap gap-6 pt-6 dark:border-gray-700">
+        <div class="flex flex-wrap gap-6 pt-4">
           <div
             v-for="i in 4"
             :key="i"
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-gray-200 pr-6 last:border-r-0 dark:border-gray-700"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-border pr-6 last:border-r-0"
           >
             <div class="flex items-center gap-2">
-              <div class="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              <div class="rounded-full bg-background-hover p-2">
+                <div class="h-4 w-4 animate-pulse rounded-full bg-background-card"></div>
+              </div>
               <div class="flex flex-col gap-2">
-                <div class="h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700"></div>
-                <div class="h-4 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700"></div>
+                <div class="h-4 w-20 animate-pulse rounded bg-background-card"></div>
+                <div class="h-4 w-24 animate-pulse rounded bg-background-card"></div>
               </div>
             </div>
           </div>

@@ -41,6 +41,7 @@ declare module 'vue' {
     ContractCard: typeof import('./src/components/ContractCard.vue')['default']
     ContractEditModal: typeof import('./src/components/regional-project/ContractEditModal.vue')['default']
     CustomCheckbox: typeof import('./src/components/CustomCheckbox.vue')['default']
+    CustomDrop: typeof import('./src/components/CustomDrop.vue')['default']
     CustomInput: typeof import('./src/components/CustomInput.vue')['default']
     CustomMultiSelect: typeof import('./src/components/CustomMultiSelect.vue')['default']
     CustomPagination: typeof import('./src/components/CustomPagination.vue')['default']

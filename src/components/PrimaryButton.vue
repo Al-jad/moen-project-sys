@@ -4,9 +4,12 @@
       buttonClass,
       'flex items-center gap-2',
       variant === 'link' && 'text-foreground-muted',
-      variant === 'primary' && 'hover:bg-primary-hover dark:text-foreground-heading border border-border bg-primary',
+      variant === 'primary' &&
+        'border border-border bg-primary hover:bg-primary-hover dark:text-foreground-heading',
       variant === 'outline' &&
-        'hover:bg-background-hover bg-background-surface border border-border',
+        'border border-border bg-background-surface hover:bg-background-hover',
+      variant === 'destructive' && 'bg-destructive hover:bg-destructive/90',
+      variant === 'warning' && 'bg-warning hover:bg-warning/90',
     ]"
     :variant="variant === 'primary' ? 'default' : variant"
     :size="size"
