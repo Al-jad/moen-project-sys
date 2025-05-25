@@ -97,17 +97,6 @@
             />
             <div class="flex items-center gap-4">
               <div class="flex-1">
-                <label class="mb-1 block text-xs text-foreground-muted">الحد الأدنى</label>
-                <NumberInput
-                  v-model="localBudgetRange[0]"
-                  :disabled="!isBudgetFilterEnabled || disabled"
-                  :class="{ 'cursor-not-allowed': disabled }"
-                  :unit="selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD"
-                  @update:model-value="validateAndUpdateMin"
-                />
-              </div>
-
-              <div class="flex-1">
                 <label class="mb-1 block text-xs text-foreground-muted">الحد الأقصى</label>
                 <NumberInput
                   v-model="localBudgetRange[1]"
@@ -115,6 +104,17 @@
                   :class="{ 'cursor-not-allowed': disabled }"
                   :unit="selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD"
                   @update:model-value="validateAndUpdateMax"
+                />
+              </div>
+
+              <div class="flex-1">
+                <label class="mb-1 block text-xs text-foreground-muted">الحد الأدنى</label>
+                <NumberInput
+                  v-model="localBudgetRange[0]"
+                  :disabled="!isBudgetFilterEnabled || disabled"
+                  :class="{ 'cursor-not-allowed': disabled }"
+                  :unit="selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD"
+                  @update:model-value="validateAndUpdateMin"
                 />
               </div>
             </div>
