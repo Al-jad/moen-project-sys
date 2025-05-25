@@ -7,29 +7,21 @@
       <img src="/img/logo-text.png" alt="Logo" class="h-16" />
     </div>
     <div class="relative z-20 flex min-h-screen items-center justify-center">
-      <Card class="mx-4 w-full max-w-md dark:border-gray-700 dark:bg-gray-800/90">
+      <Card class="mx-4 w-full max-w-md border-border bg-background-surface/90">
         <CardHeader>
           <div class="space-y-2 text-right">
-            <h1 class="text-2xl font-semibold text-[#003049] dark:text-white">
+            <h1 class="text-2xl font-semibold text-foreground">
               اهلا بك في برنامج ادارة المشاريع
             </h1>
-            <h2 class="text-lg text-[#003049]/80 dark:text-gray-300">
-              دائرة التخطيط - وزارة البيئة
-            </h2>
-            <p class="text-sm text-muted-foreground dark:text-gray-400">
-              ادخل الايميل الخاص بك و الرمز السري
-            </p>
+            <h2 class="text-lg text-foreground"> دائرة التخطيط - وزارة البيئة </h2>
+            <p class="text-sm text-muted-foreground"> ادخل الايميل الخاص بك و الرمز السري </p>
           </div>
         </CardHeader>
         <CardContent>
           <form @submit.prevent="handleLogin" class="space-y-6" dir="rtl">
             <div class="space-y-4">
               <div class="space-y-2">
-                <label
-                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200"
-                >
-                  اسم المستخدم
-                </label>
+                <label class="text-sm font-medium leading-none"> اسم المستخدم </label>
                 <CustomInput
                   type="text"
                   v-model="username"
@@ -38,11 +30,7 @@
                 />
               </div>
               <div class="space-y-2">
-                <label
-                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200"
-                >
-                  كلمة السر
-                </label>
+                <label class="text-sm font-medium leading-none"> كلمة السر </label>
                 <div class="relative">
                   <CustomInput
                     :type="showPassword ? 'text' : 'password'"
@@ -60,61 +48,81 @@
                   >
                     <Icon
                       :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'"
-                      class="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground dark:text-gray-400 dark:hover:text-gray-300"
+                      class="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground"
                     />
                     <span class="sr-only">{{ showPassword ? 'Hide' : 'Show' }} password</span>
                   </PrimaryButton>
                 </div>
               </div>
             </div>
-            <PrimaryButton type="submit" class="w-full">
-              <span class="mr-2 text-lg"> → </span>
+            <PrimaryButton type="submit" class="w-full" icon="lucide:arrow-right">
               <span>تسجيل الدخول</span>
             </PrimaryButton>
           </form>
         </CardContent>
       </Card>
     </div>
+    <Toaster />
   </div>
 </template>
-
-<script setup>
-  import { useToast } from '@/composables/useToast';
-  import axiosInstance from '@/plugins/axios';
+<script setup lang="ts">
   import { useAuthStore } from '@/stores/authStore';
+  import { authService } from '@/services/authService';
+  import type { LoginRequest } from '@/types/auth';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
-
+  import { ref, onMounted } from 'vue';
+  import { useToast } from '@/composables/useToast';
+  import { useRouter, useRoute } from 'vue-router';
+  import { Toaster } from 'vue-sonner';
   const router = useRouter();
+  const route = useRoute();
   const authStore = useAuthStore();
+  const { showError, showSuccess } = useToast();
   const username = ref('');
   const password = ref('');
   const showPassword = ref(false);
   const errorMessage = ref('');
-
-  const { showError } = useToast();
-
+  onMounted(() => {
+    if (authStore.isAuthenticated) {
+      const redirectPath = route.query.redirect?.toString() || '/';
+      router.replace(redirectPath);
+    }
+  });
+  const getArabicErrorMessage = (error: any) => {
+    const apiMessage = error.response?.data?.message || error.details?.message;
+    if (!apiMessage) return 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى';
+    const errorMessages: Record<string, string> = {
+      'User not found': 'المستخدم غير موجود. يرجى التحقق من اسم المستخدم',
+      'Invalid credentials': 'كلمة المرور غير صحيحة',
+      'Invalid username or password': 'اسم المستخدم أو كلمة المرور غير صحيحة',
+      'User is inactive': 'هذا الحساب غير مفعل. يرجى التواصل مع المسؤول',
+      'User is blocked': 'هذا الحساب محظور. يرجى التواصل مع المسؤول',
+    };
+    return errorMessages[apiMessage] || 'يرجى التحقق من اسم المستخدم وكلمة المرور';
+  };
   const handleLogin = async () => {
     errorMessage.value = '';
-
     try {
-      const response = await axiosInstance.post('/api/auth/login', {
+      const credentials: LoginRequest = {
         username: username.value,
         password: password.value,
-      });
-
-      if (response.status === 200 || response.status === 201) {
-        const { user, tokens } = response.data;
-
+      };
+      const response = await authService.login(credentials);
+      const { user, tokens } = response;
+      if (user && tokens && tokens.access) {
         authStore.setUser(user);
         authStore.setToken(tokens.access);
-
-        router.push({ path: '/', query: { from: 'login' } });
+        showSuccess('تم تسجيل الدخول بنجاح', 'مرحباً بك في النظام');
+        const redirectPath = route.query.redirect?.toString() || '/';
+        await router.replace(redirectPath);
+      } else {
+        errorMessage.value = 'خطأ في استجابة تسجيل الدخول من الخادم.';
+        showError('فشل تسجيل الدخول', 'بيانات تسجيل الدخول غير مكتملة.');
       }
-    } catch (error) {
-      console.error('Login Error:', error);
+    } catch (error: any) {
       errorMessage.value = 'خطأ في تسجيل الدخول. تحقق من اسم المستخدم أو كلمة المرور.';
-      showError('فشل تسجيل الدخول', 'يرجى التحقق من اسم المستخدم وكلمة المرور');
+      const arabicErrorMsg = getArabicErrorMessage(error);
+      showError('فشل تسجيل الدخول', arabicErrorMsg);
     }
   };
 </script>

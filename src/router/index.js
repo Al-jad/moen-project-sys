@@ -207,13 +207,19 @@ router.beforeEach((to, from, next) => {
 
   // If the route requires auth and user is not authenticated
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/login');
+    // Store the intended destination in the redirect query parameter
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    });
     return;
   }
 
   // If user is authenticated and tries to access login page
   if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/');
+    // If there's a redirect query, use it, otherwise go to home
+    const redirectPath = to.query.redirect || '/';
+    next(redirectPath);
     return;
   }
 

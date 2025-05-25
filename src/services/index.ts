@@ -1,4 +1,5 @@
 // Export all services
+export * from './authService';
 export { beneficiaryService } from './beneficiaryService';
 export { projectService } from './projectService';
 export {
