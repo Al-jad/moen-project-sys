@@ -1,12 +1,14 @@
 <template>
   <div class="relative">
-    <input
-      :type="type"
+    <textarea
       :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
       :placeholder="placeholder"
+      :rows="rows"
+      :disabled="disabled"
+      :readonly="readonly"
       :class="[
-        'w-full rounded-lg px-4 py-2 transition-colors',
+        'w-full resize-none rounded-lg px-4 py-2 transition-colors',
         'bg-background-surface',
         'border border-border',
         'text-foreground',
@@ -16,7 +18,7 @@
         icon ? 'pr-10' : '',
       ]"
     />
-    <div v-if="icon" class="absolute inset-y-0 right-0 flex items-center pr-3">
+    <div v-if="icon" class="absolute right-0 top-2 flex items-start pr-3">
       <Icon :icon="icon" class="h-5 w-5 text-foreground-muted" />
     </div>
   </div>
@@ -27,16 +29,24 @@
 
   defineProps({
     modelValue: {
-      type: [String, Number],
+      type: String,
       default: '',
     },
     placeholder: {
       type: String,
       default: '',
     },
-    type: {
-      type: String,
-      default: 'text',
+    rows: {
+      type: Number,
+      default: 3,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
     icon: {
       type: String,

@@ -1,9 +1,9 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
-      <div class="w-full max-w-6xl mx-auto space-y-8">
-        <div class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100"> اضافة مشروع - ممول </h1>
+    <div class="min-h-screen bg-background p-6">
+      <div class="mx-auto w-full max-w-6xl space-y-8">
+        <div class="rounded-xl border border-border bg-background-surface p-6">
+          <h1 class="text-2xl font-bold text-foreground"> اضافة مشروع - ممول </h1>
         </div>
 
         <div class="space-y-8">
@@ -24,32 +24,30 @@
               <div
                 v-for="(component, index) in store.form.components"
                 :key="component.id || index"
-                class="p-6 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800"
+                class="rounded-xl border border-border bg-background-surface p-6"
               >
-                <div class="flex items-center justify-between mb-6">
+                <div class="mb-6 flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     <div
-                      class="w-8 h-8 rounded-lg"
+                      class="h-8 w-8 rounded-lg"
                       :style="{ backgroundColor: getComponentColor(index, true) }"
                     >
                       <div
-                        class="flex items-center justify-center w-full h-full text-sm font-medium"
+                        class="flex h-full w-full items-center justify-center text-sm font-medium"
                         :style="{ color: getComponentColor(index) }"
                       >
                         {{ index + 1 }}
                       </div>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      المكون {{ index + 1 }}
-                    </h3>
+                    <h3 class="text-lg font-medium text-foreground"> المكون {{ index + 1 }} </h3>
                   </div>
                   <Button
                     @click="removeComponent(index)"
                     variant="ghost"
                     size="sm"
-                    class="text-red-500 hover:text-red-600 dark:text-red-400"
+                    class="bg-destructive/30 !text-destructive hover:bg-destructive/40"
                   >
-                    <Icon icon="lucide:trash" class="w-4 h-4" />
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -61,7 +59,6 @@
                         v-model="component.name"
                         dir="rtl"
                         placeholder="ادخل اسم المكون"
-                        class="bg-white dark:bg-gray-800"
                       />
                     </FormField>
                     <FormField label="المستهدف الكلي للمكون">
@@ -69,29 +66,28 @@
                         v-model="component.targetPercentage"
                         placeholder="ادخل المستهدف الكلي"
                         unit="%"
-                        class="bg-white dark:bg-gray-800"
                       />
                     </FormField>
                   </div>
 
                   <!-- Activities Section -->
                   <div class="space-y-4">
-                    <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
+                    <h4 class="font-medium text-foreground">الفعاليات</h4>
 
                     <!-- Activities List -->
                     <div class="space-y-3">
                       <div
                         v-for="(activity, activityIndex) in component.activities || []"
                         :key="activityIndex"
-                        class="p-4 border rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-700/50"
+                        class="rounded-lg border border-border bg-background-surface p-4"
                       >
-                        <div class="flex items-center justify-between mb-4">
+                        <div class="mb-4 flex items-center justify-between">
                           <div class="flex items-center gap-2">
                             <div
-                              class="w-2 h-2 rounded-full"
+                              class="h-2 w-2 rounded-full"
                               :style="{ backgroundColor: getComponentColor(index) }"
                             ></div>
-                            <span class="font-medium text-gray-900 dark:text-gray-100">
+                            <span class="font-medium text-foreground">
                               الفعالية {{ activityIndex + 1 }}
                             </span>
                           </div>
@@ -100,14 +96,14 @@
                             variant="ghost"
                             size="sm"
                             :disabled="store.form.isSaving"
-                            class="text-red-500 hover:text-red-600 dark:text-red-400"
+                            class="bg-destructive/30 !text-destructive hover:bg-destructive/40"
                           >
                             <Icon
                               v-if="store.form.isSaving"
                               icon="lucide:loader-2"
-                              class="w-4 h-4 animate-spin"
+                              class="h-4 w-4 animate-spin"
                             />
-                            <Icon v-else icon="lucide:trash" class="w-4 h-4" />
+                            <Icon v-else icon="lucide:trash" class="h-4 w-4" />
                           </Button>
                         </div>
 
@@ -118,7 +114,6 @@
                               v-model="activity.name"
                               dir="rtl"
                               placeholder="ادخل اسم الفعالية"
-                              class="bg-white dark:bg-gray-800"
                             />
                           </FormField>
                           <FormField label="المستهدف الكلي للفعالية">
@@ -126,15 +121,13 @@
                               v-model="activity.targetPercentage"
                               placeholder="ادخل المستهدف الكلي"
                               unit="%"
-                              class="bg-white dark:bg-gray-800"
                             />
                           </FormField>
                           <FormField label="ملاحظات" class="md:col-span-2">
-                            <Textarea
+                            <CustomTextArea
                               v-model="activity.notes"
                               dir="rtl"
                               placeholder="ادخل الملاحظات"
-                              class="min-h-[80px] bg-white dark:bg-gray-800"
                             />
                           </FormField>
                         </div>
@@ -148,26 +141,27 @@
                           >
                             <div v-if="totalPeriods > 0" class="space-y-4">
                               <div
-                                class="flex items-center justify-between px-4 py-2 border rounded-lg bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50"
+                                class="flex items-center justify-between rounded-lg border border-border bg-background-surface p-4"
                               >
-                                <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                <span class="text-sm font-medium text-foreground">
                                   {{
                                     store.form.periodType === 1
                                       ? `اختر الاسابيع (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
                                       : `اختر الاشهر (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
                                   }}
                                 </span>
-                                <button
+                                <PrimaryButton
+                                  variant="link"
                                   v-if="activity.selectedPeriods?.length"
                                   type="button"
-                                  class="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                                  class="!text-destructive"
                                   @click="clearActivityPeriods(index, activityIndex)"
                                 >
                                   مسح التحديد
-                                </button>
+                                </PrimaryButton>
                               </div>
                               <div
-                                class="grid gap-2 p-4 bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+                                class="grid gap-2 rounded-lg border border-border bg-background-surface p-4"
                                 :class="{
                                   'grid-cols-4': totalPeriods <= 4,
                                   'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
@@ -179,14 +173,12 @@
                                   :key="period"
                                   class="flex flex-col items-center"
                                 >
-                                  <span
-                                    class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
-                                  >
+                                  <span class="mb-2 text-sm font-medium text-foreground">
                                     {{ period }}
                                   </span>
                                   <button
                                     type="button"
-                                    class="relative w-full h-12 transition-all duration-200 border rounded-md cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
+                                    class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
                                     :class="[
                                       activity.selectedPeriods?.includes(period)
                                         ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
@@ -212,7 +204,7 @@
                             </div>
                             <div
                               v-else
-                              class="flex items-center justify-center p-6 text-center text-gray-500 border border-gray-200 rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                              class="flex items-center justify-center rounded-lg border border-border bg-background-surface p-6 text-center text-foreground"
                             >
                               <div class="space-y-1">
                                 <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
@@ -227,32 +219,24 @@
                     </div>
 
                     <!-- Add Activity Button (Moved here) -->
-                    <Button
+                    <PrimaryButton
                       @click="addActivity(index)"
-                      variant="outline"
+                      variant="accent"
                       size="sm"
-                      :style="{
-                        borderColor: getComponentColor(index),
-                        color: getComponentColor(index),
-                      }"
                       class="w-full"
                     >
-                      <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                       اضافة فعالية
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </div>
               </div>
 
               <!-- Add Component Button -->
-              <Button
-                @click="addNewComponent"
-                variant="outline"
-                class="w-full py-6 border-dashed hover:border-gray-400 dark:hover:border-gray-600"
-              >
-                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+              <PrimaryButton @click="addNewComponent" variant="primary" class="w-full py-6">
+                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                 اضافة مكون جديد
-              </Button>
+              </PrimaryButton>
             </div>
           </FormSection>
 
@@ -266,21 +250,22 @@
           <ProjectPreview />
         </div>
 
-        <div class="sticky left-0 right-0 bottom-6">
-          <div class="p-4 bg-white border rounded-xl dark:border-gray-700 dark:bg-gray-800">
-            <Button
+        <div class="sticky bottom-6 left-0 right-0">
+          <div class="rounded-xl border border-border bg-background-card p-4">
+            <PrimaryButton
               @click="saveProjectWithComponents"
-              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              variant="primary"
+              class="h-12 w-full"
               :disabled="store.isSaving"
             >
               <Icon
                 v-if="store.isSaving"
                 icon="lucide:loader-2"
-                class="w-4 h-4 ml-2 animate-spin"
+                class="ml-2 h-4 w-4 animate-spin"
               />
-              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
-            </Button>
+            </PrimaryButton>
           </div>
         </div>
       </div>
@@ -290,13 +275,13 @@
 
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
+  import CustomTextArea from '@/components/CustomTextArea.vue';
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
   import ProjectAchivments from '@/components/funded-project/ProjectAchivments.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import Button from '@/components/ui/button/Button.vue'; // Adjust the path if needed
-  import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { CURRENCY_CONVERSION } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';

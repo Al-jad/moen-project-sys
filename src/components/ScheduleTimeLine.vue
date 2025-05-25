@@ -1,12 +1,12 @@
 <template>
-  <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-    <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+  <div class="rounded-xl border border-border bg-background-surface">
+    <div class="flex items-center justify-between border-b p-4">
       <div class="flex items-center gap-2">
-        <Icon icon="lucide:calendar" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-        <h4 class="font-medium text-gray-900 dark:text-gray-100">المخطط الزمني للمشروع</h4>
+        <Icon icon="lucide:calendar" class="h-5 w-5 text-foreground-muted" />
+        <h4 class="font-medium text-foreground">المخطط الزمني للمشروع</h4>
       </div>
       <div
-        class="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+        class="flex items-center gap-2 rounded-full bg-background-hover px-3 py-1 text-sm text-foreground-muted"
       >
         <Icon icon="lucide:calendar" class="h-4 w-4" />
         {{ periodType === 1 ? 'عرض بالأسابيع' : 'عرض بالأشهر' }}
@@ -16,26 +16,22 @@
     <div class="p-4">
       <div v-if="duration && periodType" class="space-y-6">
         <div
-          class="relative isolate overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
+          class="relative isolate overflow-hidden rounded-lg border border-border bg-background-surface"
         >
           <div class="flex">
             <!-- Fixed Left Column -->
-            <div
-              class="sticky left-0 z-[15] w-48 shrink-0 border-l bg-white dark:border-gray-700 dark:bg-gray-800"
-            >
+            <div class="sticky left-0 z-[15] w-48 shrink-0 border-l bg-background-surface">
               <div
-                class="sticky top-0 z-[15] h-[4rem] border-b bg-white p-4 font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                class="sticky top-0 z-[15] h-[4rem] border-b bg-background-surface p-4 font-medium text-foreground"
               >
                 المكون / الفعالية
               </div>
-              <div class="divide-y dark:divide-gray-700">
+              <div class="divide-y">
                 <template
                   v-for="(component, componentIndex) in reversedComponents"
                   :key="componentIndex"
                 >
-                  <div
-                    class="h-[4rem] border-b p-4 font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200"
-                  >
+                  <div class="h-[4rem] border-b p-4 font-medium text-foreground">
                     <div class="flex items-center gap-2">
                       <div
                         class="h-3 w-3 shrink-0 rounded-full"
@@ -46,7 +42,7 @@
                           <TooltipTrigger asChild>
                             <div class="truncate">{{ component.name }}</div>
                           </TooltipTrigger>
-                          <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
+                          <TooltipContent class="bg-background-surface text-foreground">
                             <p>{{ component.name }}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -56,7 +52,7 @@
                   <div
                     v-for="(activity, activityIndex) in sortedActivities(component.activities)"
                     :key="activityIndex"
-                    class="h-[4rem] border-b bg-gray-50/50 p-4 pr-8 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/30 dark:text-gray-300"
+                    class="h-[4rem] border-b bg-background-hover/50 p-4 pr-8 text-sm text-foreground-muted"
                   >
                     <div class="flex items-center gap-2">
                       <div
@@ -68,7 +64,7 @@
                           <TooltipTrigger asChild>
                             <div class="truncate">{{ activity.name }}</div>
                           </TooltipTrigger>
-                          <TooltipContent class="bg-gray-900 text-white dark:bg-gray-800">
+                          <TooltipContent class="bg-background-surface text-foreground">
                             <p>{{ activity.name }}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -82,40 +78,38 @@
             <!-- Scrollable Timeline Grid -->
             <div class="custom-scrollbar relative overflow-x-auto">
               <div class="inline-block min-w-[800px]">
-                <div
-                  class="sticky top-0 z-[10] flex h-[4rem] border-b bg-white dark:border-gray-700 dark:bg-gray-800"
-                >
+                <div class="sticky top-0 z-[10] flex h-[4rem] border-b bg-background-surface">
                   <div
                     v-for="period in totalPeriods"
                     :key="period"
-                    class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
+                    class="flex h-full w-16 shrink-0 items-center justify-center border-l p-4 text-center text-sm font-medium text-foreground-muted"
                   >
                     {{ periodType === 1 ? `${period}` : `${period}` }}
                   </div>
                 </div>
-                <div class="divide-y dark:divide-gray-700">
+                <div class="divide-y">
                   <template
                     v-for="(component, componentIndex) in reversedComponents"
                     :key="componentIndex"
                   >
                     <div
-                      class="flex h-[4rem] border-b transition-colors duration-150 hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-gray-800/50"
+                      class="flex h-[4rem] border-b transition-colors duration-150 hover:bg-background-hover"
                     >
                       <div
                         v-for="period in totalPeriods"
                         :key="period"
-                        class="w-16 shrink-0 border-l dark:border-gray-700"
+                        class="w-16 shrink-0 border-l"
                       ></div>
                     </div>
                     <div
                       v-for="(activity, activityIndex) in sortedActivities(component.activities)"
                       :key="activityIndex"
-                      class="flex h-[4rem] border-b bg-gray-50/50 transition-colors duration-150 hover:bg-gray-100/80 dark:border-gray-700 dark:bg-gray-800/30 dark:hover:bg-gray-800/50"
+                      class="flex h-[4rem] border-b bg-background-hover/50 transition-colors duration-150 hover:bg-background-hover"
                     >
                       <div
                         v-for="period in totalPeriods"
                         :key="period"
-                        class="relative w-16 shrink-0 border-l dark:border-gray-700"
+                        class="relative w-16 shrink-0 border-l"
                       >
                         <div
                           v-if="activity.selectedPeriods?.includes(period)"
@@ -137,7 +131,7 @@
       <!-- No Timeline Data State -->
       <div
         v-else
-        class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+        class="flex items-center justify-center rounded-lg border border-border bg-background-card p-8 text-center text-foreground-muted"
       >
         <div class="space-y-2">
           <div class="text-sm font-medium">لا يمكن عرض المخطط الزمني</div>
@@ -193,17 +187,21 @@
     if (!activities || !Array.isArray(activities)) {
       return [];
     }
-    
+
     // Sort the activities based on the selectedPeriods
     return [...activities].sort((a, b) => {
       // If activities have selectedPeriods, sort by the earliest period
-      if (a.selectedPeriods && b.selectedPeriods && 
-          Array.isArray(a.selectedPeriods) && Array.isArray(b.selectedPeriods)) {
+      if (
+        a.selectedPeriods &&
+        b.selectedPeriods &&
+        Array.isArray(a.selectedPeriods) &&
+        Array.isArray(b.selectedPeriods)
+      ) {
         const aMin = a.selectedPeriods.length > 0 ? Math.min(...a.selectedPeriods) : 0;
         const bMin = b.selectedPeriods.length > 0 ? Math.min(...b.selectedPeriods) : 0;
         return aMin - bMin;
       }
-      
+
       // Fallback for activities without selectedPeriods
       return 0;
     });

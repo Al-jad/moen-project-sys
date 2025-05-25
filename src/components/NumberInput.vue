@@ -1,13 +1,22 @@
 <template>
   <div class="relative">
-    <Input
+    <input
       v-model="inputValue"
       type="text"
       dir="rtl"
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly"
-      class="w-full border-border bg-background-surface text-foreground"
+      :class="[
+        'w-full rounded-lg px-4 py-2 transition-colors',
+        'bg-background-surface',
+        'border border-border',
+        'text-foreground',
+        'placeholder:text-foreground-muted',
+        'focus:border-primary',
+        'outline-none focus:ring-0',
+        'pr-10', // Always add right padding for the unit
+      ]"
       @input="handleInput"
       @keypress="onlyNumbers"
     />
@@ -18,7 +27,6 @@
 </template>
 
 <script setup>
-  import { Input } from '@/components/ui/input';
   import { ref, watch } from 'vue';
 
   const props = defineProps({

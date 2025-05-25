@@ -60,7 +60,7 @@
   .dark {
     --background: 222 84% 5%;
     --background-surface: 215 25% 27%;
-    --background-card: 215 25% 27%;
+    --background-card: 215 25% 30%;
     --background-hover: 215 25% 35%;
 
     --foreground: 210 40% 98%;
@@ -74,8 +74,8 @@
     --primary-disabled: 215 25% 27%;
     --primary-foreground: 222 84% 5%;
 
-    --accent: 180 25% 73%;
-    --accent-hover: 180 25% 65%;
+    --accent: 32 95% 65%;
+    --accent-hover: 32 95% 70%;
     --accent-foreground: 222 84% 5%;
 
     --secondary: 215 25% 35%;

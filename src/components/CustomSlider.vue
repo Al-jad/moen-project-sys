@@ -15,7 +15,8 @@
 
       <!-- Active Track -->
       <div
-        class="absolute h-full rounded-lg bg-primary transition-all duration-200"
+        class="absolute h-full rounded-lg bg-primary-hover/80 transition-all duration-200"
+        :class="{ 'cursor-not-allowed opacity-50': disabled }"
         :style="{
           left: `${((modelValue[0] - min) / (max - min)) * 100}%`,
           width: `${((modelValue[1] - modelValue[0]) / (max - min)) * 100}%`,
@@ -25,7 +26,7 @@
       <!-- Min Thumb -->
       <div
         class="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-2 border-primary bg-primary transition-all duration-200 hover:scale-110 hover:bg-primary-hover"
-        :class="{ 'cursor-not-allowed opacity-50': disabled }"
+        :class="{ 'cursor-not-allowed': disabled }"
         :style="{ left: `${((modelValue[0] - min) / (max - min)) * 100}%` }"
         @mousedown="startDrag('min', $event)"
         @touchstart="startDrag('min', $event)"
@@ -34,7 +35,7 @@
       <!-- Max Thumb -->
       <div
         class="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-2 border-primary bg-primary transition-all duration-200 hover:scale-110 hover:bg-primary-hover"
-        :class="{ 'cursor-not-allowed opacity-50': disabled }"
+        :class="{ 'cursor-not-allowed': disabled }"
         :style="{ left: `${((modelValue[1] - min) / (max - min)) * 100}%` }"
         @mousedown="startDrag('max', $event)"
         @touchstart="startDrag('max', $event)"
