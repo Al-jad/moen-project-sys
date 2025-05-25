@@ -8,37 +8,38 @@
       role="checkbox"
       :aria-checked="modelValue"
       :aria-disabled="disabled"
-      :class="{ 'cursor-not-allowed opacity-50': disabled }"
+      :class="[disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:opacity-80']"
     >
       <div
         :class="[
-          'h-4 w-4 rounded border transition-colors',
+          'relative h-4 w-4 rounded border transition-all duration-200',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           modelValue
-            ? 'border-primary bg-primary dark:border-primary dark:bg-primary'
-            : 'border-gray-300 dark:border-gray-600',
-          !disabled && 'hover:border-primary dark:hover:border-primary',
+            ? '!border-primary !bg-primary !text-primary-foreground ring-2 ring-primary/10'
+            : 'border-border bg-background-surface hover:bg-background-hover',
+          !disabled && !modelValue && 'hover:border-primary hover:ring-1 hover:ring-primary/20',
         ]"
       >
         <Icon
           v-if="modelValue"
           icon="lucide:check"
-          class="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 transform text-white"
+          class="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 transform transition-transform duration-200"
+          :class="[modelValue ? 'scale-100 text-primary-foreground' : 'scale-0 text-transparent']"
         />
       </div>
     </div>
     <slot></slot>
     <div v-if="label || $slots.default" class="flex items-center gap-2">
-      <Icon
-        v-if="icon"
-        :icon="icon"
-        :class="[iconClass || 'h-4 w-4 text-gray-400 dark:text-gray-500']"
-      />
+      <Icon v-if="icon" :icon="icon" :class="[iconClass || 'h-4 w-4 text-foreground-muted']" />
       <label
         v-if="label"
         :for="id"
-        class="select-none text-sm text-gray-800 dark:text-gray-200"
-        :class="{ 'cursor-not-allowed opacity-50': disabled }"
+        class="select-none text-sm text-foreground transition-colors"
+        :class="[
+          disabled
+            ? 'cursor-not-allowed opacity-50'
+            : 'cursor-pointer hover:text-foreground-heading',
+        ]"
         @click="toggle"
       >
         {{ label }}
