@@ -5,13 +5,13 @@
     "
   >
     <div class="flex flex-col gap-6">
-      <div class="bg-background-surface rounded-md border border-border p-6 shadow-sm">
+      <div class="rounded-md border border-border bg-background-surface p-6 shadow-sm">
         <!-- Filter Header -->
         <div class="bg-background-surface">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:filter" class="text-foreground-muted h-4 w-4" />
-              <span class="text-foreground-heading text-sm font-medium">فلتر</span>
+              <Icon icon="lucide:filter" class="h-4 w-4 text-foreground-muted" />
+              <span class="text-sm font-medium text-foreground-heading">فلتر</span>
             </div>
           </div>
           <hr class="my-2 w-full border-border" />
@@ -19,7 +19,7 @@
 
         <!-- Search Input -->
         <div class="my-4 rounded-md">
-          <label class="text-foreground-heading text-sm font-medium"> بحث </label>
+          <label class="text-sm font-medium text-foreground-heading"> بحث </label>
           <FormField label="">
             <CustomInput
               v-model="localSearchQuery"
@@ -36,7 +36,7 @@
 
         <!-- Funding Type -->
         <div v-if="showFundingTypeFilter" class="space-y-3">
-          <label class="text-foreground-muted text-sm">نوع التمويل</label>
+          <label class="text-sm text-foreground-muted">نوع التمويل</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedFunding.all"
@@ -76,7 +76,7 @@
         <!-- Budget Range -->
         <div class="mt-4 space-y-3">
           <div class="flex items-center justify-between">
-            <label class="text-foreground-muted text-sm">المبلغ</label>
+            <label class="text-sm text-foreground-muted">المبلغ</label>
             <div class="flex items-center gap-4">
               <CustomSwitch
                 v-model="isBudgetFilterEnabled"
@@ -87,20 +87,17 @@
             </div>
           </div>
           <div class="space-y-4" :class="{ 'opacity-50': !isBudgetFilterEnabled }">
-            <Slider
+            <CustomSlider
               v-model="localBudgetRange"
               :min="convertedMin"
               :max="convertedMax"
               :step="convertedStep"
-              class="w-full"
-              dir="rtl"
+              class="flex-1"
               :disabled="!isBudgetFilterEnabled || disabled"
-              :class="{ 'cursor-not-allowed': disabled }"
-              @update:model-value="handleSliderChange"
             />
-            <div class="grid grid-cols-2 flex-row-reverse gap-4">
-              <div class="space-y-2">
-                <label class="text-foreground-muted text-xs">الحد الادنى</label>
+            <div class="flex items-center gap-4">
+              <div class="flex-1">
+                <label class="mb-1 block text-xs text-foreground-muted">الحد الأدنى</label>
                 <NumberInput
                   v-model="localBudgetRange[0]"
                   :disabled="!isBudgetFilterEnabled || disabled"
@@ -109,8 +106,9 @@
                   @update:model-value="validateAndUpdateMin"
                 />
               </div>
-              <div class="space-y-2">
-                <label class="text-foreground-muted text-xs">الحد الاعلى</label>
+
+              <div class="flex-1">
+                <label class="mb-1 block text-xs text-foreground-muted">الحد الأقصى</label>
                 <NumberInput
                   v-model="localBudgetRange[1]"
                   :disabled="!isBudgetFilterEnabled || disabled"
@@ -126,7 +124,7 @@
         <!-- Implementation Years -->
         <div class="space-y-2" v-if="!isFundedProjects">
           <hr class="my-4 border border-dashed border-border" />
-          <label class="text-foreground-muted text-sm">سنوات التنفيذ</label>
+          <label class="text-sm text-foreground-muted">سنوات التنفيذ</label>
           <div class="px-2 text-sm text-destructive">
             <slot> الميزة غير متاحة، والبيانات الظاهرة للتوضيح فقط </slot>
           </div>
@@ -157,7 +155,7 @@
 
         <!-- Project Status -->
         <div class="space-y-3">
-          <label class="text-foreground-muted text-sm">حالة المشروع</label>
+          <label class="text-sm text-foreground-muted">حالة المشروع</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedStatus.all"
@@ -226,7 +224,7 @@
 
         <!-- Beneficiary -->
         <div class="space-y-3">
-          <label class="text-foreground-muted text-sm">الجهة المستفيدة</label>
+          <label class="text-sm text-foreground-muted">الجهة المستفيدة</label>
           <div class="space-y-2">
             <CustomCheckbox
               v-model="localSelectedBeneficiaries.all"
@@ -283,6 +281,7 @@
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
+  import CustomSlider from './CustomSlider.vue';
   import CustomSwitch from './CustomSwitch.vue';
   import NumberInput from './NumberInput.vue';
 
@@ -567,57 +566,54 @@
     return parseInt(value.toString().replace(/,/g, ''), 10);
   };
 
-  // Update the validation functions to use props.selectedCurrency
+  // Update the validation functions for better sync with slider
   const validateAndUpdateMin = (val) => {
     let value = Number(val);
-    if (isNaN(value)) return;
-
-    // Get the min and max values in the current currency
-    const minInCurrentCurrency = convertCurrency(
-      props.budgetRange[0],
-      'IQD',
-      props.selectedCurrency
-    );
-    const maxInCurrentCurrency = convertCurrency(
-      props.budgetRange[1],
-      'IQD',
-      props.selectedCurrency
-    );
+    if (isNaN(value)) {
+      value = convertedMin.value;
+    }
 
     // Ensure the value is within bounds
-    value = Math.max(minInCurrentCurrency, Math.min(value, localBudgetRange.value[1]));
+    value = Math.max(
+      convertedMin.value,
+      Math.min(value, localBudgetRange.value[1] - convertedStep.value)
+    );
 
-    // Update the value
-    localBudgetRange.value[0] = value;
+    // Update the entire array to trigger reactivity
+    localBudgetRange.value = [value, localBudgetRange.value[1]];
   };
 
   const validateAndUpdateMax = (val) => {
     let value = Number(val);
-    if (isNaN(value)) return;
-
-    // Get the min and max values in the current currency
-    const minInCurrentCurrency = convertCurrency(
-      props.budgetRange[0],
-      'IQD',
-      props.selectedCurrency
-    );
-    const maxInCurrentCurrency = convertCurrency(
-      props.budgetRange[1],
-      'IQD',
-      props.selectedCurrency
-    );
+    if (isNaN(value)) {
+      value = convertedMax.value;
+    }
 
     // Ensure the value is within bounds
-    value = Math.max(localBudgetRange.value[0], Math.min(value, maxInCurrentCurrency));
+    value = Math.min(
+      convertedMax.value,
+      Math.max(value, localBudgetRange.value[0] + convertedStep.value)
+    );
 
-    // Update the value
-    localBudgetRange.value[1] = value;
+    // Update the entire array to trigger reactivity
+    localBudgetRange.value = [localBudgetRange.value[0], value];
   };
 
-  // Update the slider to handle currency conversion
-  const handleSliderChange = (newValue) => {
-    localBudgetRange.value = newValue;
-  };
+  // Watch for changes in budget range to ensure valid state
+  watch(
+    localBudgetRange,
+    (newRange) => {
+      if (!isBudgetFilterEnabled.value) return;
+
+      const [min, max] = newRange;
+      // Ensure values are within bounds and properly spaced
+      if (max - min < convertedStep.value || min < convertedMin.value || max > convertedMax.value) {
+        validateAndUpdateMin(min);
+        validateAndUpdateMax(max);
+      }
+    },
+    { deep: true }
+  );
 
   // Watch for currency changes in props
   watch(

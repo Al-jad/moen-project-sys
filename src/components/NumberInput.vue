@@ -7,14 +7,13 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly"
-      class="w-full dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+      class="w-full border-border bg-background-surface text-foreground"
       @input="handleInput"
       @keypress="onlyNumbers"
     />
-    <span
-      class="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400"
-      >{{ unit }}</span
-    >
+    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-foreground-muted">{{
+      unit
+    }}</span>
   </div>
 </template>
 

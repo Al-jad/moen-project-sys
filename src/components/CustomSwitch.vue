@@ -15,9 +15,9 @@
       dir="rtl"
       v-model:checked="switchState"
       :disabled="disabled"
-      class="relative flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-transparent bg-background-card/90 shadow-sm outline-none ring-offset-2 ring-offset-background transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:hover:bg-primary/90"
+      class="relative flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-transparent bg-background-hover shadow-sm outline-none ring-offset-2 ring-offset-background transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:hover:bg-primary/90"
       :class="{
-        'hover:bg-background-hover': !disabled && !switchState,
+        'hover:bg-background-hover/50': !disabled && !switchState,
         'cursor-not-allowed': disabled,
       }"
     >

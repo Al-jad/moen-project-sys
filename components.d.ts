@@ -46,6 +46,7 @@ declare module 'vue' {
     CustomMultiSelect: typeof import('./src/components/CustomMultiSelect.vue')['default']
     CustomPagination: typeof import('./src/components/CustomPagination.vue')['default']
     CustomSelect: typeof import('./src/components/CustomSelect.vue')['default']
+    CustomSlider: typeof import('./src/components/CustomSlider.vue')['default']
     CustomSwitch: typeof import('./src/components/CustomSwitch.vue')['default']
     CustomTab: typeof import('./src/components/CustomTab.vue')['default']
     CustomTable: typeof import('./src/components/CustomTable.vue')['default']

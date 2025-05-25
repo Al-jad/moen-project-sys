@@ -285,6 +285,7 @@
 
   function getFundingTypeClass() {
     const classes = getProjectTypeClass(projectType.value);
+    console.log('Project:', props.project?.name, 'Type:', projectType.value, 'Classes:', classes);
     return classes;
   }
 

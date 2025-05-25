@@ -31,7 +31,7 @@ const PROJECT_TYPE_CONFIG: Record<ProjectTypeEnum, ProjectTypeConfig> = {
   },
   [ProjectTypeEnum.REGIONAL]: {
     text: 'مشروع تنمية الأقاليم',
-    cssClass: 'bg-teal-500/10 text-teal-600 dark:bg-teal-500/20 dark:text-teal-300',
+    cssClass: 'bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300',
   },
 };
 
@@ -114,32 +114,32 @@ export const determineFundingType = (
 ): ProjectTypeEnum => {
   if (!project) return ProjectTypeEnum.REGIONAL;
 
-  // For funded projects
+  // For funded projects - explicit check first
   if ((project as any).isFunded === true || (project as any).fundingType === 1) {
     return ProjectTypeEnum.FUNDED;
   }
 
-  // For regional development projects
+  // For regional development projects - explicit check
+  if ((project as any).isFunded === false) {
+    return ProjectTypeEnum.REGIONAL;
+  }
+
+  // Check for regional project indicators
   if (
     (project as any).directorate ||
     (project as any).projectType ||
-    (project as any).isFunded === false
+    Array.isArray((project as any).sustainableDevelopment)
   ) {
     return ProjectTypeEnum.REGIONAL;
   }
 
-  // If we have components array, it's likely a funded project
+  // Check for funded project indicators
   if (Array.isArray((project as any).components)) {
     return ProjectTypeEnum.FUNDED;
   }
 
-  // If we have sustainableDevelopment array, it's likely a regional project
-  if (Array.isArray((project as any).sustainableDevelopment)) {
-    return ProjectTypeEnum.REGIONAL;
-  }
-
-  // Default based on the most reliable indicator
-  return (project as any).isFunded === true ? ProjectTypeEnum.FUNDED : ProjectTypeEnum.REGIONAL;
+  // Default to regional if no clear indicators
+  return ProjectTypeEnum.REGIONAL;
 };
 
 /**
