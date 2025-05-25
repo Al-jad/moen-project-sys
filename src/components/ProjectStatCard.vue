@@ -1,22 +1,32 @@
 <template>
   <div
-    class="bg-background-surface hover:bg-background-hover cursor-pointer rounded-xl border border-border p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
+    class="cursor-pointer rounded-xl border border-border bg-background-surface p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-background-hover hover:shadow-md"
     @click="navigateToProjects"
   >
     <div class="flex items-center justify-between">
-      <div class="flex flex-col gap-2 text-right">
-        <p class="text-foreground-muted text-sm">{{ title }}</p>
-        <p class="text-foreground-heading text-2xl font-bold">{{ count }}</p>
-      </div>
-      <div :class="backgroundColorClass">
-        <Icon :icon="icon" class="h-8 w-8" :class="iconColorClass" />
-      </div>
+      <template v-if="loading">
+        <div class="flex flex-col gap-2">
+          <div class="h-4 w-20 rounded bg-border"></div>
+          <div class="h-8 w-16 rounded bg-border"></div>
+        </div>
+        <div class="h-10 w-10 rounded-full bg-border"></div>
+      </template>
+      <template v-else>
+        <div class="flex flex-col gap-2 text-right">
+          <p class="text-sm text-foreground-muted">{{ title }}</p>
+          <p class="text-2xl font-bold text-foreground-heading">{{ count }}</p>
+        </div>
+        <div :class="backgroundColorClass">
+          <Icon :icon="icon" class="h-8 w-8" :class="iconColorClass" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
   import { Icon } from '@iconify/vue';
+  import { computed } from 'vue';
   import { useRouter } from 'vue-router';
 
   const router = useRouter();
@@ -42,6 +52,10 @@
     to: {
       type: String,
       default: '',
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   });
 
@@ -77,7 +91,7 @@
   });
 
   const navigateToProjects = () => {
-    if (props.to) {
+    if (props.to && !props.loading) {
       router.push(props.to);
     }
   };

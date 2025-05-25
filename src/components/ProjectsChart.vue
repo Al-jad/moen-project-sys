@@ -3,32 +3,50 @@
     <div class="my-6 flex items-center justify-between">
       <div class="flex items-center gap-8">
         <div class="relative h-[400px] w-full">
-          <Line :data="chartData" :options="chartOptions" style="width: 100%; height: 100%" />
+          <template v-if="loading">
+            <div class="animate-pulse space-y-4">
+              <div class="h-[400px] w-full rounded-lg bg-border"></div>
+            </div>
+          </template>
+          <template v-else>
+            <Line :data="chartData" :options="chartOptions" style="width: 100%; height: 100%" />
+          </template>
         </div>
         <div class="flex flex-col items-start gap-12">
-          <div class="flex flex-col items-start">
-            <span class="text-3xl font-bold">40.00k</span>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-green-500">+2.45%</span>
-              <span class="text-sm text-gray-500">المنجز</span>
+          <template v-if="loading">
+            <div v-for="i in 3" :key="i" class="animate-pulse space-y-2">
+              <div class="h-8 w-24 rounded bg-border"></div>
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-16 rounded bg-border"></div>
+                <div class="h-4 w-20 rounded bg-border"></div>
+              </div>
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <div class="flex flex-col items-start">
+              <span class="text-3xl font-bold">40.00k</span>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-green-500">+2.45%</span>
+                <span class="text-sm text-gray-500">المنجز</span>
+              </div>
+            </div>
 
-          <div class="flex flex-col items-start">
-            <span class="text-3xl font-bold">37.5K</span>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-green-500">+2.45%</span>
-              <span class="text-sm text-gray-500">قيد الانجاز</span>
+            <div class="flex flex-col items-start">
+              <span class="text-3xl font-bold">37.5K</span>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-green-500">+2.45%</span>
+                <span class="text-sm text-gray-500">قيد الانجاز</span>
+              </div>
             </div>
-          </div>
 
-          <div class="flex flex-col items-start">
-            <span class="text-3xl font-bold">100</span>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-red-500">-2.45%</span>
-              <span class="text-sm text-gray-500">متلكئ</span>
+            <div class="flex flex-col items-start">
+              <span class="text-3xl font-bold">100</span>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-red-500">-2.45%</span>
+                <span class="text-sm text-gray-500">متلكئ</span>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -46,6 +64,7 @@
     Title,
     Tooltip,
   } from 'chart.js';
+  import { computed, ref } from 'vue';
   import { Line } from 'vue-chartjs';
 
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -54,6 +73,10 @@
     selectedYear: {
       type: String,
       required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   });
 

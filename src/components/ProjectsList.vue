@@ -1,43 +1,68 @@
 <template>
   <div class="space-y-6">
     <div class="grid grid-cols-4 gap-4">
-      <GenericProjectCard
-        v-for="project in paginatedProjects"
-        :key="project.id"
-        :project="project"
-        :disabled="false"
-      />
+      <template v-if="loading">
+        <div
+          v-for="i in itemsPerPage"
+          :key="i"
+          class="animate-pulse rounded-xl border border-border bg-background-card p-6"
+        >
+          <div class="mb-4 flex items-center justify-between">
+            <div class="h-8 w-8 rounded-lg bg-border"></div>
+            <div class="h-6 w-24 rounded-full bg-border"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <div class="h-6 w-3/4 rounded bg-border"></div>
+              <div class="h-4 w-1/2 rounded bg-border"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="h-3 w-24 rounded bg-border"></div>
+              <div class="h-8 w-8 rounded-full bg-border"></div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <GenericProjectCard
+          v-for="project in paginatedProjects"
+          :key="project.id"
+          :project="project"
+          :disabled="false"
+        />
+      </template>
     </div>
 
     <!-- Empty State -->
-    <!-- <div
-      v-if="!projects.length"
-      class="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-700 dark:bg-gray-800/50"
+    <div
+      v-if="!loading && !projects.length"
+      class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-background-card p-12 text-center"
     >
       <div
-        class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+        class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-background-hover"
       >
-        <Icon icon="lucide:folder" class="h-10 w-10 text-gray-400 dark:text-gray-500" />
+        <Icon icon="lucide:folder" class="h-10 w-10 text-foreground-muted" />
       </div>
-      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">لا توجد مشاريع</h3>
-      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      <h3 class="mt-4 text-lg font-medium text-foreground-heading">لا توجد مشاريع</h3>
+      <p class="mt-1 text-sm text-foreground-muted">
         لم يتم العثور على أي مشاريع تطابق معايير البحث الخاصة بك
       </p>
-    </div> -->
+    </div>
 
     <!-- Pagination -->
-    <div v-if="projects.length > 0" class="mt-6 flex items-center justify-center">
+    <div v-if="!loading && projects.length > 0" class="mt-6 flex items-center justify-center">
       <CustomPagination
         v-model="currentPage"
         :total="projects.length"
         :per-page="itemsPerPage"
-        class="text-gray-600 dark:text-gray-300"
+        class="text-foreground-muted"
       />
     </div>
   </div>
 </template>
 
 <script setup>
+  import { Icon } from '@iconify/vue';
   import { computed, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import CustomPagination from './CustomPagination.vue';
@@ -47,6 +72,10 @@
     projects: {
       type: Array,
       required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
     fundingFilter: {
       type: Function,
@@ -59,7 +88,7 @@
 
   // Pagination logic
   const currentPage = ref(1);
-  const itemsPerPage = 9; // Changed to 9 for better grid layout (3x3)
+  const itemsPerPage = 8; // Changed to 8 for better grid layout (2x4)
 
   const filteredProjects = computed(() => {
     return props.projects.filter((project) => props.fundingFilter(project));

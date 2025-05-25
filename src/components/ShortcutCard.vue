@@ -1,17 +1,23 @@
 <template>
   <div
-    class="bg-background-surface hover:bg-background-hover flex items-center justify-between rounded-xl border border-border p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
-    :class="{ 'cursor-pointer': to }"
+    class="flex items-center justify-between rounded-xl border border-border bg-background-surface p-8 shadow transition-all duration-300 hover:scale-[1.01] hover:bg-background-hover hover:shadow-md"
+    :class="{ 'cursor-pointer': to && !loading }"
     @click="handleClick"
   >
-    <span class="text-foreground-body text-sm font-medium">{{ title }}</span>
-    <div class="p-2">
-      <Icon
-        :icon="icon"
-        class="h-12 w-12 rounded-full p-2"
-        :class="[colorMap[color].bg, colorMap[color].icon]"
-      />
-    </div>
+    <template v-if="loading">
+      <div class="h-4 w-32 rounded bg-border"></div>
+      <div class="h-8 w-8 rounded-full bg-border"></div>
+    </template>
+    <template v-else>
+      <span class="text-sm font-medium text-foreground-body">{{ title }}</span>
+      <div class="p-2">
+        <Icon
+          :icon="icon"
+          class="h-12 w-12 rounded-full p-2"
+          :class="[colorMap[color].bg, colorMap[color].icon]"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -37,6 +43,10 @@
       default: 'sky',
       validator: (value) =>
         ['sky', 'blue', 'green', 'yellow', 'red', 'purple', 'pink'].includes(value),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   });
 
@@ -72,7 +82,7 @@
   };
 
   const handleClick = () => {
-    if (props.to) {
+    if (props.to && !props.loading) {
       router.push(props.to);
     }
   };
