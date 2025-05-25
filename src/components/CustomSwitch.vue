@@ -1,9 +1,13 @@
 <template>
-  <div class="flex items-center justify-between gap-4">
+  <div class="group flex items-center justify-between gap-4">
     <span
       v-if="label"
-      class="text-sm text-gray-700 dark:text-gray-200"
-      :class="{ 'opacity-50': disabled }"
+      class="select-none text-sm font-medium text-foreground-heading transition-colors duration-200 group-hover:text-foreground"
+      :class="{
+        'opacity-50': disabled,
+        'cursor-default': !disabled,
+        'cursor-not-allowed': disabled,
+      }"
     >
       {{ label }}
     </span>
@@ -11,11 +15,14 @@
       dir="rtl"
       v-model:checked="switchState"
       :disabled="disabled"
-      class="relative flex h-[25px] w-[42px] cursor-default rounded-full border border-gray-200 bg-gray-100 shadow-sm focus-within:outline focus-within:outline-gray-500 data-[state=checked]:bg-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:data-[state=checked]:bg-gray-950"
-      :class="{ 'cursor-not-allowed opacity-50': disabled }"
+      class="relative flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-transparent bg-background-card/90 shadow-sm outline-none ring-offset-2 ring-offset-background transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:hover:bg-primary/90"
+      :class="{
+        'hover:bg-background-hover': !disabled && !switchState,
+        'cursor-not-allowed': disabled,
+      }"
     >
       <SwitchThumb
-        class="my-auto block h-[21px] w-[21px] -translate-x-0.5 rounded-full bg-white shadow-sm transition-transform duration-100 will-change-transform data-[state=checked]:-translate-x-[19px]"
+        class="pointer-events-none my-auto block h-5 w-5 translate-x-0.5 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 will-change-transform data-[state=checked]:-translate-x-5 data-[state=checked]:bg-white"
       />
     </SwitchRoot>
   </div>

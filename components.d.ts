@@ -15,6 +15,7 @@ declare module 'vue' {
     BackButton: typeof import('./src/components/BackButton.vue')['default']
     BackToMainButton: typeof import('./src/components/BackToMainButton.vue')['default']
     Badge: typeof import('./src/components/ui/badge/Badge.vue')['default']
+    BaseModal: typeof import('./src/components/BaseModal.vue')['default']
     Button: typeof import('./src/components/ui/button/Button.vue')['default']
     Calendar: typeof import('./src/components/ui/calendar/Calendar.vue')['default']
     CalendarCell: typeof import('./src/components/ui/calendar/CalendarCell.vue')['default']

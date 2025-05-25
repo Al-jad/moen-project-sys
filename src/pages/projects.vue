@@ -15,13 +15,17 @@
         :selectedCurrency="selectedCurrency"
         @currency-changed="handleCurrencyChange"
       />
-      <PremiumModal v-model:open="showPremiumModalOpen" />
-      <div class="bg-background -mt-1 flex-1 p-6 dark:bg-darkmode">
+      <PremiumModal
+        :open="showPremiumModalOpen"
+        @update:open="(val) => (showPremiumModalOpen = val)"
+        @close="handlePremiumModalClose"
+      />
+      <div class="dark:bg-darkmode -mt-1 flex-1 bg-background p-6">
         <!-- Projects Header -->
         <div class="mb-6 flex items-center justify-between">
           <div class="space-y-1">
-            <h1 class="text-foreground-heading text-2xl font-bold">قائمة المشاريع</h1>
-            <p class="text-foreground-muted text-sm">
+            <h1 class="text-2xl font-bold text-foreground-heading">قائمة المشاريع</h1>
+            <p class="text-sm text-foreground-muted">
               {{
                 isLoading
                   ? 'جاري التحميل...'
@@ -33,7 +37,7 @@
           <div class="flex items-center gap-3">
             <!-- Currency Selector -->
             <div class="flex items-center gap-2">
-              <span class="text-foreground-muted text-sm">العملة:</span>
+              <span class="text-sm text-foreground-muted">العملة:</span>
               <CustomSelect
                 v-model="selectedCurrency"
                 :options="currencyOptions"
@@ -56,7 +60,7 @@
                 </PrimaryButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                class="bg-background-surface w-[200px] border-border dark:border-gray-700 dark:bg-gray-800"
+                class="w-[200px] border-border bg-background-surface dark:border-gray-700 dark:bg-gray-800"
               >
                 <DropdownMenuItem
                   class="dark:focus:bg-gray-700/50"
@@ -149,11 +153,11 @@
         <!-- Empty State - No Filter Match -->
         <div
           v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
-          class="bg-background-surface flex flex-col items-center justify-center rounded-lg border border-border p-8 text-center"
+          class="flex flex-col items-center justify-center rounded-lg border border-border bg-background-surface p-8 text-center"
         >
-          <Icon icon="lucide:search-x" class="text-foreground-muted mb-4 h-12 w-12" />
-          <h3 class="text-foreground-heading mb-2 text-lg font-medium">لا توجد نتائج مطابقة</h3>
-          <p class="text-foreground-muted mb-4 text-sm">
+          <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
+          <h3 class="mb-2 text-lg font-medium text-foreground-heading">لا توجد نتائج مطابقة</h3>
+          <p class="mb-4 text-sm text-foreground-muted">
             لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.
           </p>
           <PrimaryButton @click="clearFilters" icon="lucide:x"> مسح الفلترة </PrimaryButton>
@@ -476,6 +480,10 @@
 
   const showPremiumModal = () => {
     showPremiumModalOpen.value = true;
+  };
+
+  const handlePremiumModalClose = () => {
+    showPremiumModalOpen.value = false;
   };
 
   const fetchBeneficiaries = async () => {
