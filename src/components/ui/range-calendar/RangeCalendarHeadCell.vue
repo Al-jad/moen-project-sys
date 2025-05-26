@@ -1,25 +1,19 @@
-<script setup>
-  import { cn } from '@/lib/utils';
-  import { RangeCalendarHeadCell, useForwardProps } from 'radix-vue';
+<script lang="ts" setup>
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { RangeCalendarHeadCell, type RangeCalendarHeadCellProps, useForwardProps } from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-  const props = defineProps({
-    asChild: { type: Boolean, required: false },
-    as: { type: null, required: false },
-    class: { type: null, required: false },
-  });
+const props = defineProps<RangeCalendarHeadCellProps & { class?: HTMLAttributes['class'] }>()
 
-  const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+const delegatedProps = reactiveOmit(props, 'class')
 
-    return delegated;
-  });
-
-  const forwardedProps = useForwardProps(delegatedProps);
+const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>
   <RangeCalendarHeadCell
-    :class="cn('w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground', props.class)"
+    :class="cn('w-8 rounded-md text-[0.8rem] font-normal text-muted-foreground', props.class)"
     v-bind="forwardedProps"
   >
     <slot />
