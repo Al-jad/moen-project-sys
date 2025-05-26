@@ -7,6 +7,30 @@ import type { TransformedFundedProject } from '@/types/funded-project';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
+// Add interface for form state
+interface FormState {
+  name: string;
+  executingDepartment: string;
+  implementingEntity: string;
+  beneficiaryEntities: number[];
+  grantingEntity: string;
+  fundingType: number;
+  cost: number | null;
+  projectObjectives: string;
+  duration: number;
+  periodType: number;
+  durationType: string;
+  actualStartDate: string | null;
+  components: any[];
+  latitude: string | number;
+  longitude: string | number;
+  isSaving: boolean;
+  hasUnsavedChanges: boolean;
+  projectStatus: number;
+  isGovernment: boolean;
+  financialAchievement: number;
+}
+
 export const useFundedProjectStore = defineStore('funded-project', () => {
   // State
   const projects = ref<TransformedFundedProject[]>([]);
@@ -14,6 +38,30 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const currentProject = ref<TransformedFundedProject | null>(null);
+
+  // Add form state with proper initialization
+  const form = ref<FormState>({
+    name: '',
+    executingDepartment: '',
+    implementingEntity: '',
+    beneficiaryEntities: [],
+    grantingEntity: '',
+    fundingType: 1,
+    cost: null,
+    projectObjectives: '',
+    duration: 0,
+    periodType: 1,
+    durationType: 'weeks',
+    actualStartDate: null,
+    components: [],
+    latitude: '',
+    longitude: '',
+    isSaving: false,
+    hasUnsavedChanges: false,
+    projectStatus: 1,
+    isGovernment: false,
+    financialAchievement: 0,
+  });
 
   // Getters
   const totalProjects = computed(() => projects.value.length);
@@ -204,6 +252,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     loading,
     error,
     currentProject,
+    form,
 
     // Getters
     totalProjects,

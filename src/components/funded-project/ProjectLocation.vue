@@ -31,10 +31,7 @@
       </div>
 
       <!-- Coordinates Display -->
-      <div
-        v-if="store.form.latitude && store.form.longitude"
-        class="rounded-lg border border-success/20 bg-success/5 p-4"
-      >
+      <div v-if="hasValidCoordinates" class="rounded-lg border border-success/20 bg-success/5 p-4">
         <div class="mb-2 flex items-center gap-2">
           <Icon icon="lucide:check-circle" class="h-4 w-4 text-success" />
           <span class="text-sm font-medium text-success">تم تحديد الموقع بنجاح</span>
@@ -42,15 +39,11 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div class="flex items-center gap-2">
             <span class="text-foreground-muted">خط العرض:</span>
-            <span class="font-mono text-foreground-heading">{{
-              parseFloat(store.form.latitude).toFixed(6)
-            }}</span>
+            <span class="font-mono text-foreground-heading">{{ formattedLatitude }}</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-foreground-muted">خط الطول:</span>
-            <span class="font-mono text-foreground-heading">{{
-              parseFloat(store.form.longitude).toFixed(6)
-            }}</span>
+            <span class="font-mono text-foreground-heading">{{ formattedLongitude }}</span>
           </div>
         </div>
       </div>
@@ -88,26 +81,51 @@
   // Default center on Iraq
   const center = ref([33.315241, 44.366197]);
   const zoom = ref(6);
-  const markerPosition = computed(() => {
-    if (store.form.latitude && store.form.longitude) {
-      return [parseFloat(store.form.latitude), parseFloat(store.form.longitude)];
-    }
-    return null;
+
+  // Add computed properties for coordinates display
+  const hasValidCoordinates = computed(() => {
+    return store.form?.latitude && store.form?.longitude;
   });
 
-  // Computed property for initial location
-  const initialLocation = computed(() => {
-    if (store.form.latitude && store.form.longitude) {
-      return {
-        lat: parseFloat(store.form.latitude),
-        lng: parseFloat(store.form.longitude),
-      };
+  const formattedLatitude = computed(() => {
+    if (!hasValidCoordinates.value) return '';
+    return parseFloat(store.form.latitude).toFixed(6);
+  });
+
+  const formattedLongitude = computed(() => {
+    if (!hasValidCoordinates.value) return '';
+    return parseFloat(store.form.longitude).toFixed(6);
+  });
+
+  // Add safety check for store.form
+  const markerPosition = computed(() => {
+    if (!store.form?.latitude || !store.form?.longitude) {
+      return null;
     }
-    return { lat: 33.315241, lng: 44.366197 }; // Default to Baghdad
+    return [parseFloat(store.form.latitude), parseFloat(store.form.longitude)];
+  });
+
+  // Computed property for initial location with safety check
+  const initialLocation = computed(() => {
+    if (!store.form?.latitude || !store.form?.longitude) {
+      return { lat: 33.315241, lng: 44.366197 }; // Default to Baghdad
+    }
+    return {
+      lat: parseFloat(store.form.latitude),
+      lng: parseFloat(store.form.longitude),
+    };
   });
 
   // Initialize form values if they don't exist
   onMounted(() => {
+    if (!store.form) {
+      store.form = {
+        latitude: '',
+        longitude: '',
+        // Add other necessary form fields
+      };
+    }
+
     if (!store.form.latitude) store.form.latitude = '';
     if (!store.form.longitude) store.form.longitude = '';
 
@@ -120,6 +138,8 @@
 
   // Handle location selected from the LocationPicker
   const handleLocationSelected = (selectedLocation) => {
+    if (!store.form) return;
+
     store.form.latitude = selectedLocation.lat.toFixed(6);
     store.form.longitude = selectedLocation.lng.toFixed(6);
     store.hasUnsavedChanges = true;

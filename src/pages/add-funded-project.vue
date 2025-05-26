@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen p-6 bg-background">
-      <div class="w-full max-w-6xl mx-auto space-y-8">
-        <div class="p-6 border rounded-xl border-border bg-background-surface">
+    <div class="min-h-screen bg-background p-6">
+      <div class="mx-auto w-full max-w-6xl space-y-8">
+        <div class="rounded-xl border border-border bg-background-surface p-6">
           <h1 class="text-2xl font-bold text-foreground"> اضافة مشروع - ممول </h1>
         </div>
 
@@ -24,16 +24,16 @@
               <div
                 v-for="(component, index) in store.form.components"
                 :key="component.id || index"
-                class="p-6 border rounded-xl border-border bg-background-surface"
+                class="rounded-xl border border-border bg-background-surface p-6"
               >
-                <div class="flex items-center justify-between mb-6">
+                <div class="mb-6 flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     <div
-                      class="w-8 h-8 rounded-lg"
+                      class="h-8 w-8 rounded-lg"
                       :style="{ backgroundColor: getComponentColor(index, true) }"
                     >
                       <div
-                        class="flex items-center justify-center w-full h-full text-sm font-medium"
+                        class="flex h-full w-full items-center justify-center text-sm font-medium"
                         :style="{ color: getComponentColor(index) }"
                       >
                         {{ index + 1 }}
@@ -47,7 +47,7 @@
                     size="sm"
                     class="bg-destructive/30 !text-destructive hover:bg-destructive/40"
                   >
-                    <Icon icon="lucide:trash" class="w-4 h-4" />
+                    <Icon icon="lucide:trash" class="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -79,12 +79,12 @@
                       <div
                         v-for="(activity, activityIndex) in component.activities || []"
                         :key="activityIndex"
-                        class="p-4 border rounded-lg border-border bg-background-surface"
+                        class="rounded-lg border border-border bg-background-surface p-4"
                       >
-                        <div class="flex items-center justify-between mb-4">
+                        <div class="mb-4 flex items-center justify-between">
                           <div class="flex items-center gap-2">
                             <div
-                              class="w-2 h-2 rounded-full"
+                              class="h-2 w-2 rounded-full"
                               :style="{ backgroundColor: getComponentColor(index) }"
                             ></div>
                             <span class="font-medium text-foreground">
@@ -101,9 +101,9 @@
                             <Icon
                               v-if="store.form.isSaving"
                               icon="lucide:loader-2"
-                              class="w-4 h-4 animate-spin"
+                              class="h-4 w-4 animate-spin"
                             />
-                            <Icon v-else icon="lucide:trash" class="w-4 h-4" />
+                            <Icon v-else icon="lucide:trash" class="h-4 w-4" />
                           </Button>
                         </div>
 
@@ -141,7 +141,7 @@
                           >
                             <div v-if="totalPeriods > 0" class="space-y-4">
                               <div
-                                class="flex items-center justify-between p-4 border rounded-lg border-border bg-background-surface"
+                                class="flex items-center justify-between rounded-lg border border-border bg-background-surface p-4"
                               >
                                 <span class="text-sm font-medium text-foreground">
                                   {{
@@ -161,7 +161,7 @@
                                 </PrimaryButton>
                               </div>
                               <div
-                                class="grid gap-2 p-4 border rounded-lg border-border bg-background-surface"
+                                class="grid gap-2 rounded-lg border border-border bg-background-surface p-4"
                                 :class="{
                                   'grid-cols-4': totalPeriods <= 4,
                                   'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
@@ -178,7 +178,7 @@
                                   </span>
                                   <button
                                     type="button"
-                                    class="relative w-full h-12 transition-all duration-200 border rounded-md cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
+                                    class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
                                     :class="[
                                       activity.selectedPeriods?.includes(period)
                                         ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
@@ -204,7 +204,7 @@
                             </div>
                             <div
                               v-else
-                              class="flex items-center justify-center p-6 text-center border rounded-lg border-border bg-background-surface text-foreground"
+                              class="flex items-center justify-center rounded-lg border border-border bg-background-surface p-6 text-center text-foreground"
                             >
                               <div class="space-y-1">
                                 <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
@@ -225,7 +225,7 @@
                       size="sm"
                       class="w-full"
                     >
-                      <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                       اضافة فعالية
                     </PrimaryButton>
                   </div>
@@ -234,7 +234,7 @@
 
               <!-- Add Component Button -->
               <PrimaryButton @click="addNewComponent" variant="primary" class="w-full py-6">
-                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
+                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
                 اضافة مكون جديد
               </PrimaryButton>
             </div>
@@ -242,28 +242,28 @@
 
           <!-- Schedule Timeline Section -->
           <ScheduleTimeLine
-            :components="store.form.components"
-            :duration="store.form.duration"
-            :periodType="store.form.periodType"
+            :components="store.form?.components || []"
+            :duration="store.form?.duration || 0"
+            :periodType="store.form?.periodType || 1"
           />
 
           <ProjectPreview />
         </div>
 
-        <div class="sticky left-0 right-0 bottom-6">
-          <div class="p-4 border rounded-xl border-border bg-background-card">
+        <div class="sticky bottom-6 left-0 right-0">
+          <div class="rounded-xl border border-border bg-background-card p-4">
             <PrimaryButton
               @click="saveProjectWithComponents"
               variant="primary"
-              class="w-full h-12"
+              class="h-12 w-full"
               :disabled="store.isSaving"
             >
               <Icon
                 v-if="store.isSaving"
                 icon="lucide:loader-2"
-                class="w-4 h-4 ml-2 animate-spin"
+                class="ml-2 h-4 w-4 animate-spin"
               />
-              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </PrimaryButton>
           </div>
@@ -301,13 +301,6 @@
     { value: 'USD', label: 'دولار أمريكي' },
     { value: 'IQD', label: 'دينار عراقي' },
   ];
-
-  // Ensure beneficiaryEntities is always an array
-  if (!Array.isArray(store.form.beneficiaryEntities)) {
-    store.form.beneficiaryEntities = store.form.beneficiaryEntities
-      ? [store.form.beneficiaryEntities]
-      : [];
-  }
 
   // Function to fetch project data directly
   const fetchProjectData = async (projectId) => {
@@ -347,11 +340,12 @@
   };
 
   onMounted(async () => {
+    // Initialize store.form first
     store.form = {
       name: '',
       executingDepartment: '',
       implementingEntity: '',
-      beneficiaryEntities: [],
+      beneficiaryEntities: [], // Initialize as empty array
       grantingEntity: '',
       fundingType: 1,
       cost: null,
@@ -369,6 +363,13 @@
       isGovernment: false,
       financialAchievement: 0,
     };
+
+    // Now it's safe to check and transform beneficiaryEntities if needed
+    if (!Array.isArray(store.form.beneficiaryEntities)) {
+      store.form.beneficiaryEntities = store.form.beneficiaryEntities
+        ? [store.form.beneficiaryEntities]
+        : [];
+    }
 
     // A check to ensure components is always an array
     if (!Array.isArray(store.form.components)) {
@@ -655,32 +656,35 @@
 
   // Keep the helper functions for adding/removing components and activities
   const addNewComponent = () => {
+    if (!store.form.components) {
+      store.form.components = [];
+    }
+
     const newComponent = {
       name: '',
       targetPercentage: 0,
       activities: [],
     };
 
-    if (!store.form.components) {
-      store.form.components = [];
-    }
-
     store.form.components.push(newComponent);
     store.hasUnsavedChanges = true;
   };
 
   const removeComponent = (index) => {
+    if (!store.form.components) return;
     store.form.components.splice(index, 1);
     store.hasUnsavedChanges = true;
   };
 
   const addActivity = (componentIndex) => {
+    if (!store.form.components?.[componentIndex]) return;
+
     const newActivity = {
       name: '',
       targetPercentage: 0,
       notes: '',
       selectedPeriods: [],
-      periodType: store.form.periodType,
+      periodType: store.form.periodType || 1,
     };
 
     if (!store.form.components[componentIndex].activities) {
@@ -692,10 +696,9 @@
   };
 
   const deleteActivity = (componentIndex, activityIndex) => {
-    if (store.form.components[componentIndex].activities) {
-      store.form.components[componentIndex].activities.splice(activityIndex, 1);
-      store.hasUnsavedChanges = true;
-    }
+    if (!store.form.components?.[componentIndex]?.activities) return;
+    store.form.components[componentIndex].activities.splice(activityIndex, 1);
+    store.hasUnsavedChanges = true;
   };
 
   const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
@@ -873,6 +876,31 @@
 
   // Add an explicit console log when passing the form to ProjectDetails
   const projectFormWithGovernment = computed(() => {
+    // Add safety check for store.form
+    if (!store.form) {
+      return {
+        isGovernment: false,
+        components: [],
+        // Add other default values that ProjectDetails component expects
+        name: '',
+        executingDepartment: '',
+        implementingEntity: '',
+        beneficiaryEntities: [],
+        grantingEntity: '',
+        fundingType: 1,
+        cost: null,
+        projectObjectives: '',
+        duration: 0,
+        periodType: 1,
+        durationType: 'weeks',
+        actualStartDate: null,
+        latitude: '',
+        longitude: '',
+        projectStatus: 1,
+        financialAchievement: 0,
+      };
+    }
+
     const isGov = Boolean(store.form.isGovernment);
     console.log('Computing projectFormWithGovernment:');
     console.log(
@@ -884,6 +912,7 @@
 
     return {
       ...store.form,
+      components: store.form.components || [],
       isGovernment: isGov,
     };
   });

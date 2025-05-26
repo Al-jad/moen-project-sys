@@ -4,7 +4,7 @@
       <!-- Stats Cards - Moved to top for better overview -->
       <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div
-          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
@@ -15,7 +15,7 @@
           <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/10 dark:bg-blue-400/10"></div>
         </div>
         <div
-          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
@@ -26,7 +26,7 @@
           <div class="absolute inset-x-0 bottom-0 h-1 bg-green-500/10 dark:bg-green-400/10"></div>
         </div>
         <div
-          class="relative p-4 overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+          class="relative overflow-hidden rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
         >
           <div class="relative z-10">
             <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
@@ -39,10 +39,10 @@
       </div>
 
       <!-- Project Details Preview - Enhanced with better spacing and icons -->
-      <div class="overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800">
-        <div class="p-4 border-b dark:border-gray-700">
+      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div class="border-b p-4 dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <Icon icon="lucide:clipboard-list" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
           </div>
         </div>
@@ -128,22 +128,22 @@
 
       <!-- Timeline Preview - Replaced with SheduleTimeLine component -->
       <ScheduleTimeLine
-        :components="store.form.components"
+        :components="safeComponents"
         :duration="totalPeriods"
-        :periodType="store.form.periodType"
+        :periodType="store.form?.periodType"
       />
 
       <!-- Components and Activities Details - Enhanced with better visuals -->
       <ComponentsActivitiesDetails
         :components="reversedComponents"
-        :periodType="store.form.periodType"
+        :periodType="store.form?.periodType"
         :useExternalSorting="true"
       />
 
-      <div class="overflow-hidden bg-white border rounded-lg dark:border-gray-700 dark:bg-gray-800">
-        <div class="p-4 border-b dark:border-gray-700">
+      <div class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div class="border-b p-4 dark:border-gray-700">
           <div class="flex items-center gap-2">
-            <Icon icon="lucide:clipboard-list" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            <Icon icon="lucide:clipboard-list" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
             <h4 class="font-medium text-gray-900 dark:text-gray-100">الإنجازات </h4>
           </div>
         </div>
@@ -182,6 +182,34 @@
   const beneficiaries = ref([]);
   const isLoading = ref(false);
 
+  // Add safety checks for components
+  const safeComponents = computed(() => {
+    if (!store.form || !store.form.components || !Array.isArray(store.form.components)) {
+      return [];
+    }
+    return store.form.components;
+  });
+
+  // Update reversedComponents to use safeComponents
+  const reversedComponents = computed(() => {
+    return [...safeComponents.value].reverse();
+  });
+
+  // Update totalComponents to use safeComponents
+  const totalComponents = computed(() => {
+    return safeComponents.value.length;
+  });
+
+  // Update totalActivities to use safeComponents
+  const totalActivities = computed(() => {
+    return safeComponents.value.reduce((total, component) => {
+      if (component.activities && Array.isArray(component.activities)) {
+        return total + component.activities.length;
+      }
+      return total;
+    }, 0);
+  });
+
   // Fetch beneficiaries once
   const fetchBeneficiaries = async () => {
     if (isLoading.value || beneficiaries.value.length > 0) return;
@@ -210,15 +238,6 @@
   onMounted(() => {
     fetchBeneficiaries();
   });
-
-  // Add sorting functions to match ComponentsActivitiesDetails.vue
-  const reversedComponents = computed(() => {
-    return [...store.form.components].reverse();
-  });
-
-  const sortedActivities = (activities) => {
-    return [...activities].reverse();
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'غير محدد';
@@ -264,29 +283,6 @@
     if (!value) return '0';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
-
-  // Safely calculate total activities
-  const totalActivities = computed(() => {
-    if (!store.form.components || !Array.isArray(store.form.components)) {
-      return 0;
-    }
-
-    return store.form.components.reduce((total, component) => {
-      // Safely check if activities exists and is an array
-      if (component.activities && Array.isArray(component.activities)) {
-        return total + component.activities.length;
-      }
-      return total;
-    }, 0);
-  });
-
-  // Safely calculate total components
-  const totalComponents = computed(() => {
-    if (!store.form.components || !Array.isArray(store.form.components)) {
-      return 0;
-    }
-    return store.form.components.length;
-  });
 </script>
 
 <style scoped>
