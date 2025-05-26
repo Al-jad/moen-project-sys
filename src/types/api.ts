@@ -17,13 +17,10 @@ export interface ApiError {
 export interface Beneficiary {
   id: number;
   name: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  referenceEntity?: string;
-  location?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  referenceEntity: string;
+  location: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateBeneficiaryRequest {
@@ -180,7 +177,7 @@ export interface FundedProject {
   name: string;
   executingDepartment: string;
   implementingEntity: string;
-  beneficiaryEntities: number[];
+  beneficiaries: Beneficiary[];
   grantingEntity: string;
   fundingType: number;
   cost: number;
@@ -193,10 +190,12 @@ export interface FundedProject {
   lng: number;
   isGovernment: boolean;
   financialAchievement: number;
-  components?: Component[];
-  attachments?: Attachment[];
-  createdAt?: string;
-  updatedAt?: string;
+  components: Component[];
+  attachments: any[];
+  createdAt: string;
+  updatedAt: string;
+  currency: number;
+  isFunded: boolean | null;
 }
 
 export interface CreateFundedProjectRequest {
@@ -225,12 +224,9 @@ export interface UpdateFundedProjectRequest extends Partial<CreateFundedProjectR
 // Component Types (for Funded Projects)
 export interface Component {
   id: number;
-  projectId: number;
   name: string;
   targetPercentage: number;
   activities?: Activity[];
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface CreateComponentRequest {
@@ -246,14 +242,7 @@ export interface UpdateComponentRequest extends Partial<CreateComponentRequest> 
 // Activity Types (for Components)
 export interface Activity {
   id: number;
-  componentId: number;
   name: string;
-  targetPercentage: number;
-  notes?: string;
-  selectedPeriods: number[];
-  periodType?: number;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface CreateActivityRequest {

@@ -1,10 +1,8 @@
-<script setup>
-import { CalendarGridHead } from 'radix-vue';
+<script lang="ts" setup>
+import type { HTMLAttributes } from 'vue'
+import { CalendarGridHead, type CalendarGridHeadProps } from 'reka-ui'
 
-const props = defineProps({
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-});
+const props = defineProps<CalendarGridHeadProps & { class?: HTMLAttributes['class'] }>()
 </script>
 
 <template>

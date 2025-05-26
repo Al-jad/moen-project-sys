@@ -41,7 +41,7 @@
   </Dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { Button } from '@/components/ui/button';
   import {
     Dialog,
@@ -83,7 +83,7 @@
     }
   );
 
-  const updateOpen = (value) => {
+  const updateOpen = (value: any) => {
     isOpen.value = value;
     emit('update:open', value);
   };

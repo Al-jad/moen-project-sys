@@ -104,7 +104,10 @@
               <button class="text-blue-600 hover:underline dark:text-blue-400">الكل</button>
             </div>
           </div>
-          <div v-if="project?.attachments?.length > 0" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div
+            v-if="project?.attachments?.length > 0"
+            class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
             <DocumentCard
               v-for="attachment in project.attachments"
               :key="attachment.id"
@@ -114,7 +117,10 @@
               :url="attachment.url"
             />
           </div>
-          <div v-else class="rounded-lg border border-dashed border-gray-300 p-6 text-center dark:border-gray-700">
+          <div
+            v-else
+            class="rounded-lg border border-dashed border-gray-300 p-6 text-center dark:border-gray-700"
+          >
             <p class="text-gray-500 dark:text-gray-400">لا توجد مرفقات لهذا المشروع</p>
           </div>
           <hr class="my-4 mt-6 w-full border-dashed border-gray-300 dark:border-gray-600" />
@@ -184,39 +190,39 @@
   import DocumentCard from '@/components/DocumentCard.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { defineAsyncComponent, ref, onMounted } from 'vue';
-  import projectService from '@/services/projectService';
-  import projectUtils from '@/utils/projectUtils';
-  
+  import projectService, { transformProject } from '@/services/projectService';
+  import { defineAsyncComponent, onMounted, ref } from 'vue';
+
   const router = useRouter();
   const route = useRoute();
   const Map = defineAsyncComponent(() => import('@/components/Map.vue'));
-  
+
   const project = ref(null);
   const isLoading = ref(false);
   const error = ref(null);
-  
+
   // Fetch project data
-  const fetchProject = function() {
+  const fetchProject = function () {
     const projectId = route.params.id;
     if (!projectId) return;
-    
+
     isLoading.value = true;
     error.value = null;
-    
-    projectService.getProjectById(projectId)
-      .then(function(response) {
-        project.value = projectUtils.transformProject(response.data);
+
+    projectService
+      .getProjectById(projectId)
+      .then(function (response) {
+        project.value = transformProject(response.data);
         isLoading.value = false;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.error('Error fetching project:', err);
         error.value = err.message || 'Failed to fetch project';
         isLoading.value = false;
       });
   };
-  
-  onMounted(function() {
+
+  onMounted(function () {
     fetchProject();
   });
 </script>

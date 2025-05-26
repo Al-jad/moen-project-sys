@@ -1,35 +1,25 @@
-<script setup>
-  import { buttonVariants } from '@/components/ui/button';
-  import { cn } from '@/lib/utils';
-  import { ChevronLeft } from 'lucide-vue-next';
-  import { CalendarPrev, useForwardProps } from 'radix-vue';
+<script lang="ts" setup>
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { ChevronLeft } from 'lucide-vue-next'
+import { CalendarPrev, type CalendarPrevProps, useForwardProps } from 'reka-ui'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 
-  const props = defineProps({
-    step: { type: String, required: false },
-    prevPage: { type: Function, required: false },
-    asChild: { type: Boolean, required: false },
-    as: { type: null, required: false },
-    class: { type: null, required: false },
-  });
+const props = defineProps<CalendarPrevProps & { class?: HTMLAttributes['class'] }>()
 
-  const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+const delegatedProps = reactiveOmit(props, 'class')
 
-    return delegated;
-  });
-
-  const forwardedProps = useForwardProps(delegatedProps);
+const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>
   <CalendarPrev
-    :class="
-      cn(
-        buttonVariants({ variant: 'outline' }),
-        'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
-        props.class
-      )
-    "
+    :class="cn(
+      buttonVariants({ variant: 'outline' }),
+      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+      props.class,
+    )"
     v-bind="forwardedProps"
   >
     <slot>

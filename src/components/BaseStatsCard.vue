@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { Icon } from '@iconify/vue';
   import { computed } from 'vue';
 
@@ -36,7 +36,7 @@
     color: {
       type: String,
       default: 'blue',
-      validator: (value) =>
+      validator: (value: string) =>
         ['blue', 'green', 'purple', 'amber', 'red', 'indigo', 'pink', 'cyan'].includes(value),
     },
   });
@@ -52,7 +52,7 @@
       pink: 'bg-pink-500/10 dark:bg-pink-500/20',
       cyan: 'bg-cyan-500/10 dark:bg-cyan-500/20',
     };
-    return colorMap[props.color];
+    return colorMap[props.color as keyof typeof colorMap];
   });
 
   const iconClass = computed(() => {
@@ -66,6 +66,6 @@
       pink: 'text-pink-600 dark:text-pink-400',
       cyan: 'text-cyan-600 dark:text-cyan-400',
     };
-    return colorMap[props.color];
+    return colorMap[props.color as keyof typeof colorMap];
   });
 </script>

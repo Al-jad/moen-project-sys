@@ -1,4 +1,4 @@
-import { CURRENCY_CONVERSION, UNITS } from '../constants/index.js';
+import { CURRENCY_CONVERSION, UNITS } from '../constants';
 
 export const formatLargeNumber = (value: number): string => {
   if (!value) return '0';
@@ -38,7 +38,7 @@ export const convertCurrency = (
     convertedValue = value * CURRENCY_CONVERSION.IQD_TO_USD;
   }
 
-  const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
+  const precision = CURRENCY_CONVERSION.PRECISION[toCurrency as keyof typeof CURRENCY_CONVERSION.PRECISION];
   return Number(convertedValue.toFixed(precision));
 };
 

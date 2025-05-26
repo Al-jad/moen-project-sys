@@ -1,44 +1,35 @@
-<script setup>
-  import { cn } from '@/lib/utils';
-  import { Icon } from '@iconify/vue';
-  import {
-    DropdownMenuCheckboxItem,
-    DropdownMenuItemIndicator,
-    useForwardPropsEmits,
-  } from 'radix-vue';
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { Check } from 'lucide-vue-next'
+import {
+  DropdownMenuCheckboxItem,
+  type DropdownMenuCheckboxItemEmits,
+  type DropdownMenuCheckboxItemProps,
+  DropdownMenuItemIndicator,
+  useForwardPropsEmits,
+} from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-  const props = defineProps({
-    checked: { type: [Boolean, String], required: false },
-    disabled: { type: Boolean, required: false },
-    textValue: { type: String, required: false },
-    asChild: { type: Boolean, required: false },
-    as: { type: null, required: false },
-    class: { type: null, required: false },
-  });
-  const emits = defineEmits(['select', 'update:checked']);
+const props = defineProps<DropdownMenuCheckboxItemProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits<DropdownMenuCheckboxItemEmits>()
 
-  const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+const delegatedProps = reactiveOmit(props, 'class')
 
-    return delegated;
-  });
-
-  const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
   <DropdownMenuCheckboxItem
     v-bind="forwarded"
-    :class="
-      cn(
-        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        props.class
-      )
-    "
+    :class=" cn(
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      props.class,
+    )"
   >
     <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuItemIndicator>
-        <Icon icon="lucide:check" class="h-4 w-4" />
+        <Check class="w-4 h-4" />
       </DropdownMenuItemIndicator>
     </span>
     <slot />

@@ -40,7 +40,7 @@
   </DropdownMenu>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -50,41 +50,42 @@
   import { Icon } from '@iconify/vue';
   import { ref } from 'vue';
 
-  const props = defineProps({
-    items: {
-      type: Array,
-      default: () => [],
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    icon: {
-      type: String,
-      default: '',
-    },
-    variant: {
-      type: String,
-      default: 'outline',
-    },
-    asChild: {
-      type: Boolean,
-      default: false,
-    },
-    triggerClass: {
-      type: String,
-      default: '',
-    },
-    contentClass: {
-      type: String,
-      default: '',
-    },
-  });
+  interface DropdownItem {
+    label: string;
+    icon?: string;
+    disabled?: boolean;
+    class?: string;
+    onClick?: () => void;
+  }
 
-  const emit = defineEmits(['select']);
+  const props = withDefaults(
+    defineProps<{
+      items: DropdownItem[];
+      label: string;
+      icon?: string;
+      variant?: string;
+      asChild?: boolean;
+      triggerClass?: string;
+      contentClass?: string;
+    }>(),
+    {
+      items: () => [],
+      label: '',
+      icon: '',
+      variant: 'outline',
+      asChild: false,
+      triggerClass: '',
+      contentClass: '',
+    }
+  );
+
+  const emit = defineEmits<{
+    select: [item: DropdownItem];
+  }>();
+
   const open = ref(false);
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item: DropdownItem): void => {
     if (!item.disabled) {
       emit('select', item);
       if (item.onClick) {
