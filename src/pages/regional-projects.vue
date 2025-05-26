@@ -1,244 +1,178 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-1">
-      <ProjectsFilter
-        :isFundedProjects="false"
-        :showFundingTypeFilter="false"
-        @filter-applied="applyFilters"
-        :searchQuery="searchQuery"
-        :budgetRange="budgetRange"
-        :selectedStatus="selectedStatus"
-        :selectedBeneficiaries="selectedBeneficiaries"
-        :showGovernmentProjects="showGovernmentProjects"
-        :beneficiaries="beneficiaries"
-        :selectedCurrency="selectedCurrency"
-        @currency-changed="handleCurrencyChange"
-      />
-      <div class="min-h-screen flex-1 bg-gray-100 p-6 dark:bg-gray-900">
-        <div class="mx-auto w-full max-w-7xl space-y-8">
-          <div class="mb-4 flex justify-end">
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-300">العملة:</span>
-              <CustomSelect
-                v-model="selectedCurrency"
-                :options="currencyOptions"
-                placeholder="اختر العملة"
-                :triggerClass="'w-[120px]'"
-                icon="lucide:currency-dollar"
-                @update:model-value="handleCurrencyChange"
-              />
-            </div>
-          </div>
-          <div class="grid gap-4 md:grid-cols-4">
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
-                  <Icon icon="lucide:folders" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ filteredProjects.length }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي المشاريع</div>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
-                  <Icon icon="lucide:file" class="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ contractsCount }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي العقود</div>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
-                  <Icon
-                    icon="lucide:check-circle"
-                    class="h-6 w-6 text-purple-600 dark:text-purple-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ proceduresCount }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي الإجراءات</div>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
-                  <Icon
-                    icon="lucide:dollar-sign"
-                    class="h-6 w-6 text-amber-600 dark:text-amber-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ formatTotalCost() }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">اجمالي التمويل</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="border-b p-6 dark:border-gray-700">
+    <div class="flex min-h-screen">
+      <div class="border-r border-border bg-background-surface">
+        <ProjectsFilter
+          :isFundedProjects="false"
+          :showFundingTypeFilter="false"
+          @filter-applied="applyFilters"
+          :searchQuery="searchQuery"
+          :budgetRange="budgetRange"
+          :selectedStatus="selectedStatus"
+          :selectedBeneficiaries="selectedBeneficiaries"
+          :showGovernmentProjects="showGovernmentProjects"
+          :beneficiaries="beneficiaries"
+          :selectedCurrency="selectedCurrency"
+          @currency-changed="handleCurrencyChange"
+        />
+      </div>
+      <div class="flex-1 bg-background">
+        <div class="p-6 lg:p-8">
+          <div class="mx-auto w-full max-w-7xl space-y-8">
+            <div class="flex flex-col gap-6">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                    >مشاريع تنمية الاقاليم</h1
-                  >
-                  <Badge variant="outline" class="px-3">
-                    {{ filteredProjects.length }} من {{ projects.length }} مشروع
-                  </Badge>
-                </div>
-                <div class="flex flex-row items-center gap-6">
-                  <div class="flex items-center gap-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <PrimaryButton variant="outline" icon="lucide:align-left">
-                          ترتيب
-                        </PrimaryButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        class="w-[250px] border-gray-100 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
-                        align="end"
-                      >
-                        <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                          <h3
-                            class="text-right text-base font-medium text-gray-900 dark:text-white"
-                          >
-                            ترتيب
-                          </h3>
-                        </div>
-                        <div class="flex flex-col">
-                          <DropdownMenuItem
-                            v-for="option in sortOptions"
-                            :key="option.id"
-                            class="flex w-full items-center justify-between border-b px-4 py-2.5 text-right text-sm transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/50 dark:focus:bg-gray-700/50"
-                            :class="{
-                              'bg-gray-50 dark:bg-gray-700/50': selectedSort === option.id,
-                            }"
-                            @click="handleSort(option.id)"
-                          >
-                            <Icon
-                              :icon="option.icon"
-                              class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                            />
-                            <span class="text-gray-700 dark:text-gray-200">{{ option.label }}</span>
-                          </DropdownMenuItem>
-                        </div>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <div
-                      v-if="selectedSort"
-                      class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                    >
-                      <span>{{ getSelectedSortLabel }}</span>
-                      <button
-                        class="rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        @click="clearSort"
-                      >
-                        <Icon icon="lucide:x" class="h-3 w-3" />
-                      </button>
-                    </div>
+                <div class="flex items-center gap-4">
+                  <div class="rounded-lg bg-primary/10 p-3">
+                    <Icon icon="lucide:building-2" class="h-8 w-8 text-primary" />
                   </div>
-                  <PrimaryButton @click="OpenPremiumModal">
-                    <Icon icon="lucide:lock" />
-                    طباعة
-                  </PrimaryButton>
-                  <RouterLink to="/add-devlopment-project">
-                    <Button
-                      class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
-                    >
-                      <Icon
-                        icon="lucide:plus"
-                        class="ml-2 h-4 w-4 text-gray-900 dark:text-gray-100"
-                      />
-                      <span class="text-gray-900 dark:text-gray-100">اضافة مشروع جديد</span>
-                    </Button>
-                  </RouterLink>
+                  <div>
+                    <h1 class="text-3xl font-bold text-foreground">مشاريع تنمية الاقاليم</h1>
+                    <p class="text-foreground-muted">إدارة ومتابعة جميع مشاريع تنمية الاقاليم</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm font-medium text-foreground-muted">العملة:</span>
+                  <CustomSelect
+                    v-model="selectedCurrency"
+                    :options="currencyOptions"
+                    placeholder="اختر العملة"
+                    :triggerClass="'w-32'"
+                    icon="lucide:currency-dollar"
+                    @update:model-value="handleCurrencyChange"
+                  />
                 </div>
               </div>
-            </div>
-            <div class="p-6">
-              <!-- Loading Skeleton -->
-              <div v-if="isLoading" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                <div
-                  v-for="n in 6"
-                  :key="n"
-                  class="h-[280px] animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800"
+              <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <BaseStatsCard
+                  icon="lucide:folders"
+                  :value="filteredProjects.length"
+                  label="اجمالي المشاريع"
+                  color="blue"
+                />
+                <BaseStatsCard
+                  icon="lucide:file"
+                  :value="contractsCount"
+                  label="اجمالي العقود"
+                  color="green"
+                />
+                <BaseStatsCard
+                  icon="lucide:check-circle"
+                  :value="proceduresCount"
+                  label="اجمالي الإجراءات"
+                  color="purple"
+                />
+                <BaseStatsCard
+                  icon="lucide:dollar-sign"
+                  :value="formattedTotalCost"
+                  label="اجمالي التمويل"
+                  color="amber"
                 />
               </div>
-
-              <!-- Content Area (after loading) -->
-              <div v-else>
-                <!-- Case 1: No Projects Initially -->
-                <div
-                  v-if="projects.length === 0"
-                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
-                >
-                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                    <Icon
-                      icon="lucide:folder-open"
-                      class="h-8 w-8 text-gray-400 dark:text-gray-500"
-                    />
+            </div>
+            <div class="rounded-xl border border-border bg-background-surface shadow-sm">
+              <div class="border-b border-border p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div class="flex items-center gap-4">
+                    <h2 class="text-xl font-semibold text-foreground">قائمة المشاريع</h2>
+                    <Badge class="bg-primary/10 px-3 py-1 text-primary">
+                      {{ filteredProjects.length }} من {{ projects.length }} مشروع
+                    </Badge>
                   </div>
-                  <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100"
-                    >لا توجد مشاريع</h3
-                  >
-                  <p class="mb-4 text-sm text-gray-500 dark:text-gray-400"
-                    >قم بإضافة مشروع جديد للبدء</p
-                  >
-                  <RouterLink to="/add-devlopment-project">
-                    <Button variant="outline" size="sm">
-                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-                      اضافة مشروع
-                    </Button>
-                  </RouterLink>
-                </div>
-
-                <!-- Case 2: Projects exist, but filter yields no results -->
-                <div
-                  v-else-if="filteredProjects.length === 0"
-                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center dark:border-gray-700"
-                >
-                  <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                    <Icon icon="lucide:search-x" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                  <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2">
+                      <CustomDrop
+                        :items="sortOptions"
+                        label="ترتيب"
+                        icon="lucide:align-left"
+                        variant="outline"
+                        @select="handleSort"
+                      />
+                      <div
+                        v-if="selectedSort"
+                        class="flex items-center gap-2 rounded-lg bg-background-hover px-3 py-2 text-sm text-foreground-muted"
+                      >
+                        <span>{{ getSelectedSortLabel }}</span>
+                        <button
+                          class="rounded-full p-1 transition-colors hover:bg-background-hover"
+                          @click="clearSort"
+                        >
+                          <Icon icon="lucide:x" class="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                    <PrimaryButton
+                      @click="OpenPremiumModal"
+                      variant="destructive"
+                      icon="lucide:lock"
+                    >
+                      طباعة
+                    </PrimaryButton>
+                    <RouterLink to="/add-devlopment-project">
+                      <PrimaryButton variant="primary" icon="lucide:plus">
+                        اضافة مشروع جديد
+                      </PrimaryButton>
+                    </RouterLink>
                   </div>
-                  <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
-                    لا توجد نتائج تطابق الفلتر
-                  </h3>
-                  <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                    حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
-                  </p>
                 </div>
-
-                <!-- Case 3: Projects exist and filters yield results -->
-                <div v-else class="grid grid-cols-1 gap-6">
-                  <RegionalProjectCard
-                    v-for="project in paginatedProjects"
-                    :key="project.id"
-                    :project="project"
-                    :selectedCurrency="selectedCurrency"
-                    @attachment-added="fetchProjects"
+              </div>
+              <div class="p-6">
+                <div v-if="isLoading" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  <div
+                    v-for="n in 6"
+                    :key="n"
+                    class="h-80 animate-pulse rounded-lg bg-background-hover"
                   />
-
-                  <div class="mt-4 flex justify-center">
-                    <CustomPagination
-                      v-model="currentPage"
-                      :total="filteredProjects.length"
-                      :per-page="itemsPerPage"
-                    />
+                </div>
+                <div v-else>
+                  <div
+                    v-if="projects.length === 0"
+                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                  >
+                    <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
+                    <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد مشاريع</h3>
+                    <p class="mb-4 text-sm text-foreground-muted">
+                      قم بإضافة مشروع جديد للبدء في إدارة المشاريع
+                    </p>
+                    <RouterLink to="/add-devlopment-project">
+                      <PrimaryButton variant="primary" size="sm" icon="lucide:plus">
+                        اضافة مشروع
+                      </PrimaryButton>
+                    </RouterLink>
                   </div>
+                  <div
+                    v-else-if="filteredProjects.length === 0"
+                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                  >
+                    <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
+                    <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد نتائج مطابقة</h3>
+                    <p class="mb-4 text-sm text-foreground-muted">
+                      حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
+                    </p>
+                  </div>
+                  <div v-else class="space-y-6">
+                    <div class="grid grid-cols-1 gap-6">
+                      <RegionalProjectCard
+                        v-for="project in paginatedProjects"
+                        :key="project.id"
+                        :project="project"
+                        :selectedCurrency="selectedCurrency"
+                        @attachment-added="fetchProjects"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Pagination at bottom of container -->
+              <div
+                v-if="filteredProjects.length > 0"
+                class="border-t border-border bg-background-surface px-6 py-4"
+              >
+                <div class="flex justify-center">
+                  <CustomPagination
+                    v-model="currentPage"
+                    :total="filteredProjects.length"
+                    :per-page="itemsPerPage"
+                  />
                 </div>
               </div>
             </div>
@@ -266,6 +200,7 @@
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { formatCost, formatTotalCost } from '@/utils/formatCost';
 
   const regionalProjectStore = useRegionalProjectStore();
   const projects = computed(() => regionalProjectStore.projects);
@@ -506,42 +441,9 @@
     }, 0);
   };
 
-  const formatTotalCost = () => {
-    const total = projects.value.reduce((sum, project) => {
-      return sum + (Number(project.cost) || 0);
-    }, 0);
-    return formatCost(total);
-  };
-
-  const formatCost = (value) => {
-    if (!value) return '0';
-    const numValue = Number(value);
-    const convertedValue = convertCurrency(numValue, 'IQD', selectedCurrency.value);
-
-    const precision = CURRENCY_CONVERSION.PRECISION[selectedCurrency.value];
-    const formattedValue = convertedValue.toLocaleString('en-US', {
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
-    });
-
-    return `${formattedValue} ${selectedCurrency.value === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
-  };
-
-  const convertCurrency = (value, fromCurrency, toCurrency) => {
-    if (!value) return 0;
-    const numValue = Number(value);
-    if (fromCurrency === toCurrency) return numValue;
-
-    let convertedValue;
-    if (fromCurrency === 'USD') {
-      convertedValue = numValue * CURRENCY_CONVERSION.USD_TO_IQD;
-    } else {
-      convertedValue = numValue * CURRENCY_CONVERSION.IQD_TO_USD;
-    }
-
-    const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
-    return Number(convertedValue.toFixed(precision));
-  };
+  const formattedTotalCost = computed(() =>
+    formatTotalCost(projects.value, selectedCurrency.value)
+  );
 
   const handleCurrencyChange = (newCurrency) => {
     selectedCurrency.value = newCurrency;

@@ -10,9 +10,9 @@
   >
     <template #title>ميزة مدفوعة</template>
 
-    <div class="flex flex-col items-center justify-center space-y-5 py-6">
-      <div class="premium-icon-container rounded-full bg-warning/20 p-4 shadow-sm">
-        <Icon icon="lucide:crown" class="h-8 w-8 text-warning" />
+    <div class="flex flex-col items-center justify-center py-6 space-y-5">
+      <div class="p-4 rounded-full shadow-sm premium-icon-container bg-warning/20">
+        <Icon icon="lucide:crown" class="w-8 h-8 text-warning" />
       </div>
       <p class="text-center text-foreground-muted">
         هذه الميزة متوفرة في النسخة الكاملة من النظام

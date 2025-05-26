@@ -1,126 +1,197 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-1">
-      <ProjectsFilter
-        :isFundedProjects="false"
-        :showFundingTypeFilter="true"
-        @filter-applied="applyFilters"
-        :searchQuery="searchQuery"
-        :budgetRange="budgetRange"
-        :isBudgetFilterEnabled="isBudgetFilterEnabled"
-        :selectedStatus="selectedStatus"
-        :selectedBeneficiaries="selectedBeneficiaries"
-        :showGovernmentProjects="showGovernmentProjects"
-        :beneficiaries="beneficiaries"
-        :selectedCurrency="selectedCurrency"
-        @currency-changed="handleCurrencyChange"
-      />
-      <PremiumModal
-        :open="showPremiumModalOpen"
-        @update:open="(val) => (showPremiumModalOpen = val)"
-        @close="handlePremiumModalClose"
-      />
-      <div class="dark:bg-darkmode -mt-1 flex-1 bg-background p-6">
-        <div class="mb-6 flex items-center justify-between">
-          <div class="space-y-1">
-            <h1 class="text-2xl font-bold text-foreground-heading">قائمة المشاريع</h1>
-            <p class="text-sm text-foreground-muted">
-              {{
-                isLoading
-                  ? 'جاري التحميل...'
-                  : `النتائج: عرض ${paginatedProjects.length} مشروع من اصل ${totalProjects} مشروع`
-              }}
-            </p>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-foreground-muted">العملة:</span>
-              <CustomSelect
-                v-model="selectedCurrency"
-                :options="currencyOptions"
-                placeholder="اختر العملة"
-                :triggerClass="'w-[120px]'"
-                icon="lucide:currency-dollar"
-                @update:model-value="handleCurrencyChange"
+    <div class="flex min-h-screen">
+      <div class="border-r border-border bg-background-surface">
+        <ProjectsFilter
+          :isFundedProjects="false"
+          :showFundingTypeFilter="true"
+          @filter-applied="applyFilters"
+          :searchQuery="searchQuery"
+          :budgetRange="budgetRange"
+          :isBudgetFilterEnabled="isBudgetFilterEnabled"
+          :selectedStatus="selectedStatus"
+          :selectedBeneficiaries="selectedBeneficiaries"
+          :showGovernmentProjects="showGovernmentProjects"
+          :beneficiaries="beneficiaries"
+          :selectedCurrency="selectedCurrency"
+          @currency-changed="handleCurrencyChange"
+        />
+      </div>
+      <div class="flex-1 bg-background">
+        <div class="p-6 lg:p-8">
+          <div class="mx-auto w-full max-w-7xl space-y-8">
+            <div class="flex flex-col gap-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="rounded-lg bg-primary/10 p-3">
+                    <Icon icon="lucide:folder" class="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <h1 class="text-3xl font-bold text-foreground">قائمة المشاريع</h1>
+                    <p class="text-foreground-muted">
+                      {{
+                        isLoading
+                          ? 'جاري التحميل...'
+                          : `النتائج: عرض ${paginatedProjects.length} مشروع من اصل ${totalProjects} مشروع`
+                      }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-foreground-muted">العملة:</span>
+                    <CustomSelect
+                      v-model="selectedCurrency"
+                      :options="currencyOptions"
+                      placeholder="اختر العملة"
+                      :triggerClass="'w-32'"
+                      icon="lucide:currency-dollar"
+                      @update:model-value="handleCurrencyChange"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <BaseStatsCard
+                icon="lucide:folders"
+                :value="filteredProjectsList.length"
+                label="اجمالي المشاريع"
+                color="blue"
+              />
+              <BaseStatsCard
+                icon="lucide:check-circle"
+                :value="getCompletedProjectsCount()"
+                label="المشاريع المنجزة"
+                color="green"
+              />
+              <BaseStatsCard
+                icon="lucide:loader"
+                :value="getInProgressProjectsCount()"
+                label="المشاريع قيد التنفيذ"
+                color="purple"
+              />
+              <BaseStatsCard
+                icon="lucide:dollar-sign"
+                :value="formattedTotalCost"
+                label="اجمالي التمويل"
+                color="amber"
               />
             </div>
-            <div class="flex items-center gap-2">
-              <PrimaryButton @click="showPremiumModal" variant="destructive" icon="mdi:lock">
-                ترتيب
-              </PrimaryButton>
+            <div class="rounded-xl border border-border bg-background-surface shadow-sm">
+              <div class="border-b border-border p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div class="flex items-center gap-4">
+                    <h2 class="text-xl font-semibold text-foreground">المشاريع</h2>
+                    <Badge class="bg-primary/10 px-3 py-1 text-primary">
+                      {{ paginatedProjects.length }} من {{ totalProjects }} مشروع
+                    </Badge>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2">
+                      <PrimaryButton
+                        @click="showPremiumModal"
+                        variant="destructive"
+                        icon="mdi:lock"
+                      >
+                        ترتيب
+                      </PrimaryButton>
+                    </div>
+                    <CustomDrop
+                      label="اضافة مشروع جديد"
+                      icon="lucide:plus"
+                      variant="primary"
+                      :items="addProjectItems"
+                      @select="handleAddProject"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="p-6">
+                <div v-if="!error" class="grid gap-6">
+                  <template v-if="isLoading">
+                    <GenericProjectCard
+                      v-for="i in itemsPerPage"
+                      :key="`skeleton-${i}`"
+                      :project="{}"
+                      :isLoading="true"
+                      :selectedCurrency="selectedCurrency"
+                    />
+                  </template>
+                  <template v-else-if="paginatedProjects.length > 0">
+                    <GenericProjectCard
+                      v-for="project in paginatedProjects"
+                      :key="project.id"
+                      :project="project"
+                      :selectedCurrency="selectedCurrency"
+                      :isLoading="false"
+                    />
+                  </template>
+                </div>
+                <div
+                  v-else-if="error"
+                  class="flex flex-col items-center justify-center rounded-lg border border-destructive bg-destructive/10 p-8 text-center"
+                >
+                  <Icon icon="lucide:alert-circle" class="mb-4 h-12 w-12 text-destructive" />
+                  <h3 class="mb-2 text-lg font-medium text-destructive"
+                    >حدث خطأ في تحميل المشاريع</h3
+                  >
+                  <p class="mb-4 text-sm text-destructive">{{ error }}</p>
+                  <PrimaryButton
+                    @click="fetchProjects"
+                    variant="destructive"
+                    icon="lucide:refresh-cw"
+                  >
+                    اعادة المحاولة
+                  </PrimaryButton>
+                </div>
+                <div
+                  v-else-if="!isLoading && !error && allProjects.length === 0"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                >
+                  <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
+                  <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد مشاريع</h3>
+                  <p class="mb-4 text-sm text-foreground-muted"
+                    >لا توجد مشاريع في النظام حالياً. قم باضافة مشروع جديد.</p
+                  >
+                </div>
+                <div
+                  v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                >
+                  <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
+                  <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد نتائج مطابقة</h3>
+                  <p class="mb-4 text-sm text-foreground-muted">
+                    لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.
+                  </p>
+                  <PrimaryButton @click="clearFilters" variant="secondary" icon="lucide:x">
+                    مسح الفلترة
+                  </PrimaryButton>
+                </div>
+              </div>
+              <!-- Pagination at bottom of container -->
+              <div
+                v-if="totalProjects > itemsPerPage"
+                class="border-t border-border bg-background-surface px-6 py-4"
+              >
+                <div class="flex justify-center">
+                  <CustomPagination
+                    v-model="currentPage"
+                    :total="totalProjects"
+                    :per-page="itemsPerPage"
+                  />
+                </div>
+              </div>
             </div>
-            <CustomDrop
-              label="اضافة مشروع جديد"
-              icon="lucide:plus"
-              variant="primary"
-              :items="addProjectItems"
-              @select="handleAddProject"
-            />
           </div>
-        </div>
-        <div v-if="!error" class="grid grid-cols-1 gap-6">
-          <template v-if="isLoading">
-            <GenericProjectCard
-              v-for="i in itemsPerPage"
-              :key="`skeleton-${i}`"
-              :project="{}"
-              :isLoading="true"
-              :selectedCurrency="selectedCurrency"
-            />
-          </template>
-          <template v-else-if="paginatedProjects.length > 0">
-            <GenericProjectCard
-              v-for="project in paginatedProjects"
-              :key="project.id"
-              :project="project"
-              :selectedCurrency="selectedCurrency"
-              :isLoading="false"
-            />
-            <div v-if="totalProjects > itemsPerPage" class="mt-4 flex justify-center">
-              <CustomPagination
-                v-model="currentPage"
-                :total="totalProjects"
-                :per-page="itemsPerPage"
-              />
-            </div>
-          </template>
-        </div>
-        <div
-          v-else-if="error"
-          class="flex flex-col items-center justify-center rounded-lg border border-destructive bg-destructive/10 p-8 text-center"
-        >
-          <Icon icon="lucide:alert-circle" class="mb-4 h-12 w-12 text-destructive" />
-          <h3 class="mb-2 text-lg font-medium text-destructive">حدث خطأ في تحميل المشاريع</h3>
-          <p class="mb-4 text-sm text-destructive">{{ error }}</p>
-          <PrimaryButton @click="fetchProjects" variant="destructive" icon="lucide:refresh-cw">
-            اعادة المحاولة
-          </PrimaryButton>
-        </div>
-        <div
-          v-else-if="!isLoading && !error && allProjects.length === 0"
-          class="flex flex-col items-center justify-center rounded-lg border border-border bg-background-surface p-8 text-center"
-        >
-          <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
-          <h3 class="mb-2 text-lg font-medium text-foreground-heading">لا توجد مشاريع</h3>
-          <p class="mb-4 text-sm text-foreground-muted"
-            >لا توجد مشاريع في النظام حالياً. قم باضافة مشروع جديد.</p
-          >
-        </div>
-        <div
-          v-else-if="!isLoading && !error && filteredProjectsList.length === 0"
-          class="flex flex-col items-center justify-center rounded-lg border border-border bg-background-surface p-8 text-center"
-        >
-          <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
-          <h3 class="mb-2 text-lg font-medium text-foreground-heading">لا توجد نتائج مطابقة</h3>
-          <p class="mb-4 text-sm text-foreground-muted">
-            لم يتم العثور على اي مشاريع تطابق معايير البحث المحددة.
-          </p>
-          <PrimaryButton @click="clearFilters" variant="secondary" icon="lucide:x">
-            مسح الفلترة
-          </PrimaryButton>
         </div>
       </div>
     </div>
+    <PremiumModal
+      :open="showPremiumModalOpen"
+      @update:open="(val) => (showPremiumModalOpen = val)"
+      @close="handlePremiumModalClose"
+    />
   </DefaultLayout>
 </template>
 <script setup>
@@ -139,6 +210,8 @@
   import { determineFundingType, ProjectType } from '../services/projectTypeService';
   import { useProjectStore } from '../stores/projectStore';
   import CustomPagination from '../components/CustomPagination.vue';
+  import BaseStatsCard from '@/components/BaseStatsCard.vue';
+  import { formatCost, formatTotalCost } from '@/utils/formatCost';
   const projectStore = useProjectStore();
   const allProjects = computed(() => projectStore.projects);
   const filteredProjects = computed(() => projectStore.filteredProjects);
@@ -489,4 +562,13 @@
       item.onClick();
     }
   };
+  const getCompletedProjectsCount = () => {
+    return allProjects.value.filter((project) => project.projectStatus === 2).length;
+  };
+  const getInProgressProjectsCount = () => {
+    return allProjects.value.filter((project) => project.projectStatus === 1).length;
+  };
+  const formattedTotalCost = computed(() =>
+    formatTotalCost(allProjects.value, selectedCurrency.value)
+  );
 </script>

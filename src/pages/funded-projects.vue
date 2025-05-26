@@ -63,7 +63,7 @@
                 />
                 <BaseStatsCard
                   icon="lucide:dollar-sign"
-                  :value="formatTotalCost()"
+                  :value="formattedTotalCost"
                   label="اجمالي التمويل"
                   color="amber"
                 />
@@ -203,6 +203,7 @@
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { formatCost, formatTotalCost } from '@/utils/formatCost';
   const projects = ref([]);
   const filteredProjects = ref([]);
   const isLoading = ref(true);
@@ -566,23 +567,9 @@
     const precision = CURRENCY_CONVERSION.PRECISION[toCurrency];
     return Number(convertedValue.toFixed(precision));
   };
-  const formatCost = (value) => {
-    if (!value) return '0';
-    const numValue = Number(value);
-    const convertedValue = convertCurrency(numValue, 'IQD', selectedCurrency.value);
-    const precision = CURRENCY_CONVERSION.PRECISION[selectedCurrency.value];
-    const formattedValue = convertedValue.toLocaleString('en-US', {
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
-    });
-    return `${formattedValue} ${selectedCurrency.value === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
-  };
-  const formatTotalCost = () => {
-    const total = projects.value.reduce((sum, project) => {
-      return sum + (Number(project.cost) || 0);
-    }, 0);
-    return formatCost(total);
-  };
+  const formattedTotalCost = computed(() =>
+    formatTotalCost(projects.value, selectedCurrency.value)
+  );
   const formatDate = (dateString) => {
     if (!dateString) return 'غير محدد';
     return new Date(dateString).toLocaleDateString('ar-EG', {
