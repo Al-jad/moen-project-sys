@@ -1,18 +1,12 @@
-<script setup>
-  import { cn } from '@/lib/utils';
-  import { SelectSeparator } from 'radix-vue';
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { SelectSeparator, type SelectSeparatorProps } from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-  const props = defineProps({
-    asChild: { type: Boolean, required: false },
-    as: { type: null, required: false },
-    class: { type: null, required: false },
-  });
+const props = defineProps<SelectSeparatorProps & { class?: HTMLAttributes['class'] }>()
 
-  const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
-
-    return delegated;
-  });
+const delegatedProps = reactiveOmit(props, 'class')
 </script>
 
 <template>

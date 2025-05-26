@@ -95,7 +95,7 @@ declare module 'vue' {
     LogoutModal: typeof import('./components/LogoutModal.vue')['default']
     Map: typeof import('./components/Map.vue')['default']
     NumberInput: typeof import('./components/NumberInput.vue')['default']
-    Pagination: typeof import('./components/ui/pagination/Pagination.vue')['default']
+    Pagination: typeof import('./components/ui/pagination.vue')['default']
     PaginationContent: typeof import('./components/ui/pagination/PaginationContent.vue')['default']
     PaginationEllipsis: typeof import('./components/ui/pagination/PaginationEllipsis.vue')['default']
     PaginationFirst: typeof import('./components/ui/pagination/PaginationFirst.vue')['default']

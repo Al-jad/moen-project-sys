@@ -1,43 +1,36 @@
 <script setup lang="ts">
-import { SwitchRoot, SwitchThumb } from 'radix-vue'
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import {
+  SwitchRoot,
+  type SwitchRootEmits,
+  type SwitchRootProps,
+  SwitchThumb,
+  useForwardPropsEmits,
+} from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-const switchState = ref(false)
+const props = defineProps<SwitchRootProps & { class?: HTMLAttributes['class'] }>()
 
-const props = defineProps({
-  label: {
-    type: String,
-    required: true
-  },
-  class: {
-    type: String,
-    required: false
-  }
-})
+const emits = defineEmits<SwitchRootEmits>()
 
-const emit = defineEmits(['update:modelValue'])
+const delegatedProps = reactiveOmit(props, 'class')
 
-watch(switchState, (value) => {
-  emit('update:modelValue', value)
-})
+const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
-  <div class="flex gap-2 items-center" :class="props.class">
-    <label
-      class="text-white text-[15px] leading-none pr-[15px] select-none"
-      for="input"
+  <SwitchRoot
+    v-bind="forwarded"
+    :class="cn(
+      'peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
+      props.class,
+    )"
+  >
+    <SwitchThumb
+      :class="cn('pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0')"
     >
-      {{ label }}
-    </label>
-    <SwitchRoot
-      dir="rtl"
-      id="input"
-      v-model:checked="switchState"
-      class="w-[42px] h-[25px] border border-black/100 focus-within:outline focus-within:outline-black flex bg-black/400 shadow-sm rounded-full relative data-[state=checked]:bg-black cursor-default"
-    >
-      <SwitchThumb
-        class="block w-[21px] h-[21px] my-auto bg-white shadow-sm rounded-full transition-transform duration-100 -translate-x-0.5 will-change-transform data-[state=checked]:-translate-x-[19px]"
-      />
-    </SwitchRoot>
-  </div>
+      <slot name="thumb" />
+    </SwitchThumb>
+  </SwitchRoot>
 </template>
