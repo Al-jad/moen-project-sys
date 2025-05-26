@@ -11,6 +11,7 @@
       variant === 'destructive' && 'bg-destructive hover:bg-destructive/90',
       variant === 'warning' && 'bg-warning hover:bg-warning/90',
       variant === 'accent' && 'bg-accent hover:bg-accent/90',
+      variant == 'custom' && ''
     ]"
     :variant="variant === 'primary' ? 'default' : variant"
     :size="size"

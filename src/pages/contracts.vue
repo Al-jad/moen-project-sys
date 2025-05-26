@@ -1,19 +1,19 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-background p-6">
-      <div class="mb-6 flex items-center justify-between">
+    <main class="min-h-screen p-6 bg-background">
+      <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <BackToMainButton />
           <h1 class="text-xl font-bold">العقود</h1>
         </div>
         <div class="flex items-center gap-4">
           <PrimaryButton @click="handleAdd">
-            <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
+            <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
             اضافة عقد جديد
           </PrimaryButton>
         </div>
       </div>
-      <div class="rounded-lg border-border bg-background-surface shadow-sm">
+      <div class="rounded-lg shadow-sm border-border bg-background-surface">
         <div class="p-6">
           <CustomTable
             ref="tableRef"
@@ -41,9 +41,9 @@
                 <button
                   v-if="(item as ContractWithProject).project"
                   @click="router.push(`/project/${(item as ContractWithProject).project!.id}`)"
-                  class="rounded p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/50"
+                  class="p-1 text-blue-600 rounded hover:bg-blue-50 dark:hover:bg-blue-900/50"
                 >
-                  <Icon icon="lucide:external-link" class="h-4 w-4" />
+                  <Icon icon="lucide:external-link" class="w-4 h-4" />
                 </button>
               </div>
             </template>
@@ -66,22 +66,22 @@
               <div class="flex items-center justify-center gap-4">
                 <button
                   @click="handleEdit(item as ContractWithProject)"
-                  class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  class="inline-flex items-center gap-1 text-gray-600 text-nowrap hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  <Icon icon="lucide:edit" class="h-4 w-4" />
+                  <Icon icon="lucide:edit" class="w-4 h-4" />
                 </button>
                 <button
                   @click="handleDelete(item as ContractWithProject)"
                   :disabled="isDeleting"
-                  class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                  class="inline-flex items-center gap-1 text-red-600 text-nowrap hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
-                  <Icon icon="lucide:trash" class="h-4 w-4" />
+                  <Icon icon="lucide:trash" class="w-4 h-4" />
                 </button>
                 <button
                   @click="handleView(item as ContractWithProject)"
-                  class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  class="inline-flex items-center gap-1 text-blue-600 text-nowrap hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  <Icon icon="lucide:eye" class="h-4 w-4" />
+                  <Icon icon="lucide:eye" class="w-4 h-4" />
                 </button>
               </div>
             </template>

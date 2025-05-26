@@ -1,4 +1,6 @@
-const theme = ref(localStorage.getItem('theme') || 'light');
+import { ref, watch } from 'vue';
+
+const theme = ref<string>(localStorage.getItem('theme') || 'light');
 
 export function useTheme() {
   const toggleTheme = () => {
@@ -21,7 +23,7 @@ export function useTheme() {
   // Watch for system theme changes
   watch(
     () => window.matchMedia('(prefers-color-scheme: dark)').matches,
-    (isDark) => {
+    (isDark: boolean) => {
       if (!localStorage.getItem('theme')) {
         theme.value = isDark ? 'dark' : 'light';
         updateTheme();

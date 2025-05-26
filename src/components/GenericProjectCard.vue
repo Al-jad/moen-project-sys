@@ -144,7 +144,7 @@
             </div>
           </div>
           <div
-            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-x border-r border-border pr-6"
+            class="flex min-w-[12rem] flex-1 items-center justify-between gap-3 border-r border-border pr-6"
           >
             <div class="flex items-center gap-2">
               <div class="rounded-full bg-background-hover p-2">
@@ -285,7 +285,6 @@
 
   function getFundingTypeClass() {
     const classes = getProjectTypeClass(projectType.value);
-    console.log('Project:', props.project?.name, 'Type:', projectType.value, 'Classes:', classes);
     return classes;
   }
 
