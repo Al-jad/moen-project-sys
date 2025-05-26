@@ -23,108 +23,71 @@
           :lat-lng="[project.lat, project.lng]"
           :icon="getMarkerIcon(project.projectStatus)"
         >
-          <l-popup class="custom-popup !w-[24rem]">
+          <l-popup class="custom-popup !w-[23rem]">
             <div
-              class="overflow-hidden rounded-xl bg-white shadow-sm dark:border dark:border-gray-700/50 dark:bg-gray-800/95"
+              class="pt-4 overflow-hidden transition-all duration-300 border shadow-lg rounded-xl border-border/40 bg-background-surface/95 backdrop-blur-sm"
             >
-              <div class="space-y-4 p-4">
-                <div class="flex items-start justify-between gap-4">
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{
+              <div class="p-4 mt-6 space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="text-base font-bold leading-tight text-foreground-heading">{{
                     project.name || 'لا يوجد اسم'
                   }}</h3>
                   <div
                     :class="getStatusBadgeClass(project.projectStatus)"
-                    class="flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium dark:bg-opacity-20"
+                    class="flex-shrink-0 rounded-full px-2.5 py-1 text-xs font-medium shadow-sm dark:bg-opacity-20"
                   >
                     {{ getStatusText(project.projectStatus) }}
                   </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
-                  <div :class="[getMapFundingTypeClass(project)]" class="rounded-full px-3 py-1">
+                <div class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+                  <div
+                    :class="[getMapFundingTypeClass(project)]"
+                    class="rounded-full px-2.5 py-1 shadow-sm"
+                  >
                     {{ getMapFundingTypeText(project) }}
                   </div>
                   <div
                     v-if="checkIsFunded(project) && project.isGovernment"
-                    class="rounded-full bg-blue-500/10 px-3 py-1 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                    class="rounded-full bg-blue-500/10 px-2.5 py-1 text-blue-600 shadow-sm dark:bg-blue-500/20 dark:text-blue-300"
                   >
                     ضمن البرنامج الحكومي
                   </div>
                 </div>
-
-                <div class="space-y-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                  <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                    <!-- Start Date -->
+                <div class="pt-3 space-y-3 border-t border-border/40">
+                  <div class="grid grid-cols-2 text-sm gap-x-4 gap-y-3">
                     <div class="flex items-center gap-2">
-                      <Icon
-                        icon="lucide:calendar-days"
-                        class="h-4 w-4 flex-shrink-0 text-gray-400"
-                      />
+                      <div class="rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                        <Icon
+                          icon="lucide:calendar-days"
+                          class="h-3.5 w-3.5 flex-shrink-0 text-gray-500 dark:text-gray-400"
+                        />
+                      </div>
                       <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">تاريخ البدء</p>
-                        <p class="font-medium text-gray-800 dark:text-gray-100">
+                        <p class="text-xs text-foreground-muted">تاريخ البدء</p>
+                        <p class="font-medium text-foreground-heading">
                           {{ formatDate(project.actualStartDate) }}
                         </p>
                       </div>
                     </div>
-
-                    <!-- Duration -->
                     <div class="flex items-center gap-2">
-                      <Icon icon="lucide:timer" class="h-4 w-4 flex-shrink-0 text-gray-400" />
+                      <div class="rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                        <Icon
+                          icon="lucide:timer"
+                          class="h-3.5 w-3.5 flex-shrink-0 text-gray-500 dark:text-gray-400"
+                        />
+                      </div>
                       <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">فترة التنفيذ</p>
-                        <p class="font-medium text-gray-800 dark:text-gray-100">
+                        <p class="text-xs text-foreground-muted">فترة التنفيذ</p>
+                        <p class="font-medium text-foreground-heading">
                           {{ project.duration }} {{ getPeriodTypeText(project.periodType) }}
                         </p>
                       </div>
                     </div>
-
-                    <!-- Cost -->
-                    <div class="flex items-center gap-2">
-                      <Icon icon="lucide:wallet" class="h-4 w-4 flex-shrink-0 text-gray-400" />
-                      <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">الكلفة</p>
-                        <p class="font-medium text-gray-800 dark:text-gray-100">
-                          {{ formatCost(project.cost) }} دينار
-                        </p>
-                      </div>
-                    </div>
-
-                    <!-- Financial Progress -->
-                    <div class="flex items-center gap-2">
-                      <Icon icon="lucide:trending-up" class="h-4 w-4 flex-shrink-0 text-gray-400" />
-                      <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                          {{ checkIsFunded(project) ? 'الانجاز المالي' : 'التقدم المالي' }}
-                        </p>
-                        <div class="flex items-center gap-2">
-                          <div
-                            class="relative h-1.5 w-16 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600"
-                          >
-                            <div
-                              class="absolute inset-0 h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out dark:from-blue-400 dark:to-blue-500"
-                              :style="{
-                                width: `${checkIsFunded(project) ? project.financialAchievement || 0 : project.cumulativeFinancialProgress || 0}%`,
-                              }"
-                            ></div>
-                          </div>
-                          <p class="font-medium text-gray-900 dark:text-white">
-                            {{
-                              checkIsFunded(project)
-                                ? project.financialAchievement || 0
-                                : project.cumulativeFinancialProgress || 0
-                            }}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
-
-                <div
-                  class="flex items-center justify-end border-t border-gray-100 pt-3 dark:border-gray-700"
-                >
+                <div class="flex items-center justify-end pt-3 border-t border-border/40">
                   <button
-                    class="inline-flex items-center justify-center gap-1 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30"
+                    class="inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-95"
                     @click="viewProjectDetails(project.id)"
                   >
                     عرض التفاصيل
@@ -139,40 +102,41 @@
     </l-map>
     <div
       v-if="filteredProjects.length === 0"
-      class="absolute left-0 right-0 top-0 bg-white bg-opacity-80 p-4 text-center"
+      class="absolute top-0 left-0 right-0 p-4 text-center bg-background-card"
     >
       لا توجد مشاريع لعرضها
     </div>
     <div
       v-else-if="projectsWithCoordinates.length === 0"
-      class="absolute left-0 right-0 top-0 bg-white bg-opacity-80 p-4 text-center"
+      class="absolute top-0 left-0 right-0 p-4 text-center bg-background-card"
     >
       لا توجد مشاريع بإحداثيات لعرضها على الخريطة
     </div>
-    <div class="absolute bottom-4 right-4 z-10 rounded-lg bg-white p-2 shadow-md dark:bg-gray-800">
-      <div class="mb-1 text-sm font-bold">مفتاح الخريطة</div>
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-green-500"></div>
-          <span class="text-xs">منجزة</span>
+    <div
+      class="absolute z-10 p-4 border shadow-lg right-4 top-4 rounded-xl border-border/40 bg-background-surface/95 backdrop-blur-sm"
+    >
+      <div class="mb-2 font-bold text-foreground-heading">مفتاح الخريطة</div>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
+          <span class="text-sm text-foreground-base">منجزة</span>
         </div>
-        <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-yellow-500"></div>
-          <span class="text-xs">قيد التنفيذ</span>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
+          <span class="text-sm text-foreground-base">قيد التنفيذ</span>
         </div>
-        <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-red-500"></div>
-          <span class="text-xs">متلكئة</span>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
+          <span class="text-sm text-foreground-base">متلكئة</span>
         </div>
-        <div class="flex items-center gap-1">
-          <div class="h-4 w-4 rounded-full bg-gray-500"></div>
-          <span class="text-xs">ملغاة</span>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-gray-500 rounded-full shadow-sm"></div>
+          <span class="text-sm text-foreground-base">ملغاة</span>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
   import {
     determineFundingType,
@@ -186,10 +150,8 @@
   import 'leaflet/dist/leaflet.css';
   import { computed, defineProps, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-
   const zoom = ref(10);
-  const centerLatLng = ref([33.3152, 44.3661]); // Default center in Baghdad
-
+  const centerLatLng = ref([33.3152, 44.3661]);
   const props = defineProps({
     projects: {
       type: Array,
@@ -200,7 +162,6 @@
       default: 'all',
     },
   });
-
   const statusMapping = {
     all: null,
     completed: 2,
@@ -208,20 +169,15 @@
     delayed: 3,
     cancelled: 0,
   };
-
   const filteredProjects = computed(() => {
     if (props.selectedStatus === 'all') return props.projects;
     return props.projects.filter((p) => p.projectStatus === statusMapping[props.selectedStatus]);
   });
-
   const projectsWithCoordinates = computed(() => {
     return filteredProjects.value.filter((p) => p.lat && p.lng);
   });
-
-  // Create custom marker icons for different project statuses
   const markerIcons = {
     0: L.icon({
-      // Cancelled
       iconUrl:
         'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -231,7 +187,6 @@
       shadowSize: [41, 41],
     }),
     1: L.icon({
-      // In Progress
       iconUrl:
         'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -241,7 +196,6 @@
       shadowSize: [41, 41],
     }),
     2: L.icon({
-      // Completed
       iconUrl:
         'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -251,7 +205,6 @@
       shadowSize: [41, 41],
     }),
     3: L.icon({
-      // Delayed
       iconUrl:
         'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -261,11 +214,9 @@
       shadowSize: [41, 41],
     }),
   };
-
   function getMarkerIcon(status) {
-    return markerIcons[status] || markerIcons[1]; // Default to in-progress icon
+    return markerIcons[status] || markerIcons[1];
   }
-
   function getStatusClass(status) {
     const statusClasses = {
       0: 'text-gray-600',
@@ -275,11 +226,9 @@
     };
     return statusClasses[status] || '';
   }
-
   function formatCurrency(value) {
     return value ? `${value.toLocaleString()} دينار` : 'غير متوفر';
   }
-
   function getStatusText(status) {
     const statusMap = {
       0: 'ملغاة',
@@ -289,25 +238,19 @@
     };
     return statusMap[status] || 'غير معروف';
   }
-
   function zoomUpdate(newZoom) {
     zoom.value = newZoom;
   }
-
   function centerUpdate(newCenter) {
     centerLatLng.value = newCenter;
   }
-
-  // Adjust map center if there are projects with coordinates
   onMounted(() => {
     if (projectsWithCoordinates.value.length > 0) {
       const firstProject = projectsWithCoordinates.value[0];
       centerLatLng.value = [firstProject.lat, firstProject.lng];
     }
   });
-
   const router = useRouter();
-
   function getStatusBadgeClass(status) {
     const statusClasses = {
       0: 'bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-300',
@@ -317,12 +260,10 @@
     };
     return statusClasses[status] || '';
   }
-
   function formatDate(dateString) {
     if (!dateString) return 'غير محدد';
     try {
       const date = new Date(dateString);
-      // Check if date is valid before formatting
       if (isNaN(date.getTime())) {
         return 'تاريخ غير صالح';
       }
@@ -336,49 +277,32 @@
       return 'تاريخ غير صالح';
     }
   }
-
   function viewProjectDetails(projectId) {
-    // Navigate to project details page
     router.push(`/funded-projects/${projectId}`);
   }
-
-  // Determine project type logic (similar to GenericProjectCard)
   const projectType = computed(() => {
-    // Need to determine type based on the *specific project* being hovered/clicked.
-    // This logic needs refinement as we don't have a single 'current' project here.
-    // For now, we might need to pass the project to helper functions or compute inside the loop.
-    // Let's define helper functions that accept the project object.
-    return null; // Placeholder
+    return null;
   });
-
-  // Helper function to determine if a specific project is funded
   function checkIsFunded(project) {
     return determineFundingType(project) === ProjectType.FUNDED;
   }
-
-  // Renaming to avoid conflict if imported later
   function getMapFundingTypeText(project) {
     const type = determineFundingType(project);
-    return getProjectTypeText(type); // Use imported function
+    return getProjectTypeText(type);
   }
-
   function getMapFundingTypeClass(project) {
     const type = determineFundingType(project);
-    return getProjectTypeClass(type); // Use imported function
+    return getProjectTypeClass(type);
   }
-
   function getPeriodTypeText(periodType) {
     if (!periodType) return '';
     return periodType === 1 ? 'أسبوع' : 'شهر';
   }
-
   function formatCost(value) {
     if (value === null || value === undefined) return 'غير متوفر';
-    // Simple formatting, adjust as needed (e.g., locale, currency symbol)
     return value.toLocaleString();
   }
 </script>
-
 <style scoped>
   .leaflet-container {
     height: 100%;
@@ -386,66 +310,64 @@
     border-radius: 20px;
     z-index: 0;
   }
-
   :deep(.leaflet-popup-content-wrapper) {
     padding: 0;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     overflow: hidden;
     background: transparent;
     box-shadow: none;
   }
-
   :deep(.leaflet-popup-tip) {
-    @apply bg-white dark:bg-gray-800/95;
+    @apply bg-background-surface/95 backdrop-blur-sm;
   }
-
   :deep(.leaflet-popup-content) {
     margin: 0;
     width: auto !important;
   }
-
   :deep(.leaflet-popup-close-button) {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    padding: 0.25rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 1.25rem;
+    top: 2rem;
+    right: 70%;
+    padding: 0.375rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
     line-height: 1;
+    transform: translate(-50%, 50%);
     color: #6b7280;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.7) !important;
     border-radius: 9999px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     transition: all 0.2s;
     z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb !important;
   }
-
   :deep(.leaflet-popup-close-button:hover) {
     color: #111827;
     background: rgba(255, 255, 255, 0.95);
-    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-
   :deep(.leaflet-popup-close-button span) {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
+    margin-top: -2px;
   }
-
   :deep(.leaflet-top),
   :deep(.leaflet-bottom) {
     z-index: 0;
   }
-
   @media (prefers-color-scheme: dark) {
     :deep(.leaflet-popup-close-button) {
       color: #e5e7eb;
-      background: rgba(31, 41, 55, 0.8);
+      background: rgba(31, 41, 55, 0.9);
     }
-
     :deep(.leaflet-popup-close-button:hover) {
       color: #f3f4f6;
       background: rgba(31, 41, 55, 0.95);

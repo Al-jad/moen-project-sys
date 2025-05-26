@@ -1,28 +1,26 @@
 <template>
   <DefaultLayout>
-    <main class="dark:bg-darkmode min-h-screen bg-gray-200 p-4">
+    <main class="min-h-screen bg-background p-4">
       <div class="container mx-auto max-w-[90rem] p-4">
         <div
           class="mb-6 flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0"
         >
           <div class="flex items-center gap-4">
             <BackToMainButton />
-            <h1 class="text-right text-2xl font-bold text-gray-800 dark:text-white"
-              >عرض المشاريع على الخارطة</h1
-            >
+            <h1 class="text-right text-2xl font-bold">عرض المشاريع على الخارطة</h1>
           </div>
         </div>
-        <div class="rounded-xl bg-white/50 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/50">
+        <div class="rounded-xl bg-background-surface p-6 shadow-lg backdrop-blur-sm">
           <div
-            class="mb-6 flex flex-wrap items-center justify-center gap-4 rounded-lg bg-white/80 p-6 shadow-sm dark:bg-gray-900/80"
+            class="mb-6 flex flex-wrap items-center justify-center gap-4 rounded-lg bg-background-card p-6 shadow-sm"
           >
             <PrimaryButton
               size="lg"
               :variant="selected === 'all' ? 'custom' : 'outline'"
               icon="lucide:layout-grid"
-              class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-accent/20"
+              class="hover:shadow-blue/20 group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg"
               :class="{
-                'bg-accent ring-2 ring-accent ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
+                'ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'all',
               }"
               @click="
@@ -122,7 +120,7 @@
               icon="lucide:x-circle"
               class="group relative min-w-[10rem] transform-gpu overflow-hidden rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-gray-500/20"
               :class="{
-                'bg-gray-300 ring-2 ring-gray-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
+                'ring-2 ring-gray-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900':
                   selected === 'cancelled',
               }"
               @click="
@@ -147,15 +145,15 @@
               <div
                 class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"
               ></div>
-              <p class="text-gray-600 dark:text-gray-300">جاري تحميل البيانات...</p>
+              <p class="text-foreground-muted">جاري تحميل البيانات...</p>
             </div>
           </div>
           <div v-else-if="error" class="flex h-[600px] items-center justify-center">
             <div class="flex flex-col items-center gap-4 text-center">
               <div class="rounded-full bg-red-100 p-4 dark:bg-red-900/20">
-                <Icon name="lucide:alert-circle" class="h-8 w-8 text-red-500" />
+                <Icon name="lucide:alert-circle" class="h-8 w-8 text-destructive" />
               </div>
-              <p class="max-w-md text-red-500">{{ error }}</p>
+              <p class="max-w-md text-destructive">{{ error }}</p>
             </div>
           </div>
           <Map

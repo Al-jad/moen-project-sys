@@ -7,7 +7,7 @@
       variant === 'primary' &&
         'border border-border bg-primary hover:bg-primary-hover dark:text-foreground-heading',
       variant === 'outline' &&
-        'border border-border bg-background-surface hover:bg-background-hover',
+        'border border-border bg-background-surface/90 hover:bg-background-hover',
       variant === 'destructive' && 'bg-destructive hover:bg-destructive/90',
       variant === 'warning' && 'bg-warning hover:bg-warning/90',
       variant === 'accent' && 'bg-accent hover:bg-accent/90',
