@@ -4,12 +4,12 @@
     <main class="mr-[60px] flex-1 bg-background">
       <Header />
       <div class="mt-[6%] p-6">
-        <h1 class="mb-4 text-right text-2xl font-bold text-foreground-heading">المشاريع</h1>
-        <div v-if="projectStore.error" class="rounded-lg bg-destructive/10 p-4 text-center">
+        <h1 class="mb-4 text-2xl font-bold text-right text-foreground-heading">المشاريع</h1>
+        <div v-if="projectStore.error" class="p-4 text-center rounded-lg bg-destructive/10">
           <p class="text-destructive">{{ projectStore.error }}</p>
         </div>
         <div>
-          <div class="mb-8 grid grid-cols-5 gap-4">
+          <div class="grid grid-cols-5 gap-4 mb-8">
             <ProjectStatCard
               title="كل المشاريع"
               :count="allProjects.length"
@@ -51,8 +51,8 @@
               :loading="projectStore.loading"
             />
           </div>
-          <h1 class="mb-4 text-right text-2xl font-bold text-foreground-heading"> الاختصارات </h1>
-          <div class="mb-8 grid grid-cols-4 gap-4">
+          <h1 class="mb-4 text-2xl font-bold text-right text-foreground-heading"> الاختصارات </h1>
+          <div class="grid grid-cols-4 gap-4 mb-8">
             <ShortcutCard
               title="البرنامج الحكومي"
               icon="lucide:users"
@@ -83,7 +83,7 @@
             />
           </div>
           <div
-            class="relative w-full overflow-hidden rounded-lg border border-destructive/20 bg-background-surface p-6 shadow"
+            class="relative w-full p-6 overflow-hidden border rounded-lg shadow border-destructive/20 bg-background-surface"
           >
             <div
               class="absolute right-[-3rem] top-[2rem] z-10 w-[12rem] rotate-45 bg-gradient-to-r from-destructive to-destructive/80 py-1 text-center text-xs shadow-md"
@@ -92,7 +92,7 @@
                 DEMO VERSION
               </span>
             </div>
-            <div class="mb-4 mr-20 flex items-center justify-between">
+            <div class="flex items-center justify-between mb-4 mr-20">
               <div class="flex items-center gap-2">
                 <CustomSelect
                   v-model="selectedYear"
@@ -144,7 +144,7 @@
   import UsersList from '@/components/UsersList.vue';
   import { useToast } from '@/composables/useToast';
   import axiosInstance from '@/plugins/axios';
-  import { useAuthStore } from '@/stores/authStore';
+  import { useAuthStore } from '@/stores/auth';
   import { useProjectStore } from '@/stores/projectStore';
   import { computed, onMounted, ref } from 'vue';
   const selectedYear = ref('2024 - 2025');

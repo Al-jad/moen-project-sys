@@ -173,7 +173,7 @@
   import FormSection from '@/components/FormSection.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import { beneficiaryService } from '@/services/beneficiaryService';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
 
@@ -270,7 +270,7 @@
     if (!store.form.components || !Array.isArray(store.form.components)) {
       return 0;
     }
-    
+
     return store.form.components.reduce((total, component) => {
       // Safely check if activities exists and is an array
       if (component.activities && Array.isArray(component.activities)) {

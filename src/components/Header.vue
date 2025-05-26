@@ -98,7 +98,7 @@
   import LogoutModal from '@/components/LogoutModal.vue';
   import { useTheme } from '@/composables/useTheme';
   import { useToast } from '@/composables/useToast';
-  import { useAuthStore } from '@/stores/authStore';
+  import { useAuthStore } from '@/stores/auth';
   import { Icon } from '@iconify/vue';
   import { onMounted, onUnmounted, ref } from 'vue';
   import { useRouter } from 'vue-router';

@@ -18,12 +18,12 @@
       </div>
       <div class="flex-1 bg-background">
         <div class="p-6 lg:p-8">
-          <div class="mx-auto w-full max-w-7xl space-y-8">
+          <div class="w-full mx-auto space-y-8 max-w-7xl">
             <div class="flex flex-col gap-6">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                  <div class="rounded-lg bg-primary/10 p-3">
-                    <Icon icon="lucide:building-2" class="h-8 w-8 text-primary" />
+                  <div class="p-3 rounded-lg bg-primary/10">
+                    <Icon icon="lucide:building-2" class="w-8 h-8 text-primary" />
                   </div>
                   <div>
                     <h1 class="text-3xl font-bold text-foreground">مشاريع تنمية الاقاليم</h1>
@@ -69,12 +69,12 @@
                 />
               </div>
             </div>
-            <div class="rounded-xl border border-border bg-background-surface shadow-sm">
-              <div class="border-b border-border p-6">
+            <div class="border shadow-sm rounded-xl border-border bg-background-surface">
+              <div class="p-6 border-b border-border">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div class="flex items-center gap-4">
                     <h2 class="text-xl font-semibold text-foreground">قائمة المشاريع</h2>
-                    <Badge class="bg-primary/10 px-3 py-1 text-primary">
+                    <Badge class="px-3 py-1 bg-primary/10 text-primary">
                       {{ filteredProjects.length }} من {{ projects.length }} مشروع
                     </Badge>
                   </div>
@@ -89,14 +89,14 @@
                       />
                       <div
                         v-if="selectedSort"
-                        class="flex items-center gap-2 rounded-lg bg-background-hover px-3 py-2 text-sm text-foreground-muted"
+                        class="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-background-hover text-foreground-muted"
                       >
                         <span>{{ getSelectedSortLabel }}</span>
                         <button
-                          class="rounded-full p-1 transition-colors hover:bg-background-hover"
+                          class="p-1 transition-colors rounded-full hover:bg-background-hover"
                           @click="clearSort"
                         >
-                          <Icon icon="lucide:x" class="h-3 w-3" />
+                          <Icon icon="lucide:x" class="w-3 h-3" />
                         </button>
                       </div>
                     </div>
@@ -120,15 +120,15 @@
                   <div
                     v-for="n in 6"
                     :key="n"
-                    class="h-80 animate-pulse rounded-lg bg-background-hover"
+                    class="rounded-lg h-80 animate-pulse bg-background-hover"
                   />
                 </div>
                 <div v-else>
                   <div
                     v-if="projects.length === 0"
-                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
                   >
-                    <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
+                    <Icon icon="lucide:folder-open" class="w-12 h-12 mb-4 text-foreground-muted" />
                     <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد مشاريع</h3>
                     <p class="mb-4 text-sm text-foreground-muted">
                       قم بإضافة مشروع جديد للبدء في إدارة المشاريع
@@ -141,9 +141,9 @@
                   </div>
                   <div
                     v-else-if="filteredProjects.length === 0"
-                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
                   >
-                    <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
+                    <Icon icon="lucide:search-x" class="w-12 h-12 mb-4 text-foreground-muted" />
                     <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد نتائج مطابقة</h3>
                     <p class="mb-4 text-sm text-foreground-muted">
                       حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
@@ -165,7 +165,7 @@
               <!-- Pagination at bottom of container -->
               <div
                 v-if="filteredProjects.length > 0"
-                class="border-t border-border bg-background-surface px-6 py-4"
+                class="px-6 py-4 border-t border-border bg-background-surface"
               >
                 <div class="flex justify-center">
                   <CustomPagination
@@ -186,37 +186,56 @@
 
 <script setup>
   import CustomSelect from '@/components/CustomSelect.vue';
-  import RegionalProjectCard from '@/components/RegionalProjectCard.vue';
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-  } from '@/components/ui/dropdown-menu';
-  import { useToast } from '@/composables/useToast';
-  import { CURRENCY_CONVERSION, UNITS } from '@/constants';
-  import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
-  import { Icon } from '@iconify/vue';
-  import { computed, onMounted, ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { formatCost, formatTotalCost } from '@/utils/formatCost';
+import RegionalProjectCard from '@/components/RegionalProjectCard.vue';
+import { useBeneficiaries } from '@/composables/useBeneficiaries';
+import { useToast } from '@/composables/useToast';
+import { UNITS } from '@/constants';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
+import { formatTotalCost } from '@/utils/formatCost';
+import { Icon } from '@iconify/vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
   const regionalProjectStore = useRegionalProjectStore();
   const projects = computed(() => regionalProjectStore.projects);
   const filteredProjects = computed(() => regionalProjectStore.filteredProjects);
   const isLoading = computed(() => regionalProjectStore.loading);
   const error = computed(() => regionalProjectStore.error);
+  const contractsCount = computed(() => regionalProjectStore.contractsCount);
+  const proceduresCount = computed(() => regionalProjectStore.proceduresCount);
+  const totalComponents = computed(() => regionalProjectStore.getTotalComponents);
+  const totalActivities = computed(() => regionalProjectStore.getTotalActivities);
+
   const router = useRouter();
   const route = useRoute();
   const showPremiumModal = ref(false);
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
-  const beneficiaries = ref([]);
 
-  const contractsCount = computed(() => regionalProjectStore.contractsCount);
-  const proceduresCount = computed(() => regionalProjectStore.proceduresCount);
+  // Use the beneficiaries composable
+  const {
+    beneficiaries,
+    selectedBeneficiaries,
+    fetchBeneficiaries,
+    filterByBeneficiaries,
+    resetBeneficiarySelection,
+  } = useBeneficiaries();
 
+  // Filter states
+  const searchQuery = ref('');
+  const selectedStatus = ref({
+    all: !route.query.status,
+    completed: route.query.status === '2',
+    inProgress: route.query.status === '1',
+    delayed: route.query.status === '3',
+    cancelled: route.query.status === '0',
+    proposed: route.query.status === '4',
+  });
+  const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
+  const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
+
+  // Sort options
   const sortOptions = [
     { id: 'price-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-to-line' },
     { id: 'price-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-to-line' },
@@ -227,11 +246,40 @@
   ];
 
   const selectedSort = ref('');
+  const { showSuccess } = useToast();
 
+  // Currency options
+  const currencyOptions = [
+    { value: 'IQD', label: UNITS.CURRENCY.IQD },
+    { value: 'USD', label: UNITS.CURRENCY.USD },
+  ];
+
+  // Computed properties
+  const minMaxBudgetRange = computed(() => {
+    if (!projects.value.length) return [0, 0];
+    const costs = projects.value
+      .map((project) => parseFloat(project.cost) || 0)
+      .filter((cost) => cost > 0);
+    if (!costs.length) return [0, 0];
+    return [Math.floor(Math.min(...costs)), Math.ceil(Math.max(...costs))];
+  });
+
+  const budgetRange = ref(minMaxBudgetRange);
+  const isBudgetFilterEnabled = ref(false);
+
+  const paginatedProjects = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredProjects.value.slice(start, end);
+  });
+
+  const formattedTotalCost = computed(() =>
+    formatTotalCost(projects.value, selectedCurrency.value)
+  );
+
+  // Methods
   const handleSort = (sortId) => {
     selectedSort.value = sortId;
-
-    // Implement sorting logic
     const sortedProjects = [...filteredProjects.value];
 
     switch (sortId) {
@@ -253,87 +301,20 @@
       case 'progress-low':
         sortedProjects.sort((a, b) => a.progress - b.progress);
         break;
-      default:
-        break;
     }
 
     regionalProjectStore.applyFilters(sortedProjects);
+  };
+
+  const clearSort = () => {
+    selectedSort.value = '';
+    regionalProjectStore.resetFilters();
   };
 
   const getSelectedSortLabel = computed(() => {
     const option = sortOptions.find((opt) => opt.id === selectedSort.value);
     return option ? option.label : '';
   });
-
-  const clearSort = () => {
-    selectedSort.value = '';
-    // Reset to original order
-    regionalProjectStore.applyFilters([]);
-  };
-
-  // Initialize showGovernmentProjects from route query
-  const showGovernmentProjects = ref(route.query.showGovernmentProjects === 'true');
-
-  // Initialize status from route query
-  const selectedStatus = ref({
-    all: !route.query.status,
-    completed: route.query.status === '2',
-    inProgress: route.query.status === '1',
-    delayed: route.query.status === '3',
-    cancelled: route.query.status === '0',
-    proposed: route.query.status === '4',
-  });
-
-  // Watch for route changes to update the filters
-  watch(
-    () => route.query,
-    (newQuery) => {
-      showGovernmentProjects.value = newQuery.showGovernmentProjects === 'true';
-      selectedStatus.value = {
-        all: !newQuery.status,
-        completed: newQuery.status === '2',
-        inProgress: newQuery.status === '1',
-        delayed: newQuery.status === '3',
-        cancelled: newQuery.status === '0',
-        proposed: newQuery.status === '4',
-      };
-    },
-    { deep: true }
-  );
-
-  // Computed properties for budget range
-  const minMaxBudgetRange = computed(() => {
-    if (!projects.value.length) return [0, 0];
-
-    const costs = projects.value
-      .map((project) => parseFloat(project.cost) || 0)
-      .filter((cost) => cost > 0);
-
-    if (!costs.length) return [0, 0];
-
-    const min = Math.floor(Math.min(...costs));
-    const max = Math.ceil(Math.max(...costs));
-
-    return [min, max];
-  });
-
-  // Filter states
-  const searchQuery = ref('');
-  const budgetRange = ref(minMaxBudgetRange);
-  const selectedYear = ref('all');
-  const selectedBeneficiaries = ref({ all: true });
-  const isBudgetFilterEnabled = ref(false);
-
-  // Add currency selection state with localStorage initialization
-  const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
-
-  // Add currency options
-  const currencyOptions = [
-    { value: 'IQD', label: UNITS.CURRENCY.IQD },
-    { value: 'USD', label: UNITS.CURRENCY.USD },
-  ];
-
-  const { showSuccess } = useToast();
 
   const applyFilters = (filters) => {
     if (!projects.value.length) {
@@ -343,8 +324,7 @@
 
     let result = [...projects.value];
 
-    // Apply search filter
-    if (filters.searchQuery && filters.searchQuery.trim() !== '') {
+    if (filters.searchQuery?.trim()) {
       const query = filters.searchQuery.toLowerCase().trim();
       result = result.filter((project) => {
         return (
@@ -356,8 +336,7 @@
       });
     }
 
-    // Apply budget range filter
-    if (filters.isBudgetFilterEnabled && filters.budgetRange && filters.budgetRange.length === 2) {
+    if (filters.isBudgetFilterEnabled && filters.budgetRange?.length === 2) {
       const [minBudget, maxBudget] = filters.budgetRange;
       result = result.filter((project) => {
         const cost = parseFloat(project.cost) || 0;
@@ -365,7 +344,6 @@
       });
     }
 
-    // Apply status filter
     if (filters.selectedStatus && !filters.selectedStatus.all) {
       result = result.filter((project) => {
         return (
@@ -378,77 +356,20 @@
       });
     }
 
-    // Apply government projects filter
     if (filters.showGovernmentProjects) {
       result = result.filter((project) => project.isGovernment);
     }
 
-    // Apply beneficiary filter
-    if (filters.selectedBeneficiaries && !filters.selectedBeneficiaries.all) {
-      result = result.filter((project) => {
-        if (!project.beneficiaries || project.beneficiaries.length === 0) {
-          return false;
-        }
-        return project.beneficiaries.some(
-          (beneficiary) => filters.selectedBeneficiaries[beneficiary.id]
-        );
-      });
-    }
+    // Use the filterByBeneficiaries helper from our composable
+    result = filterByBeneficiaries(result, filters.selectedBeneficiaries);
 
     regionalProjectStore.applyFilters(result);
     currentPage.value = 1;
   };
 
-  const paginatedProjects = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return filteredProjects.value.slice(start, end);
-  });
-
-  const OpenPremiumModal = () => {
-    showPremiumModal.value = true;
-  };
-
-  const fetchProjects = async () => {
-    await regionalProjectStore.fetchAllProjects();
-  };
-
-  const fetchBeneficiaries = async () => {
-    try {
-      const response = await beneficiaryService.getAllBeneficiaries();
-      beneficiaries.value = response.data;
-    } catch (error) {
-      console.error('Error fetching beneficiaries:', error);
-    }
-  };
-
-  const getTotalComponents = () => {
-    return projects.value.reduce((total, project) => {
-      return total + (project.components?.length || 0);
-    }, 0);
-  };
-
-  const getTotalActivitiesAll = () => {
-    return projects.value.reduce((total, project) => {
-      return total + getTotalActivities(project);
-    }, 0);
-  };
-
-  const getTotalActivities = (project) => {
-    if (!project.components) return 0;
-    return project.components.reduce((total, comp) => {
-      return total + (comp.activities?.length || 0);
-    }, 0);
-  };
-
-  const formattedTotalCost = computed(() =>
-    formatTotalCost(projects.value, selectedCurrency.value)
-  );
-
   const handleCurrencyChange = (newCurrency) => {
     selectedCurrency.value = newCurrency;
     localStorage.setItem('selectedCurrency', newCurrency);
-
     showSuccess(
       'تم تغيير العملة',
       newCurrency === 'USD'
@@ -457,6 +378,11 @@
     );
   };
 
+  const OpenPremiumModal = () => {
+    showPremiumModal.value = true;
+  };
+
+  // Lifecycle hooks and watchers
   onMounted(async () => {
     try {
       const savedCurrency = localStorage.getItem('selectedCurrency');
@@ -465,7 +391,7 @@
       }
 
       await Promise.all([
-        fetchProjects(),
+        regionalProjectStore.fetchAllProjects(),
         fetchBeneficiaries(),
         regionalProjectStore.fetchAllContracts(),
         regionalProjectStore.fetchAllProcedures(),
@@ -499,7 +425,7 @@
           searchQuery: '',
           budgetRange: minMaxBudgetRange.value,
           selectedStatus: selectedStatus.value,
-          selectedBeneficiaries: { all: true },
+          selectedBeneficiaries: selectedBeneficiaries.value,
           showGovernmentProjects: route.query.showGovernmentProjects === 'true',
           isBudgetFilterEnabled: false,
         });
@@ -512,24 +438,27 @@
   watch(
     () => route.query,
     (newQuery) => {
+      showGovernmentProjects.value = newQuery.showGovernmentProjects === 'true';
+      selectedStatus.value = {
+        all: !newQuery.status,
+        completed: newQuery.status === '2',
+        inProgress: newQuery.status === '1',
+        delayed: newQuery.status === '3',
+        cancelled: newQuery.status === '0',
+        proposed: newQuery.status === '4',
+      };
+
       if (newQuery.status || newQuery.showGovernmentProjects) {
         applyFilters({
           searchQuery: '',
           budgetRange: minMaxBudgetRange.value,
-          selectedStatus: {
-            all: !newQuery.status,
-            completed: newQuery.status === '2',
-            inProgress: newQuery.status === '1',
-            delayed: newQuery.status === '3',
-            cancelled: newQuery.status === '0',
-            proposed: newQuery.status === '4',
-          },
-          selectedBeneficiaries: { all: true },
+          selectedStatus: selectedStatus.value,
+          selectedBeneficiaries: selectedBeneficiaries.value,
           showGovernmentProjects: newQuery.showGovernmentProjects === 'true',
           isBudgetFilterEnabled: false,
         });
       }
     },
-    { immediate: true }
+    { deep: true }
   );
 </script>

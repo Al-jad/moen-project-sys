@@ -4,8 +4,8 @@ import axios, {
   type AxiosRequestConfig,
   type AxiosResponse,
 } from 'axios';
-import { useAuthStore } from '../stores/authStore';
-import type { ApiError } from '../types/api';
+import { useAuthStore } from '../stores/auth';
+import type { ApiError } from '../types';
 
 export interface ApiConfig {
   BASE_URL: string;

@@ -3,10 +3,10 @@ export * from './authService';
 export { beneficiaryService } from './beneficiaryService';
 export { projectService } from './projectService';
 export {
-  ProjectType,
   determineFundingType,
   getProjectTypeClass,
   getProjectTypeText,
+  ProjectType,
   projectTypeService,
 } from './projectTypeService';
 export { userService } from './userService';
@@ -18,4 +18,4 @@ export { BaseApiService } from './base/BaseApiService';
 export { API_CONFIG, default as axiosInstance, fileUploadInstance } from '@/plugins/axios';
 
 // Export types
-export type * from '@/types/api';
+export type * from '@/types';

@@ -76,7 +76,7 @@
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { toast } from 'vue-sonner';

@@ -1,19 +1,24 @@
 import axiosInstance from '@/plugins/axios';
 import { BaseApiService } from '@/services/base/BaseApiService';
+import type { Activity, CreateActivityRequest } from '@/types/activity';
+import type { ServiceResponse } from '@/types/api-base';
+import type { Component, CreateComponentRequest } from '@/types/component';
 import type {
   CreateFundedProjectRequest,
   FundedProject,
-  Activity as FundedProjectActivity,
-  CreateActivityRequest as FundedProjectActivityRequest,
-  Component as FundedProjectComponent,
-  CreateComponentRequest as FundedProjectComponentRequest,
-  ServiceResponse,
+  TransformedFundedProject,
   UpdateFundedProjectRequest,
-} from '@/types/api';
-import { FundedProjectStatus } from '@/types/api';
-import type { TransformedFundedProject } from '@/types/funded-project';
-import { FundedProjectStatusVariantMap } from '@/types/funded-project';
+} from '@/types/funded-project';
 import { formatDate } from '@/utils/dateUtils';
+
+// Import enums and constants
+import { FundedProjectStatus, FundedProjectStatusVariantMap } from '@/types/funded-project';
+
+// Type aliases for clarity
+type FundedProjectActivity = Activity;
+type FundedProjectComponent = Component;
+type FundedProjectActivityRequest = CreateActivityRequest;
+type FundedProjectComponentRequest = CreateComponentRequest;
 
 class FundedProjectService extends BaseApiService<
   FundedProject,
@@ -65,7 +70,7 @@ class FundedProjectService extends BaseApiService<
   /**
    * Get funded projects by status
    */
-  async getProjectsByStatus(status: number): ServiceResponse<FundedProject[]> {
+  async getProjectsByStatus(status: FundedProjectStatus): ServiceResponse<FundedProject[]> {
     return this.getAll({ status: status.toString() });
   }
 

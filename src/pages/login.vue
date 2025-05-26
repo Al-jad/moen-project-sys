@@ -66,13 +66,13 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useAuthStore } from '@/stores/authStore';
+  import { useToast } from '@/composables/useToast';
   import { authService } from '@/services/authService';
+  import { useAuthStore } from '@/stores/auth';
   import type { LoginRequest } from '@/types/auth';
   import { Icon } from '@iconify/vue';
-  import { ref, onMounted } from 'vue';
-  import { useToast } from '@/composables/useToast';
-  import { useRouter, useRoute } from 'vue-router';
+  import { onMounted, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { Toaster } from 'vue-sonner';
   const router = useRouter();
   const route = useRoute();
@@ -82,10 +82,17 @@
   const password = ref('');
   const showPassword = ref(false);
   const errorMessage = ref('');
-  onMounted(() => {
+  onMounted(async () => {
     if (authStore.isAuthenticated) {
-      const redirectPath = route.query.redirect?.toString() || '/';
-      router.replace(redirectPath);
+      try {
+        const redirectPath = route.query.redirect
+          ? decodeURIComponent(route.query.redirect.toString())
+          : '/';
+        await router.push(redirectPath);
+      } catch (error) {
+        console.error('Navigation error:', error);
+        await router.push('/');
+      }
     }
   });
   const getArabicErrorMessage = (error: any) => {
@@ -113,8 +120,15 @@
         authStore.setUser(user);
         authStore.setToken(tokens.access);
         showSuccess('تم تسجيل الدخول بنجاح', 'مرحباً بك في النظام');
-        const redirectPath = route.query.redirect?.toString() || '/';
-        await router.replace(redirectPath);
+        try {
+          const redirectPath = route.query.redirect
+            ? decodeURIComponent(route.query.redirect.toString())
+            : '/';
+          await router.push(redirectPath);
+        } catch (error) {
+          console.error('Navigation error:', error);
+          await router.push('/');
+        }
       } else {
         errorMessage.value = 'خطأ في استجابة تسجيل الدخول من الخادم.';
         showError('فشل تسجيل الدخول', 'بيانات تسجيل الدخول غير مكتملة.');

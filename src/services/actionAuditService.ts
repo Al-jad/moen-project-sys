@@ -1,5 +1,5 @@
 import axiosInstance from '@/plugins/axios';
-import type { ActionAudit, QueryParams, ServiceResponse } from '@/types/api';
+import type { ActionAudit, QueryParams, ServiceResponse } from '@/types';
 
 class ActionAuditService {
   // Action Audit Operations

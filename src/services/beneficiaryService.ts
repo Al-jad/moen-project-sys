@@ -5,7 +5,7 @@ import type {
   QueryParams,
   ServiceResponse,
   UpdateBeneficiaryRequest,
-} from '../types/api';
+} from '../types';
 
 class BeneficiaryService {
   // Beneficiary CRUD Operations

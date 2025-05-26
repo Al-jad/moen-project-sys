@@ -11,7 +11,7 @@ import type {
   UpdateContractRequest,
   UpdateProcedureRequest,
   UpdateRegionalProjectRequest,
-} from '../types/api';
+} from '../types';
 
 class RegionalProjectService {
   // Regional Project CRUD Operations

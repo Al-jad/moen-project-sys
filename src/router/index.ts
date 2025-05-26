@@ -22,10 +22,11 @@ import Tasks from '@/pages/tasks.vue';
 import UserDetails from '@/pages/user-details.vue';
 import Users from '@/pages/users.vue';
 
-import { useAuthStore } from '@/stores/authStore';
+import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
@@ -218,7 +219,7 @@ router.beforeEach((to, from, next) => {
   // If user is authenticated and tries to access login page
   if (to.path === '/login' && authStore.isAuthenticated) {
     // If there's a redirect query, use it, otherwise go to home
-    const redirectPath = to.query.redirect || '/';
+    const redirectPath = to.query.redirect?.toString() || '/';
     next(redirectPath);
     return;
   }

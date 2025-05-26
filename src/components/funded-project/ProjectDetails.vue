@@ -208,7 +208,7 @@
   import NumberInput from '@/components/NumberInput.vue';
   import { Textarea } from '@/components/ui/textarea';
   import { beneficiaryService } from '@/services/beneficiaryService';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { defineEmits, defineProps, onMounted, ref, watch } from 'vue';
 
   const props = defineProps({

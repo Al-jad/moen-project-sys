@@ -8,7 +8,7 @@ import type {
   UpdateUserRequest,
   User,
   UserRole,
-} from '@/types/api';
+} from '@/types';
 
 class UserService extends BaseApiService<User, CreateUserRequest, UpdateUserRequest> {
   constructor() {

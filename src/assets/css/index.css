@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --background-surface: 0 0% 100%;
-    --background-card: 210 40% 96%;
-    --background-hover: 214 32% 91%;
+    --background: 210 40% 94%;
+    --background-surface: 0 0% 96%;
+    --background-card: 210 40% 92%;
+    --background-hover: 214 32% 88%;
 
     --foreground: 222 84% 5%;
     --foreground-heading: 222 84% 5%;

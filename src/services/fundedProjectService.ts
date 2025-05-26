@@ -14,7 +14,7 @@ import type {
   UpdateAttachmentRequest,
   UpdateComponentRequest,
   UpdateFundedProjectRequest,
-} from '../types/api';
+} from '../types';
 
 class FundedProjectService {
   // Funded Project CRUD Operations

@@ -1,9 +1,9 @@
 import { fundedProjectService } from '@/services/funded-project';
 import type {
-  CreateFundedProjectRequest,
-  TransformedFundedProject,
-  UpdateFundedProjectRequest,
-} from '@/types/funded-project';
+  CreateFundedProjectRequest as APICreateFundedProjectRequest,
+  UpdateFundedProjectRequest as APIUpdateFundedProjectRequest,
+} from '@/types';
+import type { TransformedFundedProject } from '@/types/funded-project';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
@@ -70,7 +70,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     }
   };
 
-  const createProject = async (projectData: CreateFundedProjectRequest) => {
+  const createProject = async (projectData: APICreateFundedProjectRequest) => {
     try {
       loading.value = true;
       error.value = null;
@@ -90,11 +90,14 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     }
   };
 
-  const updateProject = async (id: number | string, projectData: UpdateFundedProjectRequest) => {
+  const updateProject = async (id: number | string, projectData: APIUpdateFundedProjectRequest) => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await fundedProjectService.updateProject(id, projectData);
+      const response = await fundedProjectService.updateProject(id, {
+        ...projectData,
+        id: typeof id === 'string' ? parseInt(id) : id,
+      });
       const transformed = fundedProjectService.transformProject(response.data);
       if (transformed) {
         const index = projects.value.findIndex((p) => p.id === id.toString());

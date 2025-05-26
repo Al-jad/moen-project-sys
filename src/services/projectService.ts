@@ -1,12 +1,15 @@
 import axiosInstance from '@/plugins/axios';
 import { BaseApiService } from '@/services/base/BaseApiService';
 import type {
+  Component,
   CreateProjectRequest,
+  FundedProject,
   Project,
   ProjectStatus,
+  RegionalProject,
   ServiceResponse,
   UpdateProjectRequest,
-} from '@/types/api';
+} from '@/types';
 import { formatDate } from '@/utils/dateUtils';
 
 class ProjectService extends BaseApiService<Project, CreateProjectRequest, UpdateProjectRequest> {
@@ -167,13 +170,16 @@ const getStatusVariant = (status: number | string): string => {
 /**
  * Calculate project progress based on components
  */
-export const calculateProgress = (project: Project): number => {
+export const calculateProgress = (project: FundedProject): number => {
   if (!project.components || project.components.length === 0) return 0;
 
   return Math.min(
     100,
     Math.round(
-      project.components.reduce((sum, component) => sum + (component.targetPercentage || 0), 0)
+      project.components.reduce(
+        (sum: number, component: Component) => sum + (component.targetPercentage || 0),
+        0
+      )
     )
   );
 };
@@ -181,32 +187,54 @@ export const calculateProgress = (project: Project): number => {
 /**
  * Transform API project to UI project format
  */
-export const transformProject = (project: Project | null): TransformedProject | null => {
+export const transformProject = (
+  project: FundedProject | RegionalProject | null
+): TransformedProject | null => {
   if (!project) {
     console.warn('Attempted to transform undefined project');
     return null;
   }
+
+  // Helper to safely access properties that might exist on one type but not another
+  const getProp = (obj: any, key: string, defaultValue: any = '') =>
+    obj?.[key] === undefined ? defaultValue : obj[key];
 
   try {
     // Create a base transformed project with default values
     const transformedProject: TransformedProject = {
       id: project.id?.toString() || '',
       title: project.name || '',
-      department: project.executingDepartment || '',
-      status: getProjectStatus(project.status || 0),
-      statusVariant: getStatusVariant(project.status || 0),
-      progress: project.progress || 0,
+      // Use getProp for fields that differ or might be missing
+      department: getProp(project, 'executingDepartment', ''),
+      status: getProjectStatus(getProp(project, 'projectStatus', 0)),
+      statusVariant: getStatusVariant(getProp(project, 'projectStatus', 0)),
+      progress:
+        'components' in project && project.components
+          ? calculateProgress(project as FundedProject)
+          : getProp(
+              project,
+              'financialAchievement',
+              getProp(project, 'calculatedCumulativeFinancialProgress', 0)
+            ),
       duration: project.duration?.toString() || '0',
       cost: project.cost || 0,
-      startDate: formatDate(project.actualStartDate),
-      endDate: formatDate(project.actualEndDate),
-      implementingEntity: project.implementingEntity || '',
-      beneficiaryEntities: project.beneficiaryEntities || '',
-      grantingEntity: project.grantingEntity || '',
-      fundingType: project.fundingType || 1,
-      projectObjectives: project.projectObjectives || '',
-      latitude: project.latitude || null,
-      longitude: project.longitude || null,
+      startDate: formatDate(getProp(project, 'actualStartDate')),
+      endDate: formatDate(getProp(project, 'actualEndDate')),
+      implementingEntity: getProp(project, 'implementingEntity', ''),
+      beneficiaryEntities: getProp(
+        project,
+        'beneficiaries',
+        getProp(project, 'beneficiaryEntities', '')
+      ),
+      grantingEntity: getProp(
+        project,
+        'grantingEntity',
+        getProp(project, 'supportingEntities', '')
+      ),
+      fundingType: getProp(project, 'fundingType', 1),
+      projectObjectives: getProp(project, 'projectObjectives', getProp(project, 'goals', '')),
+      latitude: project.lat || null,
+      longitude: project.lng || null,
     };
 
     return transformedProject;
@@ -221,6 +249,7 @@ export const transformProject = (project: Project | null): TransformedProject | 
       statusVariant: 'danger',
       progress: 0,
       duration: '0',
+      cost: 0,
       startDate: '',
       endDate: '',
       implementingEntity: '',

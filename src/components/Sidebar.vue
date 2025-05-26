@@ -1,22 +1,22 @@
 <template>
   <div
-    class="group fixed right-0 top-0 z-50 flex h-screen flex-col bg-background-surface shadow-lg"
+    class="fixed top-0 right-0 z-50 flex flex-col h-screen shadow-lg group bg-background-surface"
     @mouseenter="isAnyItemHovered = true"
     @mouseleave="isAnyItemHovered = false"
   >
     <div
-      class="relative flex h-24 cursor-pointer items-center overflow-x-hidden transition-all duration-300 ease-in-out"
+      class="relative flex items-center h-24 overflow-x-hidden transition-all duration-300 ease-in-out cursor-pointer"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
       @click="router.push('/')"
     >
       <div
-        class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        class="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
       />
-      <div class="relative flex h-full w-full items-center justify-center px-3">
+      <div class="relative flex items-center justify-center w-full h-full px-3">
         <img
           src="/public/img/Logo.png"
           alt="Logo"
-          class="absolute right-3 h-12 w-10 bg-transparent object-contain transition-all duration-300 ease-in-out"
+          class="absolute object-contain w-10 h-12 transition-all duration-300 ease-in-out bg-transparent right-3"
           :class="{
             'scale-100 opacity-100': !isAnyItemHovered,
             'scale-95 opacity-0': isAnyItemHovered,
@@ -25,7 +25,7 @@
         <img
           :src="isDark ? '/public/img/logo-white-text.png' : '/public/img/logo-text.png'"
           alt="Logo with Text"
-          class="absolute h-12 object-contain transition-all duration-300 ease-in-out"
+          class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
           :class="{
             'scale-95 opacity-0': !isAnyItemHovered,
             'scale-100 opacity-100': isAnyItemHovered,
@@ -35,28 +35,28 @@
     </div>
 
     <nav
-      class="hide-scrollbar flex-1 overflow-x-hidden p-2 transition-all duration-300 ease-in-out"
+      class="flex-1 p-2 overflow-x-hidden transition-all duration-300 ease-in-out hide-scrollbar"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
     >
       <ul class="mt-4 space-y-1.5">
         <template v-for="(item, index) in menuItems" :key="index">
           <li v-if="item.type === 'separator'" class="px-2">
-            <hr class="my-2 h-px w-full rounded border-0 bg-gradient-to-l from-border to-border" />
+            <hr class="w-full h-px my-2 border-0 rounded bg-gradient-to-l from-border to-border" />
           </li>
           <li
             v-else
-            class="group/item relative"
+            class="relative group/item"
             @mouseenter="hoveredItem = index"
             @mouseleave="hoveredItem = null"
           >
             <div
-              class="absolute inset-0 rounded-md bg-gradient-to-l from-background-surface via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover/item:opacity-100"
+              class="absolute inset-0 transition-opacity duration-200 rounded-md opacity-0 bg-gradient-to-l from-background-surface via-transparent to-transparent group-hover/item:opacity-100"
               :class="{ '!opacity-0': isActive(item.path) }"
             />
             <Button
               variant="ghost"
               size="icon"
-              class="relative flex w-full items-center justify-start gap-3 whitespace-nowrap rounded-md px-3 py-2 transition-all duration-200 ease-in-out"
+              class="relative flex items-center justify-start w-full gap-3 px-3 py-2 transition-all duration-200 ease-in-out rounded-md whitespace-nowrap"
               :class="{
                 'bg-primary/20 text-primary hover:bg-primary/10 hover:text-primary': isActive(
                   item.path
@@ -75,7 +75,7 @@
                 }"
               />
               <span
-                class="translate-x-1 transform text-sm font-medium text-foreground-heading opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                class="text-sm font-medium transition-all duration-300 transform translate-x-1 opacity-0 text-foreground-heading group-hover:translate-x-0 group-hover:opacity-100"
                 :class="{ 'text-primary': isActive(item.path) }"
               >
                 {{ item.label }}
@@ -93,26 +93,26 @@
 
     <!-- User Profile Section -->
     <div
-      class="relative flex cursor-pointer items-center border-t border-border p-2 transition-all duration-300 ease-in-out hover:bg-background-hover"
+      class="relative flex items-center p-2 transition-all duration-300 ease-in-out border-t cursor-pointer border-border hover:bg-background-hover"
       :class="{ 'w-[60px]': !isAnyItemHovered, 'w-[220px]': isAnyItemHovered }"
     >
       <div class="flex items-center gap-3 px-2 py-1.5">
         <div class="flex items-center justify-center">
-          <Icon icon="lucide:user" class="h-4 w-4 text-foreground-muted" />
+          <Icon icon="lucide:user" class="w-4 h-4 text-foreground-muted" />
         </div>
         <div
           class="flex flex-col transition-all duration-300"
           :class="{ 'opacity-0': !isAnyItemHovered, 'opacity-100': isAnyItemHovered }"
         >
-          <span class="whitespace-nowrap text-sm font-medium text-foreground-heading">{{
+          <span class="text-sm font-medium whitespace-nowrap text-foreground-heading">{{
             authStore.getUser?.name || 'User'
           }}</span>
-          <span class="whitespace-nowrap text-xs text-foreground-muted">{{
+          <span class="text-xs whitespace-nowrap text-foreground-muted">{{
             userTranslations[authStore.getUser?.role] || 'Guest'
           }}</span>
         </div>
         <div
-          class="flex items-center justify-center rounded-full p-2 transition-all duration-200 hover:bg-background-card"
+          class="flex items-center justify-center p-2 transition-all duration-200 rounded-full hover:bg-background-card"
           :class="{
             'translate-x-2 opacity-0': !isAnyItemHovered,
             'translate-x-0 opacity-100': isAnyItemHovered,
@@ -120,7 +120,7 @@
         >
           <Icon
             icon="lucide:log-out"
-            class="h-4 w-4 text-foreground-muted transition-all duration-200 hover:text-destructive"
+            class="w-4 h-4 transition-all duration-200 text-foreground-muted hover:text-destructive"
             @click.stop="showLogoutModal = true"
           />
         </div>
@@ -139,7 +139,7 @@
 <script setup>
   import LogoutModal from '@/components/LogoutModal.vue';
   import { useTheme } from '@/composables/useTheme';
-  import { useAuthStore } from '@/stores/authStore';
+  import { useAuthStore } from '@/stores/auth';
   import { Icon } from '@iconify/vue';
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';

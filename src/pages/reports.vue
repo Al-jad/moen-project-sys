@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <div class="space-y-6 bg-gray-200 p-6 dark:bg-darkmode">
+    <div class="dark:bg-darkmode space-y-6 bg-gray-200 p-6">
       <div class="mb-2 flex items-center justify-between">
         <div class="flex items-center justify-between gap-2">
           <BackToMainButton />
@@ -59,7 +59,7 @@
                       <RadialProgress :progress="85" variant="success" />
                     </div>
                     <div class="space-y-1">
-                      <p class="text-success text-2xl font-bold">85%</p>
+                      <p class="text-2xl font-bold text-success">85%</p>
                       <p class="text-sm text-muted-foreground dark:text-gray-400"
                         >من إجمالي المشروع</p
                       >
@@ -97,8 +97,8 @@
                 </CardHeader>
                 <CardContent>
                   <div class="flex items-center gap-4">
-                    <div class="bg-success/10 dark:bg-success/5 rounded-lg p-3">
-                      <Icon icon="lucide:dollar-sign" class="text-success h-8 w-8" />
+                    <div class="rounded-lg bg-success/10 p-3 dark:bg-success/5">
+                      <Icon icon="lucide:dollar-sign" class="h-8 w-8 text-success" />
                     </div>
                     <div class="space-y-1">
                       <p class="text-2xl font-bold text-gray-900 dark:text-white">65%</p>
@@ -177,8 +177,8 @@
                       <span class="text-sm text-muted-foreground dark:text-gray-400"
                         >المبالغ المصروفة</span
                       >
-                      <span class="text-success text-2xl font-bold">8,567,890</span>
-                      <span class="text-success text-sm">56% من الميزانية</span>
+                      <span class="text-2xl font-bold text-success">8,567,890</span>
+                      <span class="text-sm text-success">56% من الميزانية</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -190,8 +190,8 @@
                       <span class="text-sm text-muted-foreground dark:text-gray-400"
                         >المبالغ المتبقية</span
                       >
-                      <span class="text-warning text-2xl font-bold">6,666,677</span>
-                      <span class="text-warning text-sm">44% من الميزانية</span>
+                      <span class="text-2xl font-bold text-warning">6,666,677</span>
+                      <span class="text-sm text-warning">44% من الميزانية</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -230,14 +230,14 @@
                         <Badge variant="outline" class="h-6 dark:border-gray-600">12 مشروع</Badge>
                         <Badge
                           variant="outline"
-                          class="bg-success/10 text-success dark:bg-success/20 h-6"
+                          class="h-6 bg-success/10 text-success dark:bg-success/20"
                           >4,567,890 د.ع</Badge
                         >
                       </div>
                     </div>
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-2">
-                        <Badge variant="warning" className="h-2 w-2 rounded-full p-0" />
+                        <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
                         <span class="text-sm text-gray-900 dark:text-white"
                           >المشاريع قيد التنفيذ</span
                         >
@@ -246,7 +246,7 @@
                         <Badge variant="outline" class="h-6 dark:border-gray-600">8 مشاريع</Badge>
                         <Badge
                           variant="outline"
-                          class="bg-warning/10 text-warning dark:bg-warning/20 h-6"
+                          class="h-6 bg-warning/10 text-warning dark:bg-warning/20"
                           >3,890,450 د.ع</Badge
                         >
                       </div>
@@ -279,7 +279,7 @@
                   <CardContent class="space-y-4">
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-2">
-                        <Badge variant="primary" className="h-2 w-2 rounded-full p-0" />
+                        <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
                         <span class="text-sm text-gray-900 dark:text-white">المبالغ المرصودة</span>
                       </div>
                       <div class="space-y-1">
@@ -299,10 +299,10 @@
                       <div class="space-y-1">
                         <Badge
                           variant="outline"
-                          class="bg-success/10 text-success dark:bg-success/20 h-6"
+                          class="h-6 bg-success/10 text-success dark:bg-success/20"
                           >8,567,890 د.ع</Badge
                         >
-                        <div class="text-success text-left text-xs">56% من الميزانية الكلية</div>
+                        <div class="text-left text-xs text-success">56% من الميزانية الكلية</div>
                       </div>
                     </div>
                     <div class="flex items-center justify-between">
@@ -340,7 +340,7 @@
                       </div>
                       <div class="space-y-1">
                         <p class="font-medium text-gray-900 dark:text-white">نسبة الصرف</p>
-                        <p class="text-success text-sm">8.5 مليار من 15.2 مليار</p>
+                        <p class="text-sm text-success">8.5 مليار من 15.2 مليار</p>
                       </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -349,7 +349,7 @@
                       </div>
                       <div class="space-y-1">
                         <p class="font-medium text-gray-900 dark:text-white">المبالغ المتبقية</p>
-                        <p class="text-warning text-sm">6.6 مليار متبقي</p>
+                        <p class="text-sm text-warning">6.6 مليار متبقي</p>
                       </div>
                     </div>
                     <div class="flex items-center gap-4">

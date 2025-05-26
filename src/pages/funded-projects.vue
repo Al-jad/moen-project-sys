@@ -18,12 +18,12 @@
       </div>
       <div class="flex-1 bg-background">
         <div class="p-6 lg:p-8">
-          <div class="mx-auto w-full max-w-7xl space-y-8">
+          <div class="w-full mx-auto space-y-8 max-w-7xl">
             <div class="flex flex-col gap-6">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                  <div class="rounded-lg bg-primary/10 p-3">
-                    <Icon icon="lucide:building-2" class="h-8 w-8 text-primary" />
+                  <div class="p-3 rounded-lg bg-primary/10">
+                    <Icon icon="lucide:building-2" class="w-8 h-8 text-primary" />
                   </div>
                   <div>
                     <h1 class="text-3xl font-bold text-foreground">المشاريع الممولة</h1>
@@ -69,12 +69,12 @@
                 />
               </div>
             </div>
-            <div class="rounded-xl border border-border bg-background-surface shadow-sm">
-              <div class="border-b border-border p-6">
+            <div class="border shadow-sm rounded-xl border-border bg-background-surface">
+              <div class="p-6 border-b border-border">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div class="flex items-center gap-4">
                     <h2 class="text-xl font-semibold text-foreground">قائمة المشاريع</h2>
-                    <Badge class="bg-primary/10 px-3 py-1 text-primary">
+                    <Badge class="px-3 py-1 bg-primary/10 text-primary">
                       {{ filteredProjects.length }} من {{ projects.length }} مشروع
                     </Badge>
                   </div>
@@ -89,25 +89,25 @@
                       />
                       <div
                         v-if="selectedSort"
-                        class="flex items-center gap-2 rounded-lg bg-background-hover px-3 py-2 text-sm text-foreground-muted"
+                        class="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-background-hover text-foreground-muted"
                       >
                         <span>{{ getSelectedSortLabel }}</span>
                         <button
-                          class="rounded-full p-1 transition-colors hover:bg-background-hover"
+                          class="p-1 transition-colors rounded-full hover:bg-background-hover"
                           @click="clearSort"
                         >
-                          <Icon icon="lucide:x" class="h-3 w-3" />
+                          <Icon icon="lucide:x" class="w-3 h-3" />
                         </button>
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
                       <PrimaryButton variant="destructive" @click="OpenPremiumModal">
-                        <Icon icon="lucide:lock" class="h-4 w-4" />
+                        <Icon icon="lucide:lock" class="w-4 h-4" />
                         طباعة
                       </PrimaryButton>
                       <RouterLink to="/add-funded-project">
                         <PrimaryButton variant="primary">
-                          <Icon icon="lucide:plus" class="h-4 w-4" />
+                          <Icon icon="lucide:plus" class="w-4 h-4" />
                           <span>اضافة مشروع جديد</span>
                         </PrimaryButton>
                       </RouterLink>
@@ -120,39 +120,39 @@
                   <div
                     v-for="n in 6"
                     :key="n"
-                    class="h-80 animate-pulse rounded-lg bg-background-hover"
+                    class="rounded-lg h-80 animate-pulse bg-background-hover"
                   />
                 </div>
                 <div v-else>
                   <div
                     v-if="projects.length === 0"
-                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
                   >
-                    <div class="mb-4 rounded-full bg-background-hover p-4">
-                      <Icon icon="lucide:folder-open" class="h-10 w-10 text-foreground-muted" />
+                    <div class="p-4 mb-4 rounded-full bg-background-hover">
+                      <Icon icon="lucide:folder-open" class="w-10 h-10 text-foreground-muted" />
                     </div>
                     <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد مشاريع</h3>
-                    <p class="mb-6 max-w-sm text-foreground-muted">
+                    <p class="max-w-sm mb-6 text-foreground-muted">
                       قم بإضافة مشروع جديد للبدء في إدارة المشاريع الممولة
                     </p>
                     <RouterLink to="/add-funded-project">
                       <PrimaryButton variant="primary" size="sm">
-                        <Icon icon="lucide:plus" class="h-4 w-4" />
+                        <Icon icon="lucide:plus" class="w-4 h-4" />
                         اضافة مشروع
                       </PrimaryButton>
                     </RouterLink>
                   </div>
                   <div
                     v-else-if="filteredProjects.length === 0"
-                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
+                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
                   >
-                    <div class="mb-4 rounded-full bg-background-hover p-4">
-                      <Icon icon="lucide:search-x" class="h-10 w-10 text-foreground-muted" />
+                    <div class="p-4 mb-4 rounded-full bg-background-hover">
+                      <Icon icon="lucide:search-x" class="w-10 h-10 text-foreground-muted" />
                     </div>
                     <h3 class="mb-2 text-lg font-semibold text-foreground">
                       لا توجد نتائج تطابق الفلتر
                     </h3>
-                    <p class="mb-6 max-w-sm text-foreground-muted">
+                    <p class="max-w-sm mb-6 text-foreground-muted">
                       حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
                     </p>
                   </div>
@@ -173,7 +173,7 @@
               <!-- Pagination at bottom of container -->
               <div
                 v-if="filteredProjects.length > 0"
-                class="border-t border-border bg-background-surface px-6 py-4"
+                class="px-6 py-4 border-t border-border bg-background-surface"
               >
                 <div class="flex justify-center">
                   <CustomPagination
@@ -195,12 +195,11 @@
   import BaseStatsCard from '@/components/BaseStatsCard.vue';
   import CustomDrop from '@/components/CustomDrop.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
+  import { useBeneficiaries } from '@/composables/useBeneficiaries';
   import { useToast } from '@/composables/useToast';
   import { UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import beneficiaryService from '@/services/beneficiaryService';
   import { useFundedProjectStore } from '@/stores/funded-project-store';
-  import type { Beneficiary } from '@/types/api';
   import { formatTotalCost } from '@/utils/formatCost';
   import {
     getSelectedSortLabel as getSortLabel,
@@ -222,7 +221,15 @@
   const showPremiumModal = ref(false);
   const currentPage = ref(1);
   const itemsPerPage = ref(6);
-  const beneficiaries = ref<Beneficiary[]>([]);
+
+  // Use the beneficiaries composable
+  const {
+    beneficiaries,
+    selectedBeneficiaries,
+    fetchBeneficiaries,
+    filterByBeneficiaries,
+    resetBeneficiarySelection,
+  } = useBeneficiaries();
 
   const selectedSort = ref('');
 
@@ -265,7 +272,6 @@
 
   const searchQuery = ref('');
   const budgetRange = ref<[number, number]>(minMaxBudgetRange.value);
-  const selectedBeneficiaries = ref({ all: true });
   const isBudgetFilterEnabled = ref(false);
   const selectedCurrency = ref(localStorage.getItem('selectedCurrency') || 'IQD');
 
@@ -290,22 +296,56 @@
     showGovernmentProjects: boolean;
     isBudgetFilterEnabled: boolean;
   }) => {
-    fundedProjectStore.filterProjects({
-      search: filters.searchQuery,
-      status: getStatusFromFilters(filters.selectedStatus),
-      minCost: filters.isBudgetFilterEnabled ? filters.budgetRange?.[0] : undefined,
-      maxCost: filters.isBudgetFilterEnabled ? filters.budgetRange?.[1] : undefined,
-      isGovernment: filters.showGovernmentProjects,
+    let result = [...projects.value];
+
+    if (filters.searchQuery?.trim()) {
+      const query = filters.searchQuery.toLowerCase().trim();
+      result = result.filter((project) => {
+        return (
+          (project.title && project.title.toLowerCase().includes(query)) ||
+          (project.department && project.department.toLowerCase().includes(query)) ||
+          (project.status && project.status.toLowerCase().includes(query)) ||
+          (project.id && project.id.toString().includes(query))
+        );
+      });
+    }
+
+    if (filters.isBudgetFilterEnabled && filters.budgetRange?.length === 2) {
+      const [minBudget, maxBudget] = filters.budgetRange;
+      result = result.filter((project) => {
+        const cost = project.cost || 0;
+        return cost >= minBudget && cost <= maxBudget;
+      });
+    }
+
+    if (filters.selectedStatus && !filters.selectedStatus.all) {
+      result = result.filter((project) => {
+        const statusMap = {
+          completed: '2',
+          inProgress: '1',
+          delayed: '3',
+          cancelled: '0',
+        };
+        return (
+          (filters.selectedStatus.completed && project.status === statusMap.completed) ||
+          (filters.selectedStatus.inProgress && project.status === statusMap.inProgress) ||
+          (filters.selectedStatus.delayed && project.status === statusMap.delayed) ||
+          (filters.selectedStatus.cancelled && project.status === statusMap.cancelled)
+        );
+      });
+    }
+
+    if (filters.showGovernmentProjects) {
+      result = result.filter((project) => project.isGovernment);
+    }
+
+    // Use the filterByBeneficiaries helper from our composable
+    result = filterByBeneficiaries(result, filters.selectedBeneficiaries);
+
+    fundedProjectStore.$patch((state) => {
+      state.filteredProjects = result;
     });
     currentPage.value = 1;
-  };
-
-  const getStatusFromFilters = (statusFilters: Record<string, boolean>): number | undefined => {
-    if (statusFilters.completed) return 2;
-    if (statusFilters.inProgress) return 1;
-    if (statusFilters.delayed) return 3;
-    if (statusFilters.cancelled) return 0;
-    return undefined;
   };
 
   const paginatedProjects = computed(() => {
@@ -320,15 +360,6 @@
 
   const fetchProjects = async () => {
     await fundedProjectStore.fetchAllProjects();
-  };
-
-  const fetchBeneficiaries = async () => {
-    try {
-      const response = await beneficiaryService.getAllBeneficiaries();
-      beneficiaries.value = response.data;
-    } catch (error) {
-      console.error('Error fetching beneficiaries:', error);
-    }
   };
 
   onMounted(async () => {
@@ -373,7 +404,7 @@
             delayed: route.query.status === '3',
             cancelled: route.query.status === '0',
           },
-          selectedBeneficiaries: { all: true },
+          selectedBeneficiaries: selectedBeneficiaries.value,
           showGovernmentProjects: route.query.showGovernmentProjects === 'true',
           isBudgetFilterEnabled: false,
         });
@@ -397,7 +428,7 @@
             delayed: newQuery.status === '3',
             cancelled: newQuery.status === '0',
           },
-          selectedBeneficiaries: { all: true },
+          selectedBeneficiaries: selectedBeneficiaries.value,
           showGovernmentProjects: newQuery.showGovernmentProjects === 'true',
           isBudgetFilterEnabled: false,
         });

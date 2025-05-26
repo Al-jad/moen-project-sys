@@ -1,3 +1,4 @@
+import router from '@/router';
 import axios from 'axios';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
@@ -5,7 +6,6 @@ import { createApp } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import App from './App.vue';
 import './assets/css/index.css';
-import router from './router/index';
 
 // Configure axios
 axios.defaults.baseURL = 'https://pmsapi.alfakharco.com/api';

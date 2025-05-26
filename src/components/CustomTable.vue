@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen overflow-x-auto">
     <!-- Filters Section -->
     <div
       v-if="showExport || showDateFilter || showSearch || filters.length > 0"
@@ -9,7 +9,7 @@
         <Button
           v-if="showExport"
           variant="outline"
-          class="px-2 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+          class="border-border bg-background-card px-2"
           :class="isExportPremium ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'"
           :disabled="isExportPremium"
           @click="$emit('export')"
@@ -45,13 +45,13 @@
     </div>
 
     <!-- Table Section -->
-    <Table class="overflow-hidden rounded-xl border dark:border-gray-700">
+    <Table class="overflow-hidden rounded-xl border-border">
       <TableHeader>
-        <TableRow class="bg-gray-100 dark:bg-gray-900">
+        <TableRow class="bg-background-surface">
           <TableHead
             v-for="column in columns"
             :key="column.key"
-            class="text-right text-gray-900 dark:text-gray-300"
+            class="whitespace-nowrap text-right font-medium text-gray-700 dark:text-gray-300"
             :class="{
               'first:rounded-tr-xl': column === columns[0],
               'w-10 last:rounded-tl-xl': column === columns[columns.length - 1],
@@ -67,9 +67,9 @@
             <TableCell :colspan="columns.length" class="py-10 text-center">
               <div class="flex flex-col items-center justify-center">
                 <div
-                  class="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"
+                  class="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
                 ></div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">جاري التحميل...</span>
+                <span class="text-sm text-muted-foreground">جاري التحميل...</span>
               </div>
             </TableCell>
           </TableRow>
@@ -77,7 +77,10 @@
         <template v-else-if="filteredData.length === 0">
           <TableRow>
             <TableCell :colspan="columns.length" class="py-10 text-center">
-              <span class="text-sm text-gray-500 dark:text-gray-400">لا توجد بيانات</span>
+              <div class="flex flex-col items-center justify-center gap-2">
+                <Icon icon="lucide:inbox" class="h-8 w-8 text-gray-400" />
+                <span class="text-sm text-muted-foreground">لا توجد بيانات</span>
+              </div>
             </TableCell>
           </TableRow>
         </template>
@@ -85,7 +88,7 @@
           v-else
           v-for="(item, index) in paginatedData"
           :key="index"
-          class="hover:bg-gray-50/50 dark:text-gray-300 dark:hover:bg-gray-700/50"
+          class="transition-colors hover:bg-background-hover"
           :class="{
             'last:[&>td:first-child]:rounded-br-xl last:[&>td:last-child]:rounded-bl-xl':
               index === paginatedData.length - 1,
@@ -94,14 +97,14 @@
           <TableCell
             v-for="column in columns"
             :key="column.key"
-            :class="[column.cellClass, column.width ? `w-[${column.width}]` : '']"
+            :class="[column.cellClass, column.width ? `w-[${column.width}]` : '', 'py-3']"
           >
             <slot :name="column.key" :item="item" :value="item[column.key]">
               <template v-if="column.type === 'button'">
                 <Button
                   variant="link"
-                  class="h-auto p-0 text-blue-600 dark:text-blue-400"
-                  @click="$emit('cell-click', { key: column.key, item })"
+                  class="h-auto p-0 text-primary hover:text-primary/80"
+                  @click="emit('cell-click', { key: column.key, item })"
                 >
                   {{ item[column.key] }}
                 </Button>
@@ -116,7 +119,7 @@
                     :class="
                       action.class || 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                     "
-                    @click="$emit('action-click', action.key, item)"
+                    @click="emit('action-click', action.key, item)"
                   >
                     <Icon :icon="action.icon" class="h-4 w-4" />
                   </Button>
@@ -128,7 +131,7 @@
                     variant="ghost"
                     size="icon"
                     class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                    @click="$emit('action-click', item)"
+                    @click="emit('action-click', 'view', item)"
                   >
                     <Icon :icon="column.icon || 'lucide:eye'" class="h-4 w-4" />
                   </Button>
@@ -149,8 +152,13 @@
     </Table>
 
     <!-- Pagination -->
-    <div class="mt-4 flex items-center justify-center border-t py-3 dark:border-gray-700">
+    <div class="mt-4 flex items-center justify-between border-t py-3 dark:border-gray-700">
       <Pagination v-model="currentPage" :total="filteredData.length" :per-page="itemsPerPage" />
+      <div class="whitespace-nowrap text-sm text-gray-500">
+        عرض {{ (currentPage - 1) * itemsPerPage + 1 }} إلى
+        {{ Math.min(currentPage * itemsPerPage, filteredData.length) }} من
+        {{ filteredData.length }} نتيجة
+      </div>
     </div>
   </div>
 </template>
@@ -187,7 +195,16 @@
     description: string;
     url: string;
     createdAt: string;
-    fileType: FileType;
+    fileType: string;
+    date?: string;
+    [key: string]: any;
+  }
+
+  interface Action {
+    key: string;
+    icon: string;
+    variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    class?: string;
   }
 
   interface Column {
@@ -197,12 +214,12 @@
     icon?: string;
     cellClass?: string;
     width?: string;
-    actions?: Array<{
-      key: string;
-      icon: string;
-      variant?: string;
-      class?: string;
-    }>;
+    actions?: Action[];
+  }
+
+  interface TableItem extends Record<string, any> {
+    date?: string;
+    [key: string]: any;
   }
 
   interface FilterOption {
@@ -221,7 +238,7 @@
 
   interface Props {
     columns: Column[];
-    data: any[];
+    data: Record<string, any>[];
     items?: Attachment[];
     itemsPerPage?: number;
     filters?: Filter[];
@@ -247,14 +264,14 @@
     items: () => [],
   });
 
-  const emit = defineEmits([
-    'cell-click',
-    'action-click',
-    'filter-change',
-    'search-change',
-    'date-change',
-    'export',
-  ]);
+  const emit = defineEmits<{
+    'cell-click': [{ key: string; item: TableItem }];
+    'action-click': [action: string, row: TableItem];
+    'filter-change': [filters: Record<string, string>];
+    'search-change': [query: string];
+    'date-change': [range: DateRange | null];
+    export: [];
+  }>();
 
   const currentPage = ref(1);
   const searchQuery = ref('');
@@ -410,22 +427,19 @@
   watch(
     [searchQuery, selectedFilters, dateRange],
     ([newSearch, newFilters, newDate], [oldSearch, oldFilters, oldDate]) => {
-      // Only emit search-change, don't trigger filter-change for search
       if (newSearch !== oldSearch) {
         emit('search-change', newSearch);
       }
 
-      // Only emit filter-change when filters change (not when search changes)
       if (JSON.stringify(newFilters) !== JSON.stringify(oldFilters)) {
         emit('filter-change', newFilters);
       }
 
-      // Only emit date-change when date changes
       if (JSON.stringify(newDate) !== JSON.stringify(oldDate)) {
-        emit('date-change', newDate);
+        emit('date-change', newDate || null); // Handle undefined case
       }
 
-      currentPage.value = 1; // Reset to first page when filters change
+      currentPage.value = 1;
     },
     { deep: true }
   );

@@ -4,11 +4,11 @@
     <div class="space-y-6">
       <!-- Enhanced Duration Input Section -->
       <div
-        class="group rounded-xl border border-border bg-background-surface p-6 shadow-sm transition-all duration-300 hover:border-primary/20 hover:shadow-md"
+        class="p-6 transition-all duration-300 border shadow-sm group rounded-xl border-border bg-background-surface hover:border-primary/20 hover:shadow-md"
       >
-        <div class="mb-6 flex items-center gap-3">
-          <div class="rounded-lg bg-primary/10 p-2">
-            <Icon icon="lucide:clock" class="h-5 w-5 text-primary" />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 rounded-lg bg-primary/10">
+            <Icon icon="lucide:clock" class="w-5 h-5 text-primary" />
           </div>
           <h3 class="text-lg font-medium text-foreground-heading">تحديد المدة</h3>
         </div>
@@ -31,11 +31,11 @@
 
       <!-- Enhanced Time Period Section -->
       <div
-        class="group rounded-xl border border-border bg-background-surface p-6 shadow-sm transition-all duration-300 hover:border-accent/20 hover:shadow-md"
+        class="p-6 transition-all duration-300 border shadow-sm group rounded-xl border-border bg-background-surface hover:border-accent/20 hover:shadow-md"
       >
-        <div class="mb-6 flex items-center gap-3">
-          <div class="rounded-lg bg-accent/10 p-2">
-            <Icon icon="lucide:calendar-days" class="h-5 w-5 text-accent" />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 rounded-lg bg-accent/10">
+            <Icon icon="lucide:calendar-days" class="w-5 h-5 text-accent" />
           </div>
           <h3 class="text-lg font-medium text-foreground-heading">نوع الفترة الزمنية</h3>
         </div>
@@ -59,11 +59,11 @@
 
       <!-- Enhanced Dates Section -->
       <div
-        class="group rounded-xl border border-border bg-background-surface p-6 shadow-sm transition-all duration-300 hover:border-info/20 hover:shadow-md"
+        class="p-6 transition-all duration-300 border shadow-sm group rounded-xl border-border bg-background-surface hover:border-info/20 hover:shadow-md"
       >
-        <div class="mb-6 flex items-center gap-3">
-          <div class="rounded-lg bg-info/10 p-2">
-            <Icon icon="lucide:calendar-range" class="h-5 w-5 text-info" />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 rounded-lg bg-info/10">
+            <Icon icon="lucide:calendar-range" class="w-5 h-5 text-info" />
           </div>
           <h3 class="text-lg font-medium text-foreground-heading">التواريخ</h3>
         </div>
@@ -80,7 +80,7 @@
           <FormField label="تاريخ الانتهاء المتوقع">
             <div class="flex h-[2.5rem] items-center">
               <div
-                class="flex h-10 w-full items-center rounded-md border border-border bg-background-card px-3 py-2 text-sm ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                class="flex items-center w-full h-10 px-3 py-2 text-sm transition-colors border rounded-md border-border bg-background-card ring-offset-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <DateDisplay
                   :show-date="!!(store.form.actualStartDate && store.form.duration)"
@@ -110,7 +110,7 @@
   import NumberInput from '@/components/NumberInput.vue';
   import { Label } from '@/components/ui/label';
   import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { Icon } from '@iconify/vue';
   import { defineComponent, h } from 'vue';
 

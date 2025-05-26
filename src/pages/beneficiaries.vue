@@ -20,7 +20,7 @@
           <CustomTable
             ref="tableRef"
             :columns="columns"
-            :data="entities"
+            :data="beneficiaries"
             @export="exportToExcel"
             :loading="isLoading"
             :showDateFilter="false"
@@ -84,15 +84,17 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import AddBeneficiaryModal from '@/components/AddBeneficiaryModal.vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import DeleteModal from '@/components/DeleteModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
+  import { useBeneficiaries } from '@/composables/useBeneficiaries';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { beneficiaryService } from '@/services/beneficiaryService';
+  import type { Beneficiary } from '@/types';
   import { Icon } from '@iconify/vue';
+  import { ref } from 'vue';
   import { toast } from 'vue-sonner';
 
   // Table configuration
@@ -103,37 +105,31 @@
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
 
+  // Use our new composable
+  const {
+    beneficiaries,
+    isLoading,
+    fetchBeneficiaries,
+    addBeneficiary,
+    updateBeneficiary,
+    deleteBeneficiary,
+  } = useBeneficiaries();
+
   // State
   const showModal = ref(false);
-  const editingEntity = ref(null);
-  const entities = ref([]);
-  const isLoading = ref(true);
+  const editingEntity = ref<Beneficiary | null>(null);
   const isDeleting = ref(false);
   const isDeleteModalOpen = ref(false);
-  const selectedEntity = ref(null);
+  const selectedEntity = ref<Beneficiary | null>(null);
   const tableRef = ref();
 
   // Fetch beneficiaries on component mount
   onMounted(async () => {
-    await fetchBeneficiaries();
+    await fetchBeneficiaries(true);
   });
 
-  // Fetch beneficiaries from API
-  const fetchBeneficiaries = async () => {
-    isLoading.value = true;
-    try {
-      const response = await beneficiaryService.getAllBeneficiaries();
-      entities.value = response.data;
-    } catch (error) {
-      console.error('Error fetching beneficiaries:', error);
-      toast.error('حدث خطأ أثناء جلب بيانات الجهات المستفيدة');
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
   // Methods
-  const handleSave = async (data) => {
+  const handleSave = async (data: Partial<Beneficiary>) => {
     try {
       const payload = {
         name: data.name,
@@ -143,15 +139,13 @@
 
       if (data.id) {
         // Edit existing entity
-        await beneficiaryService.updateBeneficiary(data.id, payload);
+        await updateBeneficiary(data.id, payload);
         toast.success('تم تحديث الجهة المستفيدة بنجاح');
       } else {
         // Add new entity
-        await beneficiaryService.createBeneficiary(payload);
+        await addBeneficiary(payload as Omit<Beneficiary, 'id'>);
         toast.success('تمت إضافة الجهة المستفيدة بنجاح');
       }
-      // Refresh the list
-      await fetchBeneficiaries();
       showModal.value = false;
     } catch (error) {
       console.error('Error saving beneficiary:', error);
@@ -159,7 +153,7 @@
     }
   };
 
-  const handleEdit = (entity) => {
+  const handleEdit = (entity: Beneficiary) => {
     editingEntity.value = {
       id: entity.id,
       name: entity.name,
@@ -174,20 +168,21 @@
     showModal.value = true;
   };
 
-  const handleDelete = (entity) => {
+  const handleDelete = (entity: Beneficiary) => {
     selectedEntity.value = entity;
     isDeleteModalOpen.value = true;
   };
 
   const confirmDelete = async () => {
+    if (!selectedEntity.value?.id) return;
+
     try {
       isDeleting.value = true;
-      await beneficiaryService.deleteBeneficiary(selectedEntity.value.id);
+      await deleteBeneficiary(selectedEntity.value.id);
       toast('تم حذف الجهة المستفيدة', {
         description: `تم حذف الجهة المستفيدة "${selectedEntity.value.name}" بنجاح`,
         type: 'success',
       });
-      await fetchBeneficiaries();
       isDeleteModalOpen.value = false;
     } catch (error) {
       console.error('Error deleting beneficiary:', error);
@@ -208,7 +203,7 @@
 
   const exportToExcel = () => {
     const headerLabels = ['اسم الجهة المستفيدة', 'اسم الجهة المرجعية', 'العنوان', 'تاريخ الإنشاء'];
-    const formattedData = entities.value.map((entity) => ({
+    const formattedData = beneficiaries.value.map((entity) => ({
       'اسم الجهة المستفيدة': entity.name || '',
       'اسم الجهة المرجعية': entity.referenceEntity || '',
       العنوان: entity.location || '',

@@ -1,10 +1,10 @@
 <template>
   <div
-    class="rounded-xl border border-border bg-background-surface p-6 shadow-sm transition-all duration-300 hover:shadow-md"
+    class="p-6 transition-all duration-300 border shadow-sm rounded-xl border-border bg-background-surface hover:shadow-md"
   >
-    <div class="mb-6 flex items-center gap-3">
-      <div class="rounded-lg bg-success/10 p-2">
-        <Icon icon="lucide:trending-up" class="h-5 w-5 text-success" />
+    <div class="flex items-center gap-3 mb-6">
+      <div class="p-2 rounded-lg bg-success/10">
+        <Icon icon="lucide:trending-up" class="w-5 h-5 text-success" />
       </div>
       <h2 class="text-xl font-semibold text-foreground-heading">إنجازات المشروع</h2>
     </div>
@@ -12,11 +12,11 @@
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
       <!-- Financial Achievement -->
       <div
-        class="group rounded-lg border border-border bg-background-card p-4 transition-all duration-200 hover:border-success/30 hover:shadow-sm"
+        class="p-4 transition-all duration-200 border rounded-lg group border-border bg-background-card hover:border-success/30 hover:shadow-sm"
       >
         <div class="space-y-4">
           <div class="flex items-center gap-2">
-            <Icon icon="lucide:dollar-sign" class="h-4 w-4 text-success" />
+            <Icon icon="lucide:dollar-sign" class="w-4 h-4 text-success" />
             <label class="block text-sm font-medium text-foreground-heading">
               الإنجاز المالي
             </label>
@@ -32,7 +32,7 @@
               max="100"
               class="pr-8"
             />
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <span class="text-sm text-muted-foreground">%</span>
             </div>
           </div>
@@ -43,9 +43,9 @@
               <span class="text-foreground-muted">التقدم</span>
               <span class="font-medium text-foreground-heading">{{ financialAchievement }}%</span>
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-border">
+            <div class="w-full h-2 overflow-hidden rounded-full bg-border">
               <div
-                class="h-full rounded-full bg-gradient-to-r from-success to-success/80 transition-all duration-500 ease-out"
+                class="h-full transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-success to-success/80"
                 :style="{ width: `${Math.min(financialAchievement, 100)}%` }"
               ></div>
             </div>
@@ -53,7 +53,7 @@
               <Icon
                 :icon="getStatusIcon(financialAchievement)"
                 :class="getStatusColor(financialAchievement)"
-                class="h-3 w-3"
+                class="w-3 h-3"
               />
               <span :class="getStatusColor(financialAchievement)">
                 {{ getStatusText(financialAchievement) }}
@@ -66,11 +66,11 @@
       <!-- Technical Achievement (Premium) -->
       <PremiumMask>
         <div
-          class="group rounded-lg border border-border bg-background-card p-4 opacity-60 transition-all duration-200 hover:border-info/30 hover:shadow-sm"
+          class="p-4 transition-all duration-200 border rounded-lg group border-border bg-background-card opacity-60 hover:border-info/30 hover:shadow-sm"
         >
           <div class="space-y-4">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:settings" class="h-4 w-4 text-info" />
+              <Icon icon="lucide:settings" class="w-4 h-4 text-info" />
               <label class="block text-sm font-medium text-foreground-heading">
                 الإنجاز الفني
               </label>
@@ -87,7 +87,7 @@
                 placeholder="0"
                 class="pr-8"
               />
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <span class="text-sm text-muted-foreground">%</span>
               </div>
             </div>
@@ -98,14 +98,14 @@
                 <span class="text-foreground-muted">التقدم</span>
                 <span class="font-medium text-foreground-muted">{{ technicalAchievement }}%</span>
               </div>
-              <div class="h-2 w-full overflow-hidden rounded-full bg-border">
+              <div class="w-full h-2 overflow-hidden rounded-full bg-border">
                 <div
                   class="h-full rounded-full bg-gradient-to-r from-muted to-muted/60"
                   :style="{ width: `${Math.min(technicalAchievement, 100)}%` }"
                 ></div>
               </div>
               <div class="flex items-center gap-1 text-xs text-foreground-muted">
-                <Icon icon="lucide:lock" class="h-3 w-3" />
+                <Icon icon="lucide:lock" class="w-3 h-3" />
                 <span>متاح في النسخة المميزة</span>
               </div>
             </div>
@@ -117,10 +117,10 @@
     <!-- Summary Section -->
     <div
       v-if="financialAchievement > 0"
-      class="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-4"
+      class="p-4 mt-6 border rounded-lg border-primary/20 bg-primary/5"
     >
-      <div class="mb-2 flex items-center gap-2">
-        <Icon icon="lucide:bar-chart-3" class="h-4 w-4 text-primary" />
+      <div class="flex items-center gap-2 mb-2">
+        <Icon icon="lucide:bar-chart-3" class="w-4 h-4 text-primary" />
         <span class="text-sm font-medium text-primary">ملخص الإنجازات</span>
       </div>
       <div class="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
@@ -142,7 +142,7 @@
 <script setup>
   import NumberInput from '@/components/NumberInput.vue';
   import PremiumMask from '@/components/PremiumMask.vue';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { Icon } from '@iconify/vue';
   import { onMounted, ref } from 'vue';
 

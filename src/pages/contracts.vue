@@ -1,10 +1,10 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
+    <main class="min-h-screen bg-background p-6">
       <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-4">
           <BackToMainButton />
-          <h1 class="text-xl font-bold dark:text-white">العقود</h1>
+          <h1 class="text-xl font-bold">العقود</h1>
         </div>
         <div class="flex items-center gap-4">
           <PrimaryButton @click="handleAdd">
@@ -13,7 +13,7 @@
           </PrimaryButton>
         </div>
       </div>
-      <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="rounded-lg border-border bg-background-surface shadow-sm">
         <div class="p-6">
           <CustomTable
             ref="tableRef"
@@ -25,60 +25,60 @@
             :showSearch="true"
             :showExport="true"
             :isExportPremium="false"
-            @edit="handleEdit"
-            @delete="handleDelete"
+            @edit="(item: any) => handleEdit(item as ContractWithProject)"
+            @delete="(item: any) => handleDelete(item as ContractWithProject)"
+            @view="(item: any) => handleView(item as ContractWithProject)"
           >
-            <template #contractNumber="{ item }">
-              <span class="dark:text-gray-300">{{ item.contractNumber }}</span>
+            <template #contractNumber="{ item }: { item: any }">
+              <span>{{ (item as ContractWithProject).contractNumber }}</span>
             </template>
-            <template #name="{ item }">
-              <span class="dark:text-gray-300">{{ item.name }}</span>
+            <template #name="{ item }: { item: any }">
+              <span>{{ (item as ContractWithProject).name }}</span>
             </template>
-            <template #projectName="{ item }">
+            <template #projectName="{ item }: { item: any }">
               <div class="flex items-center gap-2">
-                <span class="dark:text-gray-300">{{ item.project?.name || 'غير محدد' }}</span>
+                <span>{{ (item as ContractWithProject).project?.name || 'غير محدد' }}</span>
                 <button
-                  v-if="item.project"
-                  @click="router.push(`/project/${item.project.id}`)"
+                  v-if="(item as ContractWithProject).project"
+                  @click="router.push(`/project/${(item as ContractWithProject).project!.id}`)"
                   class="rounded p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/50"
                 >
                   <Icon icon="lucide:external-link" class="h-4 w-4" />
                 </button>
               </div>
             </template>
-            <template #executingDepartment="{ item }">
-              <span class="dark:text-gray-300">{{ item.executingDepartment }}</span>
+            <template #executingDepartment="{ item }: { item: any }">
+              <span>{{ (item as ContractWithProject).executingDepartment }}</span>
             </template>
-            <template #cost="{ item }">
-              <span class="dark:text-gray-300" v-html="formatCurrency(item.cost)" />
+            <template #cost="{ item }: { item: any }">
+              <span v-html="formatCurrency((item as ContractWithProject).cost)" />
             </template>
-            <template #signingDate="{ item }">
-              <span class="dark:text-gray-300">{{ formatDate(item.signingDate) }}</span>
+            <template #signingDate="{ item }: { item: any }">
+              <span>{{ formatDate((item as ContractWithProject).signingDate) }}</span>
             </template>
-            <template #referralDate="{ item }">
-              <span class="dark:text-gray-300">{{ formatDate(item.referralDate) }}</span>
+            <template #referralDate="{ item }: { item: any }">
+              <span>{{ formatDate((item as ContractWithProject).referralDate) }}</span>
             </template>
-            <template #proceduresCount="{ item }">
-              <span class="dark:text-gray-300">{{ item.proceduresCount || 0 }}</span>
+            <template #proceduresCount="{ item }: { item: any }">
+              <span>{{ (item as ContractWithProject).proceduresCount || 0 }}</span>
             </template>
-            <template> عدد الاجراءات </template>
-            <template #action="{ item }">
+            <template #action="{ item }: { item: any }">
               <div class="flex items-center justify-center gap-4">
                 <button
-                  @click="handleEdit(item)"
+                  @click="handleEdit(item as ContractWithProject)"
                   class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
                   <Icon icon="lucide:edit" class="h-4 w-4" />
                 </button>
                 <button
-                  @click="handleDelete(item)"
+                  @click="handleDelete(item as ContractWithProject)"
                   :disabled="isDeleting"
                   class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
                   <Icon icon="lucide:trash" class="h-4 w-4" />
                 </button>
                 <button
-                  @click="handleView(item)"
+                  @click="handleView(item as ContractWithProject)"
                   class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   <Icon icon="lucide:eye" class="h-4 w-4" />
@@ -141,6 +141,21 @@
       name: string;
     };
   }
+  interface Project {
+    id: number;
+    name: string;
+  }
+  interface Procedure {
+    id: number;
+    contractId: number;
+  }
+  interface ContractWithProject extends Contract {
+    project?: {
+      id: number;
+      name: string;
+    };
+    proceduresCount?: number;
+  }
   const columns: Column[] = [
     { key: 'contractNumber', label: 'رقم العقد', type: 'text' },
     { key: 'name', label: 'اسم العقد', type: 'text' },
@@ -157,7 +172,7 @@
   const isDeleting = ref(false);
   const isDeleteModalOpen = ref(false);
   const selectedContract = ref<Contract | null>(null);
-  const tableRef = ref();
+  const tableRef = ref<any>(null);
   const regionalProjectStore = useRegionalProjectStore();
   const contracts = computed<Contract[]>(() => regionalProjectStore.contracts);
   const projects = computed(() => regionalProjectStore.projects);
@@ -258,12 +273,13 @@
     isDeleteModalOpen.value = false;
     selectedContract.value = null;
   };
-  const contractsWithProjects = computed(() => {
+  const contractsWithProjects = computed<ContractWithProject[]>(() => {
     return contracts.value.map((contract) => ({
       ...contract,
-      project: regionalProjectStore.projects.find((p) => p.id === contract.projectId),
-      proceduresCount: regionalProjectStore.procedures.filter((p) => p.contractId === contract.id)
-        .length,
+      project: regionalProjectStore.projects.find((p: Project) => p.id === contract.projectId),
+      proceduresCount: regionalProjectStore.procedures.filter(
+        (p: Procedure) => p.contractId === contract.id
+      ).length,
     }));
   });
   const exportToExcel = () => {

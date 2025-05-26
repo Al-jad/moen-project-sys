@@ -156,7 +156,7 @@
   const projects = computed(() => regionalProjectStore.projects);
 
   const projectOptions = computed(() => {
-    return projects.value.map((project) => ({
+    return projects.value.map((project: { id: number; name: string }) => ({
       value: project.id,
       label: project.name || `مشروع ${project.id}`,
     }));

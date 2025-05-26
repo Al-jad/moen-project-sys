@@ -230,7 +230,7 @@
   </FormSection>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import CustomInput from '@/components/CustomInput.vue';
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
@@ -238,27 +238,36 @@
   import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { Icon } from '@iconify/vue';
   import { computed, nextTick } from 'vue';
-  
+
   // Update the Button import to match where it's located in your project
   // This path should match the one used in add-funded-project.vue
   import Button from '@/components/ui/button/Button.vue';
-  
-  const props = defineProps({
-    components: {
-      type: Array,
-      default: () => [],
-    },
-    periodType: {
-      type: Number,
-      required: true,
-    },
-    totalPeriods: {
-      type: Number,
-      required: true,
-    },
-  });
 
-  const emit = defineEmits(['update:components']);
+  interface Activity {
+    name: string;
+    targetPercentage: number;
+    notes: string;
+    selectedPeriods: number[];
+  }
+
+  interface Component {
+    id: string;
+    name: string;
+    description: string;
+    activities: Activity[];
+  }
+
+  interface Props {
+    components: Component[];
+    periodType: number;
+    totalPeriods: number;
+  }
+
+  const props = defineProps<Props>();
+
+  const emit = defineEmits<{
+    'update:components': [components: Component[]];
+  }>();
 
   const componentColors = [
     { base: '#3B82F6', light: '#EFF6FF' }, // Blue
@@ -268,7 +277,7 @@
     { base: '#EC4899', light: '#FDF2F8' }, // Pink
   ];
 
-  const getComponentColor = (index, isLight = false) => {
+  const getComponentColor = (index: number, isLight = false): string => {
     const colorIndex = index % componentColors.length;
     return isLight ? componentColors[colorIndex].light : componentColors[colorIndex].base;
   };
@@ -281,7 +290,7 @@
     if (!Array.isArray(props.components)) {
       emit('update:components', []);
       nextTick(() => {
-        const newComponent = {
+        const newComponent: Component = {
           id: Date.now().toString(),
           name: '',
           description: '',
@@ -290,7 +299,7 @@
         emit('update:components', [...(props.components || []), newComponent]);
       });
     } else {
-      const newComponent = {
+      const newComponent: Component = {
         id: Date.now().toString(),
         name: '',
         description: '',
@@ -300,13 +309,13 @@
     }
   };
 
-  const removeComponent = (index) => {
+  const removeComponent = (index: number) => {
     const newComponents = [...props.components];
     newComponents.splice(index, 1);
     emit('update:components', newComponents);
   };
 
-  const updateComponent = (index, field, value) => {
+  const updateComponent = (index: number, field: keyof Component, value: string) => {
     const newComponents = [...props.components];
     newComponents[index] = {
       ...newComponents[index],
@@ -315,27 +324,33 @@
     emit('update:components', newComponents);
   };
 
-  const addActivity = (componentIndex) => {
+  const addActivity = (componentIndex: number) => {
     const newComponents = [...props.components];
     if (!newComponents[componentIndex].activities) {
       newComponents[componentIndex].activities = [];
     }
-    newComponents[componentIndex].activities.push({
+    const newActivity: Activity = {
       name: '',
       targetPercentage: 0,
       notes: '',
       selectedPeriods: [],
-    });
+    };
+    newComponents[componentIndex].activities.push(newActivity);
     emit('update:components', newComponents);
   };
 
-  const removeActivity = (componentIndex, activityIndex) => {
+  const removeActivity = (componentIndex: number, activityIndex: number) => {
     const newComponents = [...props.components];
     newComponents[componentIndex].activities.splice(activityIndex, 1);
     emit('update:components', newComponents);
   };
 
-  const updateActivity = (componentIndex, activityIndex, field, value) => {
+  const updateActivity = (
+    componentIndex: number,
+    activityIndex: number,
+    field: keyof Activity,
+    value: string | number
+  ) => {
     const newComponents = [...props.components];
     newComponents[componentIndex].activities[activityIndex] = {
       ...newComponents[componentIndex].activities[activityIndex],
@@ -344,7 +359,7 @@
     emit('update:components', newComponents);
   };
 
-  const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
+  const toggleActivityPeriod = (componentIndex: number, activityIndex: number, period: number) => {
     const newComponents = [...props.components];
     const activity = newComponents[componentIndex].activities[activityIndex];
     if (!activity.selectedPeriods) {
@@ -360,7 +375,7 @@
     emit('update:components', newComponents);
   };
 
-  const clearActivityPeriods = (componentIndex, activityIndex) => {
+  const clearActivityPeriods = (componentIndex: number, activityIndex: number) => {
     const newComponents = [...props.components];
     newComponents[componentIndex].activities[activityIndex].selectedPeriods = [];
     emit('update:components', newComponents);

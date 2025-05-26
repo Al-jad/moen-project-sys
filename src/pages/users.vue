@@ -25,14 +25,14 @@
 
             <template #role="{ item }">
               <Badge
-                v-if="item.role === 'ADMIN'"
+                v-if="item.role === 'admin'"
                 variant="success"
                 class="w-fit bg-green-500 font-medium text-white dark:bg-green-500/20"
               >
                 مدير
               </Badge>
               <Badge
-                v-else-if="item.role === 'SUPERVISOR'"
+                v-else-if="item.role === 'supervisor'"
                 class="w-fit bg-gray-500 font-medium text-white dark:bg-gray-500/20 dark:text-gray-300"
               >
                 مشرف
@@ -77,10 +77,10 @@
             >
               <span class="text-right text-gray-500 dark:text-gray-400">{{ field.label }}</span>
               <span v-if="field.type !== 'badge'" class="dark:text-gray-300">{{
-                selectedUser?.[field.key]
+                selectedUser?.[field.key as keyof User]
               }}</span>
               <Badge v-else variant="success" class="w-fit font-medium dark:bg-green-500/20">
-                {{ selectedUser?.[field.key] }}
+                {{ selectedUser?.[field.key as keyof User] }}
               </Badge>
             </div>
           </div>
@@ -102,7 +102,8 @@
   } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
-  import { onMounted, ref } from 'vue';
+  import type { User, UserRole } from '@/types';
+  import { computed, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   const router = useRouter();
@@ -159,23 +160,35 @@
     },
   ];
 
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    createdAt: string;
-  }
-
-  const users = ref([]);
+  const users = ref<User[]>([]);
 
   // User details configuration
-  const userDetailsFields = [
-    { key: 'name', label: 'الاسم الكامل', type: 'text' },
-    { key: 'email', label: 'الايميل', type: 'text' },
-    { key: 'role', label: 'الصلاحية', type: 'badge' },
-    { key: 'createdAt', label: 'تاريخ الاضافة', type: 'text' },
-  ];
+  const userDetailsFields = computed(() => [
+    { label: 'الاسم الكامل', key: 'username' },
+    { label: 'اسم المستخدم', key: 'username' },
+    { label: 'الايميل', key: 'email' },
+    {
+      label: 'الدور',
+      key: 'role',
+      format: (role: UserRole) => {
+        if (role === UserRole.ADMIN) return 'مدير';
+        if (role === UserRole.MANAGER) return 'مشرف';
+        return 'مدخل بيانات';
+      },
+    },
+    {
+      label: 'تاريخ الاضافة',
+      key: 'createdAt',
+      format: (date: string) =>
+        date
+          ? new Date(date).toLocaleDateString('ar', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })
+          : '',
+    },
+  ]);
 
   // State
   const showDetailsDialog = ref(false);
@@ -184,12 +197,20 @@
   // Methods
   const exportToExcel = () => {
     const headerLabels = ['اسم الموظف', 'الايميل', 'الصلاحية', 'تاريخ الاضافة'];
-    const formattedData = users.value.map((user) => ({
-      'اسم الموظف': user.name || '',
+    const formattedData = users.value.map((user: User) => ({
+      'اسم الموظف':
+        user.username ||
+        (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''),
       الايميل: user.email || '',
       الصلاحية:
-        user.role === 'ADMIN' ? 'مدير' : user.role === 'SUPERVISOR' ? 'مشرف' : 'مدخل بيانات',
-      'تاريخ الاضافة': user.createdAt || '',
+        user.role === 'admin' ? 'مدير' : user.role === 'supervisor' ? 'مشرف' : 'مدخل بيانات',
+      'تاريخ الاضافة': user.createdAt
+        ? new Date(user.createdAt).toLocaleDateString('ar', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+        : '',
     }));
     const tableRef = ref();
     tableRef.value?.exportToExcel(formattedData, headerLabels, 'المستخدمين');
@@ -201,14 +222,14 @@
     });
   }
 
-  const handleCellClick = ({ key, item }: { key: string; item: User }) => {
+  const handleCellClick = (row: Record<string, any>, key: string) => {
     if (key === 'name') {
-      router.push(`/users/${item.id}`);
+      router.push(`/users/${(row as User).id}`);
     }
   };
 
-  const viewUserDetails = (user: User) => {
-    selectedUser.value = user;
+  const viewUserDetails = (action: string, row: Record<string, any>) => {
+    selectedUser.value = row as User;
     showDetailsDialog.value = true;
   };
 

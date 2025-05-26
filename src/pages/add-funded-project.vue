@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-background p-6">
-      <div class="mx-auto w-full max-w-6xl space-y-8">
-        <div class="rounded-xl border border-border bg-background-surface p-6">
+    <div class="min-h-screen p-6 bg-background">
+      <div class="w-full max-w-6xl mx-auto space-y-8">
+        <div class="p-6 border rounded-xl border-border bg-background-surface">
           <h1 class="text-2xl font-bold text-foreground"> اضافة مشروع - ممول </h1>
         </div>
 
@@ -24,16 +24,16 @@
               <div
                 v-for="(component, index) in store.form.components"
                 :key="component.id || index"
-                class="rounded-xl border border-border bg-background-surface p-6"
+                class="p-6 border rounded-xl border-border bg-background-surface"
               >
-                <div class="mb-6 flex items-center justify-between">
+                <div class="flex items-center justify-between mb-6">
                   <div class="flex items-center gap-3">
                     <div
-                      class="h-8 w-8 rounded-lg"
+                      class="w-8 h-8 rounded-lg"
                       :style="{ backgroundColor: getComponentColor(index, true) }"
                     >
                       <div
-                        class="flex h-full w-full items-center justify-center text-sm font-medium"
+                        class="flex items-center justify-center w-full h-full text-sm font-medium"
                         :style="{ color: getComponentColor(index) }"
                       >
                         {{ index + 1 }}
@@ -47,7 +47,7 @@
                     size="sm"
                     class="bg-destructive/30 !text-destructive hover:bg-destructive/40"
                   >
-                    <Icon icon="lucide:trash" class="h-4 w-4" />
+                    <Icon icon="lucide:trash" class="w-4 h-4" />
                   </Button>
                 </div>
 
@@ -79,12 +79,12 @@
                       <div
                         v-for="(activity, activityIndex) in component.activities || []"
                         :key="activityIndex"
-                        class="rounded-lg border border-border bg-background-surface p-4"
+                        class="p-4 border rounded-lg border-border bg-background-surface"
                       >
-                        <div class="mb-4 flex items-center justify-between">
+                        <div class="flex items-center justify-between mb-4">
                           <div class="flex items-center gap-2">
                             <div
-                              class="h-2 w-2 rounded-full"
+                              class="w-2 h-2 rounded-full"
                               :style="{ backgroundColor: getComponentColor(index) }"
                             ></div>
                             <span class="font-medium text-foreground">
@@ -101,9 +101,9 @@
                             <Icon
                               v-if="store.form.isSaving"
                               icon="lucide:loader-2"
-                              class="h-4 w-4 animate-spin"
+                              class="w-4 h-4 animate-spin"
                             />
-                            <Icon v-else icon="lucide:trash" class="h-4 w-4" />
+                            <Icon v-else icon="lucide:trash" class="w-4 h-4" />
                           </Button>
                         </div>
 
@@ -141,7 +141,7 @@
                           >
                             <div v-if="totalPeriods > 0" class="space-y-4">
                               <div
-                                class="flex items-center justify-between rounded-lg border border-border bg-background-surface p-4"
+                                class="flex items-center justify-between p-4 border rounded-lg border-border bg-background-surface"
                               >
                                 <span class="text-sm font-medium text-foreground">
                                   {{
@@ -161,7 +161,7 @@
                                 </PrimaryButton>
                               </div>
                               <div
-                                class="grid gap-2 rounded-lg border border-border bg-background-surface p-4"
+                                class="grid gap-2 p-4 border rounded-lg border-border bg-background-surface"
                                 :class="{
                                   'grid-cols-4': totalPeriods <= 4,
                                   'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
@@ -178,7 +178,7 @@
                                   </span>
                                   <button
                                     type="button"
-                                    class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
+                                    class="relative w-full h-12 transition-all duration-200 border rounded-md cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
                                     :class="[
                                       activity.selectedPeriods?.includes(period)
                                         ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
@@ -204,7 +204,7 @@
                             </div>
                             <div
                               v-else
-                              class="flex items-center justify-center rounded-lg border border-border bg-background-surface p-6 text-center text-foreground"
+                              class="flex items-center justify-center p-6 text-center border rounded-lg border-border bg-background-surface text-foreground"
                             >
                               <div class="space-y-1">
                                 <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
@@ -225,7 +225,7 @@
                       size="sm"
                       class="w-full"
                     >
-                      <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                      <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
                       اضافة فعالية
                     </PrimaryButton>
                   </div>
@@ -234,7 +234,7 @@
 
               <!-- Add Component Button -->
               <PrimaryButton @click="addNewComponent" variant="primary" class="w-full py-6">
-                <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
+                <Icon icon="lucide:plus" class="w-4 h-4 ml-2" />
                 اضافة مكون جديد
               </PrimaryButton>
             </div>
@@ -250,20 +250,20 @@
           <ProjectPreview />
         </div>
 
-        <div class="sticky bottom-6 left-0 right-0">
-          <div class="rounded-xl border border-border bg-background-card p-4">
+        <div class="sticky left-0 right-0 bottom-6">
+          <div class="p-4 border rounded-xl border-border bg-background-card">
             <PrimaryButton
               @click="saveProjectWithComponents"
               variant="primary"
-              class="h-12 w-full"
+              class="w-full h-12"
               :disabled="store.isSaving"
             >
               <Icon
                 v-if="store.isSaving"
                 icon="lucide:loader-2"
-                class="ml-2 h-4 w-4 animate-spin"
+                class="w-4 h-4 ml-2 animate-spin"
               />
-              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
+              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
               {{ store.isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </PrimaryButton>
           </div>
@@ -285,7 +285,7 @@
   import { CURRENCY_CONVERSION } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
-  import { useFundedProjectStore } from '@/stores/fundedProject';
+  import { useFundedProjectStore } from '@/stores/funded-project-store';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
