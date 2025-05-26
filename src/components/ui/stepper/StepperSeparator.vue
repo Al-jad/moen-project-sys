@@ -1,36 +1,27 @@
-<script setup>
-  import { cn } from '@/lib/utils';
-  import { StepperSeparator, useForwardProps } from 'radix-vue';
+<script lang="ts" setup>
+import type { StepperSeparatorProps } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { StepperSeparator, useForwardProps } from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-  const props = defineProps({
-    orientation: { type: String, required: false },
-    decorative: { type: Boolean, required: false },
-    asChild: { type: Boolean, required: false },
-    as: { type: null, required: false },
-    class: { type: null, required: false },
-  });
+const props = defineProps<StepperSeparatorProps & { class?: HTMLAttributes['class'] }>()
 
-  const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+const delegatedProps = reactiveOmit(props, 'class')
 
-    return delegated;
-  });
-
-  const forwarded = useForwardProps(delegatedProps);
+const forwarded = useForwardProps(delegatedProps)
 </script>
 
 <template>
   <StepperSeparator
     v-bind="forwarded"
-    :class="
-      cn(
-        'bg-muted',
-        // Disabled
-        'group-data-[disabled]:bg-muted group-data-[disabled]:opacity-50',
-        // Completed
-        'group-data-[state=completed]:bg-accent-foreground',
-        props.class
-      )
-    "
+    :class="cn(
+      'bg-muted',
+      // Disabled
+      'group-data-[disabled]:bg-muted group-data-[disabled]:opacity-50',
+      // Completed
+      'group-data-[state=completed]:bg-accent-foreground',
+      props.class,
+    )"
   />
 </template>
