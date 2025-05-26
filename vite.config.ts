@@ -2,6 +2,7 @@ import vue from '@vitejs/plugin-vue';
 import autoprefixer from 'autoprefixer';
 import { fileURLToPath, URL } from 'node:url';
 import tailwind from 'tailwindcss';
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 
 import AutoImport from 'unplugin-auto-import/vite';
@@ -20,13 +21,17 @@ export default defineConfig({
       include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
       imports: ['vue', 'vue-router'],
       dirs: ['./composables/**'],
+      dts: 'src/auto-imports.d.ts',
     }),
-    Components({}),
+    Components({
+      dts: 'src/components.d.ts',
+    }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+    extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
     cors: {
@@ -36,4 +41,4 @@ export default defineConfig({
       credentials: true,
     },
   },
-});
+} as UserConfig);

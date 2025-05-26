@@ -3,7 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-    "scripts": {    "dev": "vite",    "build": "vue-tsc && vite build",    "preview": "vite preview",    "type-check": "vue-tsc --noEmit"  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit"
+  },
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/core": "^12.4.0",

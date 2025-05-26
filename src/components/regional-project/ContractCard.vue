@@ -252,16 +252,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
 
-  const props = defineProps({
-    contract: {
-      type: Object,
-      required: true,
-    },
-  });
+  const props = defineProps<{
+    contract: any;
+  }>();
 
   defineEmits(['edit', 'delete', 'view', 'addProcedure', 'editProcedure', 'deleteProcedure']);
 
@@ -289,3 +286,9 @@
     return `${formattedNumber} د.ع`;
   };
 </script>
+
+<style scoped>
+  .contract-card {
+    /* Your existing styles */
+  }
+</style>

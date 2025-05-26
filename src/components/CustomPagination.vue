@@ -69,7 +69,7 @@
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-  } from '@/components/ui/pagination';
+  } from '@/components/ui/pagination/index.js';
 
   const props = defineProps({
     modelValue: {
