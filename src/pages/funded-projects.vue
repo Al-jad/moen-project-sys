@@ -202,6 +202,11 @@
   import { useFundedProjectStore } from '@/stores/funded-project-store';
   import type { Beneficiary } from '@/types/api';
   import { formatTotalCost } from '@/utils/formatCost';
+  import {
+    getSelectedSortLabel as getSortLabel,
+    handleSort as handleSortUtil,
+    sortOptions,
+  } from '@/utils/sortUtils';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -219,22 +224,15 @@
   const itemsPerPage = ref(6);
   const beneficiaries = ref<Beneficiary[]>([]);
 
-  const sortOptions = [
-    { id: 'cost-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-to-line' },
-    { id: 'cost-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-to-line' },
-    { id: 'duration-high', label: 'من الفترة الاعلى', icon: 'lucide:arrow-up-wide-narrow' },
-    { id: 'duration-low', label: 'من الفترة الادنى', icon: 'lucide:arrow-down-narrow-wide' },
-    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-up-circle' },
-    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-down-circle' },
-  ];
-
   const selectedSort = ref('');
 
   const handleSort = (sortId: string) => {
     selectedSort.value = sortId;
-    const [field, order] = sortId.split('-');
-    if (field && (field === 'cost' || field === 'progress' || field === 'duration')) {
-      fundedProjectStore.sortProjects(field, order as 'asc' | 'desc');
+    const sortedProjects = handleSortUtil(filteredProjects.value, sortId);
+    if (sortedProjects) {
+      fundedProjectStore.$patch((state) => {
+        state.filteredProjects = sortedProjects;
+      });
     }
   };
 
@@ -242,10 +240,7 @@
     handleSort(item.id);
   };
 
-  const getSelectedSortLabel = computed(() => {
-    const option = sortOptions.find((opt) => opt.id === selectedSort.value);
-    return option ? option.label : '';
-  });
+  const getSelectedSortLabel = computed(() => getSortLabel(selectedSort.value));
 
   const clearSort = () => {
     selectedSort.value = '';
