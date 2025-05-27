@@ -1,57 +1,56 @@
 <template>
-  <Dialog :open="isOpen" @update:open="updateOpen">
-    <DialogContent class="sm:max-w-md">
-      <DialogHeader class="pb-2">
-        <DialogTitle class="text-center text-xl font-bold text-gray-900 dark:text-white">
-          {{ title }}
-        </DialogTitle>
-        <DialogDescription class="text-center text-gray-500 dark:text-gray-400">
-          {{ description }}
-        </DialogDescription>
-      </DialogHeader>
-      <div class="flex flex-col items-center justify-center space-y-5 py-6">
-        <div class="delete-icon-container rounded-full bg-red-100 p-4 shadow-sm dark:bg-red-900/30">
-          <Icon :icon="icon || 'lucide:trash-2'" class="h-8 w-8 text-red-600 dark:text-red-400" />
-        </div>
-        <p class="max-w-sm text-center text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-          {{ message || 'هذا الإجراء لا يمكن التراجع عنه. هل أنت متأكد من الاستمرار؟' }}
-        </p>
+  <BaseModal
+    :open="isOpen"
+    @update:open="updateOpen"
+    :content-class="'sm:max-w-md'"
+    :confirm-button-class="'bg-destructive hover:bg-destructive/90'"
+    :cancel-text="cancelText || 'إلغاء'"
+    :confirm-text="confirmText || 'حذف'"
+    @close="cancel"
+    @confirm="confirm"
+  >
+    <template #title>
+      <div class="space-y-2">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h3>
       </div>
-      <DialogFooter class="flex justify-center gap-4 pt-2 sm:justify-center">
-        <Button
+    </template>
+
+    <div class="flex flex-col items-center justify-center py-6 space-y-5">
+      <div class="p-4 bg-red-100 rounded-full shadow-sm delete-icon-container dark:bg-red-900/30">
+        <Icon :icon="icon || 'lucide:trash-2'" class="w-8 h-8 text-red-600 dark:text-red-400" />
+      </div>
+      <p class="max-w-sm text-sm leading-relaxed text-center text-gray-600 dark:text-gray-300">
+        {{ message || 'هذا الإجراء لا يمكن التراجع عنه. هل أنت متأكد من الاستمرار؟' }}
+      </p>
+    </div>
+
+    <template #footer v-if="isLoading">
+      <div class="flex justify-center gap-4 sm:justify-center">
+        <PrimaryButton
           type="button"
           variant="outline"
           @click="cancel"
-          class="min-w-[8rem] border-gray-300 px-4 py-2 transition-all duration-200 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800"
+          class="min-w-[8rem] px-4 py-2"
         >
           {{ cancelText || 'إلغاء' }}
-        </Button>
-        <Button
-          type="button"
+        </PrimaryButton>
+        <PrimaryButton
           variant="destructive"
           @click="confirm"
-          class="min-w-[8rem] px-4 py-2 transition-all duration-200"
-          :class="{ 'opacity-90 hover:opacity-100': !isLoading, 'opacity-80': isLoading }"
+          class="min-w-[8rem] px-4 py-2 opacity-80 transition-all duration-200"
           :disabled="isLoading"
         >
-          <Icon v-if="isLoading" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+          <Icon icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
           {{ confirmText || 'حذف' }}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+        </PrimaryButton>
+      </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
-  import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-  } from '@/components/ui/dialog';
+  import BaseModal from '@/components/BaseModal.vue';
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Icon } from '@iconify/vue';
   import { ref, watch } from 'vue';
 

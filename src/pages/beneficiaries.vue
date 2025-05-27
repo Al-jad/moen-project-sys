@@ -28,30 +28,30 @@
             :showExport="true"
             :isExportPremium="false"
           >
-            <template #name="{ value }">
-              <span class="dark:text-gray-300">{{ value }}</span>
+            <template #name="{ item }">
+              <span class="dark:text-gray-300">{{ item.name }}</span>
             </template>
-            <template #referenceEntity="{ value }">
-              <span class="dark:text-gray-300">{{ value }}</span>
+            <template #referenceEntity="{ item }">
+              <span class="dark:text-gray-300">{{ item.referenceEntity }}</span>
             </template>
-            <template #location="{ value }">
-              <span class="dark:text-gray-300">{{ value }}</span>
+            <template #location="{ item }">
+              <span class="dark:text-gray-300">{{ item.location }}</span>
             </template>
-            <template #createdAt="{ value }">
+            <template #createdAt="{ item }">
               <span class="dark:text-gray-300">{{
-                new Date(value).toLocaleDateString('en-US')
+                new Date(item.createdAt).toLocaleDateString('en-US')
               }}</span>
             </template>
             <template #action="{ item }">
               <div class="flex items-center justify-center gap-4">
                 <button
-                  @click="handleEdit(item)"
+                  @click="handleEdit(item as Beneficiary)"
                   class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
                   <Icon icon="lucide:edit" class="h-4 w-4" />
                 </button>
                 <button
-                  @click="handleDelete(item)"
+                  @click="handleDelete(item as Beneficiary)"
                   :disabled="isDeleting"
                   class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
@@ -71,7 +71,6 @@
         v-model:open="isDeleteModalOpen"
         :loading="isDeleting"
         title="حذف الجهة المستفيدة"
-        description="تأكيد حذف الجهة المستفيدة"
         :message="
           selectedEntity?.name
             ? 'هل أنت متأكد من حذف الجهة المستفيدة ' + selectedEntity.name + '؟'
@@ -94,14 +93,22 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import type { Beneficiary } from '@/types';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { toast } from 'vue-sonner';
 
-  // Table configuration
-  const columns = [
-    { key: 'name', label: 'اسم الجهة المستفيدة' },
-    { key: 'referenceEntity', label: 'اسم الجهة المرجعية' },
-    { key: 'location', label: 'العنوان' },
+  // Define Column type
+  type ColumnType = 'button' | 'text' | 'action' | 'actions' | 'custom';
+  interface Column {
+    key: string;
+    label: string;
+    type?: ColumnType;
+  }
+
+  // Table configuration with proper typing
+  const columns: Column[] = [
+    { key: 'name', label: 'اسم الجهة المستفيدة', type: 'text' },
+    { key: 'referenceEntity', label: 'اسم الجهة المرجعية', type: 'text' },
+    { key: 'location', label: 'العنوان', type: 'text' },
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
 
@@ -115,7 +122,7 @@
     deleteBeneficiary,
   } = useBeneficiaries();
 
-  // State
+  // State with proper typing
   const showModal = ref(false);
   const editingEntity = ref<Beneficiary | null>(null);
   const isDeleting = ref(false);
@@ -155,10 +162,7 @@
 
   const handleEdit = (entity: Beneficiary) => {
     editingEntity.value = {
-      id: entity.id,
-      name: entity.name,
-      referenceEntity: entity.referenceEntity,
-      location: entity.location,
+      ...entity, // Spread all properties to include createdAt and updatedAt
     };
     showModal.value = true;
   };
@@ -179,16 +183,14 @@
     try {
       isDeleting.value = true;
       await deleteBeneficiary(selectedEntity.value.id);
-      toast('تم حذف الجهة المستفيدة', {
+      toast.success('تم حذف الجهة المستفيدة', {
         description: `تم حذف الجهة المستفيدة "${selectedEntity.value.name}" بنجاح`,
-        type: 'success',
       });
       isDeleteModalOpen.value = false;
     } catch (error) {
       console.error('Error deleting beneficiary:', error);
-      toast('خطأ في حذف الجهة المستفيدة', {
+      toast.error('خطأ في حذف الجهة المستفيدة', {
         description: 'حدث خطأ أثناء محاولة حذف الجهة المستفيدة',
-        type: 'error',
       });
     } finally {
       isDeleting.value = false;
