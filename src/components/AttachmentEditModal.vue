@@ -1,116 +1,313 @@
 <template>
-  <Dialog :open="isOpen" @update:open="updateOpen">
-    <DialogContent class="sm:max-w-[425px]">
-      <DialogHeader class="mb-2 mt-4 flex flex-row gap-4">
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center justify-start">
-            <DialogTitle class="text-xl font-semibold">
-              {{ props.attachment ? 'تعديل المرفق' : 'إضافة مرفق جديد' }}
-            </DialogTitle>
+  <BaseModal
+    :open="isOpen"
+    @update:open="updateOpen"
+    @close="cancel"
+    @confirm="confirm"
+    content-class="sm:max-w-[32rem] max-h-[90vh] flex flex-col overflow-hidden"
+    header-class="pb-0 flex-shrink-0"
+    title-class="text-xl font-bold text-foreground-heading"
+    footer-class="flex justify-center gap-3 pt-6 mt-6 border-t border-border/50 flex-shrink-0 bg-background/80 backdrop-blur-sm"
+    :cancel-text="'إلغاء'"
+    :confirm-text="props.attachment ? 'حفظ التغييرات' : 'إضافة المرفق'"
+    :show-confirm="true"
+    confirm-button-class="bg-primary hover:bg-primary/90 disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-300"
+  >
+    <template #title>
+      <div class="space-y-3 p-6 pb-4 text-center" :class="{ 'opacity-60': isLoading }">
+        <!-- Icon Header -->
+
+        <!-- Title & Subtitle -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-center gap-4">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/40 to-primary/20 shadow-lg transition-all duration-300"
+              :class="{ 'animate-pulse': isLoading }"
+            >
+              <Icon
+                v-if="!isLoading"
+                :icon="props.attachment ? 'lucide:edit-3' : 'lucide:file-plus'"
+                class="h-6 w-6 text-primary"
+              />
+              <Icon v-else icon="lucide:loader-2" class="h-6 w-6 animate-spin text-primary" />
+            </div>
+            <h3 class="text-2xl font-bold text-foreground-heading">
+              {{
+                isLoading
+                  ? props.attachment
+                    ? 'جاري حفظ التغييرات...'
+                    : 'جاري إضافة المرفق...'
+                  : props.attachment
+                    ? 'تعديل المرفق'
+                    : 'إضافة مرفق جديد'
+              }}
+            </h3>
           </div>
-          <DialogDescription class="text-right">
-            {{ props.attachment ? 'قم بتعديل بيانات المرفق هنا.' : 'قم بإضافة مرفق جديد هنا.' }}
-            اضغط حفظ عند الانتهاء.
-          </DialogDescription>
+          <p class="mx-auto max-w-sm text-sm leading-relaxed text-foreground-muted">
+            {{
+              isLoading
+                ? 'يرجى الانتظار، جاري معالجة طلبك...'
+                : props.attachment
+                  ? 'قم بتحديث معلومات المرفق وإعادة رفع الملف إذا لزم الأمر'
+                  : 'أضف ملفًا جديدًا مع المعلومات المطلوبة لحفظه في النظام'
+            }}
+          </p>
         </div>
-        <Button variant="ghost" @click="cancel">
-          <Icon icon="lucide:x" class="h-4 w-4" />
-        </Button>
-      </DialogHeader>
-      <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
-      <div class="space-y-5 py-6">
-        <div v-if="props.attachment" class="grid gap-2">
-          <Label for="project" class="text-[0.925rem]">المشروع</Label>
-          <div
-            class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 dark:border-gray-700 dark:bg-gray-800/50"
-          >
-            <Icon icon="lucide:folder" class="h-4 w-4 text-gray-500" />
-            <span class="text-sm text-gray-600 dark:text-gray-400">
-              {{ props.attachment?.projectName }}
-            </span>
+
+        <!-- Project Info Badge (for editing) -->
+        <div
+          v-if="props.attachment"
+          class="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2"
+        >
+          <Icon icon="lucide:folder" class="h-4 w-4 text-accent" />
+          <span class="text-sm font-medium text-accent">{{
+            props.attachment?.projectName || 'غير محدد'
+          }}</span>
+        </div>
+
+        <!-- Loading Progress Bar -->
+        <div v-if="isLoading" class="w-full">
+          <div class="h-1 w-full overflow-hidden rounded-full bg-primary/20">
+            <div class="animate-pulse-slow h-full bg-gradient-to-r from-primary to-accent"></div>
           </div>
         </div>
+      </div>
+    </template>
 
-        <div class="grid gap-2">
-          <Label for="title" class="text-[0.925rem]">العنوان</Label>
-          <Input
-            id="title"
-            v-model="form.title"
-            placeholder="عنوان المرفق"
-            class="dark:bg-gray-800"
-          />
-        </div>
-
-        <div class="grid gap-2">
-          <Label for="description" class="text-[0.925rem]">الوصف</Label>
-          <Textarea
-            id="description"
-            v-model="form.description"
-            placeholder="وصف المرفق"
-            class="min-h-[6rem] dark:bg-gray-800"
-          />
-        </div>
-
-        <div class="grid gap-2">
-          <div class="flex items-center justify-between">
-            <Label for="file" class="text-[0.925rem]">الملف</Label>
-            <div v-if="currentFile" class="flex items-center gap-2 text-sm text-gray-500">
-              <span>الملف الحالي:</span>
-              <a
-                :href="props.attachment?.url"
-                target="_blank"
-                class="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                <Icon icon="lucide:file" class="h-4 w-4" />
-                <span>{{ currentFile }}</span>
-                <Icon icon="tabler:download" class="h-3.5 w-3.5" />
-              </a>
+    <!-- Scrollable Content -->
+    <div
+      class="flex-1 overflow-y-auto px-6 pb-2"
+      :class="{ 'pointer-events-none opacity-60': isLoading }"
+    >
+      <div class="space-y-6">
+        <!-- Title Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:type"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+              :class="{ 'animate-pulse': isLoading }"
+            />
+            <Label for="title" class="text-sm font-semibold text-foreground-body"
+              >عنوان المرفق</Label
+            >
+            <span class="text-sm text-red-500">*</span>
+          </div>
+          <div class="group relative">
+            <Input
+              id="title"
+              v-model="form.title"
+              :disabled="isLoading"
+              placeholder="اكتب عنوانًا وصفيًا للمرفق..."
+              class="h-12 rounded-xl border-2 border-border/60 bg-background/50 pl-12 backdrop-blur-sm transition-all duration-300 focus:border-primary focus:bg-background focus:ring-4 focus:ring-primary/10 disabled:cursor-not-allowed disabled:opacity-50 group-hover:border-border"
+            />
+            <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
+              <div class="h-1 w-16 overflow-hidden rounded-full bg-primary/30">
+                <div class="h-full animate-pulse bg-primary"></div>
+              </div>
             </div>
           </div>
-          <div class="space-y-3">
-            <Input
+        </div>
+
+        <!-- Description Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:align-left"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+              :class="{ 'animate-pulse': isLoading }"
+            />
+            <Label for="description" class="text-sm font-semibold text-foreground-body"
+              >وصف المرفق</Label
+            >
+            <span class="text-xs text-muted-foreground">(اختياري)</span>
+          </div>
+          <div class="group relative">
+            <Textarea
+              id="description"
+              v-model="form.description"
+              :disabled="isLoading"
+              placeholder="أضف وصفًا مفصلًا للمرفق ليسهل العثور عليه لاحقًا..."
+              class="max-h-[8rem] min-h-[5rem] resize-none rounded-xl border-2 border-border/60 bg-background/50 pl-12 backdrop-blur-sm transition-all duration-300 focus:border-primary focus:bg-background focus:ring-4 focus:ring-primary/10 disabled:cursor-not-allowed disabled:opacity-50 group-hover:border-border"
+            />
+            <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
+              <div class="h-1 w-20 overflow-hidden rounded-full bg-primary/30">
+                <div class="h-full animate-pulse bg-primary"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <div
+              class="h-2 w-2 rounded-full bg-primary"
+              :class="{ 'animate-pulse': isLoading }"
+            ></div>
+            <Label for="file" class="text-sm font-semibold text-foreground-body">رفع الملف</Label>
+            <span v-if="!props.attachment" class="text-sm text-red-500">*</span>
+          </div>
+
+          <!-- Current File Display -->
+          <div
+            v-if="currentFile"
+            class="rounded-xl border-2 border-dashed border-info/30 bg-info/5 p-4"
+            :class="{ 'opacity-60': isLoading }"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-info/20">
+                  <Icon icon="lucide:file-text" class="h-5 w-5 text-info" />
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-foreground-body">الملف الحالي</p>
+                  <p class="text-xs font-medium text-info">{{
+                    currentFile.length > 25 ? currentFile.substring(0, 25) + '...' : currentFile
+                  }}</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                :disabled="isLoading"
+                @click="downloadCurrentFile"
+                class="h-9 px-3 text-info hover:bg-info/10 hover:text-info/80 disabled:opacity-50"
+              >
+                <Icon icon="lucide:download" class="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <!-- File Upload Area -->
+          <div class="relative" :class="{ 'pointer-events-none opacity-60': isLoading }">
+            <input
               id="file"
               type="file"
               :required="!props.attachment"
-              class="h-14 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-600 hover:file:bg-blue-100 dark:bg-gray-800 dark:file:bg-blue-950 dark:file:text-blue-400 dark:hover:file:bg-blue-900"
+              :disabled="isLoading"
               @change="handleFileChange"
+              class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
             />
             <div
-              v-if="form.file"
-              class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+              class="group cursor-pointer rounded-xl border-2 border-dashed border-border/60 p-6 text-center transition-all duration-300 hover:border-primary/60 hover:bg-primary/5"
+              :class="[
+                form.file ? 'border-success/60 bg-success/5' : '',
+                isLoading ? 'cursor-not-allowed' : '',
+              ]"
             >
-              <Icon icon="lucide:file-plus" class="h-4 w-4 text-green-500" />
-              <span class="text-sm text-gray-600 dark:text-gray-400">
-                {{ form.file.name }} (ملف جديد)
-              </span>
+              <div class="space-y-3">
+                <div
+                  class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20"
+                >
+                  <Icon
+                    v-if="!isLoading"
+                    :icon="form.file ? 'lucide:check-circle' : 'lucide:upload-cloud'"
+                    :class="form.file ? 'h-6 w-6 text-success' : 'h-6 w-6 text-primary'"
+                  />
+                  <Icon v-else icon="lucide:loader-2" class="h-6 w-6 animate-spin text-primary" />
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-foreground-body">
+                    {{
+                      isLoading
+                        ? 'جاري المعالجة...'
+                        : form.file
+                          ? 'تم اختيار الملف بنجاح'
+                          : 'اختر ملفًا للرفع'
+                    }}
+                  </p>
+                  <p class="mt-1 text-xs text-muted-foreground">
+                    {{ isLoading || form.file ? '' : 'أو اسحب الملف وأفلته هنا' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected File Preview -->
+          <div v-if="form.file" class="duration-300 animate-in slide-in-from-bottom-2">
+            <div
+              class="rounded-xl border border-success/30 bg-gradient-to-r from-success/10 to-success/5 p-4"
+              :class="{ 'opacity-60': isLoading }"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-success/20"
+                >
+                  <Icon v-if="!isLoading" icon="lucide:file-plus" class="h-5 w-5 text-success" />
+                  <Icon v-else icon="lucide:loader-2" class="h-5 w-5 animate-spin text-success" />
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-foreground-body">{{
+                    form.file.name
+                  }}</p>
+                  <div class="mt-1 flex items-center gap-2">
+                    <div
+                      class="h-2 w-2 rounded-full bg-success"
+                      :class="isLoading ? 'animate-spin' : 'animate-pulse'"
+                    ></div>
+                    <p class="text-xs font-medium text-success">
+                      {{ isLoading ? 'جاري الرفع...' : 'جاهز للرفع' }}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  :disabled="isLoading"
+                  @click="clearFile"
+                  class="h-8 w-8 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                >
+                  <Icon icon="lucide:x" class="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <DialogFooter class="border-t pt-4 dark:border-gray-700">
-        <div class="flex w-full items-center justify-end gap-3">
-          <Button variant="outline" @click="cancel">إلغاء</Button>
-          <Button type="submit" :disabled="isLoading || !isValid" @click="confirm">
-            <Icon v-if="isLoading" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
-            {{ props.attachment ? 'حفظ التغييرات' : 'إضافة المرفق' }}
-          </Button>
-        </div>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+    <template #footer>
+      <div class="flex justify-center gap-3 px-6">
+        <Button
+          variant="outline"
+          @click="cancel"
+          :disabled="isLoading"
+          class="h-11 min-w-[7rem] border-2 border-border/60 transition-all duration-300 hover:border-border hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          إلغاء
+        </Button>
+        <Button
+          type="submit"
+          :disabled="isLoading || !isValid"
+          @click="confirm"
+          class="h-11 min-w-[7rem] bg-gradient-to-r from-primary to-primary/90 px-6 text-primary-foreground shadow-lg transition-all duration-300 hover:from-primary/90 hover:to-primary hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Icon v-if="isLoading" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+          <Icon
+            v-else
+            :icon="props.attachment ? 'lucide:save' : 'lucide:plus'"
+            class="mr-2 h-4 w-4"
+          />
+          {{
+            isLoading
+              ? props.attachment
+                ? 'جاري الحفظ...'
+                : 'جاري الإضافة...'
+              : props.attachment
+                ? 'حفظ التغييرات'
+                : 'إضافة المرفق'
+          }}
+        </Button>
+      </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
+  import BaseModal from '@/components/BaseModal.vue';
   import { Button } from '@/components/ui/button';
-  import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-  } from '@/components/ui/dialog';
   import { Input } from '@/components/ui/input';
   import { Label } from '@/components/ui/label';
   import { Textarea } from '@/components/ui/textarea';
@@ -136,7 +333,7 @@
     },
   });
 
-  const emit = defineEmits(['update:open', 'confirm', 'cancel']);
+  const emit = defineEmits(['update:open', 'confirm', 'cancel', 'success']);
 
   const isOpen = ref(props.open);
   const isLoading = ref(props.loading);
@@ -189,17 +386,51 @@
     }
   };
 
+  const clearFile = () => {
+    if (isLoading.value) return;
+    form.value.file = null;
+    // Reset the file input
+    const fileInput = document.getElementById('file');
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const updateOpen = (value) => {
     isOpen.value = value;
     emit('update:open', value);
   };
 
-  const confirm = () => {
-    if (!isValid.value) return;
-    emit('confirm', { ...form.value, projectId: props.projectId });
+  const confirm = async () => {
+    if (!isValid.value || isLoading.value) return;
+
+    try {
+      const result = await emit('confirm', { ...form.value, projectId: props.projectId });
+
+      // Emit success event for parent to handle reload
+      emit('success', {
+        action: props.attachment ? 'update' : 'create',
+        attachment: result,
+        projectId: props.projectId,
+      });
+
+      // Reset form and close modal
+      form.value = {
+        title: '',
+        description: '',
+        file: null,
+      };
+      currentFile.value = '';
+      updateOpen(false);
+    } catch (error) {
+      console.error('Error saving attachment:', error);
+      // Keep modal open on error
+    }
   };
 
   const cancel = () => {
+    if (isLoading.value) return;
+
     form.value = {
       title: '',
       description: '',
@@ -209,4 +440,56 @@
     emit('cancel');
     updateOpen(false);
   };
+
+  const downloadCurrentFile = () => {
+    if (props.attachment?.url && !isLoading.value) {
+      window.open(props.attachment.url, '_blank');
+    }
+  };
 </script>
+
+<style scoped>
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: animate-in 0.3s ease-out;
+  }
+
+  .slide-in-from-bottom-2 {
+    animation: slide-in-from-bottom 0.3s ease-out;
+  }
+
+  @keyframes slide-in-from-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 2s infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+</style>
