@@ -6,7 +6,7 @@
   >
     <SelectTrigger
       :class="[
-        'flex flex-row-reverse items-center gap-2 border-border bg-background-surface transition-all duration-200',
+        'flex flex-row-reverse items-center gap-2 !border-border !bg-background-surface transition-all duration-200',
         disabled ? 'cursor-not-allowed opacity-50' : 'hover:!bg-background-hover hover:shadow-sm',
         triggerClass,
       ]"
@@ -78,7 +78,7 @@
                   option.value === modelValue
                     ? 'scale-110 !text-primary'
                     : '!text-foreground-muted',
-                  'group-hover:scale-105 ',
+                  'group-hover:scale-105',
                 ]"
               />
             </div>

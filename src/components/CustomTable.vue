@@ -3,55 +3,60 @@
     <!-- Filters Section -->
     <div
       v-if="showExport || showDateFilter || showSearch || filters.length > 0"
-      class="mb-8 flex items-center justify-between gap-4"
+      class="mb-8 flex flex-col items-start justify-between gap-6 rounded-xl border border-border bg-background-surface/60 p-6 sm:flex-row sm:items-center"
     >
-      <div class="flex items-center gap-6">
-        <Button
+      <div class="flex flex-wrap items-center gap-4">
+        <PrimaryButton
           v-if="showExport"
           variant="outline"
-          class="border-border bg-background-card px-2"
-          :class="isExportPremium ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'"
+          :class="
+            isExportPremium
+              ? 'border-destructive/20 bg-destructive/10 text-destructive'
+              : 'border-success/20 bg-success/10 text-success'
+          "
           :disabled="isExportPremium"
           @click="$emit('export')"
         >
           <Icon
             icon="lucide:file-spreadsheet"
             class="ml-2 h-4 w-4"
-            :class="isExportPremium ? 'text-red-500' : 'text-green-500'"
+            :class="isExportPremium ? 'text-destructive' : 'text-success'"
           />
-          <span :class="isExportPremium ? 'text-red-500' : 'text-green-500'">تصدير Excel</span>
-          <div v-if="isExportPremium" class="flex items-center gap-1 text-xs text-red-500">
+          <span :class="isExportPremium ? 'text-destructive' : 'text-success'" class="font-medium"
+            >تصدير Excel</span
+          >
+          <div v-if="isExportPremium" class="flex items-center gap-1 text-xs text-destructive">
             <span> – هذه الميزة غير متوفرة حاليا</span>
             <Icon icon="lucide:lock" class="h-4 w-4" />
           </div>
-        </Button>
+        </PrimaryButton>
 
         <DateRangeInput v-if="showDateFilter" v-model="dateRange" :isPremium="isPremium" />
 
-        <div v-for="filter in filters" :key="filter.key" class="min-w-[200px]">
+        <div v-for="filter in filters" :key="filter.key" class="min-w-[12.5rem]">
           <CustomSelect
             v-model="selectedFilters[filter.key]"
             :options="filter.options"
             :placeholder="filter.placeholder"
             :TriggerIcon="filter.icon"
-            :trigger-class="filter.triggerClass"
+            :trigger-class="`${filter.triggerClass} `"
           />
         </div>
       </div>
 
-      <div v-if="showSearch" class="relative min-w-[240px]">
+      <div v-if="showSearch" class="relative min-w-[15rem]">
         <CustomInput v-model="searchQuery" placeholder="بحث سريع" :icon="'lucide:search'" />
       </div>
     </div>
 
     <!-- Table Section -->
-    <Table class="overflow-hidden rounded-xl border-border">
+    <Table class="overflow-hidden rounded-xl border border-border shadow-sm">
       <TableHeader>
-        <TableRow class="bg-background-surface">
+        <TableRow class="border-b border-border bg-background-card hover:bg-background-card">
           <TableHead
             v-for="column in columns"
             :key="column.key"
-            class="whitespace-nowrap text-right font-medium text-gray-700 dark:text-gray-300"
+            class="h-14 whitespace-nowrap px-6 text-right font-semibold text-foreground-heading"
             :class="{
               'first:rounded-tr-xl': column === columns[0],
               'w-10 last:rounded-tl-xl': column === columns[columns.length - 1],
@@ -61,25 +66,27 @@
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody class="border-border bg-background-surface">
         <template v-if="loading">
           <TableRow>
-            <TableCell :colspan="columns.length" class="py-10 text-center">
+            <TableCell :colspan="columns.length" class="py-16 text-center">
               <div class="flex flex-col items-center justify-center">
                 <div
-                  class="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+                  class="border-3 mb-4 h-8 w-8 animate-spin rounded-full border-primary border-t-transparent"
                 ></div>
-                <span class="text-sm text-muted-foreground">جاري التحميل...</span>
+                <span class="text-sm font-medium text-foreground-muted">جاري التحميل...</span>
               </div>
             </TableCell>
           </TableRow>
         </template>
         <template v-else-if="filteredData.length === 0">
           <TableRow>
-            <TableCell :colspan="columns.length" class="py-10 text-center">
-              <div class="flex flex-col items-center justify-center gap-2">
-                <Icon icon="lucide:inbox" class="h-8 w-8 text-gray-400" />
-                <span class="text-sm text-muted-foreground">لا توجد بيانات</span>
+            <TableCell :colspan="columns.length" class="py-16 text-center">
+              <div class="flex flex-col items-center justify-center gap-3">
+                <div class="rounded-full bg-background-surface/30 p-4">
+                  <Icon icon="lucide:inbox" class="h-8 w-8 text-foreground-muted" />
+                </div>
+                <span class="text-sm font-medium text-foreground-muted">لا توجد بيانات للعرض</span>
               </div>
             </TableCell>
           </TableRow>
@@ -88,7 +95,7 @@
           v-else
           v-for="(item, index) in paginatedData"
           :key="index"
-          class="transition-colors hover:bg-background-hover"
+          class="border border-border transition-all duration-200 last:border-b-0 hover:bg-background-surface/20"
           :class="{
             'last:[&>td:first-child]:rounded-br-xl last:[&>td:last-child]:rounded-bl-xl':
               index === paginatedData.length - 1,
@@ -97,13 +104,13 @@
           <TableCell
             v-for="column in columns"
             :key="column.key"
-            :class="[column.cellClass, column.width ? `w-[${column.width}]` : '', 'py-3']"
+            :class="[column.cellClass, column.width ? `w-[${column.width}]` : '', 'px-6 py-4']"
           >
             <slot :name="column.key" :item="item" :value="item[column.key]">
               <template v-if="column.type === 'button'">
                 <Button
                   variant="link"
-                  class="h-auto p-0 text-primary hover:text-primary/80"
+                  class="h-auto p-0 font-medium text-primary transition-colors hover:text-primary-hover"
                   @click="emit('cell-click', { key: column.key, item })"
                 >
                   {{ item[column.key] }}
@@ -117,7 +124,8 @@
                     :variant="action.variant || 'ghost'"
                     size="icon"
                     :class="
-                      action.class || 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                      action.class ||
+                      'text-foreground-muted hover:bg-background-hover hover:text-foreground'
                     "
                     @click="emit('action-click', action.key, item)"
                   >
@@ -130,7 +138,7 @@
                   <Button
                     variant="ghost"
                     size="icon"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    class="text-foreground-muted transition-colors hover:bg-background-hover hover:text-foreground"
                     @click="emit('action-click', 'view', item)"
                   >
                     <Icon :icon="column.icon || 'lucide:eye'" class="h-4 w-4" />
@@ -143,7 +151,7 @@
                 </slot>
               </template>
               <template v-else>
-                {{ item[column.key] }}
+                <span class="text-foreground-body">{{ item[column.key] }}</span>
               </template>
             </slot>
           </TableCell>
@@ -152,9 +160,13 @@
     </Table>
 
     <!-- Pagination -->
-    <div class="mt-4 flex items-center justify-between border-t py-3 dark:border-gray-700">
+    <div
+      class="mt-6 flex flex-col items-center justify-between gap-4 rounded-lg border-t border-border bg-background-surface/40 p-4 pt-6 sm:flex-row"
+    >
       <Pagination v-model="currentPage" :total="filteredData.length" :per-page="itemsPerPage" />
-      <div class="whitespace-nowrap text-sm text-gray-500">
+      <div
+        class="whitespace-nowrap rounded-lg border border-border bg-background-card/70 px-4 py-2 text-sm text-foreground-muted"
+      >
         عرض {{ (currentPage - 1) * itemsPerPage + 1 }} إلى
         {{ Math.min(currentPage * itemsPerPage, filteredData.length) }} من
         {{ filteredData.length }} نتيجة
@@ -164,6 +176,7 @@
 </template>
 
 <script setup lang="ts">
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import {
     Table,
     TableBody,

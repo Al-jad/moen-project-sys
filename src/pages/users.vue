@@ -1,8 +1,14 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-gray-200 p-6 dark:bg-gray-900">
-      <div class="rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <div class="p-6">
+    <main class="min-h-screen bg-background p-6">
+      <div class="rounded-xl border border-border bg-card shadow-lg">
+        <div class="p-8">
+          <!-- Page Header -->
+          <div class="mb-8 border-b border-border pb-6">
+            <h1 class="mb-2 text-2xl font-bold text-foreground-heading">إدارة المستخدمين</h1>
+            <p class="text-foreground-muted">إدارة وعرض جميع المستخدمين في النظام</p>
+          </div>
+
           <CustomTable
             ref="tableRef"
             :columns="columns"
@@ -16,7 +22,7 @@
             <template #id="{ item }">
               <Button
                 variant="link"
-                class="h-auto p-0 text-blue-600 dark:text-blue-400"
+                class="h-auto p-0 font-medium text-primary transition-colors hover:text-primary-hover"
                 @click="$router.push(`/users/${item.id}`)"
               >
                 {{ item.id }}
@@ -25,28 +31,27 @@
 
             <template #role="{ item }">
               <Badge
-                v-if="item.role === 'admin'"
-                variant="success"
-                class="w-fit bg-green-500 font-medium text-white dark:bg-green-500/20"
+                v-if="item.role === 'ADMIN'"
+                class="w-fit border-0 bg-success font-medium text-success-foreground shadow-sm"
               >
                 مدير
               </Badge>
               <Badge
-                v-else-if="item.role === 'supervisor'"
-                class="w-fit bg-gray-500 font-medium text-white dark:bg-gray-500/20 dark:text-gray-300"
+                v-else-if="item.role === 'MANAGER'"
+                class="w-fit border-0 bg-accent font-medium text-accent-foreground shadow-sm"
               >
                 مشرف
               </Badge>
               <Badge
                 v-else
-                class="w-fit font-medium text-white dark:bg-gray-500/20 dark:text-gray-300"
+                class="w-fit border-0 bg-secondary font-medium text-secondary-foreground shadow-sm"
               >
                 مدخل بيانات
               </Badge>
             </template>
 
             <template #createdAt="{ item }">
-              <div>
+              <div class="font-medium text-foreground-body">
                 {{
                   new Date(item.createdAt).toLocaleDateString('ar', {
                     year: 'numeric',
@@ -62,24 +67,29 @@
 
       <!-- User Details Dialog -->
       <Dialog v-model:open="showDetailsDialog">
-        <DialogContent class="dark:border-gray-700 dark:bg-gray-800 sm:max-w-[600px]">
+        <DialogContent class="border border-border bg-background shadow-xl sm:max-w-[36rem]">
           <DialogHeader>
-            <DialogTitle class="text-right dark:text-white">تفاصيل المستخدم</DialogTitle>
-            <DialogDescription class="text-right dark:text-gray-400">
-              معلومات المستخدم الكاملة
+            <DialogTitle class="text-right text-xl font-bold text-foreground-heading"
+              >تفاصيل المستخدم</DialogTitle
+            >
+            <DialogDescription class="text-right text-foreground-muted">
+              معلومات المستخدم الكاملة والتفصيلية
             </DialogDescription>
           </DialogHeader>
-          <div class="grid gap-y-4 py-4">
+          <div class="grid gap-y-6 py-6">
             <div
               v-for="(field, index) in userDetailsFields"
               :key="index"
-              class="grid grid-cols-[120px_1fr] items-center gap-4"
+              class="grid grid-cols-[7.5rem_1fr] items-center gap-6 rounded-lg border border-border bg-background-surface/50 p-4"
             >
-              <span class="text-right text-gray-500 dark:text-gray-400">{{ field.label }}</span>
-              <span v-if="field.type !== 'badge'" class="dark:text-gray-300">{{
+              <span class="text-right font-medium text-foreground-muted">{{ field.label }}</span>
+              <span v-if="field.type !== 'badge'" class="font-medium text-foreground-body">{{
                 selectedUser?.[field.key as keyof User]
               }}</span>
-              <Badge v-else variant="success" class="w-fit font-medium dark:bg-green-500/20">
+              <Badge
+                v-else
+                class="w-fit border-0 bg-success font-medium text-success-foreground shadow-sm"
+              >
                 {{ selectedUser?.[field.key as keyof User] }}
               </Badge>
             </div>
@@ -102,7 +112,7 @@
   } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
-  import type { User, UserRole } from '@/types';
+  import type { User } from '@/types';
   import { computed, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
@@ -170,9 +180,9 @@
     {
       label: 'الدور',
       key: 'role',
-      format: (role: UserRole) => {
-        if (role === UserRole.ADMIN) return 'مدير';
-        if (role === UserRole.MANAGER) return 'مشرف';
+      format: (role: string) => {
+        if (role === 'admin') return 'مدير';
+        if (role === 'manager') return 'مشرف';
         return 'مدخل بيانات';
       },
     },
@@ -202,8 +212,7 @@
         user.username ||
         (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''),
       الايميل: user.email || '',
-      الصلاحية:
-        user.role === 'admin' ? 'مدير' : user.role === 'supervisor' ? 'مشرف' : 'مدخل بيانات',
+      الصلاحية: user.role === 'admin' ? 'مدير' : user.role === 'manager' ? 'مشرف' : 'مدخل بيانات',
       'تاريخ الاضافة': user.createdAt
         ? new Date(user.createdAt).toLocaleDateString('ar', {
             year: 'numeric',
@@ -217,7 +226,7 @@
   };
 
   function getUsers() {
-    axiosInstance.get('/api/auth/users').then((res) => {
+    axiosInstance.get('/api/auth/users').then((res: any) => {
       users.value = res.data;
     });
   }
