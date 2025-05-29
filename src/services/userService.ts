@@ -1,165 +1,98 @@
 import axiosInstance from '@/plugins/axios';
-import { BaseApiService } from '@/services/base/BaseApiService';
-import type {
-  CreateUserRequest,
-  LoginRequest,
-  LoginResponse,
-  ServiceResponse,
-  UpdateUserRequest,
-  User,
-  UserRole,
-} from '@/types';
+import type { ServiceResponse } from '@/types';
+import type { CreateUserPayload, UpdateUserPayload, User } from '@/types/users';
 
-class UserService extends BaseApiService<User, CreateUserRequest, UpdateUserRequest> {
-  constructor() {
-    super(axiosInstance, '/api/User');
-  }
-
-  /**
-   * Get all users
-   * @returns Promise with the users data
-   */
-  async getAllUsers(): ServiceResponse<User[]> {
-    return this.getAll();
-  }
-
-  /**
-   * Get a user by ID
-   * @param id - User ID
-   * @returns Promise with the user data
-   */
-  async getUserById(id: number | string): ServiceResponse<User> {
-    return this.getById(id);
-  }
-
-  /**
-   * Create a new user
-   * @param userData - User data
-   * @returns Promise with the created user data
-   */
-  async createUser(userData: CreateUserRequest): ServiceResponse<User> {
-    return this.create(userData);
-  }
-
-  /**
-   * Update a user
-   * @param id - User ID
-   * @param userData - Updated user data
-   * @returns Promise with the updated user data
-   */
-  async updateUser(id: number | string, userData: UpdateUserRequest): ServiceResponse<User> {
-    return this.update(id, userData);
-  }
-
-  /**
-   * Delete a user
-   * @param id - User ID
-   * @returns Promise with the deletion result
-   */
-  async deleteUser(id: number | string): ServiceResponse<void> {
-    return this.delete(id);
-  }
-
-  /**
-   * Get current authenticated user
-   * @returns Promise with the current user data
-   */
-  async getCurrentUser(): ServiceResponse<User> {
-    return axiosInstance.get('/api/auth/me');
-  }
-
-  /**
-   * Login user
-   * @param credentials - Login credentials
-   * @returns Promise with login response
-   */
-  async login(credentials: LoginRequest): ServiceResponse<LoginResponse> {
-    return axiosInstance.post('/api/auth/login', credentials);
-  }
-
-  /**
-   * Logout user
-   * @returns Promise with logout result
-   */
-  async logout(): ServiceResponse<void> {
-    return axiosInstance.post('/api/auth/logout');
-  }
-
-  /**
-   * Refresh authentication token
-   * @returns Promise with new token
-   */
-  async refreshToken(): ServiceResponse<LoginResponse> {
-    return axiosInstance.post('/api/auth/refresh');
-  }
-
-  /**
-   * Change user password
-   * @param id - User ID
-   * @param currentPassword - Current password
-   * @param newPassword - New password
-   * @returns Promise with the result
-   */
-  async changePassword(
-    id: number | string,
-    currentPassword: string,
-    newPassword: string
-  ): ServiceResponse<void> {
-    return axiosInstance.put(`${this.baseEndpoint}/${id}/password`, {
-      currentPassword,
-      newPassword,
-    });
-  }
-
-  /**
-   * Update user role
-   * @param id - User ID
-   * @param role - New role
-   * @returns Promise with updated user
-   */
-  async updateUserRole(id: number | string, role: UserRole): ServiceResponse<User> {
-    return this.patch(id, { role });
-  }
-
-  /**
-   * Toggle user active status
-   * @param id - User ID
-   * @param isActive - Active status
-   * @returns Promise with updated user
-   */
-  async toggleUserStatus(id: number | string, isActive: boolean): ServiceResponse<User> {
-    return this.patch(id, { isActive });
-  }
-
-  /**
-   * Search users by username or email
-   * @param searchTerm - Search term
-   * @returns Promise with matching users
-   */
-  async searchUsers(searchTerm: string): ServiceResponse<User[]> {
-    return this.getAll({ search: searchTerm });
-  }
-
-  /**
-   * Get users by role
-   * @param role - User role
-   * @returns Promise with users of specified role
-   */
-  async getUsersByRole(role: UserRole): ServiceResponse<User[]> {
-    return axiosInstance.get(`${this.baseEndpoint}/role/${role}`);
-  }
-
-  /**
-   * Get users with pagination
-   * @param page - Page number
-   * @param limit - Items per page
-   * @returns Promise with paginated users
-   */
-  async getUsersPaginated(page: number = 1, limit: number = 10) {
-    return this.getPaginated({ page, limit });
-  }
+// User CRUD Operations
+async function getAllUsers(): ServiceResponse<User[]> {
+  const response = await axiosInstance.get('/api/Auth/users');
+  return response;
 }
 
-// Export singleton instance
-export const userService = new UserService();
+async function getUserById(id: number): ServiceResponse<User> {
+  const response = await axiosInstance.get(`/api/Auth/users/${id}`);
+  return response;
+}
+
+async function createUser(userData: CreateUserPayload): ServiceResponse<User> {
+  const response = await axiosInstance.post('/api/Auth/users', userData);
+  return response;
+}
+
+async function updateUser(id: number, userData: UpdateUserPayload): ServiceResponse<User> {
+  const response = await axiosInstance.put(`/api/Auth/users/${id}`, userData);
+  return response;
+}
+
+async function deleteUser(id: number): ServiceResponse<void> {
+  const response = await axiosInstance.delete(`/api/Auth/users/${id}`);
+  return response;
+}
+
+// Auth Operations
+async function getCurrentUser(): ServiceResponse<User> {
+  const response = await axiosInstance.get('/api/auth/me');
+  return response;
+}
+
+async function login(credentials: {
+  email: string;
+  password: string;
+}): ServiceResponse<{ token: string; user: User }> {
+  const response = await axiosInstance.post('/api/auth/login', credentials);
+  return response;
+}
+
+async function logout(): ServiceResponse<void> {
+  const response = await axiosInstance.post('/api/auth/logout');
+  return response;
+}
+
+// Utility Operations
+async function searchUsers(searchTerm: string): ServiceResponse<User[]> {
+  const response = await axiosInstance.get(BASE_URL, {
+    params: { search: searchTerm },
+  });
+  return response;
+}
+
+async function getUsersByRole(role: User['role']): ServiceResponse<User[]> {
+  const response = await axiosInstance.get(`${BASE_URL}/role/${role}`);
+  return response;
+}
+
+async function toggleUserStatus(id: number, isActive: boolean): ServiceResponse<User> {
+  const response = await axiosInstance.patch(`${BASE_URL}/${id}/status`, { isActive });
+  return response;
+}
+
+async function changePassword(
+  id: number,
+  currentPassword: string,
+  newPassword: string
+): ServiceResponse<void> {
+  const response = await axiosInstance.put(`${BASE_URL}/${id}/password`, {
+    currentPassword,
+    newPassword,
+  });
+  return response;
+}
+
+export const userService = {
+  // CRUD Operations
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  // Auth Operations
+  getCurrentUser,
+  login,
+  logout,
+  // Utility Operations
+  searchUsers,
+  getUsersByRole,
+  toggleUserStatus,
+  changePassword,
+};
+
 export default userService;

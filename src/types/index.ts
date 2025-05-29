@@ -1,3 +1,4 @@
+import type { Activity } from './activity';
 import type {
   ApiError,
   ApiResponse,
@@ -9,6 +10,8 @@ import type {
   ServiceResponse,
   SortParams,
 } from './api-base';
+import type { Attachment } from './attachment';
+import type { ActionAudit } from './audit';
 import type {
   CreateUserRequest,
   LoginRequest,
@@ -17,9 +20,6 @@ import type {
   User,
   UserRole,
 } from './auth';
-import type { ActionAudit } from './audit';
-import type { Activity } from './activity';
-import type { Attachment } from './attachment';
 import type { Beneficiary } from './beneficiary';
 import type { Component } from './component';
 import type { Contract } from './contract';

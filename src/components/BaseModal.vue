@@ -1,6 +1,6 @@
 <template>
   <Dialog :open="isOpen" @update:open="updateOpen">
-    <DialogContent :class="contentClass">
+    <DialogContent class="bg-background" :class="contentClass">
       <DialogHeader :class="headerClass">
         <DialogTitle :class="titleClass">
           <slot name="title"></slot>
@@ -12,23 +12,20 @@
       <DialogFooter :class="footerClass">
         <slot name="footer">
           <div class="flex justify-center gap-4 sm:justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              @click="closeModal"
-              class="min-w-[8rem] border-border px-4 py-2 transition-all duration-200 hover:bg-background-hover"
-            >
+            <PrimaryButton type="button" variant="outline" size="lg" @click="closeModal">
               {{ cancelText }}
-            </Button>
-            <Button
+            </PrimaryButton>
+            <PrimaryButton
               v-if="showConfirm"
               type="button"
+              variant="primary"
               @click="confirmModal"
-              class="min-w-[8rem] px-4 py-2 transition-all duration-200"
+              size="lg"
+              class="transition-all duration-200"
               :class="confirmButtonClass"
             >
               {{ confirmText }}
-            </Button>
+            </PrimaryButton>
           </div>
         </slot>
       </DialogFooter>
@@ -37,7 +34,6 @@
 </template>
 
 <script setup>
-  import { Button } from '@/components/ui/button';
   import {
     Dialog,
     DialogContent,
