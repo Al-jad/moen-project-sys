@@ -1,6 +1,6 @@
 <template>
   <Dialog :open="isOpen" @update:open="updateOpen">
-    <DialogContent class="bg-background" :class="contentClass">
+    <DialogContent class="bg-background" :class="contentClass" :closeButton="false">
       <DialogHeader :class="headerClass">
         <DialogTitle :class="titleClass">
           <slot name="title"></slot>

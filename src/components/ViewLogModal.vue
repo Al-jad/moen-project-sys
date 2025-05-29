@@ -1,142 +1,123 @@
 <template>
-  <Dialog :open="open" @update:open="$emit('update:open', $event)">
-    <DialogContent class="flex flex-col px-8 min-w-[800px] max-w-[800px] overflow-y-auto max-h-[80vh] bg-gray-200 dark:bg-gray-800">
-      <DialogHeader class="flex col gap-4 mt-4 mb-2">
-        <div class="flex items-center justify-start">
-          <DialogTitle class="text-xl font-semibold">
-            تفاصيل الحدث
-          </DialogTitle>
-        </div>
-        <div class="h-px bg-gray-100"></div>
-      </DialogHeader>
+  <BaseModal
+    :open="open"
+    @update:open="$emit('update:open', $event)"
+    content-class="sm:max-w-4xl"
+    :show-confirm="false"
+  >
+    <template #title>
+      <div class="flex items-center gap-2">
+        <Icon icon="lucide:eye" class="h-5 w-5" />
+        <span>تفاصيل الحدث</span>
+      </div>
+    </template>
 
-      <div class="py-4">
+    <div class="space-y-4">
+      <!-- Basic Information -->
+      <div class="rounded-lg border border-border bg-card p-4">
+        <h3 class="mb-4 font-semibold text-foreground-heading">المعلومات الأساسية</h3>
         <div class="space-y-3">
-              <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700" v-for="(attribute, key) in tableNames" :key="key">
-                <span class="text-gray-500 dark:text-gray-300 font-semibold">{{ key }}</span>
-                <span class="text-gray-900 dark:text-gray-300">{{ log[attribute] || 'غير متوفر' }}</span>
-              </div>
-
-          <!-- Details Section -->
-          <div class="py-3 border-b border-gray-100">
-            <div class="flex justify-between mb-2">
-              <span class="text-gray-900 dark:text-gray-300 font-semibold">تفاصيل التغييرات</span>
-              <span class="text-gray-500 dark:text-gray-300">عدد التغييرات: {{ log?.details?.length || 0 }}</span>
-            </div>
-            
-            <!-- Details Table -->
-            <div v-if="log?.details && log.details.length > 0" class="mt-3 border rounded-md overflow-hidden">
-              <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead class="bg-gray-300 dark:bg-gray-700">
-                    <tr>
-                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                        اسم الحقل
-                      </th>
-                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                        القيمة السابقة
-                      </th>
-                      <th scope="col" class="text-gray-800 dark:text-gray-300 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                        القيمة الجديدة
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr v-for="(detail, index) in log.details" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {{ translateFieldName(detail.fieldName) }}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {{ detail.oldValue || 'لا يوجد' }}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                        {{ detail.newValue || 'لا يوجد' }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div v-else class="text-center py-4 text-gray-500 dark:text-gray-300">
-              لا توجد تفاصيل متاحة
-            </div>
+          <div
+            v-for="(attribute, key) in tableNames"
+            :key="key"
+            class="flex items-center justify-between border-b border-border py-2 last:border-0"
+          >
+            <span class="text-sm font-medium text-muted-foreground">{{ key }}</span>
+            <span class="text-sm font-medium text-foreground">{{ log[attribute] || 'غير متوفر' }}</span>
           </div>
         </div>
       </div>
-    </DialogContent>
-  </Dialog>
+
+      <!-- Changes Details -->
+      <div class="rounded-lg border border-border bg-card p-4">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="font-semibold text-foreground-heading">تفاصيل التغييرات</h3>
+          <Badge variant="secondary">
+            عدد التغييرات: {{ log?.details?.length || 0 }}
+          </Badge>
+        </div>
+
+        <div v-if="log?.details?.length" class="rounded-md border border-border">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-border bg-muted">
+                  <th class="p-3 text-right text-sm font-medium text-muted-foreground">اسم الحقل</th>
+                  <th class="p-3 text-right text-sm font-medium text-muted-foreground">القيمة السابقة</th>
+                  <th class="p-3 text-right text-sm font-medium text-muted-foreground">القيمة الجديدة</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                <tr
+                  v-for="(detail, index) in log.details"
+                  :key="index"
+                  class="bg-card transition-colors hover:bg-muted/50"
+                >
+                  <td class="p-3 text-sm font-medium text-foreground">
+                    {{ translateFieldName(detail.fieldName) }}
+                  </td>
+                  <td class="p-3 text-sm text-muted-foreground">
+                    {{ detail.oldValue || 'لا يوجد' }}
+                  </td>
+                  <td class="p-3 text-sm text-foreground">
+                    {{ detail.newValue || 'لا يوجد' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          v-else
+          class="flex items-center justify-center rounded-md border border-border bg-muted/50 py-8 text-sm text-muted-foreground"
+        >
+          لا توجد تفاصيل متاحة
+        </div>
+      </div>
+    </div>
+  </BaseModal>
 </template>
 
-<script setup>
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+<script setup lang="ts">
+import { computed } from 'vue';
+import { Icon } from '@iconify/vue';
+import BaseModal from '@/components/BaseModal.vue';
+import { Badge } from '@/components/ui/badge';
+import { translateFieldName as translateFieldNameService } from '@/services/logService';
 
-const props = defineProps({
-  open: { type: Boolean, required: true },
-  log: {
-    type: Object,
-    required: false,
-    default: () => ({})
-  }
-});
-
-// Ensure reactivity
-const translatedTableName = computed(() => {
-  return props.log?.tableName ? translations[props.log.tableName] || props.log.tableName : 'غير متوفر';
-});
-
-const translateFieldName = (fieldName) => {
-    const fieldTranslations = {
-      'createdAt': 'تاريخ الإنشاء',
-      'isDeleted': 'محذوف',
-      'Name': 'الاسم',
-      'ComponentId': 'رقم المكون',
-      'Notes': 'ملاحظات',
-      'TargetPercentage': 'النسبة المستهدفة',
-      'ProjectId': 'رقم المشروع',
-      'ProjectPhaseId': 'رقم المرحلة',
-      'ProjectActivityId': 'رقم النشاط',
-      'AttachmentId': 'رقم المرفق',
-      'AppUserId': 'رقم المستخدم',
-      'ProjectPhaseName': 'اسم المرحلة',
-      'ProjectActivityName': 'اسم النشاط',
-      'IsDeleted': 'محذوف',
-      'IsActive': 'مفعل',
-      'CreatedAt': 'تاريخ الإنشاء',
-      'Id': 'معرف الصف',
-      'UpdatedAt': 'تاريخ التعديل',
-      'AttachmentName': 'اسم المرفق',
-      'AppUserName': 'اسم المستخدم',
-      'ProjectName': 'اسم المشروع',
-      'isGovernment': 'مشروع حكومي',
-      'Lng': 'خط الطول',
-      'Lat': 'خط العرض',
-      'FinancialAchievement': 'الانجاز المالي',
-      'isFunded': 'ممول',
-      'PeriodType': 'نوع الفترة',
-      'Duration': 'المدة',
-      'projectObjectives': 'أهداف المشروع',
-      'ActualStartDate': 'تاريخ بدء المشروع الفعلي',
-      'ActualEndDate': 'تاريخ انتهاء المشروع الفعلي',
-      'ProjectStatus': 'حالة المشروع',
-      'ProjectType': 'نوع المشروع',
-      'ProjectCategory': 'تصنيف المشروع',
-      'ProjectSubCategory': 'تصنيف المشروع الفرعي',
-    };
-    return fieldTranslations[fieldName] || fieldName;
-  };
-
-const tableNames = {
- 'رقم العملية': 'id',
- 'اسم الجدول': 'tableName',
- 'معرف الصف': 'tableRowId',
- 'نوع العملية': 'action',
- 'تاريخ العملية': 'createdAt',
+interface LogDetail {
+  fieldName: string;
+  oldValue: string | null;
+  newValue: string | null;
 }
 
-defineEmits(['update:open'])
-</script> 
+interface Log {
+  id: number;
+  tableName: string;
+  tableRowId: string;
+  action: string;
+  createdAt: string;
+  details?: LogDetail[];
+}
+
+const props = defineProps<{
+  open: boolean;
+  log: Log;
+}>();
+
+defineEmits<{
+  (e: 'update:open', value: boolean): void;
+}>();
+
+const tableNames = {
+  'رقم العملية': 'id',
+  'اسم الجدول': 'tableName',
+  'معرف الصف': 'tableRowId',
+  'نوع العملية': 'action',
+  'تاريخ العملية': 'createdAt',
+} as const;
+
+const translateFieldName = (fieldName: string): string => {
+  return translateFieldNameService(fieldName);
+};
+</script>
