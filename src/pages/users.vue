@@ -1,9 +1,9 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-background p-6">
-      <div class="rounded-xl border border-border bg-card shadow-lg">
+    <main class="min-h-screen p-6 bg-background">
+      <div class="border shadow-lg rounded-xl border-border bg-card">
         <div class="p-8">
-          <div class="mb-8 border-b border-border pb-6">
+          <div class="pb-6 mb-8 border-b border-border">
             <div class="flex items-center justify-between">
               <div>
                 <div class="flex items-center gap-2">
@@ -13,8 +13,8 @@
                 <p class="text-foreground-muted">إدارة وعرض جميع المستخدمين في النظام</p>
               </div>
               <div class="flex items-center gap-4">
-                <PrimaryButton @click="handleAdd">
-                  <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
+                <PrimaryButton>
+                  <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
                   اضافة مستخدم
                 </PrimaryButton>
               </div>
@@ -36,7 +36,7 @@
             <template #name="{ item }">
               <button
                 @click="handleViewDetails(item as User)"
-                class="inline-flex items-center gap-1 font-medium text-primary transition-colors hover:text-primary-hover hover:underline"
+                class="inline-flex items-center gap-1 font-medium transition-colors text-primary hover:text-primary-hover hover:underline"
               >
                 {{ item.name }}
               </button>
@@ -47,19 +47,19 @@
             <template #role="{ item }">
               <Badge
                 v-if="item.role === 'ADMIN'"
-                class="w-fit border-0 bg-success font-medium text-success-foreground shadow-sm"
+                class="font-medium border-0 shadow-sm w-fit bg-success text-success-foreground"
               >
                 مدير
               </Badge>
               <Badge
                 v-else-if="item.role === 'SUPERVISOR'"
-                class="w-fit border-0 bg-accent font-medium text-accent-foreground shadow-sm"
+                class="font-medium border-0 shadow-sm w-fit bg-accent text-accent-foreground"
               >
                 مشرف
               </Badge>
               <Badge
                 v-else
-                class="w-fit border-0 bg-secondary font-medium text-secondary-foreground shadow-sm"
+                class="font-medium border-0 shadow-sm w-fit bg-secondary text-secondary-foreground"
               >
                 مدخل بيانات
               </Badge>
@@ -81,18 +81,6 @@
 
       <!-- User Details Modal -->
       <UserDetailsModal v-model:open="showDetailsDialog" :user-data="selectedUser" />
-
-      <!-- Delete Confirmation Modal -->
-      <DeleteModal
-        v-model:open="showDeleteDialog"
-        :loading="isDeleting"
-        title="حذف المستخدم"
-        :message="
-          selectedUser?.name ? 'هل أنت متأكد من حذف المستخدم ' + selectedUser.name + '؟' : ''
-        "
-        @confirm="confirmDelete"
-        @cancel="cancelDelete"
-      />
     </main>
   </DefaultLayout>
 </template>
@@ -100,7 +88,6 @@
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
-  import DeleteModal from '@/components/DeleteModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Badge } from '@/components/ui/badge';
   import UserDetailsModal from '@/components/UserDetailsModal.vue';
@@ -110,15 +97,12 @@
   import { Icon } from '@iconify/vue';
   import { storeToRefs } from 'pinia';
   import { onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
 
-  const router = useRouter();
   const userStore = useUserStore();
   const { users, isLoading, selectedUser } = storeToRefs(userStore);
 
   const showDetailsDialog = ref(false);
-  const showDeleteDialog = ref(false);
-  const isDeleting = ref(false);
+
   const tableRef = ref();
 
   interface Column {
@@ -149,40 +133,9 @@
     },
   ];
 
-  // Handlers
-  const handleAdd = () => {
-    router.push('/users/new');
-  };
-
   const handleViewDetails = (user: User) => {
     selectedUser.value = user;
     showDetailsDialog.value = true;
-  };
-
-  const handleEdit = (user: User) => {
-    router.push(`/users/${user.id}/edit`);
-  };
-
-  const openDeleteModal = (user: User) => {
-    selectedUser.value = user;
-    showDeleteDialog.value = true;
-  };
-
-  const confirmDelete = async () => {
-    if (!selectedUser.value?.id) return;
-
-    isDeleting.value = true;
-    const success = await userStore.deleteUser(selectedUser.value.id);
-    if (success) {
-      showDeleteDialog.value = false;
-      selectedUser.value = null;
-    }
-    isDeleting.value = false;
-  };
-
-  const cancelDelete = () => {
-    showDeleteDialog.value = false;
-    selectedUser.value = null;
   };
 
   const exportToExcel = () => {

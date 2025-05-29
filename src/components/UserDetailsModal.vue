@@ -15,7 +15,7 @@
     <div class="py-6">
       <!-- User Header -->
       <div
-        class="flex items-center justify-between p-4 mb-6 border rounded-lg border-border bg-background-surface/50"
+        class="mb-6 flex items-center justify-between rounded-lg border border-border bg-background-surface/50 p-4"
       >
         <div>
           <h3 class="text-lg font-semibold text-foreground-heading">{{ userData?.name }}</h3>
@@ -28,8 +28,8 @@
 
       <!-- User Details -->
       <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-4">
-          <div class="p-4 border rounded-lg border-border">
+        <div class="space-y-4 bg-background-surface/50">
+          <div class="rounded-lg border border-border p-4">
             <h4 class="mb-3 text-sm font-medium text-foreground-muted">معلومات المستخدم</h4>
             <div class="space-y-3">
               <div>
@@ -48,8 +48,8 @@
           </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="p-4 border rounded-lg border-border">
+        <div class="space-y-4 bg-background-surface/50">
+          <div class="rounded-lg border border-border p-4">
             <h4 class="mb-3 text-sm font-medium text-foreground-muted">معلومات العمل</h4>
             <div class="space-y-3">
               <div>
