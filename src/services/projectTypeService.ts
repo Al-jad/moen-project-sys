@@ -6,7 +6,7 @@ import type {
   ProjectType as ProjectTypeInterface,
   ServiceResponse,
   UpdateProjectTypeRequest,
-} from '@/types';
+} from '../types';
 
 /**
  * Project Type Constants

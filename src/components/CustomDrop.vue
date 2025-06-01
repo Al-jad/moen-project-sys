@@ -58,12 +58,21 @@
     onClick?: () => void;
   }
 
+  type ButtonVariant =
+    | 'primary'
+    | 'link'
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost';
+
   const props = withDefaults(
     defineProps<{
       items: DropdownItem[];
       label: string;
       icon?: string;
-      variant?: string;
+      variant?: ButtonVariant;
       asChild?: boolean;
       triggerClass?: string;
       contentClass?: string;

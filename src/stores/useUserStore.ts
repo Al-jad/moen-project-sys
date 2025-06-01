@@ -1,5 +1,5 @@
 import { userService } from '@/services/userService';
-import type { User } from '@/types/users';
+import type { UpdateUserPayload, User } from '@/types/users';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('user', () => {
     }
   };
 
-  const updateUser = async (id: number, payload: Partial<User>) => {
+  const updateUser = async (id: number, payload: UpdateUserPayload) => {
     try {
       const response = await userService.updateUser(id, payload);
       const index = users.value.findIndex((user) => user.id === id);

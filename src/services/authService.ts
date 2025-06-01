@@ -1,38 +1,26 @@
 import axiosInstance from '@/plugins/axios';
-import type { LoginRequest, LoginResponse } from '@/types/auth';
+import type { LoginRequest, LoginResponse, ServiceResponse } from '@/types';
 
-export class AuthService {
-  private static instance: AuthService;
-  private readonly baseUrl = '/api/auth';
-
-  private constructor() {}
-
-  public static getInstance(): AuthService {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
-    }
-    return AuthService.instance;
-  }
-
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    try {
-      const response = await axiosInstance.post<LoginResponse>(
-        `${this.baseUrl}/login`,
-        credentials
-      );
-      return response.data;
-    } catch (error: any) {
-      // Enhance error with details from the response if available
-      if (error.response?.data) {
-        error.details = error.response.data;
-      }
-      throw error;
-    }
-  }
-
-  async logout(): Promise<void> {
-    await axiosInstance.post(`${this.baseUrl}/logout`);
-  }
+// Auth Operations
+async function login(credentials: LoginRequest): ServiceResponse<LoginResponse> {
+  const response = await axiosInstance.post('/api/auth/login', credentials);
+  return response;
 }
 
-export const authService = AuthService.getInstance();
+async function logout(): ServiceResponse<void> {
+  const response = await axiosInstance.post('/api/auth/logout');
+  return response;
+}
+
+async function getCurrentUser(): ServiceResponse<LoginResponse> {
+  const response = await axiosInstance.get('/api/auth/me');
+  return response;
+}
+
+export const authService = {
+  login,
+  logout,
+  getCurrentUser,
+};
+
+export default authService;

@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/vue-table": "^8.21.3",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/core": "^12.8.2",
     "apexcharts": "^4.3.0",

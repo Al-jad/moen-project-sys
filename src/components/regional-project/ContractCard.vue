@@ -101,11 +101,11 @@
               <Button
                 variant="ghost"
                 size="icon"
-                @click="$emit('edit-procedure', procedure, contract)"
+                @click="$emit('editProcedure', procedure, contract)"
               >
                 <Icon icon="lucide:edit" class="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" @click="$emit('delete-procedure', procedure)">
+              <Button variant="ghost" size="icon" @click="$emit('deleteProcedure', procedure)">
                 <Icon icon="lucide:trash" class="h-4 w-4" />
               </Button>
             </div>
@@ -256,13 +256,45 @@
   import { Button } from '@/components/ui/button';
   import { Icon } from '@iconify/vue';
 
+  interface Procedure {
+    id: string | number;
+    name: string;
+    details: string;
+    duration: number;
+    weight: number;
+    startDate: string;
+    endDate: string;
+    actualFinancialProgress: number;
+    calculatedActualFinancialProgress: number;
+    actualCompletionPercentage: number;
+    calculatedActualCompletionPercentage: number;
+  }
+
+  interface Contract {
+    id: string | number;
+    contractNumber: string;
+    name: string;
+    executingDepartment: string;
+    signingDate: string;
+    referralDate: string;
+    cost: number;
+    procedures?: Procedure[];
+  }
+
   const props = defineProps<{
-    contract: any;
+    contract: Contract;
   }>();
 
-  defineEmits(['edit', 'delete', 'view', 'addProcedure', 'editProcedure', 'deleteProcedure']);
+  defineEmits<{
+    (e: 'edit', contract: Contract): void;
+    (e: 'delete', contract: Contract): void;
+    (e: 'view', contract: Contract): void;
+    (e: 'addProcedure', contract: Contract): void;
+    (e: 'editProcedure', procedure: Procedure, contract: Contract): void;
+    (e: 'deleteProcedure', procedure: Procedure): void;
+  }>();
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     if (!dateString) return '';
     try {
       const date = new Date(dateString);
@@ -277,7 +309,7 @@
     }
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: number): string => {
     if (!value) return '0';
     const formattedNumber = new Intl.NumberFormat('ar-IQ', {
       style: 'decimal',

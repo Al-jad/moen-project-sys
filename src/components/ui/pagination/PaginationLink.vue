@@ -1,24 +1,30 @@
 <template>
-  <Button
-    variant="outline"
+  <button
+    type="button"
     :class="[
-      'h-9 w-9',
-      'data-[active=true]:bg-primary data-[active=true]:text-primary-foreground',
-      isActive ? '!bg-primary !text-primary-foreground' : '',
+      'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+      isActive
+        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+        : 'hover:bg-accent hover:text-accent-foreground',
+      size === 'sm' ? 'h-8 px-3' : 'h-10 px-4',
+      $attrs.class,
     ]"
-    :data-active="isActive"
+    :aria-current="isActive ? 'page' : undefined"
+    :aria-label="ariaLabel || `Page ${$slots.default?.()?.[0]?.children || ''}`"
   >
     <slot />
-  </Button>
+  </button>
 </template>
 
-<script setup>
-  import { Button } from '@/components/ui/button';
+<script setup lang="ts">
+  interface Props {
+    isActive?: boolean;
+    size?: 'sm' | 'default';
+    ariaLabel?: string;
+  }
 
-  defineProps({
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
+  withDefaults(defineProps<Props>(), {
+    isActive: false,
+    size: 'default',
   });
 </script>

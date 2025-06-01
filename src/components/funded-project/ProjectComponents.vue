@@ -254,6 +254,7 @@
     id: string;
     name: string;
     description: string;
+    targetPercentage: number;
     activities: Activity[];
   }
 
@@ -294,6 +295,7 @@
           id: Date.now().toString(),
           name: '',
           description: '',
+          targetPercentage: 0,
           activities: [],
         };
         emit('update:components', [...(props.components || []), newComponent]);
@@ -303,6 +305,7 @@
         id: Date.now().toString(),
         name: '',
         description: '',
+        targetPercentage: 0,
         activities: [],
       };
       emit('update:components', [...props.components, newComponent]);
@@ -315,7 +318,11 @@
     emit('update:components', newComponents);
   };
 
-  const updateComponent = (index: number, field: keyof Component, value: string) => {
+  const updateComponent = (
+    index: number,
+    field: keyof Component | 'targetPercentage',
+    value: string | number
+  ) => {
     const newComponents = [...props.components];
     newComponents[index] = {
       ...newComponents[index],

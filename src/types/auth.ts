@@ -1,6 +1,3 @@
-import type { User } from '.';
-
-// User Types
 export interface User {
   id: number;
   username: string;

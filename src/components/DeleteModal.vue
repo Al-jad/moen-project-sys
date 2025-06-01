@@ -15,11 +15,11 @@
       </div>
     </template>
 
-    <div class="flex flex-col items-center justify-center py-6 space-y-5">
-      <div class="p-4 bg-red-100 rounded-full shadow-sm delete-icon-container dark:bg-red-900/30">
-        <Icon :icon="icon || 'lucide:trash-2'" class="w-8 h-8 text-red-600 dark:text-red-400" />
+    <div class="flex flex-col items-center justify-center space-y-5 py-6">
+      <div class="delete-icon-container rounded-full bg-red-100 p-4 shadow-sm dark:bg-red-900/30">
+        <Icon :icon="icon || 'lucide:trash-2'" class="h-8 w-8 text-red-600 dark:text-red-400" />
       </div>
-      <p class="max-w-sm text-sm leading-relaxed text-center text-gray-600 dark:text-gray-300">
+      <p class="max-w-sm text-center text-sm leading-relaxed text-gray-600 dark:text-gray-300">
         {{ message || 'هذا الإجراء لا يمكن التراجع عنه. هل أنت متأكد من الاستمرار؟' }}
       </p>
     </div>
@@ -40,7 +40,7 @@
           class="min-w-[8rem] px-4 py-2 opacity-80 transition-all duration-200"
           :disabled="isLoading"
         >
-          <Icon icon="lucide:loader-2" class="w-4 h-4 mr-2 animate-spin" />
+          <Icon icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
           {{ confirmText || 'حذف' }}
         </PrimaryButton>
       </div>

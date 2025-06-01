@@ -1,5 +1,6 @@
 <template>
   <Button
+    class="px-8"
     :class="[
       buttonClass,
       'flex items-center gap-2',
@@ -9,9 +10,6 @@
       variant === 'outline' &&
         'border border-border bg-background-surface/90 hover:bg-background-hover',
       variant === 'destructive' && 'bg-destructive hover:bg-destructive/90',
-      variant === 'warning' && 'bg-warning hover:bg-warning/90',
-      variant === 'accent' && 'bg-accent hover:bg-accent/90',
-      variant == 'custom' && ''
     ]"
     :variant="variant === 'primary' ? 'default' : variant"
     :size="size"
@@ -27,8 +25,8 @@
 
   withDefaults(
     defineProps<{
-      variant?: 'primary' | 'link' | string;
-      size?: string;
+      variant?: 'primary' | 'link' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost';
+      size?: 'default' | 'icon' | 'xs' | 'sm' | 'lg';
       buttonClass?: string;
       icon?: string;
       iconClass?: string;

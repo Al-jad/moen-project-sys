@@ -1,5 +1,5 @@
 import { beneficiaryService } from '@/services/beneficiaryService';
-import type { Beneficiary } from '@/types';
+import type { Beneficiary, UpdateBeneficiaryRequest } from '@/types';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
@@ -44,7 +44,9 @@ export const useBeneficiaryStore = defineStore('beneficiary', () => {
     }
   };
 
-  const addBeneficiary = async (beneficiaryData: Omit<Beneficiary, 'id'>) => {
+  const addBeneficiary = async (
+    beneficiaryData: Omit<Beneficiary, 'id' | 'createdAt' | 'updatedAt'>
+  ) => {
     loading.value = true;
     error.value = null;
 
@@ -60,12 +62,15 @@ export const useBeneficiaryStore = defineStore('beneficiary', () => {
     }
   };
 
-  const updateBeneficiary = async (id: string, beneficiaryData: Partial<Beneficiary>) => {
+  const updateBeneficiary = async (
+    id: string,
+    beneficiaryData: Omit<UpdateBeneficiaryRequest, 'id'>
+  ) => {
     loading.value = true;
     error.value = null;
 
     try {
-      const response = await beneficiaryService.updateBeneficiary(id, beneficiaryData);
+      const response = await beneficiaryService.updateBeneficiary(id, { ...beneficiaryData, id });
       const index = beneficiaries.value.findIndex((b) => b.id === id);
       if (index !== -1) {
         beneficiaries.value[index] = response.data;

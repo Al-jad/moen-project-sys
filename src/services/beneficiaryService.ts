@@ -14,7 +14,7 @@ class BeneficiaryService {
     return response;
   }
 
-  async getBeneficiaryById(id: number): ServiceResponse<Beneficiary> {
+  async getBeneficiaryById(id: string): ServiceResponse<Beneficiary> {
     const response = await axiosInstance.get(`/api/beneficiary/${id}`);
     return response;
   }
@@ -25,14 +25,14 @@ class BeneficiaryService {
   }
 
   async updateBeneficiary(
-    id: number,
+    id: string,
     beneficiaryData: UpdateBeneficiaryRequest
   ): ServiceResponse<Beneficiary> {
     const response = await axiosInstance.put(`/api/beneficiary/${id}`, beneficiaryData);
     return response;
   }
 
-  async deleteBeneficiary(id: number): ServiceResponse<void> {
+  async deleteBeneficiary(id: string): ServiceResponse<void> {
     const response = await axiosInstance.delete(`/api/beneficiary/${id}`);
     return response;
   }

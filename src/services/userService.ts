@@ -47,36 +47,6 @@ async function logout(): ServiceResponse<void> {
   return response;
 }
 
-// Utility Operations
-async function searchUsers(searchTerm: string): ServiceResponse<User[]> {
-  const response = await axiosInstance.get(BASE_URL, {
-    params: { search: searchTerm },
-  });
-  return response;
-}
-
-async function getUsersByRole(role: User['role']): ServiceResponse<User[]> {
-  const response = await axiosInstance.get(`${BASE_URL}/role/${role}`);
-  return response;
-}
-
-async function toggleUserStatus(id: number, isActive: boolean): ServiceResponse<User> {
-  const response = await axiosInstance.patch(`${BASE_URL}/${id}/status`, { isActive });
-  return response;
-}
-
-async function changePassword(
-  id: number,
-  currentPassword: string,
-  newPassword: string
-): ServiceResponse<void> {
-  const response = await axiosInstance.put(`${BASE_URL}/${id}/password`, {
-    currentPassword,
-    newPassword,
-  });
-  return response;
-}
-
 export const userService = {
   // CRUD Operations
   getAllUsers,
@@ -88,11 +58,6 @@ export const userService = {
   getCurrentUser,
   login,
   logout,
-  // Utility Operations
-  searchUsers,
-  getUsersByRole,
-  toggleUserStatus,
-  changePassword,
 };
 
 export default userService;

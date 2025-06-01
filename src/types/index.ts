@@ -1,4 +1,4 @@
-import type { Activity } from './activity';
+import type { Activity, CreateActivityRequest, UpdateActivityRequest } from './activity';
 import type {
   ApiError,
   ApiResponse,
@@ -10,7 +10,7 @@ import type {
   ServiceResponse,
   SortParams,
 } from './api-base';
-import type { Attachment } from './attachment';
+import type { Attachment, CreateAttachmentRequest, UpdateAttachmentRequest } from './attachment';
 import type { ActionAudit } from './audit';
 import type {
   CreateUserRequest,
@@ -20,12 +20,38 @@ import type {
   User,
   UserRole,
 } from './auth';
-import type { Beneficiary } from './beneficiary';
-import type { Component } from './component';
-import type { Contract } from './contract';
-import type { FundedProject, FundedProjectStatus, FundingType, PeriodType } from './funded-project';
-import type { Procedure } from './procedure';
-import type { RegionalProject, RegionalProjectStatus } from './regional-project';
+import type {
+  Beneficiary,
+  CreateBeneficiaryRequest,
+  UpdateBeneficiaryRequest,
+} from './beneficiary';
+import type { Component, CreateComponentRequest, UpdateComponentRequest } from './component';
+import type { Contract, CreateContractRequest, UpdateContractRequest } from './contract';
+import type {
+  CreateFundedProjectRequest,
+  FundedProject,
+  FundedProjectStatus,
+  FundingType,
+  PeriodType,
+  UpdateFundedProjectRequest,
+} from './funded-project';
+import type { CreateProcedureRequest, Procedure, UpdateProcedureRequest } from './procedure';
+import type {
+  CreateProjectRequest,
+  CreateProjectTypeRequest,
+  Project,
+  ProjectStatus,
+  ProjectType,
+  UpdateProjectRequest,
+  UpdateProjectTypeRequest,
+} from './project-type';
+import type {
+  CreateRegionalProjectRequest,
+  RegionalProject,
+  RegionalProjectStatus,
+  UpdateRegionalProjectRequest,
+} from './regional-project';
+
 export type {
   ActionAudit,
   Activity,
@@ -35,6 +61,16 @@ export type {
   Beneficiary,
   Component,
   Contract,
+  CreateActivityRequest,
+  CreateAttachmentRequest,
+  CreateBeneficiaryRequest,
+  CreateComponentRequest,
+  CreateContractRequest,
+  CreateFundedProjectRequest,
+  CreateProcedureRequest,
+  CreateProjectRequest,
+  CreateProjectTypeRequest,
+  CreateRegionalProjectRequest,
   CreateUserRequest,
   FilterParams,
   FundedProject,
@@ -47,11 +83,24 @@ export type {
   PaginationParams,
   PeriodType,
   Procedure,
+  Project,
+  ProjectStatus,
+  ProjectType,
   QueryParams,
   RegionalProject,
   RegionalProjectStatus,
   ServiceResponse,
   SortParams,
+  UpdateActivityRequest,
+  UpdateAttachmentRequest,
+  UpdateBeneficiaryRequest,
+  UpdateComponentRequest,
+  UpdateContractRequest,
+  UpdateFundedProjectRequest,
+  UpdateProcedureRequest,
+  UpdateProjectRequest,
+  UpdateProjectTypeRequest,
+  UpdateRegionalProjectRequest,
   UpdateUserRequest,
   User,
   UserRole,

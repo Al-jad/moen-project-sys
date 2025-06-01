@@ -18,6 +18,8 @@ pinia.use(piniaPluginPersistedstate);
 const app = createApp(App);
 app.use(pinia);
 app.use(router);
-app.use(VueApexCharts);
+
+// Register ApexCharts components globally
+app.component('apexchart', VueApexCharts);
 
 app.mount('#app');

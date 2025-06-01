@@ -25,9 +25,9 @@
               @export="exportToExcel"
               @action-click="handleViewAction"
             >
-              <template #name="{ value }">
+              <template #name="{ item }">
                 <PrimaryButton variant="ghost" class="h-auto p-0">
-                  {{ value }}
+                  {{ item.name }}
                 </PrimaryButton>
               </template>
             </CustomTable>
@@ -37,7 +37,7 @@
     </main>
     <ViewActionModal
       v-model:open="showViewModal"
-      :action="selectedAction"
+      :action="selectedAction ? getActionFormData(selectedAction) : undefined"
       @submit="handleSubmitAction"
     />
     <AddEditActionModal v-model:open="showEditModal" @submit="handleSubmitAction" />
@@ -56,6 +56,39 @@
   import type { DateRange } from 'radix-vue';
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+
+  interface Action {
+    id: number;
+    name: string;
+    projectName: string;
+    contractNumber: string;
+    weight: string;
+    duration: string;
+    startDate: string;
+    plannedTechnicalProgress: string;
+    actualTechnicalProgress: string;
+    technicalDeviation: string;
+    plannedFinancialProgress: string;
+    actualFinancialProgress: string;
+  }
+
+  interface ActionFormData {
+    name?: string;
+    weight?: number;
+    duration?: number;
+    startDate?: string;
+    plannedTechnicalProgress?: string;
+    actualTechnicalProgress?: string;
+    technicalDeviation?: string;
+    plannedFinancialProgress?: string;
+    actualFinancialProgress?: string;
+    projectName?: string;
+    contractNumber?: string;
+  }
+
+  interface TableItem {
+    [key: string]: any;
+  }
 
   const route = useRoute();
   const router = useRouter();
@@ -80,22 +113,25 @@
   const selectedEmployee = ref('all');
 
   const showViewModal = ref(false);
-  const selectedAction = ref(null);
+  const selectedAction = ref<Action | null>(null);
 
-  const handleViewAction = (action) => {
+  const handleViewAction = (_action: string, row: TableItem) => {
+    const action = row as Action;
     selectedAction.value = action;
     showViewModal.value = true;
   };
 
   const showEditModal = ref(false);
 
-  const handleEditAction = (action) => {
+  const handleEditAction = (_action: string, row: TableItem) => {
+    const action = row as Action;
     selectedAction.value = action;
     showEditModal.value = true;
   };
 
-  const handleSubmitAction = (formData) => {
+  const handleSubmitAction = (formData: ActionFormData) => {
     // Handle form submission here
+    console.log('Form submitted:', formData);
   };
 
   // Table configuration
@@ -103,7 +139,7 @@
     key: string;
     label: string;
     type?: 'button' | 'action' | 'text';
-    icon?: any;
+    icon?: string;
   }
 
   const columns: Column[] = [
@@ -144,8 +180,8 @@
     },
   ];
 
-  // Mock data
-  const actions = ref(
+  // Mock data with proper type conversion
+  const actions = ref<Action[]>(
     Array(9)
       .fill(null)
       .map((_, index) => ({
@@ -164,8 +200,17 @@
       }))
   );
 
+  const getActionFormData = (action: Action): ActionFormData => {
+    return {
+      ...action,
+      weight: Number(action.weight),
+      duration: Number(action.duration),
+    };
+  };
+
   const exportToExcel = () => {
     // Implement export to Excel functionality
+    console.log('Exporting to Excel...');
   };
 </script>
 

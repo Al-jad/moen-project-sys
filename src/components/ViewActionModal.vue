@@ -95,7 +95,7 @@
     emit('update:open', false);
   };
 
-  const handleSubmit = (formData) => {
+  const handleSubmit = (formData: any) => {
     emit('submit', formData);
     showEditModal.value = false;
   };

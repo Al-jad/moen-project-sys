@@ -115,10 +115,10 @@
         password: password.value,
       };
       const response = await authService.login(credentials);
-      const { user, tokens } = response;
-      if (user && tokens && tokens.access) {
+      const { user, token } = response;
+      if (user && token) {
         authStore.setUser(user);
-        authStore.setToken(tokens.access);
+        authStore.setToken(token);
         showSuccess('تم تسجيل الدخول بنجاح', 'مرحباً بك في النظام');
         try {
           const redirectPath = route.query.redirect

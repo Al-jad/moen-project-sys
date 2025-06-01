@@ -5,11 +5,11 @@ import type {
   CreateProjectRequest,
   FundedProject,
   Project,
-  ProjectStatus,
   RegionalProject,
   ServiceResponse,
   UpdateProjectRequest,
 } from '@/types';
+import { ProjectStatus } from '@/types/project-type';
 import { formatDate } from '@/utils/dateUtils';
 
 class ProjectService extends BaseApiService<Project, CreateProjectRequest, UpdateProjectRequest> {
@@ -71,7 +71,7 @@ class ProjectService extends BaseApiService<Project, CreateProjectRequest, Updat
    * @returns Promise with filtered projects
    */
   async getProjectsByStatus(status: ProjectStatus): ServiceResponse<Project[]> {
-    return this.getAll({ status });
+    return this.getAll({ status: status.toString() });
   }
 
   /**
@@ -109,7 +109,7 @@ class ProjectService extends BaseApiService<Project, CreateProjectRequest, Updat
    * @returns Promise with updated project
    */
   async updateProjectStatus(id: number | string, status: ProjectStatus): ServiceResponse<Project> {
-    return this.patch(id, { status });
+    return this.patch(id, { status: Number(status) });
   }
 }
 
@@ -142,11 +142,11 @@ interface TransformedProject {
  */
 const getProjectStatus = (status: number | string): string => {
   const statusMap: Record<string | number, string> = {
-    0: 'قيد الدراسة',
-    1: 'قيد التنفيذ',
-    2: 'متوقف',
-    3: 'منجز',
-    4: 'ملغي',
+    [ProjectStatus.UNDER_STUDY]: 'قيد الدراسة',
+    [ProjectStatus.IN_PROGRESS]: 'قيد التنفيذ',
+    [ProjectStatus.SUSPENDED]: 'متوقف',
+    [ProjectStatus.COMPLETED]: 'منجز',
+    [ProjectStatus.CANCELLED]: 'ملغي',
   };
 
   return statusMap[status] || 'قيد التنفيذ';
@@ -157,11 +157,11 @@ const getProjectStatus = (status: number | string): string => {
  */
 const getStatusVariant = (status: number | string): string => {
   const variantMap: Record<string | number, string> = {
-    0: 'info',
-    1: 'warning',
-    2: 'secondary',
-    3: 'success',
-    4: 'danger',
+    [ProjectStatus.UNDER_STUDY]: 'info',
+    [ProjectStatus.IN_PROGRESS]: 'warning',
+    [ProjectStatus.SUSPENDED]: 'secondary',
+    [ProjectStatus.COMPLETED]: 'success',
+    [ProjectStatus.CANCELLED]: 'danger',
   };
 
   return variantMap[status] || 'warning';
