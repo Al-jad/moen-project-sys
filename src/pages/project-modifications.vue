@@ -251,19 +251,19 @@
     },
   ]);
 
-  const handleCellClick = ({ key, item }) => {
+  const handleCellClick = ({ key, item }: { key: string; item: any }) => {
     if (key === 'employee') {
     } else if (key === 'project') {
     }
   };
 
-  const showDetails = (item) => {};
+  const showDetails = (item: any) => {};
 
-  const handleFilterChange = (filters) => {};
+  const handleFilterChange = (filters: any) => {};
 
-  const handleSearchChange = (query) => {};
+  const handleSearchChange = (query: any) => {};
 
-  const handleDateChange = (date) => {};
+  const handleDateChange = (date: any) => {};
 
   const handleExport = () => {};
 </script>

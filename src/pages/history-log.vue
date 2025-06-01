@@ -1,9 +1,9 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-background">
-      <div class="border shadow-lg rounded-xl border-border bg-card">
+    <main class="min-h-screen bg-background p-6">
+      <div class="rounded-xl border border-border bg-card shadow-lg">
         <div class="p-8">
-          <div class="pb-6 mb-8 border-b border-border">
+          <div class="mb-8 border-b border-border pb-6">
             <div class="flex items-center justify-between">
               <div>
                 <div class="flex items-center gap-2">
@@ -37,7 +37,7 @@
       </div>
 
       <!-- View Details Dialog -->
-      <ViewLogModal v-model:open="showDetailsDialog" :log="selectedLog" />
+      <ViewLogModal v-if="selectedLog" v-model:open="showDetailsDialog" :log="selectedLog" />
     </main>
   </DefaultLayout>
 </template>
@@ -122,14 +122,16 @@
   };
 
   const viewDetails = (_action: string, row: Record<string, any>) => {
-    const logItem = row as LogTableItem;
+    const logItem = row as unknown as LogTableItem;
     logStore.setSelectedLog({
       id: logItem.id,
       tableName: logItem.tableName,
+      tableRowId: logItem.tableRowId || '',
       action: logItem.originalAction,
       createdAt: logItem.createdAt,
       changes: logItem.changes,
       user: logItem.user,
+      details: logItem.details || [],
     });
     showDetailsDialog.value = true;
   };

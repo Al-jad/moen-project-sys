@@ -122,9 +122,31 @@
   import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
+  interface Project {
+    id: string;
+    title: string;
+    department: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+    statusVariant: string;
+    progress: number;
+    duration: string;
+    cost: number;
+    type: 'investment' | 'operational' | 'regional';
+  }
+
+  interface DropdownItem {
+    label: string;
+    icon?: string;
+    disabled?: boolean;
+    class?: string;
+    onClick?: () => void;
+  }
+
   const route = useRoute();
   const router = useRouter();
-  const allProjects = ref([
+  const allProjects = ref<Project[]>([
     // Investment Projects
     {
       id: 'INV001',
@@ -250,16 +272,25 @@
   ]);
 
   const isLoading = ref(false);
-  const error = ref(null);
+  const error = ref<string | null>(null);
 
   // Sort Options Configuration
-  const sortOptions = [
-    { id: 'price-low', label: 'من السعر الادنى', icon: 'lucide:arrow-down-0-1' },
-    { id: 'price-high', label: 'من السعر الاعلى', icon: 'lucide:arrow-up-0-1' },
-    { id: 'period-high', label: 'من الفترة الاعلى', icon: 'lucide:arrow-down-narrow-wide' },
-    { id: 'period-low', label: 'من الفترة الادنى', icon: 'lucide:arrow-up-narrow-wide' },
-    { id: 'progress-high', label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-down-0-1' },
-    { id: 'progress-low', label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-up-0-1' },
+  const sortMap: Record<string, string> = {
+    'من السعر الادنى': 'price-low',
+    'من السعر الاعلى': 'price-high',
+    'من الفترة الاعلى': 'period-high',
+    'من الفترة الادنى': 'period-low',
+    'نسبة الانجاز الاعلى': 'progress-high',
+    'نسبة الانجاز الاقل': 'progress-low',
+  };
+
+  const sortOptions: DropdownItem[] = [
+    { label: 'من السعر الادنى', icon: 'lucide:arrow-down-0-1' },
+    { label: 'من السعر الاعلى', icon: 'lucide:arrow-up-0-1' },
+    { label: 'من الفترة الاعلى', icon: 'lucide:arrow-down-narrow-wide' },
+    { label: 'من الفترة الادنى', icon: 'lucide:arrow-up-narrow-wide' },
+    { label: 'نسبة الانجاز الاعلى', icon: 'lucide:arrow-down-0-1' },
+    { label: 'نسبة الانجاز الاقل', icon: 'lucide:arrow-up-0-1' },
   ];
 
   const selectedSort = ref('');
@@ -287,7 +318,8 @@
   const totalProjects = computed(() => filteredProjects.value.length);
   const paginatedCount = computed(() => Math.min(10, totalProjects.value));
 
-  const handleSort = (sortId: string) => {
+  const handleSort = (item: DropdownItem) => {
+    const sortId = sortMap[item.label];
     selectedSort.value = sortId;
     const sortedProjects = [...allProjects.value];
 
@@ -316,8 +348,7 @@
   };
 
   const getSelectedSortLabel = computed(() => {
-    const option = sortOptions.find((opt) => opt.id === selectedSort.value);
-    return option ? option.label : '';
+    return sortOptions.find((opt) => sortMap[opt.label] === selectedSort.value)?.label || '';
   });
 
   const clearSort = () => {

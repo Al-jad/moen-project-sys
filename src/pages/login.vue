@@ -115,7 +115,7 @@
         password: password.value,
       };
       const response = await authService.login(credentials);
-      const { user, token } = response;
+      const { user, token } = response.data;
       if (user && token) {
         authStore.setUser(user);
         authStore.setToken(token);

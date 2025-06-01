@@ -1,12 +1,18 @@
 export interface Log {
   id: number;
   tableName: string;
+  tableRowId: string;
   action: string;
   createdAt: string;
   changes?: string | Record<string, unknown>;
   user?: {
     name: string;
   };
+  details?: {
+    fieldName: string;
+    oldValue: string | null;
+    newValue: string | null;
+  }[];
 }
 
 export type ActionType = 'create' | 'update' | 'delete';
