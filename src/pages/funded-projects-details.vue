@@ -57,164 +57,144 @@
 
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
-              <div class="relative z-10">
-                <div class="text-foreground-subheading mb-1 text-sm">المدة الكلية</div>
-                <div class="text-2xl font-semibold text-foreground-heading">
-                  {{ project?.duration }} {{ project?.periodType === 1 ? 'اسبوع' : 'شهر' }}
-                </div>
-              </div>
-              <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/50 dark:bg-blue-400/50"></div>
-            </div>
-            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
-              <div class="relative z-10">
-                <div class="text-foreground-subheading mb-1 text-sm">عدد المكونات</div>
-                <div class="text-2xl font-semibold text-foreground-heading">
-                  {{ project?.components?.length || 0 }}
-                </div>
-              </div>
-              <div
-                class="absolute inset-x-0 bottom-0 h-1 bg-green-500/50 dark:bg-green-400/50"
-              ></div>
-            </div>
-            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
-              <div class="relative z-10">
-                <div class="text-foreground-subheading mb-1 text-sm">عدد الفعاليات</div>
-                <div class="text-2xl font-semibold text-foreground-heading">
-                  {{
-                    project?.components?.reduce(
-                      (total, comp) => total + (comp.activities?.length || 0),
-                      0
-                    ) || 0
-                  }}
-                </div>
-              </div>
-              <div
-                class="absolute inset-x-0 bottom-0 h-1 bg-purple-500/50 dark:bg-purple-400/50"
-              ></div>
-            </div>
+            <StatsCard
+              label="المدة الكلية"
+              :value="project?.duration"
+              :unit="project?.periodType === 1 ? 'اسبوع' : 'شهر'"
+              color="#3B82F6"
+            />
+            <StatsCard
+              label="عدد المكونات"
+              :value="project?.components?.length || 0"
+              color="#10B981"
+            />
+            <StatsCard
+              label="عدد الفعاليات"
+              :value="
+                project?.components?.reduce(
+                  (total, comp) => total + (comp.activities?.length || 0),
+                  0
+                ) || 0
+              "
+              color="#8B5CF6"
+            />
           </div>
 
           <!-- Project Details -->
-          <div class="rounded-xl border bg-background-surface">
-            <div class="flex items-center justify-between border-b p-4">
-              <div class="flex items-center gap-2">
-                <Icon icon="lucide:info" class="text-foreground-subheading h-5 w-5" />
-                <h4 class="font-medium text-foreground-heading">تفاصيل المشروع</h4>
-              </div>
-              <Button @click="toggleEditDetails" variant="ghost" size="sm">
-                <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:x" class="h-4 w-4" />
-              </Button>
-            </div>
-
-            <!-- View Mode -->
-            <div v-if="!isEditingDetails" class="divide-y divide-border">
-              <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-                <div>
-                  <div class="text-sm text-foreground-muted">اسم المشروع</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{ project?.name || 'لم يتم تحديد اسم المشروع' }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-sm text-foreground-muted">الدائرة المنفذة</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{ project?.executingDepartment || 'لم يتم تحديد الدائرة' }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-sm text-foreground-muted">الجهة المنفذة</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{ project?.implementingEntity || 'لم يتم تحديد الجهة' }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-sm text-foreground-muted">الجهات المستفيدة</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{
-                      project?.beneficiaries.map((b) => b.name).join(', ') ||
-                      'لم يتم تحديد الجهات المستفيدة'
-                    }}
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-2 p-4">
-                <div class="text-sm text-foreground-muted">الهدف من المشروع</div>
-                <div class="mt-1 text-sm font-medium text-foreground-heading">
-                  {{ project?.projectObjectives || 'لم يتم تحديد الهدف' }}
-                </div>
-              </div>
-
-              <div class="flex flex-col gap-2 p-4">
-                <div class="text-sm text-foreground-muted">نوع المشروع</div>
-                <div class="mt-1 text-sm font-medium text-foreground-heading">
-                  {{ project?.isGovernment ? 'مشروع حكومي' : 'مشروع غير حكومي' }}
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-                <div>
-                  <div class="text-sm text-foreground-muted">نوع التمويل</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{ project?.fundingType === 1 ? 'مشروع ممول' : 'مشروع غير ممول' }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-sm text-foreground-muted">التمويل الدولي</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{ project?.cost ? `$${formatCost(project?.cost)}` : 'لم يتم تحديد المبلغ' }}
-                  </div>
-                </div>
-              </div>
-              <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-                <div>
-                  <div class="text-sm text-foreground-muted">تاريخ البدء</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{
-                      project?.actualStartDate
-                        ? formatDate(project?.actualStartDate)
-                        : 'لم يتم تحديد تاريخ البدء'
-                    }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-sm text-foreground-muted">تاريخ الانتهاء المتوقع</div>
-                  <div class="mt-1 text-sm font-medium text-foreground-heading">
-                    {{
-                      project?.actualStartDate && project?.duration
-                        ? calculateEndDate(
-                            project?.actualStartDate,
-                            project?.duration,
-                            project?.durationType
-                          )
-                        : 'لم يتم تحديد تاريخ الانتهاء'
-                    }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Edit Mode -->
-            <div v-else class="p-4">
-              <ProjectDetails
-                :project="editForm"
-                :is-editing="isEditingDetails"
-                @update:project="updateProjectDetails"
-              />
-              <div class="mt-4 flex justify-end gap-2">
-                <PrimaryButton variant="outline" @click="cancelEditDetails"> الغاء </PrimaryButton>
-                <PrimaryButton
-                  variant="primary"
-                  :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
-                  @click="saveProjectDetails"
-                  :disabled="isSaving"
-                >
-                  حفظ التغييرات
-                </PrimaryButton>
-              </div>
-            </div>
-          </div>
+          <GenericSection
+            title="تفاصيل المشروع"
+            icon="lucide:info"
+            :data="project"
+            layout="grid"
+            :columns="3"
+            :fields="{
+              name: {
+                label: 'اسم المشروع',
+                type: 'text',
+                props: {
+                  placeholder: 'ادخل اسم المشروع',
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              executingDepartment: {
+                label: 'الدائرة المنفذة',
+                type: 'text',
+                props: {
+                  placeholder: 'ادخل الدائرة المنفذة',
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              implementingEntity: {
+                label: 'الجهة المنفذة',
+                type: 'text',
+                props: {
+                  placeholder: 'ادخل الجهة المنفذة',
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              beneficiaries: {
+                label: 'الجهات المستفيدة',
+                type: 'multiselect',
+                formatter: (value) =>
+                  value?.map((b) => b.name).join(', ') || 'لم يتم تحديد الجهات المستفيدة',
+                props: {
+                  options: beneficiaryOptions,
+                  placeholder: 'اختر الجهات المستفيدة',
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              projectObjectives: {
+                label: 'الهدف من المشروع',
+                type: 'textarea',
+                props: {
+                  placeholder: 'اكتب أهداف المشروع',
+                  rows: 3,
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              isGovernment: {
+                label: 'البرنامج الحكومي',
+                formatter: (value) => (value ? 'ضمن البرنامج الحكومي' : 'ليس ضمن البرنامج الحكومي'),
+                editable: true,
+                type: 'switch',
+                props: {
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              fundingType: {
+                label: 'نوع التمويل',
+                type: 'switch',
+                editable: false,
+                formatter: (value) => (value === 1 ? 'مشروع ممول' : 'مشروع غير ممول'),
+                props: {
+                  label: 'مشروع ممول',
+                  description: 'حدد ما إذا كان المشروع ممولاً',
+                },
+              },
+              cost: {
+                label: 'كلفة المشروع',
+                type: 'number',
+                formatter: (value) => (value ? `$${formatCost(value)}` : 'لم يتم تحديد المبلغ'),
+                props: {
+                  placeholder: 'ادخل قيمة التمويل',
+                  min: 0,
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              actualStartDate: {
+                label: 'تاريخ البدء',
+                type: 'text',
+                formatter: (value) => (value ? formatDate(value) : 'لم يتم تحديد تاريخ البدء'),
+                props: {
+                  type: 'date',
+                  class: 'text-base',
+                  wrapperClass: 'rounded-lg border-foreground-muted/30',
+                },
+              },
+              endDate: {
+                label: 'تاريخ الانتهاء المتوقع',
+                editable: false,
+                formatter: () =>
+                  project?.actualStartDate && project?.duration
+                    ? calculateEndDate(
+                        project?.actualStartDate,
+                        project?.duration,
+                        project?.durationType
+                      )
+                    : 'لم يتم تحديد تاريخ الانتهاء',
+              },
+            }"
+            :is-saving="isSaving"
+            @save="saveProjectDetails"
+            @cancel="cancelEditDetails"
+          />
 
           <ScheduleTimeLine
             :components="project?.components || []"
@@ -223,335 +203,310 @@
           />
 
           <!-- Components and Activities -->
-          <div class="rounded-xl border bg-background-surface">
-            <div class="flex items-center justify-between border-b p-4">
-              <div class="flex items-center gap-2">
-                <Icon icon="lucide:target" class="text-foreground-subheading h-5 w-5" />
-                <h4 class="font-medium text-foreground-heading">المكونات والفعاليات</h4>
-              </div>
-              <PrimaryButton @click="toggleEditComponents" variant="ghost" size="sm">
-                <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
-                <Icon v-else icon="lucide:x" class="h-4 w-4" />
-              </PrimaryButton>
-            </div>
-
-            <!-- View Mode -->
-            <div v-if="!isEditingComponents">
-              <ComponentsActivitiesDetails
-                :components="project?.components || []"
-                :periodType="project?.periodType || 1"
-              >
-                <template #componentActions="{ component }">
-                  <PrimaryButton
-                    @click="handleDeleteComponent(component)"
-                    variant="destructive"
-                    icon="lucide:trash"
-                    size="sm"
-                    class="text-red-500 hover:text-red-600 dark:text-red-400"
-                  />
-                </template>
-                <template #activityActions="{ activity, component }">
-                  <PrimaryButton
-                    @click="handleDeleteActivity(activity, component)"
-                    variant="destructive"
-                    icon="lucide:trash"
-                    size="sm"
-                    class="text-red-500 hover:text-red-600 dark:text-red-400"
-                  />
-                </template>
-              </ComponentsActivitiesDetails>
-            </div>
-
-            <!-- Edit Mode -->
-            <div v-else class="p-4">
-              <ProjectComponents
-                :components="editForm.components"
-                :period-type="editForm.periodType"
-                :total-periods="totalPeriods"
-                @update:components="updateComponents"
-              />
-              <div class="mt-4 flex justify-end gap-2">
-                <PrimaryButton variant="outline" @click="cancelEditComponents">
-                  الغاء
-                </PrimaryButton>
-                <PrimaryButton
-                  @click="saveComponents"
-                  :disabled="isSaving"
-                  :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
+          <ViewModeSection
+            title="المكونات والفعاليات"
+            icon="lucide:target"
+            :is-editing="isEditingComponents"
+            @toggle-edit="toggleEditComponents"
+          >
+            <template #view-content="{ isEditing }">
+              <div v-if="!isEditingComponents">
+                <ComponentsActivitiesDetails
+                  :components="project?.components || []"
+                  :periodType="project?.periodType || 1"
                 >
-                  حفظ التغييرات
-                </PrimaryButton>
+                  <template #componentActions="{ component }">
+                    <PrimaryButton
+                      @click="handleDeleteComponent(component)"
+                      variant="destructive"
+                      icon="lucide:trash"
+                      size="sm"
+                      class="text-red-500 hover:text-red-600 dark:text-red-400"
+                    />
+                  </template>
+                  <template #activityActions="{ activity, component }">
+                    <PrimaryButton
+                      @click="handleDeleteActivity(activity, component)"
+                      variant="destructive"
+                      icon="lucide:trash"
+                      size="sm"
+                      class="text-red-500 hover:text-red-600 dark:text-red-400"
+                    />
+                  </template>
+                </ComponentsActivitiesDetails>
               </div>
+              <div v-else class="p-4">
+                <ProjectComponents
+                  :components="editForm.components"
+                  :period-type="editForm.periodType"
+                  :total-periods="totalPeriods"
+                  @update:components="updateComponents"
+                />
+                <div class="mt-4 flex justify-end gap-2">
+                  <PrimaryButton variant="outline" @click="cancelEditComponents">
+                    الغاء
+                  </PrimaryButton>
+                  <PrimaryButton
+                    @click="saveComponents"
+                    :disabled="isSaving"
+                    :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
+                  >
+                    حفظ التغييرات
+                  </PrimaryButton>
+                </div>
+              </div>
+            </template>
+          </ViewModeSection>
+
+          <!-- Achievements Section -->
+          <ViewModeSection
+            title="الإنجازات"
+            icon="lucide:award"
+            :is-editing="isEditingAchievements"
+            @toggle-edit="toggleEditAchievements"
+          >
+            <template #view-content="{ isEditing }">
+              <div class="divide-y divide-border">
+                <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+                  <!-- Financial Achievement -->
+                  <div>
+                    <div class="text-sm text-foreground-muted">الإنجاز المالي</div>
+                    <div v-if="!isEditing" class="mt-1 text-sm font-medium text-foreground-heading">
+                      {{
+                        project?.financialAchievement
+                          ? project.financialAchievement + '%'
+                          : 'لم يتم تحديد الإنجاز المالي'
+                      }}
+                    </div>
+                    <div v-else class="mt-1">
+                      <NumberInput
+                        v-model="editForm.financialAchievement"
+                        class="w-full"
+                        placeholder="ادخل الإنجاز المالي"
+                        unit="%"
+                      />
+                    </div>
+                  </div>
+                  <!-- Technical Achievement (Premium) -->
+                  <div
+                    @click="OpenPremiumModal"
+                    class="relative rounded-lg border border-red-300 bg-red-200 p-4"
+                  >
+                    <div class="text-sm text-red-600">الإنجاز الفني (ميزة مدفوعة)</div>
+                    <div class="mt-1 text-sm font-medium text-red-600">
+                      {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
+                    </div>
+                    <div
+                      class="absolute inset-0 flex items-center justify-center bg-red-200/10 dark:bg-gray-800/80"
+                    >
+                      <div class="text-center">
+                        <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-red-400" />
+                        <p class="mt-2 text-sm text-red-400">هذه ميزة مدفوعة</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Save/Cancel Buttons -->
+                <div v-if="isEditing" class="flex justify-end gap-2 p-4">
+                  <PrimaryButton variant="outline" @click="cancelEditAchievements"
+                    >الغاء</PrimaryButton
+                  >
+                  <PrimaryButton
+                    @click="saveAchievements"
+                    :disabled="isSaving"
+                    :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
+                  >
+                    حفظ التغييرات
+                  </PrimaryButton>
+                </div>
+              </div>
+            </template>
+          </ViewModeSection>
+
+          <!-- Attachments Section -->
+          <ViewModeSection title="المرفقات" icon="lucide:paperclip" :edit-enabled="false">
+            <template #view-content>
+              <div class="p-4">
+                <div v-if="project?.attachments?.length > 0">
+                  <CustomTable
+                    :columns="attachmentColumns"
+                    :items="transformedAttachments"
+                    :loading="isLoading"
+                    :items-per-page="8"
+                    :show-export="false"
+                    :show-date-filter="false"
+                    :show-search="true"
+                  >
+                    <template #fileType="{ item }">
+                      <div class="flex items-center gap-2">
+                        <div :class="getFileTypeContainerClass(item.fileType)">
+                          <Icon
+                            :icon="item.fileType.icon"
+                            :class="getFileTypeIconClass(item.fileType)"
+                          />
+                        </div>
+                        <span class="text-sm text-foreground-muted">{{ item.fileType.type }}</span>
+                      </div>
+                    </template>
+                    <template #action="{ item }">
+                      <div class="flex items-center justify-center gap-4">
+                        <a
+                          :href="item.url"
+                          target="_blank"
+                          class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          <Icon icon="tabler:download" class="h-4 w-4" />
+                        </a>
+                        <button
+                          @click="handleEditAttachment(item)"
+                          class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        >
+                          <Icon icon="lucide:edit" class="h-4 w-4" />
+                        </button>
+                        <button
+                          @click="handleDeleteAttachment(item)"
+                          class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        >
+                          <Icon icon="lucide:trash" class="h-4 w-4" />
+                        </button>
+                      </div>
+                    </template>
+                  </CustomTable>
+                </div>
+                <div
+                  v-else
+                  class="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center"
+                >
+                  <div class="mb-3 rounded-full bg-background-card p-3">
+                    <Icon icon="lucide:file" class="text-foreground-subheading h-8 w-8" />
+                  </div>
+                  <h3 class="mb-1 text-base font-medium text-foreground-heading">
+                    لا توجد مرفقات
+                  </h3>
+                  <p class="mb-4 text-sm text-foreground-muted"> قم بإضافة مرفقات للمشروع </p>
+                  <PrimaryButton
+                    icon="lucide:plus"
+                    variant="outline"
+                    size="sm"
+                    @click="openAttachmentDialog"
+                  >
+                    إضافة
+                  </PrimaryButton>
+                </div>
+              </div>
+            </template>
+          </ViewModeSection>
+
+          <!-- Attachment Modal -->
+          <AttachmentEditModal
+            v-model:open="isAttachmentDialogOpen"
+            :loading="isUploading"
+            :attachment="selectedAttachment"
+            :project-id="project?.id"
+            @confirm="handleAttachmentSubmit"
+            @cancel="closeAttachmentDialog"
+          />
+
+          <!-- Delete Attachment Modal -->
+          <DeleteModal
+            v-model:open="isDeleteAttachmentModalOpen"
+            title="حذف المرفق"
+            description="تأكيد حذف المرفق"
+            :message="
+              selectedAttachment?.title
+                ? `هل أنت متأكد من حذف المرفق '${selectedAttachment.title}'؟`
+                : ''
+            "
+            :sub-message="'سيتم حذف المرفق نهائياً من النظام'"
+            :checklist="[
+              {
+                text: 'لن يمكنك استعادة البيانات بعد الحذف',
+                icon: 'lucide:x-circle',
+              },
+              {
+                text: 'سيتم إزالة المرفق من جميع السجلات',
+                icon: 'lucide:alert-triangle',
+              },
+            ]"
+            :loading="isDeleting"
+            @confirm="confirmDeleteAttachment"
+            @cancel="cancelDeleteAttachment"
+          />
+
+          <!-- Delete Component Modal -->
+          <DeleteModal
+            v-model:open="isDeleteComponentModalOpen"
+            title="حذف المكون"
+            description="تأكيد حذف المكون"
+            :message="
+              selectedComponentToDelete?.name
+                ? `هل أنت متأكد من حذف المكون '${selectedComponentToDelete.name}'؟`
+                : ''
+            "
+            :sub-message="'سيتم حذف جميع الفعاليات المرتبطة بالمكون'"
+            :checklist="[
+              {
+                text: 'لن يمكنك استعادة البيانات بعد الحذف',
+                icon: 'lucide:x-circle',
+              },
+              {
+                text: 'سيتم إزالة جميع الفعاليات المرتبطة بالمكون',
+                icon: 'lucide:alert-triangle',
+              },
+            ]"
+            :loading="isDeleting"
+            @confirm="confirmDeleteComponent"
+            @cancel="cancelDeleteComponent"
+          />
+
+          <!-- Delete Activity Modal -->
+          <DeleteModal
+            v-model:open="isDeleteActivityModalOpen"
+            title="حذف الفعالية"
+            description="تأكيد حذف الفعالية"
+            :message="
+              selectedActivityToDelete?.name
+                ? `هل أنت متأكد من حذف الفعالية '${selectedActivityToDelete.name}' من المكون '${selectedActivityToDelete.componentName}'؟`
+                : ''
+            "
+            :sub-message="'سيتم حذف الفعالية نهائياً من المكون'"
+            :checklist="[
+              {
+                text: 'لن يمكنك استعادة البيانات بعد الحذف',
+                icon: 'lucide:x-circle',
+              },
+              {
+                text: 'سيتم إزالة الفعالية من المكون',
+                icon: 'lucide:alert-triangle',
+              },
+            ]"
+            :loading="isDeleting"
+            @confirm="confirmDeleteActivity"
+            @cancel="cancelDeleteActivity"
+          />
+
+          <!-- Action Buttons -->
+          <div class="flex justify-end">
+            <div class="flex items-center gap-2">
+              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+                توجيه المهام
+              </PrimaryButton>
+              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+                عرض النسخة السابقة
+              </PrimaryButton>
+              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+                تدقيق المشروع
+              </PrimaryButton>
+              <PrimaryButton
+                icon="lucide:trash"
+                variant="destructive"
+                @click="showDeleteConfirmation"
+              >
+                حذف المشروع
+              </PrimaryButton>
             </div>
           </div>
         </template>
-
-        <!-- Achievements Section -->
-        <div class="overflow-hidden rounded-lg border border-border bg-background-surface">
-          <div class="flex items-center justify-between border-b p-4">
-            <div class="flex items-center gap-2">
-              <Icon icon="" class="text-foreground-subheading h-5 w-5" />
-              <h4 class="font-medium text-foreground-heading">الإنجازات </h4>
-            </div>
-            <PrimaryButton
-              :icon="isEditingAchievements ? 'lucide:x' : 'lucide:edit'"
-              @click="toggleEditAchievements"
-              :variant="isEditingAchievements ? 'destructive' : 'ghost'"
-              size="sm"
-            />
-          </div>
-          <div class="divide-y divide-border">
-            <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-              <!-- Financial Achievement -->
-              <div>
-                <div class="text-sm text-foreground-muted">الإنجاز المالي</div>
-                <div
-                  v-if="!isEditingAchievements"
-                  class="mt-1 text-sm font-medium text-foreground-heading"
-                >
-                  {{
-                    project?.financialAchievement
-                      ? project.financialAchievement + '%'
-                      : 'لم يتم تحديد الإنجاز المالي'
-                  }}
-                </div>
-                <div v-else class="mt-1">
-                  <NumberInput
-                    v-model="editForm.financialAchievement"
-                    class="w-full"
-                    placeholder="ادخل الإنجاز المالي"
-                    unit="%"
-                  />
-                </div>
-              </div>
-              <!-- Technical Achievement (Premium) -->
-              <div
-                @click="OpenPremiumModal"
-                class="relative rounded-lg border border-red-300 bg-red-200 p-4"
-              >
-                <div class="text-sm text-red-600">الإنجاز الفني (ميزة مدفوعة)</div>
-                <div class="mt-1 text-sm font-medium text-red-600">
-                  {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
-                </div>
-                <div
-                  class="absolute inset-0 flex items-center justify-center bg-red-200/10 dark:bg-gray-800/80"
-                >
-                  <div class="text-center">
-                    <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-red-400" />
-                    <p class="mt-2 text-sm text-red-400">هذه ميزة مدفوعة</p>
-                  </div>
-                </div>
-              </div>
-              <PremiumModal v-model:open="showPremiumModal" @close="showPremiumModal = false" />
-            </div>
-            <!-- Save/Cancel Buttons -->
-            <div v-if="isEditingAchievements" class="flex justify-end gap-2 p-4">
-              <PrimaryButton variant="outline" @click="cancelEditAchievements">الغاء</PrimaryButton>
-              <PrimaryButton
-                @click="saveAchievements"
-                :disabled="isSaving"
-                :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
-              >
-                حفظ التغييرات
-              </PrimaryButton>
-            </div>
-          </div>
-        </div>
-
-        <!-- Attachments Section -->
-        <div class="rounded-xl border bg-background-surface">
-          <div class="flex items-center justify-between border-b p-4">
-            <div class="flex items-center gap-2">
-              <Icon icon="lucide:paperclip" class="text-foreground-subheading h-5 w-5" />
-              <h4 class="font-medium text-foreground-heading">المرفقات</h4>
-            </div>
-            <PrimaryButton
-              icon="lucide:plus"
-              variant="primary"
-              @click="openAttachmentDialog"
-              size="sm"
-            >
-              إضافة
-            </PrimaryButton>
-          </div>
-
-          <div class="p-4">
-            <div v-if="project?.attachments?.length > 0">
-              <CustomTable
-                :columns="attachmentColumns"
-                :items="transformedAttachments"
-                :loading="isLoading"
-                :items-per-page="8"
-                :show-export="false"
-                :show-date-filter="false"
-                :show-search="true"
-              >
-                <template #fileType="{ item }">
-                  <div class="flex items-center gap-2">
-                    <div :class="getFileTypeContainerClass(item.fileType)">
-                      <Icon
-                        :icon="item.fileType.icon"
-                        :class="getFileTypeIconClass(item.fileType)"
-                      />
-                    </div>
-                    <span class="text-sm text-foreground-muted">{{ item.fileType.type }}</span>
-                  </div>
-                </template>
-                <template #action="{ item }">
-                  <div class="flex items-center justify-center gap-4">
-                    <a
-                      :href="item.url"
-                      target="_blank"
-                      class="inline-flex items-center gap-1 text-nowrap text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
-                      <Icon icon="tabler:download" class="h-4 w-4" />
-                    </a>
-                    <button
-                      @click="handleEditAttachment(item)"
-                      class="inline-flex items-center gap-1 text-nowrap text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    >
-                      <Icon icon="lucide:edit" class="h-4 w-4" />
-                    </button>
-                    <button
-                      @click="handleDeleteAttachment(item)"
-                      class="inline-flex items-center gap-1 text-nowrap text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                    >
-                      <Icon icon="lucide:trash" class="h-4 w-4" />
-                    </button>
-                  </div>
-                </template>
-              </CustomTable>
-            </div>
-            <div
-              v-else
-              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center"
-            >
-              <div class="mb-3 rounded-full bg-background-card p-3">
-                <Icon icon="lucide:file" class="text-foreground-subheading h-8 w-8" />
-              </div>
-              <h3 class="mb-1 text-base font-medium text-foreground-heading"> لا توجد مرفقات </h3>
-              <p class="mb-4 text-sm text-foreground-muted"> قم بإضافة مرفقات للمشروع </p>
-              <PrimaryButton
-                icon="lucide:plus"
-                variant="outline"
-                size="sm"
-                @click="openAttachmentDialog"
-              >
-                إضافة
-              </PrimaryButton>
-            </div>
-          </div>
-        </div>
-
-        <!-- Attachment Modal -->
-        <AttachmentEditModal
-          v-model:open="isAttachmentDialogOpen"
-          :loading="isUploading"
-          :attachment="selectedAttachment"
-          :project-id="project?.id"
-          @confirm="handleAttachmentSubmit"
-          @cancel="closeAttachmentDialog"
-        />
-
-        <!-- Delete Attachment Modal -->
-        <DeleteModal
-          v-model:open="isDeleteAttachmentModalOpen"
-          title="حذف المرفق"
-          description="تأكيد حذف المرفق"
-          :message="
-            selectedAttachment?.title
-              ? `هل أنت متأكد من حذف المرفق '${selectedAttachment.title}'؟`
-              : ''
-          "
-          :sub-message="'سيتم حذف المرفق نهائياً من النظام'"
-          :checklist="[
-            {
-              text: 'لن يمكنك استعادة البيانات بعد الحذف',
-              icon: 'lucide:x-circle',
-            },
-            {
-              text: 'سيتم إزالة المرفق من جميع السجلات',
-              icon: 'lucide:alert-triangle',
-            },
-          ]"
-          :loading="isDeleting"
-          @confirm="confirmDeleteAttachment"
-          @cancel="cancelDeleteAttachment"
-        />
-
-        <!-- Delete Component Modal -->
-        <DeleteModal
-          v-model:open="isDeleteComponentModalOpen"
-          title="حذف المكون"
-          description="تأكيد حذف المكون"
-          :message="
-            selectedComponentToDelete?.name
-              ? `هل أنت متأكد من حذف المكون '${selectedComponentToDelete.name}'؟`
-              : ''
-          "
-          :sub-message="'سيتم حذف جميع الفعاليات المرتبطة بالمكون'"
-          :checklist="[
-            {
-              text: 'لن يمكنك استعادة البيانات بعد الحذف',
-              icon: 'lucide:x-circle',
-            },
-            {
-              text: 'سيتم إزالة جميع الفعاليات المرتبطة بالمكون',
-              icon: 'lucide:alert-triangle',
-            },
-          ]"
-          :loading="isDeleting"
-          @confirm="confirmDeleteComponent"
-          @cancel="cancelDeleteComponent"
-        />
-
-        <!-- Delete Activity Modal -->
-        <DeleteModal
-          v-model:open="isDeleteActivityModalOpen"
-          title="حذف الفعالية"
-          description="تأكيد حذف الفعالية"
-          :message="
-            selectedActivityToDelete?.name
-              ? `هل أنت متأكد من حذف الفعالية '${selectedActivityToDelete.name}' من المكون '${selectedActivityToDelete.componentName}'؟`
-              : ''
-          "
-          :sub-message="'سيتم حذف الفعالية نهائياً من المكون'"
-          :checklist="[
-            {
-              text: 'لن يمكنك استعادة البيانات بعد الحذف',
-              icon: 'lucide:x-circle',
-            },
-            {
-              text: 'سيتم إزالة الفعالية من المكون',
-              icon: 'lucide:alert-triangle',
-            },
-          ]"
-          :loading="isDeleting"
-          @confirm="confirmDeleteActivity"
-          @cancel="cancelDeleteActivity"
-        />
-
-        <!-- Action Buttons -->
-        <div class="flex justify-end">
-          <div class="flex items-center gap-2">
-            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
-              توجيه المهام
-            </PrimaryButton>
-            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
-              عرض النسخة السابقة
-            </PrimaryButton>
-            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
-              تدقيق المشروع
-            </PrimaryButton>
-            <PrimaryButton
-              icon="lucide:trash"
-              variant="destructive"
-              @click="showDeleteConfirmation"
-            >
-              حذف المشروع
-            </PrimaryButton>
-          </div>
-        </div>
       </div>
     </div>
   </DefaultLayout>
@@ -584,10 +539,10 @@
   import ComponentsActivitiesDetails from '@/components/ComponentsActivitiesDetails.vue';
   import DeleteModal from '@/components/DeleteModal.vue';
   import ProjectComponents from '@/components/funded-project/ProjectComponents.vue';
-  import ProjectDetails from '@/components/funded-project/ProjectDetails.vue';
-  import PremiumModal from '@/components/PremiumModal.vue';
+  import GenericSection from '@/components/GenericSection.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
+  import ViewModeSection from '@/components/ViewModeSection.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
   import { fundedProjectService } from '@/services/fundedProjectService';
@@ -665,6 +620,7 @@
 
   onMounted(() => {
     fetchProject();
+    fetchBeneficiaryOptions();
   });
 
   const totalPeriods = computed(() => {
@@ -1248,6 +1204,23 @@
   const cancelDeleteActivity = () => {
     isDeleteActivityModalOpen.value = false;
     selectedActivityToDelete.value = null;
+  };
+
+  // Add this near the top of your script setup
+  const beneficiaryOptions = ref([]);
+
+  // Fetch beneficiary options
+  const fetchBeneficiaryOptions = async () => {
+    try {
+      const response = await axiosInstance.get('/api/Beneficiary');
+      beneficiaryOptions.value = response.data.map((beneficiary) => ({
+        value: beneficiary.id,
+        label: beneficiary.name,
+      }));
+    } catch (error) {
+      console.error('Error fetching beneficiary options:', error);
+      toast.error('حدث خطأ في تحميل الجهات المستفيدة');
+    }
   };
 </script>
 

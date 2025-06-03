@@ -1,9 +1,14 @@
 <template>
-  <FormSection title="التفاصيل العامة للمشروع" full-width>
-    <div class="space-y-8">
-      <!-- Basic Info Section -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">معلومات المشروع الأساسية</h3>
+  <div class="space-y-8">
+    <!-- Basic Info Section -->
+    <div class="rounded-xl border bg-background-surface">
+      <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:info" class="text-foreground-subheading h-5 w-5" />
+          <h4 class="font-medium text-foreground-heading">معلومات المشروع الأساسية</h4>
+        </div>
+      </div>
+      <div class="p-4">
         <div class="grid gap-6 md:grid-cols-2">
           <FormField label="اسم المشروع" class="md:col-span-2">
             <template v-if="isEditing">
@@ -14,10 +19,8 @@
               />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ project?.name || 'لم يتم تحديد اسم المشروع' }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.name || 'لم يتم تحديد اسم المشروع' }}
               </div>
             </template>
           </FormField>
@@ -30,10 +33,8 @@
               />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ project?.executingDepartment || 'لم يتم تحديد الدائرة' }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.executingDepartment || 'لم يتم تحديد الدائرة' }}
               </div>
             </template>
           </FormField>
@@ -46,19 +47,24 @@
               />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ project?.implementingEntity || 'لم يتم تحديد الجهة' }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.implementingEntity || 'لم يتم تحديد الجهة' }}
               </div>
             </template>
           </FormField>
         </div>
       </div>
+    </div>
 
-      <!-- Project Status and Type Section -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">حالة ونوع المشروع</h3>
+    <!-- Project Status and Type Section -->
+    <div class="rounded-xl border bg-background-surface">
+      <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:target" class="text-foreground-subheading h-5 w-5" />
+          <h4 class="font-medium text-foreground-heading">حالة ونوع المشروع</h4>
+        </div>
+      </div>
+      <div class="p-4">
         <div class="grid gap-6 md:grid-cols-2">
           <!-- Status select dropdown -->
           <FormField label="حالة المشروع">
@@ -74,44 +80,56 @@
               </select>
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ getStatusText(project?.projectStatus) }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ getStatusText(formData.projectStatus) }}
               </div>
             </template>
           </FormField>
 
           <!-- Government Project Toggle -->
           <FormField label="نوع المشروع">
-            <div class="flex items-center gap-3">
-              <CustomSwitch
-                v-model="formData.isGovernment"
-                label="ضمن البرنامج الحكومي"
-                @update:model-value="updateIsGovernment"
-              />
-              <div
-                class="text-xs"
-                :class="
-                  formData.isGovernment
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-gray-500 dark:text-gray-400'
-                "
-              >
-                {{
-                  formData.isGovernment
-                    ? 'تم تعيين المشروع كاحد مشاريع البرنامج الحكومي'
-                    : 'ليس ضمن مشاريع البرنامج الحكومي'
-                }}
+            <template v-if="isEditing">
+              <div class="flex items-center gap-3">
+                <CustomSwitch
+                  v-model="formData.isGovernment"
+                  label="ضمن البرنامج الحكومي"
+                  @update:model-value="updateIsGovernment"
+                />
+                <div
+                  class="text-xs"
+                  :class="
+                    formData.isGovernment
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                  "
+                >
+                  {{
+                    formData.isGovernment
+                      ? 'تم تعيين المشروع كاحد مشاريع البرنامج الحكومي'
+                      : 'ليس ضمن مشاريع البرنامج الحكومي'
+                  }}
+                </div>
               </div>
-            </div>
+            </template>
+            <template v-else>
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.isGovernment ? 'مشروع حكومي' : 'مشروع غير حكومي' }}
+              </div>
+            </template>
           </FormField>
         </div>
       </div>
+    </div>
 
-      <!-- Beneficiaries Section -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">الجهات المستفيدة والمانحة</h3>
+    <!-- Beneficiaries Section -->
+    <div class="rounded-xl border bg-background-surface">
+      <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:users" class="text-foreground-subheading h-5 w-5" />
+          <h4 class="font-medium text-foreground-heading">الجهات المستفيدة والمانحة</h4>
+        </div>
+      </div>
+      <div class="p-4">
         <div class="grid gap-6">
           <FormField label="الجهات المستفيدة من المشروع">
             <template v-if="isEditing">
@@ -123,10 +141,8 @@
               />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ formatBeneficiaries(project?.beneficiaryEntities) }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formatBeneficiaries(formData.beneficiaryEntities) }}
               </div>
             </template>
           </FormField>
@@ -139,45 +155,64 @@
               />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ project?.grantingEntity || 'لم يتم تحديد الجهة المانحة' }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.grantingEntity || 'لم يتم تحديد الجهة المانحة' }}
               </div>
             </template>
           </FormField>
         </div>
       </div>
+    </div>
 
-      <!-- Funding Section -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">تفاصيل التمويل</h3>
+    <!-- Funding Section -->
+    <div class="rounded-xl border bg-background-surface">
+      <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:dollar-sign" class="text-foreground-subheading h-5 w-5" />
+          <h4 class="font-medium text-foreground-heading">تفاصيل التمويل</h4>
+        </div>
+      </div>
+      <div class="p-4">
         <div class="grid gap-6 md:grid-cols-2">
           <FormField label="نوع التمويل">
-            <div
-              class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-            >
-              دولي
-            </div>
+            <template v-if="isEditing">
+              <select
+                v-model="formData.fundingType"
+                class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option :value="1">مشروع ممول</option>
+                <option :value="0">مشروع غير ممول</option>
+              </select>
+            </template>
+            <template v-else>
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.fundingType === 1 ? 'مشروع ممول' : 'مشروع غير ممول' }}
+              </div>
+            </template>
           </FormField>
           <FormField label="كلفة المشروع">
             <template v-if="isEditing">
               <NumberInput v-model="formData.cost" placeholder="165,000" unit="$" />
             </template>
             <template v-else>
-              <div
-                class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-              >
-                {{ project?.cost ? `$${formatCost(project.cost)}` : 'لم يتم تحديد المبلغ' }}
+              <div class="text-sm font-medium text-foreground-heading">
+                {{ formData.cost ? `$${formatCost(formData.cost)}` : 'لم يتم تحديد المبلغ' }}
               </div>
             </template>
           </FormField>
         </div>
       </div>
+    </div>
 
-      <!-- Objectives Section -->
-      <div class="rounded-xl border bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/30">
-        <h3 class="mb-6 text-lg font-medium">أهداف المشروع</h3>
+    <!-- Objectives Section -->
+    <div class="rounded-xl border bg-background-surface">
+      <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:target" class="text-foreground-subheading h-5 w-5" />
+          <h4 class="font-medium text-foreground-heading">أهداف المشروع</h4>
+        </div>
+      </div>
+      <div class="p-4">
         <FormField label="الهدف من المشروع">
           <template v-if="isEditing">
             <Textarea
@@ -188,23 +223,20 @@
             />
           </template>
           <template v-else>
-            <div
-              class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
-            >
-              {{ project?.projectObjectives || 'لم يتم تحديد الهدف' }}
+            <div class="text-sm font-medium text-foreground-heading">
+              {{ formData.projectObjectives || 'لم يتم تحديد الهدف' }}
             </div>
           </template>
         </FormField>
       </div>
     </div>
-  </FormSection>
+  </div>
 </template>
 
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import FormField from '@/components/FormField.vue';
-  import FormSection from '@/components/FormSection.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import { Textarea } from '@/components/ui/textarea';
   import { beneficiaryService } from '@/services/beneficiaryService';
@@ -404,3 +436,7 @@
     console.log('Emitted formData with isGovernment:', formData.value.isGovernment);
   };
 </script>
+
+<style scoped>
+  /* Add any additional scoped styles if needed */
+</style>

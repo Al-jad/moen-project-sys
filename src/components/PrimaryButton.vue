@@ -10,6 +10,8 @@
       variant === 'outline' &&
         'border border-border bg-background-surface/90 hover:bg-background-hover',
       variant === 'destructive' && 'bg-destructive hover:bg-destructive/90',
+      variant === 'secondary' && 'bg-secondary hover:bg-secondary/90',
+      variant === 'ghost' && 'bg-transparent text-primary hover:bg-primary/10 hover:text-primary',
     ]"
     :variant="variant === 'primary' ? 'default' : variant"
     :size="size"

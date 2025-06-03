@@ -82,6 +82,8 @@ declare module 'vue' {
     DropdownMenuSubContent: typeof import('./components/ui/dropdown-menu/DropdownMenuSubContent.vue')['default']
     DropdownMenuSubTrigger: typeof import('./components/ui/dropdown-menu/DropdownMenuSubTrigger.vue')['default']
     DropdownMenuTrigger: typeof import('./components/ui/dropdown-menu/DropdownMenuTrigger.vue')['default']
+    EditableSection: typeof import('./components/EditableSection.vue')['default']
+    EditModeSection: typeof import('./components/EditModeSection.vue')['default']
     EditProcedureModal: typeof import('./components/EditProcedureModal.vue')['default']
     ExecutionProcedure: typeof import('./components/ExecutionProcedure.vue')['default']
     Footer: typeof import('./components/Footer.vue')['default']
@@ -89,6 +91,7 @@ declare module 'vue' {
     FormSection: typeof import('./components/FormSection.vue')['default']
     FundedProjectCard: typeof import('./components/FundedProjectCard.vue')['default']
     GenericProjectCard: typeof import('./components/GenericProjectCard.vue')['default']
+    GenericSection: typeof import('./components/GenericSection.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
     Input: typeof import('./components/ui/input/Input.vue')['default']
     InputWithAddButton: typeof import('./components/InputWithAddButton.vue')['default']
@@ -160,6 +163,7 @@ declare module 'vue' {
     Sidebar: typeof import('./components/Sidebar.vue')['default']
     Slider: typeof import('./components/ui/slider/Slider.vue')['default']
     Sonner: typeof import('./components/ui/sonner/Sonner.vue')['default']
+    StatsCard: typeof import('./components/StatsCard.vue')['default']
     StatusBadge: typeof import('./components/StatusBadge.vue')['default']
     Stepper: typeof import('./components/ui/stepper/Stepper.vue')['default']
     StepperDescription: typeof import('./components/ui/stepper/StepperDescription.vue')['default']
@@ -194,5 +198,6 @@ declare module 'vue' {
     UsersList: typeof import('./components/UsersList.vue')['default']
     ViewActionModal: typeof import('./components/ViewActionModal.vue')['default']
     ViewLogModal: typeof import('./components/ViewLogModal.vue')['default']
+    ViewModeSection: typeof import('./components/ViewModeSection.vue')['default']
   }
 }
