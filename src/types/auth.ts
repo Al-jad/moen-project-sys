@@ -36,7 +36,9 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  tokens: {
+    access: string;
+  };
   user: User;
-  expiresIn: number;
+  roles: string[];
 }
