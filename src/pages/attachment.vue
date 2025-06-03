@@ -144,40 +144,26 @@
       />
 
       <!-- Delete Confirmation Dialog -->
-      <Dialog v-model:open="isDeleteModalOpen">
-        <DialogContent class="border border-border bg-background shadow-xl sm:max-w-[26rem]">
-          <DialogHeader>
-            <DialogTitle class="text-right text-xl font-bold text-foreground-heading">
-              حذف المرفق
-            </DialogTitle>
-            <DialogDescription class="text-right text-foreground-muted">
-              هذا الإجراء لا يمكن التراجع عنه
-            </DialogDescription>
-          </DialogHeader>
-          <div class="py-6">
-            <div class="rounded-lg border border-destructive/20 bg-destructive/5 p-4">
-              <div class="flex items-start gap-3">
-                <div class="rounded-full bg-destructive/10 p-2">
-                  <Icon icon="lucide:alert-triangle" class="h-5 w-5 text-destructive" />
-                </div>
-                <div class="flex-1">
-                  <p class="font-medium text-foreground-heading"> هل أنت متأكد من حذف المرفق؟ </p>
-                  <p class="mt-1 text-sm text-foreground-muted">
-                    سيتم حذف المرفق "{{ selectedAttachment?.title }}" نهائياً من النظام.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex justify-end gap-3">
-            <Button variant="outline" @click="cancelDelete" :disabled="isDeleting"> إلغاء </Button>
-            <Button variant="destructive" @click="confirmDelete" :disabled="isDeleting">
-              <Icon v-if="isDeleting" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
-              حذف المرفق
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeleteModal
+        v-model:open="isDeleteModalOpen"
+        :loading="isDeleting"
+        title="حذف المرفق"
+        description="تأكيد حذف المرفق"
+        :message="`هل أنت متأكد من حذف المرفق '${selectedAttachment?.title}'؟`"
+        :sub-message="'سيتم حذف المرفق نهائياً من النظام'"
+        :checklist="[
+          {
+            text: 'لن يمكنك استعادة البيانات بعد الحذف',
+            icon: 'lucide:x-circle',
+          },
+          {
+            text: 'سيتم إزالة المرفق من جميع السجلات',
+            icon: 'lucide:alert-triangle',
+          },
+        ]"
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+      />
 
       <!-- Attachment Details Dialog -->
       <Dialog v-model:open="showDetailsDialog">
@@ -236,6 +222,7 @@
   import AttachmentEditModal from '@/components/AttachmentEditModal.vue';
   import BackToMainButton from '@/components/BackToMainButton.vue';
   import CustomTable from '@/components/CustomTable.vue';
+  import DeleteModal from '@/components/DeleteModal.vue';
   import { Badge } from '@/components/ui/badge';
   import { Button } from '@/components/ui/button';
   import {

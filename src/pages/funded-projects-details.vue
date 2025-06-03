@@ -1,26 +1,24 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
+    <div class="min-h-screen bg-background p-6">
       <div class="mx-auto w-full max-w-6xl space-y-8">
         <!-- Loading State -->
         <div v-if="isLoading" class="space-y-4">
-          <div class="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-48 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-96 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="h-24 animate-pulse rounded-xl bg-background-surface"></div>
+          <div class="h-48 animate-pulse rounded-xl bg-background-surface"></div>
+          <div class="h-96 animate-pulse rounded-xl bg-background-surface"></div>
         </div>
 
         <!-- Error State -->
         <div
           v-else-if="error"
-          class="rounded-xl border border-red-200 bg-white p-6 text-center dark:border-red-800 dark:bg-gray-800"
+          class="rounded-xl border border-destructive bg-background-surface p-6 text-center"
         >
-          <div class="mb-3 inline-block rounded-full bg-red-100 p-3 dark:bg-red-900/30">
-            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div class="mb-3 inline-block rounded-full bg-destructive/10 p-3">
+            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-destructive" />
           </div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            حدث خطأ في تحميل المشروع
-          </h3>
-          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <h3 class="text-lg font-medium text-destructive">حدث خطأ في تحميل المشروع</h3>
+          <p class="mt-2 text-sm text-destructive">
             {{ error }}
           </p>
           <Button @click="fetchProject" variant="outline" class="mt-4">
@@ -32,21 +30,21 @@
         <!-- Content -->
         <template v-else-if="project">
           <!-- Header -->
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border bg-background-surface p-6">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                <div class="h-10 w-10 rounded-lg bg-primary/10">
                   <div
-                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
+                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-primary"
                   >
-                    {{ project?.id }}
+                    <Icon icon="lucide:folder" class="h-6 w-6" />
                   </div>
                 </div>
                 <div>
-                  <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <h1 class="text-2xl font-bold text-foreground-heading">
                     {{ project?.name }}
                   </h1>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <p class="text-foreground-subheading text-sm">
                     {{ project?.executingDepartment }}
                   </p>
                 </div>
@@ -59,36 +57,30 @@
 
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
+            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
               <div class="relative z-10">
-                <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
-                <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <div class="text-foreground-subheading mb-1 text-sm">المدة الكلية</div>
+                <div class="text-2xl font-semibold text-foreground-heading">
                   {{ project?.duration }} {{ project?.periodType === 1 ? 'اسبوع' : 'شهر' }}
                 </div>
               </div>
-              <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/10 dark:bg-blue-400/10"></div>
+              <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-500/50 dark:bg-blue-400/50"></div>
             </div>
-            <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
+            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
               <div class="relative z-10">
-                <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد المكونات</div>
-                <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <div class="text-foreground-subheading mb-1 text-sm">عدد المكونات</div>
+                <div class="text-2xl font-semibold text-foreground-heading">
                   {{ project?.components?.length || 0 }}
                 </div>
               </div>
               <div
-                class="absolute inset-x-0 bottom-0 h-1 bg-green-500/10 dark:bg-green-400/10"
+                class="absolute inset-x-0 bottom-0 h-1 bg-green-500/50 dark:bg-green-400/50"
               ></div>
             </div>
-            <div
-              class="relative overflow-hidden rounded-xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
+            <div class="relative overflow-hidden rounded-xl border bg-background-surface p-4">
               <div class="relative z-10">
-                <div class="mb-1 text-sm text-gray-500 dark:text-gray-400">عدد الفعاليات</div>
-                <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <div class="text-foreground-subheading mb-1 text-sm">عدد الفعاليات</div>
+                <div class="text-2xl font-semibold text-foreground-heading">
                   {{
                     project?.components?.reduce(
                       (total, comp) => total + (comp.activities?.length || 0),
@@ -98,17 +90,17 @@
                 </div>
               </div>
               <div
-                class="absolute inset-x-0 bottom-0 h-1 bg-purple-500/10 dark:bg-purple-400/10"
+                class="absolute inset-x-0 bottom-0 h-1 bg-purple-500/50 dark:bg-purple-400/50"
               ></div>
             </div>
           </div>
 
           <!-- Project Details -->
-          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+          <div class="rounded-xl border bg-background-surface">
+            <div class="flex items-center justify-between border-b p-4">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:info" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
+                <Icon icon="lucide:info" class="text-foreground-subheading h-5 w-5" />
+                <h4 class="font-medium text-foreground-heading">تفاصيل المشروع</h4>
               </div>
               <Button @click="toggleEditDetails" variant="ghost" size="sm">
                 <Icon v-if="!isEditingDetails" icon="lucide:edit" class="h-4 w-4" />
@@ -117,29 +109,29 @@
             </div>
 
             <!-- View Mode -->
-            <div v-if="!isEditingDetails" class="divide-y dark:divide-gray-700">
+            <div v-if="!isEditingDetails" class="divide-y divide-border">
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">اسم المشروع</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">اسم المشروع</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{ project?.name || 'لم يتم تحديد اسم المشروع' }}
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">الدائرة المنفذة</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">الدائرة المنفذة</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{ project?.executingDepartment || 'لم يتم تحديد الدائرة' }}
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">الجهة المنفذة</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">الجهة المنفذة</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{ project?.implementingEntity || 'لم يتم تحديد الجهة' }}
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">الجهات المستفيدة</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">الجهات المستفيدة</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{
                       project?.beneficiaries.map((b) => b.name).join(', ') ||
                       'لم يتم تحديد الجهات المستفيدة'
@@ -148,41 +140,37 @@
                 </div>
               </div>
               <div class="flex flex-col gap-2 p-4">
-                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400"
-                  >الهدف من المشروع</div
-                >
-                <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-sm text-foreground-muted">الهدف من المشروع</div>
+                <div class="mt-1 text-sm font-medium text-foreground-heading">
                   {{ project?.projectObjectives || 'لم يتم تحديد الهدف' }}
                 </div>
               </div>
 
               <div class="flex flex-col gap-2 p-4">
-                <div class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400"
-                  >نوع المشروع</div
-                >
-                <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-sm text-foreground-muted">نوع المشروع</div>
+                <div class="mt-1 text-sm font-medium text-foreground-heading">
                   {{ project?.isGovernment ? 'مشروع حكومي' : 'مشروع غير حكومي' }}
                 </div>
               </div>
 
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">نوع التمويل</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">نوع التمويل</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{ project?.fundingType === 1 ? 'مشروع ممول' : 'مشروع غير ممول' }}
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">التمويل الدولي</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">التمويل الدولي</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{ project?.cost ? `$${formatCost(project?.cost)}` : 'لم يتم تحديد المبلغ' }}
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ البدء</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">تاريخ البدء</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{
                       project?.actualStartDate
                         ? formatDate(project?.actualStartDate)
@@ -191,8 +179,8 @@
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ الانتهاء المتوقع</div>
-                  <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div class="text-sm text-foreground-muted">تاريخ الانتهاء المتوقع</div>
+                  <div class="mt-1 text-sm font-medium text-foreground-heading">
                     {{
                       project?.actualStartDate && project?.duration
                         ? calculateEndDate(
@@ -215,15 +203,15 @@
                 @update:project="updateProjectDetails"
               />
               <div class="mt-4 flex justify-end gap-2">
-                <Button @click="cancelEditDetails" variant="outline"> الغاء </Button>
-                <Button
+                <PrimaryButton variant="outline" @click="cancelEditDetails"> الغاء </PrimaryButton>
+                <PrimaryButton
+                  variant="primary"
+                  :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
                   @click="saveProjectDetails"
                   :disabled="isSaving"
-                  class="bg-slate-700 hover:bg-slate-800"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
-                </Button>
+                </PrimaryButton>
               </div>
             </div>
           </div>
@@ -235,16 +223,16 @@
           />
 
           <!-- Components and Activities -->
-          <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+          <div class="rounded-xl border bg-background-surface">
+            <div class="flex items-center justify-between border-b p-4">
               <div class="flex items-center gap-2">
-                <Icon icon="lucide:target" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                <h4 class="font-medium text-gray-900 dark:text-gray-100">المكونات والفعاليات</h4>
+                <Icon icon="lucide:target" class="text-foreground-subheading h-5 w-5" />
+                <h4 class="font-medium text-foreground-heading">المكونات والفعاليات</h4>
               </div>
-              <Button @click="toggleEditComponents" variant="ghost" size="sm">
+              <PrimaryButton @click="toggleEditComponents" variant="ghost" size="sm">
                 <Icon v-if="!isEditingComponents" icon="lucide:edit" class="h-4 w-4" />
                 <Icon v-else icon="lucide:x" class="h-4 w-4" />
-              </Button>
+              </PrimaryButton>
             </div>
 
             <!-- View Mode -->
@@ -254,24 +242,22 @@
                 :periodType="project?.periodType || 1"
               >
                 <template #componentActions="{ component }">
-                  <Button
+                  <PrimaryButton
                     @click="handleDeleteComponent(component)"
-                    variant="ghost"
+                    variant="destructive"
+                    icon="lucide:trash"
                     size="sm"
                     class="text-red-500 hover:text-red-600 dark:text-red-400"
-                  >
-                    <Icon icon="lucide:trash" class="h-4 w-4" />
-                  </Button>
+                  />
                 </template>
                 <template #activityActions="{ activity, component }">
-                  <Button
+                  <PrimaryButton
                     @click="handleDeleteActivity(activity, component)"
-                    variant="ghost"
+                    variant="destructive"
+                    icon="lucide:trash"
                     size="sm"
                     class="text-red-500 hover:text-red-600 dark:text-red-400"
-                  >
-                    <Icon icon="lucide:trash" class="h-4 w-4" />
-                  </Button>
+                  />
                 </template>
               </ComponentsActivitiesDetails>
             </div>
@@ -285,45 +271,43 @@
                 @update:components="updateComponents"
               />
               <div class="mt-4 flex justify-end gap-2">
-                <Button @click="cancelEditComponents" variant="outline"> الغاء </Button>
-                <Button
+                <PrimaryButton variant="outline" @click="cancelEditComponents">
+                  الغاء
+                </PrimaryButton>
+                <PrimaryButton
                   @click="saveComponents"
                   :disabled="isSaving"
-                  class="bg-slate-700 hover:bg-slate-800"
+                  :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
                 >
-                  <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                   حفظ التغييرات
-                </Button>
+                </PrimaryButton>
               </div>
             </div>
           </div>
         </template>
 
         <!-- Achievements Section -->
-        <div
-          class="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
-        >
-          <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+        <div class="overflow-hidden rounded-lg border border-border bg-background-surface">
+          <div class="flex items-center justify-between border-b p-4">
             <div class="flex items-center gap-2">
-              <Icon
-                icon="hugeicons:task-done-01"
-                class="h-5 w-5 text-gray-500 dark:text-gray-400"
-              />
-              <h4 class="font-medium text-gray-900 dark:text-gray-100">الإنجازات </h4>
+              <Icon icon="" class="text-foreground-subheading h-5 w-5" />
+              <h4 class="font-medium text-foreground-heading">الإنجازات </h4>
             </div>
-            <Button @click="toggleEditAchievements" variant="ghost" size="sm">
-              <Icon v-if="!isEditingAchievements" icon="lucide:edit" class="h-4 w-4" />
-              <Icon v-else icon="lucide:x" class="h-4 w-4" />
-            </Button>
+            <PrimaryButton
+              :icon="isEditingAchievements ? 'lucide:x' : 'lucide:edit'"
+              @click="toggleEditAchievements"
+              :variant="isEditingAchievements ? 'destructive' : 'ghost'"
+              size="sm"
+            />
           </div>
-          <div class="divide-y dark:divide-gray-700">
+          <div class="divide-y divide-border">
             <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
               <!-- Financial Achievement -->
               <div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">الإنجاز المالي</div>
+                <div class="text-sm text-foreground-muted">الإنجاز المالي</div>
                 <div
                   v-if="!isEditingAchievements"
-                  class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100"
+                  class="mt-1 text-sm font-medium text-foreground-heading"
                 >
                   {{
                     project?.financialAchievement
@@ -362,29 +346,33 @@
             </div>
             <!-- Save/Cancel Buttons -->
             <div v-if="isEditingAchievements" class="flex justify-end gap-2 p-4">
-              <Button @click="cancelEditAchievements" variant="outline">الغاء</Button>
-              <Button
+              <PrimaryButton variant="outline" @click="cancelEditAchievements">الغاء</PrimaryButton>
+              <PrimaryButton
                 @click="saveAchievements"
                 :disabled="isSaving"
-                class="bg-slate-700 hover:bg-slate-800"
+                :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
               >
-                <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
                 حفظ التغييرات
-              </Button>
+              </PrimaryButton>
             </div>
           </div>
         </div>
 
         <!-- Attachments Section -->
-        <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-          <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+        <div class="rounded-xl border bg-background-surface">
+          <div class="flex items-center justify-between border-b p-4">
             <div class="flex items-center gap-2">
-              <Icon icon="lucide:paperclip" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <h4 class="font-medium text-gray-900 dark:text-gray-100">المرفقات</h4>
+              <Icon icon="lucide:paperclip" class="text-foreground-subheading h-5 w-5" />
+              <h4 class="font-medium text-foreground-heading">المرفقات</h4>
             </div>
-            <Button @click="openAttachmentDialog" variant="ghost" size="sm">
-              <Icon icon="lucide:plus" class="h-4 w-4" />
-            </Button>
+            <PrimaryButton
+              icon="lucide:plus"
+              variant="primary"
+              @click="openAttachmentDialog"
+              size="sm"
+            >
+              إضافة
+            </PrimaryButton>
           </div>
 
           <div class="p-4">
@@ -406,9 +394,7 @@
                         :class="getFileTypeIconClass(item.fileType)"
                       />
                     </div>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{
-                      item.fileType.type
-                    }}</span>
+                    <span class="text-sm text-foreground-muted">{{ item.fileType.type }}</span>
                   </div>
                 </template>
                 <template #action="{ item }">
@@ -438,21 +424,21 @@
             </div>
             <div
               v-else
-              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center dark:border-gray-700"
+              class="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center"
             >
-              <div class="mb-3 rounded-full bg-gray-100 p-3 dark:bg-gray-800">
-                <Icon icon="lucide:file" class="h-8 w-8 text-gray-400 dark:text-gray-500" />
+              <div class="mb-3 rounded-full bg-background-card p-3">
+                <Icon icon="lucide:file" class="text-foreground-subheading h-8 w-8" />
               </div>
-              <h3 class="mb-1 text-base font-medium text-gray-900 dark:text-gray-100">
-                لا توجد مرفقات
-              </h3>
-              <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                قم بإضافة مرفقات للمشروع
-              </p>
-              <Button variant="outline" size="sm" @click="openAttachmentDialog">
-                <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
-                إضافة مرفق
-              </Button>
+              <h3 class="mb-1 text-base font-medium text-foreground-heading"> لا توجد مرفقات </h3>
+              <p class="mb-4 text-sm text-foreground-muted"> قم بإضافة مرفقات للمشروع </p>
+              <PrimaryButton
+                icon="lucide:plus"
+                variant="outline"
+                size="sm"
+                @click="openAttachmentDialog"
+              >
+                إضافة
+              </PrimaryButton>
             </div>
           </div>
         </div>
@@ -474,9 +460,20 @@
           description="تأكيد حذف المرفق"
           :message="
             selectedAttachment?.title
-              ? 'هل أنت متأكد من حذف المرفق ' + selectedAttachment.title + '؟'
+              ? `هل أنت متأكد من حذف المرفق '${selectedAttachment.title}'؟`
               : ''
           "
+          :sub-message="'سيتم حذف المرفق نهائياً من النظام'"
+          :checklist="[
+            {
+              text: 'لن يمكنك استعادة البيانات بعد الحذف',
+              icon: 'lucide:x-circle',
+            },
+            {
+              text: 'سيتم إزالة المرفق من جميع السجلات',
+              icon: 'lucide:alert-triangle',
+            },
+          ]"
           :loading="isDeleting"
           @confirm="confirmDeleteAttachment"
           @cancel="cancelDeleteAttachment"
@@ -489,11 +486,20 @@
           description="تأكيد حذف المكون"
           :message="
             selectedComponentToDelete?.name
-              ? 'هل أنت متأكد من حذف المكون ' +
-                selectedComponentToDelete.name +
-                '؟ سيتم حذف جميع الفعاليات المرتبطة به.'
+              ? `هل أنت متأكد من حذف المكون '${selectedComponentToDelete.name}'؟`
               : ''
           "
+          :sub-message="'سيتم حذف جميع الفعاليات المرتبطة بالمكون'"
+          :checklist="[
+            {
+              text: 'لن يمكنك استعادة البيانات بعد الحذف',
+              icon: 'lucide:x-circle',
+            },
+            {
+              text: 'سيتم إزالة جميع الفعاليات المرتبطة بالمكون',
+              icon: 'lucide:alert-triangle',
+            },
+          ]"
           :loading="isDeleting"
           @confirm="confirmDeleteComponent"
           @cancel="cancelDeleteComponent"
@@ -506,13 +512,20 @@
           description="تأكيد حذف الفعالية"
           :message="
             selectedActivityToDelete?.name
-              ? 'هل أنت متأكد من حذف الفعالية ' +
-                selectedActivityToDelete.name +
-                ' من المكون ' +
-                selectedActivityToDelete.componentName +
-                '؟'
+              ? `هل أنت متأكد من حذف الفعالية '${selectedActivityToDelete.name}' من المكون '${selectedActivityToDelete.componentName}'؟`
               : ''
           "
+          :sub-message="'سيتم حذف الفعالية نهائياً من المكون'"
+          :checklist="[
+            {
+              text: 'لن يمكنك استعادة البيانات بعد الحذف',
+              icon: 'lucide:x-circle',
+            },
+            {
+              text: 'سيتم إزالة الفعالية من المكون',
+              icon: 'lucide:alert-triangle',
+            },
+          ]"
           :loading="isDeleting"
           @confirm="confirmDeleteActivity"
           @cancel="cancelDeleteActivity"
@@ -521,22 +534,22 @@
         <!-- Action Buttons -->
         <div class="flex justify-end">
           <div class="flex items-center gap-2">
-            <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
               توجيه المهام
-            </Button>
-            <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+            </PrimaryButton>
+            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
               عرض النسخة السابقة
-            </Button>
-            <Button variant="outline" class="hover:cursor-not-allowed">
-              <Icon icon="lucide:lock" class="mr-2 h-4 w-4" />
+            </PrimaryButton>
+            <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
               تدقيق المشروع
-            </Button>
-            <Button variant="destructive" @click="showDeleteConfirmation">
-              <Icon icon="material-symbols-light:delete-outline" class="mr-2 h-4 w-4" />
+            </PrimaryButton>
+            <PrimaryButton
+              icon="lucide:trash"
+              variant="destructive"
+              @click="showDeleteConfirmation"
+            >
               حذف المشروع
-            </Button>
+            </PrimaryButton>
           </div>
         </div>
       </div>
@@ -546,10 +559,21 @@
   <!-- Delete Confirmation Modal -->
   <DeleteModal
     v-model:open="showDeleteModal"
+    :loading="isDeleting"
     title="حذف المشروع"
     description="تأكيد حذف المشروع"
-    :message="`هل أنت متأكد من حذف المشروع '${project?.name}'؟ لا يمكن التراجع عن هذا الإجراء.`"
-    :loading="isDeleting"
+    :message="`هل أنت متأكد من حذف المشروع '${project?.name}'؟`"
+    :sub-message="'سيتم حذف جميع البيانات المرتبطة بالمشروع بشكل نهائي'"
+    :checklist="[
+      {
+        text: 'لن يمكنك استعادة البيانات بعد الحذف',
+        icon: 'lucide:x-circle',
+      },
+      {
+        text: 'سيتم إزالة جميع السجلات المرتبطة بالمشروع',
+        icon: 'lucide:alert-triangle',
+      },
+    ]"
     @confirm="confirmDeleteProject"
     @cancel="() => (showDeleteModal = false)"
   />
@@ -566,6 +590,7 @@
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
+  import { fundedProjectService } from '@/services/fundedProjectService';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
