@@ -1,21 +1,18 @@
 <template>
   <Popover>
     <PopoverTrigger asChild>
-      <Button
+      <PrimaryButton
         variant="outline"
-        class="w-full justify-between text-right dark:border-gray-700 dark:bg-gray-800"
-        :class="[
-          !modelValue && 'text-gray-500 dark:text-gray-400',
-          modelValue && 'text-gray-900 dark:text-gray-100',
-        ]"
+        class="w-full justify-between text-right"
+        :class="[!modelValue && 'text-foreground-muted', modelValue && 'text-foreground-heading']"
       >
-        <span class="text-right text-gray-900 dark:text-white">
+        <span class="text-right text-foreground-heading">
           {{ modelValue ? formatDate(modelValue) : placeholder }}
         </span>
-        <Icon icon="lucide:calendar" class="h-4 w-4 dark:text-gray-400" />
-      </Button>
+        <Icon icon="lucide:calendar" class="h-4 w-4 text-foreground-muted" />
+      </PrimaryButton>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-0 dark:border-gray-700 dark:bg-gray-800" align="start">
+    <PopoverContent class="w-auto p-0" align="start">
       <Calendar
         mode="single"
         :value="modelValue ? new Date(modelValue) : null"
@@ -30,7 +27,6 @@
           }
         "
         initialFocus
-        class="dark:bg-gray-800 dark:text-gray-100"
       />
     </PopoverContent>
   </Popover>
@@ -57,7 +53,7 @@
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ar-EG', {
+    return date.toLocaleDateString('ar-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

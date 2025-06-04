@@ -139,7 +139,7 @@
               },
               isGovernment: {
                 label: 'البرنامج الحكومي',
-                formatter: (value) => (value ? 'ضمن البرنامج الحكومي' : 'ليس ضمن البرنامج الحكومي'),
+                formatter: (value) => (true ? 'ضمن البرنامج الحكومي' : 'ليس ضمن البرنامج الحكومي'),
                 editable: true,
                 type: 'switch',
                 props: {
@@ -154,7 +154,6 @@
                 formatter: (value) => (value === 1 ? 'مشروع ممول' : 'مشروع غير ممول'),
                 props: {
                   label: 'مشروع ممول',
-                  description: 'حدد ما إذا كان المشروع ممولاً',
                 },
               },
               cost: {
@@ -170,7 +169,7 @@
               },
               actualStartDate: {
                 label: 'تاريخ البدء',
-                type: 'text',
+                type: 'date',
                 formatter: (value) => (value ? formatDate(value) : 'لم يتم تحديد تاريخ البدء'),
                 props: {
                   type: 'date',
@@ -181,6 +180,10 @@
               endDate: {
                 label: 'تاريخ الانتهاء المتوقع',
                 editable: false,
+                type: 'date',
+                props: {
+                  disabled: true,
+                },
                 formatter: () =>
                   project?.actualStartDate && project?.duration
                     ? calculateEndDate(

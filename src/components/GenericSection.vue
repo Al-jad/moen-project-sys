@@ -155,6 +155,7 @@
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import CustomSwitch from '@/components/CustomSwitch.vue';
   import CustomTextArea from '@/components/CustomTextArea.vue';
+  import DateInput from '@/components/DateInput.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Icon } from '@iconify/vue';
@@ -277,7 +278,13 @@
   watch(
     () => props.data,
     (newData) => {
-      editedData.value = { ...newData };
+      // Create a new object with transformed values
+      const transformedData = Object.entries(newData).reduce((acc, [key, value]) => {
+        const field = props.fields[key] || {};
+        acc[key] = transformInputValue(key, value, field);
+        return acc;
+      }, {});
+      editedData.value = transformedData;
     },
     { deep: true }
   );
@@ -288,7 +295,13 @@
       cancelEdit();
     } else {
       isEditing.value = true;
-      editedData.value = { ...props.data };
+      // Create a new object with transformed values
+      const transformedData = Object.entries(props.data).reduce((acc, [key, value]) => {
+        const field = props.fields[key] || {};
+        acc[key] = transformInputValue(key, value, field);
+        return acc;
+      }, {});
+      editedData.value = transformedData;
     }
   };
 
@@ -319,8 +332,21 @@
       switch: CustomSwitch,
       multiselect: CustomMultiSelect,
       textarea: CustomTextArea,
+      date: DateInput,
     };
     return componentMap[type] || CustomInput;
+  };
+
+  // Add a new method to handle special transformations
+  const transformInputValue = (key, value, field) => {
+    // Special handling for multiselect fields
+    if (field.type === 'multiselect') {
+      // If the value is an array of objects, map to their IDs
+      if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
+        return value.map((item) => item.id || item.value);
+      }
+    }
+    return value;
   };
 
   const formatValue = (value, field) => {
