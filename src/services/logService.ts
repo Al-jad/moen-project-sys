@@ -30,7 +30,7 @@ export const FIELD_TRANSLATIONS: Record<string, string> = {
   ComponentId: 'رقم المكون',
   Notes: 'ملاحظات',
   TargetPercentage: 'النسبة المستهدفة',
-  id: 'المعرف',
+  Id: 'المعرف',
   description: 'الوصف',
   title: 'العنوان',
   status: 'الحالة',
@@ -70,19 +70,74 @@ export const FIELD_TRANSLATIONS: Record<string, string> = {
   ProjectType: 'نوع المشروع',
   ProjectCategory: 'تصنيف المشروع',
   ProjectSubCategory: 'تصنيف المشروع الفرعي',
+  ReferenceEntity: 'الجهة المرجعية',
+  Location: 'الموقع',
+  CreatedAt: 'تاريخ الإنشاء',
+  UpdatedAt: 'تاريخ التحديث',
+  IsDeleted: 'محذوف؟',
 };
 
 export const formatDate = (dateString: string): string => {
+  // If no date string is provided, return empty string
   if (!dateString) return '';
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('ar', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  }).format(date);
+
+  // Remove any Arabic-specific formatting characters
+  const cleanDateString = dateString
+    .replace(/[٠-٩]/g, (d) => {
+      const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+      return arabicNumerals.indexOf(d).toString();
+    })
+    .replace(/[ص]/g, 'AM')
+    .replace(/[م]/g, 'PM')
+    .replace(/‏/g, ''); // Remove zero-width spaces
+
+  try {
+    // Parse the cleaned date string
+    const date = new Date(cleanDateString);
+
+    // Validate the date
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', dateString);
+      return 'تاريخ غير صالح';
+    }
+
+    // Format using Arabic locale
+    return new Intl.DateTimeFormat('ar', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }).format(date);
+  } catch (error) {
+    console.error('Date parsing error:', error);
+    return 'تاريخ غير صالح';
+  }
 };
+
+function normalizeArabicNumerals(input: string): string {
+  const arabicNumeralsMap: { [key: string]: string } = {
+    '٠': '0',
+    '٩': '9',
+    '١': '1',
+    '٢': '2',
+    '٣': '3',
+    '٤': '4',
+    '٥': '5',
+    '٦': '6',
+    '٧': '7',
+    '٨': '8',
+    '‏': '',
+    ص: 'AM',
+    م: 'PM',
+  };
+
+  return input
+    .split('')
+    .map((char) => arabicNumeralsMap[char] || char)
+    .join('')
+    .trim();
+}
 
 export const getTableName = (tableName: string | null | undefined): string => {
   if (tableName === null || tableName === undefined) {
