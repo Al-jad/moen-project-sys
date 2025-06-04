@@ -206,6 +206,7 @@
   import { UNITS } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useFundedProjectStore } from '@/stores/funded-project-store';
+  import type { FundedProject } from '@/types/funded-project';
   import { formatTotalCost } from '@/utils/formatCost';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref, watch } from 'vue';
@@ -247,40 +248,9 @@
   }>();
 
   const fundedProjectStore = useFundedProjectStore();
-  interface Project {
-    id: string;
-    title: string;
-    department: string;
-    status: string;
-    statusVariant: string;
-    progress: number;
-    duration: string;
-    cost: number;
-    startDate: string;
-    endDate: string;
-    implementingEntity: string;
-    beneficiaryEntities: string;
-    grantingEntity: string;
-    projectObjectives: string;
-    isGovernment: boolean;
-    components: {
-      id?: string;
-      name: string;
-      targetPercentage: number;
-      activities: {
-        id?: string;
-        name: string;
-        description: string;
-        selectedPeriods: number[];
-      }[];
-    }[];
-    activities?: any[];
-    latitude: number | null;
-    longitude: number | null;
-  }
 
-  const projects = computed(() => fundedProjectStore.projects as Project[]);
-  const filteredProjects = computed(() => fundedProjectStore.filteredProjects as Project[]);
+  const projects = computed(() => fundedProjectStore.projects as FundedProject[]);
+  const filteredProjects = computed(() => fundedProjectStore.filteredProjects as FundedProject[]);
   const isLoading = computed(() => fundedProjectStore.loading);
   const error = computed(() => fundedProjectStore.error);
 
@@ -354,10 +324,10 @@
         sortedProjects.sort((a, b) => Number(a.duration) - Number(b.duration));
         break;
       case 'progress-high':
-        sortedProjects.sort((a, b) => b.progress - a.progress);
+        sortedProjects.sort((a, b) => b.financialAchievement - a.financialAchievement);
         break;
       case 'progress-low':
-        sortedProjects.sort((a, b) => a.progress - b.progress);
+        sortedProjects.sort((a, b) => a.financialAchievement - b.financialAchievement);
         break;
     }
 
@@ -456,9 +426,10 @@
       const query = filters.searchQuery.toLowerCase().trim();
       result = result.filter((project) => {
         return (
-          (project.title && project.title.toLowerCase().includes(query)) ||
-          (project.department && project.department.toLowerCase().includes(query)) ||
-          (project.status && project.status.toLowerCase().includes(query)) ||
+          (project.name && project.name.toLowerCase().includes(query)) ||
+          (project.executingDepartment &&
+            project.executingDepartment.toLowerCase().includes(query)) ||
+          (project.projectStatus && project.projectStatus.toString().includes(query)) ||
           (project.id && project.id.toString().includes(query))
         );
       });
@@ -472,19 +443,20 @@
       });
     }
 
+    const statusMap = {
+      completed: 2,
+      inProgress: 1,
+      delayed: 3,
+      cancelled: 0,
+    };
+
     if (filters.selectedStatus && !filters.selectedStatus.all) {
       result = result.filter((project) => {
-        const statusMap = {
-          completed: '2',
-          inProgress: '1',
-          delayed: '3',
-          cancelled: '0',
-        };
         return (
-          (filters.selectedStatus.completed && project.status === statusMap.completed) ||
-          (filters.selectedStatus.inProgress && project.status === statusMap.inProgress) ||
-          (filters.selectedStatus.delayed && project.status === statusMap.delayed) ||
-          (filters.selectedStatus.cancelled && project.status === statusMap.cancelled)
+          (filters.selectedStatus.completed && project.projectStatus === statusMap.completed) ||
+          (filters.selectedStatus.inProgress && project.projectStatus === statusMap.inProgress) ||
+          (filters.selectedStatus.delayed && project.projectStatus === statusMap.delayed) ||
+          (filters.selectedStatus.cancelled && project.projectStatus === statusMap.cancelled)
         );
       });
     }

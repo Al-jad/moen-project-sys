@@ -1,9 +1,9 @@
-import { fundedProjectService } from '@/services/funded-project';
+import { fundedProjectService } from '@/services/fundedProjectService';
 import type {
   CreateFundedProjectRequest as APICreateFundedProjectRequest,
   UpdateFundedProjectRequest as APIUpdateFundedProjectRequest,
+  FundedProject,
 } from '@/types';
-import type { TransformedFundedProject } from '@/types/funded-project';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
@@ -33,11 +33,11 @@ interface FormState {
 
 export const useFundedProjectStore = defineStore('funded-project', () => {
   // State
-  const projects = ref<TransformedFundedProject[]>([]);
-  const filteredProjects = ref<TransformedFundedProject[]>([]);
+  const projects = ref<FundedProject[]>([]);
+  const filteredProjects = ref<FundedProject[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const currentProject = ref<TransformedFundedProject | null>(null);
+  const currentProject = ref<FundedProject | null>(null);
 
   // Add form state with proper initialization
   const form = ref<FormState>({
@@ -87,9 +87,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.getAllProjects();
-      projects.value = response.data
-        .map((project) => fundedProjectService.transformProject(project))
-        .filter((p): p is TransformedFundedProject => p !== null);
+      projects.value = response;
       filteredProjects.value = [...projects.value];
     } catch (err) {
       error.value = 'Failed to fetch projects';
@@ -104,11 +102,8 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.getProjectById(id);
-      const transformed = fundedProjectService.transformProject(response.data);
-      if (transformed) {
-        currentProject.value = transformed;
-      }
-      return transformed;
+      currentProject.value = response;
+      return response;
     } catch (err) {
       error.value = 'Failed to fetch project';
       console.error('Error fetching project:', err);
@@ -123,12 +118,9 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.createProject(projectData);
-      const transformed = fundedProjectService.transformProject(response.data);
-      if (transformed) {
-        projects.value.push(transformed);
-        filteredProjects.value = [...projects.value];
-      }
-      return transformed;
+      projects.value.push(response);
+      filteredProjects.value = [...projects.value];
+      return response;
     } catch (err) {
       error.value = 'Failed to create project';
       console.error('Error creating project:', err);
@@ -146,15 +138,12 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
         ...projectData,
         id: typeof id === 'string' ? parseInt(id) : id,
       });
-      const transformed = fundedProjectService.transformProject(response.data);
-      if (transformed) {
-        const index = projects.value.findIndex((p) => p.id === id.toString());
-        if (index !== -1) {
-          projects.value[index] = transformed;
-          filteredProjects.value = [...projects.value];
-        }
+      const index = projects.value.findIndex((p) => p.id === id);
+      if (index !== -1) {
+        projects.value[index] = response;
+        filteredProjects.value = [...projects.value];
       }
-      return transformed;
+      return response;
     } catch (err) {
       error.value = 'Failed to update project';
       console.error('Error updating project:', err);
@@ -169,7 +158,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       await fundedProjectService.deleteProject(id);
-      projects.value = projects.value.filter((p) => p.id !== id.toString());
+      projects.value = projects.value.filter((p) => p.id !== id);
       filteredProjects.value = [...projects.value];
       return true;
     } catch (err) {
@@ -196,13 +185,13 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
         const searchLower = filters.search.toLowerCase();
         matches =
           matches &&
-          (project.title.toLowerCase().includes(searchLower) ||
-            project.department.toLowerCase().includes(searchLower) ||
+          (project.name.toLowerCase().includes(searchLower) ||
+            project.executingDepartment.toLowerCase().includes(searchLower) ||
             project.implementingEntity.toLowerCase().includes(searchLower));
       }
 
       if (typeof filters.status !== 'undefined') {
-        matches = matches && project.status === filters.status.toString();
+        matches = matches && project.projectStatus === filters.status;
       }
 
       if (typeof filters.minCost !== 'undefined') {
@@ -223,7 +212,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
 
   // Sort functions
   const sortProjects = (
-    sortBy: 'cost' | 'progress' | 'duration',
+    sortBy: 'cost' | 'financialAchievement' | 'duration',
     order: 'asc' | 'desc' = 'desc'
   ) => {
     filteredProjects.value.sort((a, b) => {
@@ -233,11 +222,11 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
         case 'cost':
           comparison = a.cost - b.cost;
           break;
-        case 'progress':
-          comparison = a.progress - b.progress;
+        case 'financialAchievement':
+          comparison = (a.financialAchievement || 0) - (b.financialAchievement || 0);
           break;
         case 'duration':
-          comparison = Number(a.duration) - Number(b.duration);
+          comparison = a.duration - b.duration;
           break;
       }
 

@@ -9,7 +9,6 @@ import type {
   CreateFundedProjectRequest,
   FundedProject,
   QueryParams,
-  ServiceResponse,
   UpdateActivityRequest,
   UpdateAttachmentRequest,
   UpdateComponentRequest,
@@ -17,169 +16,156 @@ import type {
 } from '../types';
 
 class FundedProjectService {
-  // Funded Project CRUD Operations
-  async getAllFundedProjects(params?: QueryParams): ServiceResponse<FundedProject[]> {
+  async getAllProjects(params?: QueryParams): Promise<FundedProject[]> {
     const response = await axiosInstance.get('/api/Project', { params });
-    return response;
+    return response.data;
   }
 
-  async getFundedProjectById(id: number): ServiceResponse<FundedProject> {
+  async getProjectById(id: number | string): Promise<FundedProject> {
     const response = await axiosInstance.get(`/api/Project/${id}`);
-    return response;
+    return response.data;
   }
 
-  async createFundedProject(
-    projectData: CreateFundedProjectRequest
-  ): ServiceResponse<FundedProject> {
+  async createProject(projectData: CreateFundedProjectRequest): Promise<FundedProject> {
     const response = await axiosInstance.post('/api/Project', projectData);
-    return response;
+    return response.data;
   }
 
-  async updateFundedProject(
-    id: number,
+  async updateProject(
+    id: number | string,
     projectData: UpdateFundedProjectRequest
-  ): ServiceResponse<FundedProject> {
+  ): Promise<FundedProject> {
     const response = await axiosInstance.put(`/api/Project/${id}`, projectData);
-    return response;
+    return response.data;
   }
 
-  async deleteFundedProject(id: number): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/api/Project/${id}`);
-    return response;
+  async deleteProject(id: number | string): Promise<void> {
+    await axiosInstance.delete(`/api/Project/${id}`);
   }
 
   // Component CRUD Operations
-  async getAllComponents(projectId?: number): ServiceResponse<Component[]> {
+  async getAllComponents(projectId?: number): Promise<Component[]> {
     const params = projectId ? { projectId } : {};
     const response = await axiosInstance.get('/api/Component', { params });
-    return response;
+    return response.data;
   }
 
-  async getComponentById(id: number): ServiceResponse<Component> {
+  async getComponentById(id: number): Promise<Component> {
     const response = await axiosInstance.get(`/api/Component/${id}`);
-    return response;
+    return response.data;
   }
 
-  async getComponentsByProjectId(projectId: number): ServiceResponse<Component[]> {
+  async getComponentsByProjectId(projectId: number): Promise<Component[]> {
     const response = await axiosInstance.get(`/api/Component/Project/${projectId}`);
-    return response;
+    return response.data;
   }
 
-  async createComponent(componentData: CreateComponentRequest): ServiceResponse<Component> {
+  async createComponent(componentData: CreateComponentRequest): Promise<Component> {
     const response = await axiosInstance.post('/api/Component', componentData);
-    return response;
+    return response.data;
   }
 
-  async updateComponent(
-    id: number,
-    componentData: UpdateComponentRequest
-  ): ServiceResponse<Component> {
+  async updateComponent(id: number, componentData: UpdateComponentRequest): Promise<Component> {
     const response = await axiosInstance.put(`/api/Component/${id}`, componentData);
-    return response;
+    return response.data;
   }
 
-  async deleteComponent(id: number): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/api/Component/${id}`);
-    return response;
+  async deleteComponent(id: number): Promise<void> {
+    await axiosInstance.delete(`/api/Component/${id}`);
   }
 
   // Activity CRUD Operations
-  async getAllActivities(componentId?: number): ServiceResponse<Activity[]> {
+  async getAllActivities(componentId?: number): Promise<Activity[]> {
     const params = componentId ? { componentId } : {};
     const response = await axiosInstance.get('/api/Activity', { params });
-    return response;
+    return response.data;
   }
 
-  async getActivityById(id: number): ServiceResponse<Activity> {
+  async getActivityById(id: number): Promise<Activity> {
     const response = await axiosInstance.get(`/api/Activity/${id}`);
-    return response;
+    return response.data;
   }
 
-  async getActivitiesByComponentId(componentId: number): ServiceResponse<Activity[]> {
+  async getActivitiesByComponentId(componentId: number): Promise<Activity[]> {
     const response = await axiosInstance.get(`/api/Activity/Component/${componentId}`);
-    return response;
+    return response.data;
   }
 
-  async createActivity(activityData: CreateActivityRequest): ServiceResponse<Activity> {
+  async createActivity(activityData: CreateActivityRequest): Promise<Activity> {
     const response = await axiosInstance.post('/api/Activity', activityData);
-    return response;
+    return response.data;
   }
 
-  async updateActivity(id: number, activityData: UpdateActivityRequest): ServiceResponse<Activity> {
+  async updateActivity(id: number, activityData: UpdateActivityRequest): Promise<Activity> {
     const response = await axiosInstance.put(`/api/Activity/${id}`, activityData);
-    return response;
+    return response.data;
   }
 
-  async deleteActivity(id: number): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/api/Activity/${id}`);
-    return response;
+  async deleteActivity(id: number): Promise<void> {
+    await axiosInstance.delete(`/api/Activity/${id}`);
   }
 
   // Attachment CRUD Operations
-  async getAllAttachments(projectId?: number): ServiceResponse<Attachment[]> {
+  async getAllAttachments(projectId?: number): Promise<Attachment[]> {
     const params = projectId ? { projectId } : {};
     const response = await axiosInstance.get('/api/Attachment', { params });
-    return response;
+    return response.data;
   }
 
-  async getAttachmentById(id: number): ServiceResponse<Attachment> {
+  async getAttachmentById(id: number): Promise<Attachment> {
     const response = await axiosInstance.get(`/api/Attachment/${id}`);
-    return response;
+    return response.data;
   }
 
-  async getAttachmentsByProjectId(projectId: number): ServiceResponse<Attachment[]> {
+  async getAttachmentsByProjectId(projectId: number): Promise<Attachment[]> {
     const response = await axiosInstance.get(`/api/Attachment/Project/${projectId}`);
-    return response;
+    return response.data;
   }
 
-  async createAttachment(attachmentData: CreateAttachmentRequest): ServiceResponse<Attachment> {
+  async createAttachment(attachmentData: CreateAttachmentRequest): Promise<Attachment> {
     const response = await axiosInstance.post('/api/Attachment', attachmentData);
-    return response;
+    return response.data;
   }
 
-  async updateAttachment(
-    id: number,
-    attachmentData: UpdateAttachmentRequest
-  ): ServiceResponse<Attachment> {
+  async updateAttachment(id: number, attachmentData: UpdateAttachmentRequest): Promise<Attachment> {
     const response = await axiosInstance.put(`/api/Attachment/${id}`, attachmentData);
-    return response;
+    return response.data;
   }
 
-  async deleteAttachment(id: number): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/api/Attachment/${id}`);
-    return response;
+  async deleteAttachment(id: number): Promise<void> {
+    await axiosInstance.delete(`/api/Attachment/${id}`);
   }
 
   // Utility Methods
-  async searchFundedProjects(searchTerm: string): ServiceResponse<FundedProject[]> {
+  async searchProjects(searchTerm: string): Promise<FundedProject[]> {
     const response = await axiosInstance.get('/api/Project', {
       params: { search: searchTerm },
     });
-    return response;
+    return response.data;
   }
 
-  async getFundedProjectsByStatus(status: number): ServiceResponse<FundedProject[]> {
+  async getProjectsByStatus(status: number): Promise<FundedProject[]> {
     const response = await axiosInstance.get('/api/Project', {
       params: { status },
     });
-    return response;
+    return response.data;
   }
 
-  async getFundedProjectsByFundingType(fundingType: number): ServiceResponse<FundedProject[]> {
+  async getProjectsByFundingType(fundingType: number): Promise<FundedProject[]> {
     const response = await axiosInstance.get('/api/Project', {
       params: { fundingType },
     });
-    return response;
+    return response.data;
   }
 
-  async getGovernmentProjects(): ServiceResponse<FundedProject[]> {
+  async getGovernmentProjects(): Promise<FundedProject[]> {
     const response = await axiosInstance.get('/api/Project', {
       params: { isGovernment: true },
     });
-    return response;
+    return response.data;
   }
 
-  async getFundedProjectStatistics(): ServiceResponse<{
+  async getProjectStatistics(): Promise<{
     total: number;
     inProgress: number;
     completed: number;
@@ -189,17 +175,17 @@ class FundedProjectService {
     nonGovernment: number;
   }> {
     const response = await axiosInstance.get('/api/Project/statistics');
-    return response;
+    return response.data;
   }
 
   // Bulk Operations
   async createProjectWithComponents(
     projectData: CreateFundedProjectRequest,
     components: CreateComponentRequest[]
-  ): ServiceResponse<FundedProject> {
+  ): Promise<FundedProject> {
     // First create the project
-    const projectResponse = await this.createFundedProject(projectData);
-    const projectId = projectResponse.data.id;
+    const project = await this.createProject(projectData);
+    const projectId = project.id;
 
     // Then create components
     for (const componentData of components) {
@@ -210,17 +196,29 @@ class FundedProjectService {
     }
 
     // Return the complete project with components
-    return this.getFundedProjectById(projectId);
+    return this.getProjectById(projectId);
   }
 
   async updateProjectFinancialAchievement(
     id: number,
     financialAchievement: number
-  ): ServiceResponse<FundedProject> {
+  ): Promise<FundedProject> {
     const response = await axiosInstance.put(`/api/Project/${id}`, {
       financialAchievement: Number(financialAchievement) || 0,
     });
-    return response;
+    return response.data;
+  }
+
+  // Calculation method
+  calculateProgress(project: FundedProject): number {
+    if (!project.components || project.components.length === 0) return 0;
+
+    return Math.min(
+      100,
+      Math.round(
+        project.components.reduce((sum, component) => sum + (component.targetPercentage || 0), 0)
+      )
+    );
   }
 }
 

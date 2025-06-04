@@ -76,42 +76,6 @@ export interface FundedProjectActivityRequest {
   selectedPeriods?: number[];
 }
 
-// UI transformed types
-export interface TransformedFundedProject {
-  id: string;
-  title: string;
-  department: string;
-  status: string;
-  statusVariant: string;
-  progress: number;
-  duration: string;
-  cost: number;
-  startDate: string;
-  endDate: string;
-  implementingEntity: string;
-  beneficiaryEntities: string;
-  grantingEntity: string;
-  isGovernment: boolean;
-  projectObjectives: string;
-  components: TransformedFundedProjectComponent[];
-  latitude: number | null;
-  longitude: number | null;
-}
-
-export interface TransformedFundedProjectComponent {
-  id?: string;
-  name: string;
-  targetPercentage: number;
-  activities: TransformedFundedProjectActivity[];
-}
-
-export interface TransformedFundedProjectActivity {
-  id?: string;
-  name: string;
-  description: string;
-  selectedPeriods: number[];
-}
-
 export enum FundedProjectStatus {
   CANCELLED = 0,
   IN_PROGRESS = 1,
