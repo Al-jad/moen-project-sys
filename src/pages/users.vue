@@ -1,9 +1,9 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-background">
-      <div class="border shadow-lg rounded-xl border-border bg-card">
+    <main class="min-h-screen bg-background p-6">
+      <div class="rounded-xl border border-border bg-card shadow-lg">
         <div class="p-8">
-          <div class="pb-6 mb-8 border-b border-border">
+          <div class="mb-8 border-b border-border pb-6">
             <div class="flex items-center justify-between">
               <div>
                 <div class="flex items-center gap-2">
@@ -14,7 +14,7 @@
               </div>
               <div class="flex items-center gap-4">
                 <PrimaryButton>
-                  <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
+                  <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
                   اضافة مستخدم
                 </PrimaryButton>
               </div>
@@ -36,7 +36,7 @@
             <template #name="{ item }">
               <button
                 @click="handleViewDetails(item as User)"
-                class="inline-flex items-center gap-1 font-medium transition-colors text-primary hover:text-primary-hover hover:underline"
+                class="inline-flex items-center gap-1 font-medium text-primary transition-colors hover:text-primary-hover hover:underline"
               >
                 {{ item.name }}
               </button>
@@ -47,19 +47,19 @@
             <template #role="{ item }">
               <Badge
                 v-if="item.role === 'ADMIN'"
-                class="font-medium border-0 shadow-sm w-fit bg-success text-success-foreground"
+                class="w-fit border-0 bg-success font-medium text-success-foreground shadow-sm"
               >
                 مدير
               </Badge>
               <Badge
                 v-else-if="item.role === 'SUPERVISOR'"
-                class="font-medium border-0 shadow-sm w-fit bg-accent text-accent-foreground"
+                class="w-fit border-0 bg-accent font-medium text-accent-foreground shadow-sm"
               >
                 مشرف
               </Badge>
               <Badge
                 v-else
-                class="font-medium border-0 shadow-sm w-fit bg-secondary text-secondary-foreground"
+                class="w-fit border-0 bg-secondary font-medium text-secondary-foreground shadow-sm"
               >
                 مدخل بيانات
               </Badge>
@@ -141,18 +141,20 @@
   const exportToExcel = () => {
     const headerLabels = ['اسم المستخدم', 'البريد الإلكتروني', 'الصلاحية', 'تاريخ الإنشاء'];
     const formattedData = users.value.map((user) => ({
-      'اسم المستخدم': user.name || '',
+      الاسم: user.name || '',
+      'اسم المستخدم': user.userName || '',
       'البريد الإلكتروني': user.email || '',
       الصلاحية:
         user.role === 'ADMIN' ? 'مدير' : user.role === 'SUPERVISOR' ? 'مشرف' : 'مدخل بيانات',
       'تاريخ الإنشاء': user.createdAt
-        ? new Date(user.createdAt).toLocaleDateString('ar', {
+        ? new Date(user.createdAt).toLocaleDateString('en', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
           })
         : '',
     }));
+    console.log(formattedData);
     tableRef.value?.exportToExcel(formattedData, headerLabels, 'المستخدمين');
   };
 
