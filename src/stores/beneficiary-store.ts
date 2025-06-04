@@ -17,10 +17,27 @@ export const useBeneficiaryStore = defineStore('beneficiary', () => {
 
   // Actions
   const fetchBeneficiaries = async (force = false) => {
-    // If we have data and it's less than 5 minutes old, don't refetch
+    // If force is true, always fetch regardless of cache
+    if (force) {
+      loading.value = true;
+      error.value = null;
+
+      try {
+        const response = await beneficiaryService.getAllBeneficiaries();
+        beneficiaries.value = response.data;
+        lastFetch.value = Date.now();
+        return beneficiaries.value;
+      } catch (err) {
+        error.value = err instanceof Error ? err.message : 'Failed to fetch beneficiaries';
+        throw err;
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    // Existing cache logic
     const CACHE_TIME = 5 * 60 * 1000; // 5 minutes
     if (
-      !force &&
       beneficiaries.value.length > 0 &&
       lastFetch.value &&
       Date.now() - lastFetch.value < CACHE_TIME

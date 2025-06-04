@@ -19,26 +19,39 @@
   </BaseModal>
 </template>
 
-<script setup lang="ts">
+<script setup generic="T" lang="ts">
   import BaseModal from '@/components/BaseModal.vue';
   import { computed, ref, watch } from 'vue';
 
-  interface Props<T> {
+  interface Props<T = Record<string, any>> {
     open: boolean;
-    editData: T | null;
+    editData?: T | null;
     entityName: string;
     defaultFormData: T;
   }
 
-  const props = defineProps<Props<any>>();
+  const props = withDefaults(defineProps<Props>(), {
+    editData: null,
+    open: false,
+  });
 
   const emit = defineEmits<{
-    'update:open': [value: boolean];
-    save: [data: any];
-    cancel: [];
+    (e: 'update:open', value: boolean): void;
+    (e: 'save', data: any): void;
+    (e: 'cancel'): void;
   }>();
 
-  const formData = ref(structuredClone(props.defaultFormData));
+  const safeClone = <T,>(data: T): T => {
+    if (data === null || data === undefined) return {} as T;
+    try {
+      return structuredClone(data);
+    } catch (error) {
+      console.warn('Failed to deep clone data, falling back to shallow copy:', error);
+      return { ...data } as T;
+    }
+  };
+
+  const formData = ref<any>(safeClone(props.defaultFormData));
   const isEditing = computed(() => !!props.editData);
 
   // Watch for modal open state
@@ -47,10 +60,10 @@
     (newVal) => {
       if (newVal && props.editData) {
         // Initialize form when modal opens with edit data
-        formData.value = structuredClone(props.editData);
+        formData.value = safeClone(props.editData);
       } else if (!newVal) {
         // Reset form when modal closes
-        formData.value = structuredClone(props.defaultFormData);
+        formData.value = safeClone(props.defaultFormData);
       }
     }
   );
@@ -60,7 +73,7 @@
     () => props.editData,
     (newData) => {
       if (newData && props.open) {
-        formData.value = structuredClone(newData);
+        formData.value = safeClone(newData);
       }
     },
     { immediate: true }
@@ -71,11 +84,13 @@
   };
 
   const updateFormData = (field: string, value: any) => {
-    formData.value[field] = value;
+    if (formData.value && typeof formData.value === 'object') {
+      formData.value[field] = value;
+    }
   };
 
   const handleCancel = () => {
-    formData.value = structuredClone(props.defaultFormData);
+    formData.value = safeClone(props.defaultFormData);
     emit('cancel');
     updateOpen(false);
   };
@@ -83,11 +98,11 @@
   const handleSave = () => {
     const dataToSave = {
       ...formData.value,
-      id: props.editData?.id,
+      id: props.editData && 'id' in props.editData ? props.editData.id : undefined,
     };
 
     emit('save', dataToSave);
     updateOpen(false);
-    formData.value = structuredClone(props.defaultFormData);
+    formData.value = safeClone(props.defaultFormData);
   };
 </script>

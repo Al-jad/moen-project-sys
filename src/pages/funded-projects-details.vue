@@ -224,7 +224,6 @@
                       variant="destructive"
                       icon="lucide:trash"
                       size="sm"
-                      class="text-red-500 hover:text-red-600 dark:text-red-400"
                     />
                   </template>
                   <template #activityActions="{ activity, component }">
@@ -233,7 +232,6 @@
                       variant="destructive"
                       icon="lucide:trash"
                       size="sm"
-                      class="text-red-500 hover:text-red-600 dark:text-red-400"
                     />
                   </template>
                 </ComponentsActivitiesDetails>
@@ -590,28 +588,28 @@
     isLoading.value = true;
     error.value = null;
     try {
-      const response = await fundedProjectService.getFundedProjectById(Number(route.params.id));
-      project.value = response.data;
+      const response = await fundedProjectService.getProjectById(Number(route.params.id));
+      project.value = response;
 
       // Initialize editForm with current project data
       Object.assign(editForm, {
-        name: response.data.name || '',
-        executingDepartment: response.data.executingDepartment || '',
-        implementingEntity: response.data.implementingEntity || '',
-        beneficiaryEntities: Array.isArray(response.data.beneficiaries)
-          ? response.data.beneficiaries.map((b) => b.id)
+        name: response.name || '',
+        executingDepartment: response.executingDepartment || '',
+        implementingEntity: response.implementingEntity || '',
+        beneficiaryEntities: Array.isArray(response.beneficiaries)
+          ? response.beneficiaries.map((b) => b.id)
           : [],
-        grantingEntity: response.data.grantingEntity || '',
-        fundingType: response.data.fundingType || 1,
-        cost: response.data.cost || null,
-        actualStartDate: response.data.actualStartDate || null,
-        projectObjectives: response.data.projectObjectives || '',
-        duration: response.data.duration || 0,
-        periodType: response.data.periodType || 1,
-        components: Array.isArray(response.data.components)
-          ? JSON.parse(JSON.stringify(response.data.components))
+        grantingEntity: response.grantingEntity || '',
+        fundingType: response.fundingType || 1,
+        cost: response.cost || null,
+        actualStartDate: response.actualStartDate || null,
+        projectObjectives: response.projectObjectives || '',
+        duration: response.duration || 0,
+        periodType: response.periodType || 1,
+        components: Array.isArray(response.components)
+          ? JSON.parse(JSON.stringify(response.components))
           : [],
-        financialAchievement: response.data.financialAchievement || 0,
+        financialAchievement: response.financialAchievement || 0,
       });
     } catch (err) {
       console.error('Error fetching project:', err);

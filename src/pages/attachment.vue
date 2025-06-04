@@ -504,6 +504,9 @@
 
       await attachmentsStore.updateAttachment(selectedAttachment.value.id, requestData);
 
+      // Force a full refetch of attachments with force flag
+      await attachmentsStore.refreshAttachments();
+
       isEditModalOpen.value = false;
       toast('تم تعديل المرفق', {
         description: `تم تعديل المرفق "${formData.title}" بنجاح`,
