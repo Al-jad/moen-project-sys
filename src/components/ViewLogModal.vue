@@ -68,9 +68,6 @@
             <Badge variant="secondary" class="bg-info/50 text-white">
               عدد التغييرات: {{ filteredDetails.length || 0 }}
             </Badge>
-            <Badge v-if="log.tableRowId" variant="secondary" class="bg-success/10 text-success">
-              معرف السجل: {{ log.tableRowId }}
-            </Badge>
           </div>
         </div>
         <div

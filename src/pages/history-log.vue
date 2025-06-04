@@ -50,6 +50,7 @@
   import { getTableName } from '@/services/logService';
   import { useLogStore } from '@/stores/useLogStore';
   import type { LogColumn, LogFilter, LogTableItem } from '@/types/logs';
+  import { exportToExcel as exportDataToExcel } from '@/utils/excel';
   import { storeToRefs } from 'pinia';
   import { onMounted, ref } from 'vue';
 
@@ -102,14 +103,6 @@
 
   // Methods
   const exportToExcel = () => {
-    const headerLabels = [
-      'رقم العملية',
-      'اسم الجدول',
-      'نوع العملية',
-      'تاريخ العملية',
-      'اسم المستخدم',
-    ];
-
     const formattedData = logs.value.map((log) => ({
       'رقم العملية': log.id || '',
       'اسم الجدول': getTableName(log.tableName) || 'غير محدد',
@@ -118,7 +111,16 @@
       'اسم المستخدم': log.user?.name || 'غير معروف',
     }));
 
-    tableRef.value?.exportToExcel(formattedData, headerLabels, 'سجل الاحداث');
+    exportDataToExcel(formattedData, {
+      fileName: 'سجل الاحداث.xlsx',
+      sheetName: 'سجل الاحداث',
+      locale: 'ar',
+      dateFormat: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+    });
   };
 
   const viewDetails = (_action: string, row: Record<string, any>) => {

@@ -94,6 +94,7 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useUserStore } from '@/stores/useUserStore';
   import type { User } from '@/types/users';
+  import { exportToExcel as exportDataToExcel } from '@/utils/excel';
   import { Icon } from '@iconify/vue';
   import { storeToRefs } from 'pinia';
   import { onMounted, ref } from 'vue';
@@ -139,23 +140,24 @@
   };
 
   const exportToExcel = () => {
-    const headerLabels = ['اسم المستخدم', 'البريد الإلكتروني', 'الصلاحية', 'تاريخ الإنشاء'];
     const formattedData = users.value.map((user) => ({
-      الاسم: user.name || '',
       'اسم المستخدم': user.userName || '',
       'البريد الإلكتروني': user.email || '',
       الصلاحية:
         user.role === 'ADMIN' ? 'مدير' : user.role === 'SUPERVISOR' ? 'مشرف' : 'مدخل بيانات',
-      'تاريخ الإنشاء': user.createdAt
-        ? new Date(user.createdAt).toLocaleDateString('en', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-        : '',
+      'تاريخ الإنشاء': user.createdAt,
     }));
-    console.log(formattedData);
-    tableRef.value?.exportToExcel(formattedData, headerLabels, 'المستخدمين');
+
+    exportDataToExcel(formattedData, {
+      fileName: 'المستخدمين.xlsx',
+      sheetName: 'المستخدمين',
+      locale: 'ar',
+      dateFormat: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+    });
   };
 
   const handleCellClick = (data: { item: any; key: string }) => {
