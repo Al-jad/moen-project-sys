@@ -199,12 +199,6 @@
             @cancel="cancelEditDetails"
           />
 
-          <ScheduleTimeLine
-            :components="project?.components || []"
-            :duration="project?.duration || 0"
-            :periodType="project?.periodType || 1"
-          />
-
           <!-- Components and Activities -->
           <ViewModeSection
             title="المكونات والفعاليات"
@@ -258,7 +252,11 @@
               </div>
             </template>
           </ViewModeSection>
-
+          <ScheduleTimeLine
+            :components="project?.components || []"
+            :duration="project?.duration || 0"
+            :periodType="project?.periodType || 1"
+          />
           <!-- Achievements Section -->
           <ViewModeSection
             title="الإنجازات"

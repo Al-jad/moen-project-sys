@@ -83,7 +83,6 @@ declare module 'vue' {
     DropdownMenuSubTrigger: typeof import('./components/ui/dropdown-menu/DropdownMenuSubTrigger.vue')['default']
     DropdownMenuTrigger: typeof import('./components/ui/dropdown-menu/DropdownMenuTrigger.vue')['default']
     EditableSection: typeof import('./components/EditableSection.vue')['default']
-    EditModeSection: typeof import('./components/EditModeSection.vue')['default']
     EditProcedureModal: typeof import('./components/EditProcedureModal.vue')['default']
     ExecutionProcedure: typeof import('./components/ExecutionProcedure.vue')['default']
     Footer: typeof import('./components/Footer.vue')['default']
@@ -197,6 +196,7 @@ declare module 'vue' {
     UserDetailsModal: typeof import('./components/UserDetailsModal.vue')['default']
     UsersList: typeof import('./components/UsersList.vue')['default']
     ViewActionModal: typeof import('./components/ViewActionModal.vue')['default']
+    ViewEditSection: typeof import('./components/ViewEditSection.vue')['default']
     ViewLogModal: typeof import('./components/ViewLogModal.vue')['default']
     ViewModeSection: typeof import('./components/ViewModeSection.vue')['default']
   }
