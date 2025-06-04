@@ -1,9 +1,9 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen p-6 bg-background">
-      <div class="border shadow-lg rounded-xl border-border bg-card">
+    <main class="min-h-screen bg-background p-6">
+      <div class="rounded-xl border border-border bg-card shadow-lg">
         <div class="p-8">
-          <div class="pb-6 mb-8 border-b border-border">
+          <div class="mb-8 border-b border-border pb-6">
             <div class="flex items-center justify-between">
               <div>
                 <div class="flex items-center gap-2">
@@ -14,7 +14,7 @@
               </div>
               <div class="flex items-center gap-4">
                 <PrimaryButton @click="handleAdd">
-                  <Icon icon="lucide:plus" class="w-4 h-4 mr-2" />
+                  <Icon icon="lucide:plus" class="mr-2 h-4 w-4" />
                   اضافة جهة مستفيدة
                 </PrimaryButton>
               </div>
@@ -24,7 +24,6 @@
             ref="tableRef"
             :columns="columns"
             :data="beneficiaries"
-            :filters="filters"
             @export="exportToExcel"
             :loading="isLoading"
             :showDateFilter="false"
@@ -56,16 +55,16 @@
               <div class="flex items-center justify-center gap-4">
                 <button
                   @click="handleEdit(item as Beneficiary)"
-                  class="inline-flex items-center gap-1 transition-colors text-nowrap text-primary hover:text-primary-hover"
+                  class="inline-flex items-center gap-1 text-nowrap text-primary transition-colors hover:text-primary-hover"
                 >
-                  <Icon icon="lucide:edit" class="w-4 h-4" />
+                  <Icon icon="lucide:edit" class="h-4 w-4" />
                 </button>
                 <button
                   @click="handleDelete(item as Beneficiary)"
                   :disabled="isDeleting"
-                  class="inline-flex items-center gap-1 transition-colors hover:text-destructive-hover text-nowrap text-destructive"
+                  class="hover:text-destructive-hover inline-flex items-center gap-1 text-nowrap text-destructive transition-colors"
                 >
-                  <Icon icon="lucide:trash" class="w-4 h-4" />
+                  <Icon icon="lucide:trash" class="h-4 w-4" />
                 </button>
               </div>
             </template>
@@ -120,20 +119,7 @@
     { key: 'createdAt', label: 'تاريخ الإنشاء', type: 'text' },
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
-  const filters: Filter[] = [
-    {
-      key: 'location',
-      placeholder: 'اختر المنطقة',
-      options: [
-        { value: 'all', label: 'الكل' },
-        { value: 'baghdad', label: 'بغداد' },
-        { value: 'basra', label: 'البصرة' },
-        { value: 'najaf', label: 'النجف' },
-      ],
-      icon: 'lucide:map-pin',
-      triggerClass: 'dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
-    },
-  ];
+
   const {
     beneficiaries,
     isLoading,
