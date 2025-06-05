@@ -1,135 +1,158 @@
 <template>
-  <Dialog :open="open" @update:open="handleClose">
-    <DialogContent class="sm:max-w-[500px]">
-      <div class="flex flex-col gap-6">
-        <DialogHeader>
-          <DialogTitle class="text-right text-xl font-semibold text-gray-900 dark:text-white">
-            {{ editData ? 'تعديل العقد' : 'اضافة عقد جديد' }}
-          </DialogTitle>
-        </DialogHeader>
-
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <!-- Contract Name -->
-          <div class="space-y-2">
-            <Label class="text-right">اسم العقد</Label>
-            <Input
-              v-model="formData.name"
+  <BaseAddEditModal
+    :open="open"
+    :edit-data="editData"
+    entity-name="عقد"
+    :default-form-data="defaultFormData"
+    @update:open="$emit('update:open', $event)"
+    @save="handleSubmit"
+    @cancel="handleCancel"
+  >
+    <template #form="{ formData: modalFormData, updateForm }">
+      <div class="space-y-6">
+        <!-- Contract Name Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:type"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+            />
+            <Label class="text-sm font-semibold text-foreground-body">اسم العقد</Label>
+            <span class="text-sm text-red-500">*</span>
+          </div>
+          <div class="group relative">
+            <CustomInput
+              :model-value="modalFormData.name"
+              @update:model-value="updateForm('name', $event)"
               placeholder="ادخل اسم العقد"
-              class="border-gray-200"
-              :class="{ 'border-red-500': errors.name }"
-              required
             />
-            <p v-if="errors.name" class="text-sm text-red-500">{{ errors.name }}</p>
+            <p v-if="errors.name" class="mt-2 text-sm text-red-500">{{ errors.name }}</p>
           </div>
+        </div>
 
-          <!-- Contract Number -->
-          <div class="space-y-2">
-            <Label class="text-right">رقم العقد</Label>
-            <Input
-              v-model="formData.contractNumber"
-              type="number"
+        <!-- Contract Number Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:hash"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+            />
+            <Label class="text-sm font-semibold text-foreground-body">رقم العقد</Label>
+            <span class="text-sm text-red-500">*</span>
+          </div>
+          <div class="group relative">
+            <CustomInput
+              :model-value="modalFormData.contractNumber"
+              @update:model-value="updateForm('contractNumber', $event)"
               placeholder="ادخل رقم العقد"
-              class="border-gray-200"
-              :class="{ 'border-red-500': errors.contractNumber }"
-              required
             />
-            <p v-if="errors.contractNumber" class="text-sm text-red-500"> رقم العقد مطلوب </p>
+            <p v-if="errors.contractNumber" class="mt-2 text-sm text-red-500">{{
+              errors.contractNumber
+            }}</p>
           </div>
+        </div>
 
-          <!-- Executing Department -->
-          <div class="space-y-2">
-            <Label class="text-right">الجهة المنفذة</Label>
-            <Input
-              v-model="formData.executingDepartment"
+        <!-- Executing Department Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:building-2"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+            />
+            <Label class="text-sm font-semibold text-foreground-body">الجهة المنفذة</Label>
+            <span class="text-sm text-red-500">*</span>
+          </div>
+          <div class="group relative">
+            <CustomInput
+              :model-value="modalFormData.executingDepartment"
+              @update:model-value="updateForm('executingDepartment', $event)"
               placeholder="ادخل اسم الجهة المنفذة"
-              class="border-gray-200"
-              :class="{ 'border-red-500': errors.executingDepartment }"
-              required
             />
-            <p v-if="errors.executingDepartment" class="text-sm text-red-500">
-              الجهة المنفذة مطلوبة
-            </p>
+            <p v-if="errors.executingDepartment" class="mt-2 text-sm text-red-500">{{
+              errors.executingDepartment
+            }}</p>
           </div>
+        </div>
 
-          <!-- Cost -->
-          <div class="space-y-2">
-            <Label class="text-right">الكلفة</Label>
+        <!-- Cost Field -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Icon
+              icon="lucide:dollar-sign"
+              class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+            />
+            <Label class="text-sm font-semibold text-foreground-body">الكلفة</Label>
+            <span class="text-sm text-red-500">*</span>
+          </div>
+          <div class="group relative">
             <NumberInput
-              v-model="formData.cost"
+              :model-value="modalFormData.cost"
+              @update:model-value="updateForm('cost', $event)"
               placeholder="ادخل الكلفة"
-              :class="{ 'border-red-500': errors.cost }"
-              required
             />
-            <p v-if="errors.cost" class="text-sm text-red-500">
-              {{ errors.cost }}
-            </p>
+            <p v-if="errors.cost" class="mt-2 text-sm text-red-500">{{ errors.cost }}</p>
           </div>
+        </div>
 
-          <!-- Project Selection -->
-          <div class="space-y-2" v-if="false">
-            <Label class="text-right">المشروع</Label>
-            <CustomSelect
-              v-model="formData.projectId"
-              :options="projectOptions"
-              placeholder="اختر المشروع"
-              :class="{ 'border-red-500': errors.projectId }"
-              icon="lucide:folder"
-            />
-            <p v-if="errors.projectId" class="text-sm text-red-500"> المشروع مطلوب </p>
+        <!-- Signing Date Field -->
+        <div class="flex items-center gap-2">
+          <div class="flex-1 space-y-3">
+            <div class="flex items-center gap-2">
+              <Icon
+                icon="lucide:calendar-check"
+                class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+              />
+              <Label class="text-sm font-semibold text-foreground-body">تاريخ التوقيع</Label>
+              <span class="text-sm text-red-500">*</span>
+            </div>
+            <div class="group relative">
+              <DateInput
+                :model-value="modalFormData.signingDate"
+                @update:model-value="updateForm('signingDate', $event)"
+                placeholder="اختر تاريخ التوقيع"
+              />
+              <p v-if="errors.signingDate" class="mt-2 text-sm text-red-500">{{
+                errors.signingDate
+              }}</p>
+            </div>
           </div>
-
-          <!-- Signing Date -->
-          <div class="space-y-2">
-            <Label class="text-right">تاريخ التوقيع</Label>
-            <DateInput
-              v-model="formData.signingDate"
-              placeholder="اختر تاريخ التوقيع"
-              :class="{ 'border-red-500': errors.signingDate }"
-              required
-            />
-            <p v-if="errors.signingDate" class="text-sm text-red-500"> تاريخ التوقيع مطلوب </p>
+          <div class="flex-1 space-y-3">
+            <div class="flex items-center gap-2">
+              <Icon
+                icon="lucide:calendar-days"
+                class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+              />
+              <Label class="text-sm font-semibold text-foreground-body">تاريخ الإحالة</Label>
+              <span class="text-sm text-red-500">*</span>
+            </div>
+            <div class="group relative">
+              <DateInput
+                :model-value="modalFormData.referralDate"
+                @update:model-value="updateForm('referralDate', $event)"
+                placeholder="اختر تاريخ الإحالة"
+              />
+              <p v-if="errors.referralDate" class="mt-2 text-sm text-red-500">{{
+                errors.referralDate
+              }}</p>
+            </div>
           </div>
+        </div>
 
-          <!-- Referral Date -->
-          <div class="space-y-2">
-            <Label class="text-right">تاريخ الإحالة</Label>
-            <DateInput
-              v-model="formData.referralDate"
-              placeholder="اختر تاريخ الإحالة"
-              :class="{ 'border-red-500': errors.referralDate }"
-              required
-            />
-            <p v-if="errors.referralDate" class="text-sm text-red-500"> تاريخ الإحالة مطلوب </p>
-          </div>
-
-          <DialogFooter class="flex justify-end gap-3 pt-4">
-            <Button variant="outline" type="button" @click="handleClose">الغاء</Button>
-            <Button type="submit" :loading="isSubmitting">{{
-              editData ? 'تحديث' : 'اضافة'
-            }}</Button>
-          </DialogFooter>
-        </form>
+        <!-- Referral Date Field -->
       </div>
-    </DialogContent>
-  </Dialog>
+    </template>
+  </BaseAddEditModal>
 </template>
 
 <script setup lang="ts">
-  import CustomSelect from '@/components/CustomSelect.vue';
+  import BaseAddEditModal from '@/components/BaseAddEditModal.vue';
+  import CustomInput from '@/components/CustomInput.vue';
   import DateInput from '@/components/DateInput.vue';
   import NumberInput from '@/components/NumberInput.vue';
-  import { Button } from '@/components/ui/button';
-  import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-  } from '@/components/ui/dialog';
-  import { Input } from '@/components/ui/input';
   import { Label } from '@/components/ui/label';
   import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
-  import { computed, reactive, ref, watch } from 'vue';
+  import { Icon } from '@iconify/vue';
+  import { computed, reactive } from 'vue';
 
   interface Props {
     open: boolean;
@@ -151,28 +174,10 @@
 
   const emit = defineEmits(['update:open', 'save']);
 
-  const isSubmitting = ref(false);
   const regionalProjectStore = useRegionalProjectStore();
   const projects = computed(() => regionalProjectStore.projects);
 
-  const projectOptions = computed(() => {
-    return projects.value.map((project: { id: number; name: string }) => ({
-      value: project.id,
-      label: project.name || `مشروع ${project.id}`,
-    }));
-  });
-
-  interface FormData {
-    name: string;
-    contractNumber: string;
-    executingDepartment: string;
-    cost: string;
-    projectId: string;
-    signingDate: string;
-    referralDate: string;
-  }
-
-  const formData = ref<FormData>({
+  const defaultFormData = {
     name: '',
     contractNumber: '',
     executingDepartment: '',
@@ -180,7 +185,7 @@
     projectId: '',
     signingDate: '',
     referralDate: '',
-  });
+  };
 
   const errors = reactive({
     name: '',
@@ -192,40 +197,7 @@
     referralDate: '',
   });
 
-  // Watch for editData changes
-  watch(
-    () => props.editData,
-    (newValue) => {
-      if (newValue) {
-        formData.value = {
-          name: newValue.name || '',
-          contractNumber: String(newValue.contractNumber),
-          executingDepartment: newValue.executingDepartment,
-          cost: String(newValue.cost),
-          projectId: String(newValue.projectId),
-          signingDate: newValue.signingDate,
-          referralDate: newValue.referralDate,
-        };
-      } else {
-        formData.value = {
-          name: '',
-          contractNumber: '',
-          executingDepartment: '',
-          cost: '',
-          projectId: '',
-          signingDate: '',
-          referralDate: '',
-        };
-      }
-      // Reset errors when form data changes
-      Object.keys(errors).forEach((key) => {
-        errors[key as keyof typeof errors] = '';
-      });
-    },
-    { immediate: true }
-  );
-
-  const validateForm = (): boolean => {
+  const validateForm = (formData: typeof defaultFormData): boolean => {
     let isValid = true;
 
     // Reset errors
@@ -233,35 +205,35 @@
       errors[key as keyof typeof errors] = '';
     });
 
-    if (!formData.value.name) {
+    if (!formData.name) {
       errors.name = 'اسم العقد مطلوب';
       isValid = false;
     }
 
-    if (!formData.value.contractNumber) {
+    if (!formData.contractNumber) {
       errors.contractNumber = 'رقم العقد مطلوب';
       isValid = false;
     }
 
-    if (!formData.value.executingDepartment) {
+    if (!formData.executingDepartment) {
       errors.executingDepartment = 'الجهة المنفذة مطلوبة';
       isValid = false;
     }
 
-    if (!formData.value.cost) {
+    if (!formData.cost) {
       errors.cost = 'الكلفة مطلوبة';
       isValid = false;
-    } else if (Number(formData.value.cost) <= 0) {
+    } else if (Number(formData.cost) <= 0) {
       errors.cost = 'الكلفة يجب ان تكون اكبر من 0';
       isValid = false;
     }
 
-    if (!formData.value.signingDate) {
+    if (!formData.signingDate) {
       errors.signingDate = 'تاريخ التوقيع مطلوب';
       isValid = false;
     }
 
-    if (!formData.value.referralDate) {
+    if (!formData.referralDate) {
       errors.referralDate = 'تاريخ الإحالة مطلوب';
       isValid = false;
     }
@@ -269,35 +241,44 @@
     return isValid;
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
+  const handleSubmit = (formData: typeof defaultFormData) => {
+    if (!validateForm(formData)) return;
 
-    try {
-      isSubmitting.value = true;
+    // Format dates to ISO string with timezone
+    const signingDate = new Date(formData.signingDate);
+    const referralDate = new Date(formData.referralDate);
 
-      // Format dates to ISO string with timezone
-      const signingDate = new Date(formData.value.signingDate);
-      const referralDate = new Date(formData.value.referralDate);
-
-      const payload = {
-        name: formData.value.name,
-        contractNumber: Number(formData.value.contractNumber),
-        executingDepartment: formData.value.executingDepartment,
-        cost: Number(formData.value.cost),
-        projectId: Number(formData.value.projectId),
-        signingDate: signingDate.toISOString(),
-        referralDate: referralDate.toISOString(),
-      };
-      emit('save', payload);
-    } finally {
-      isSubmitting.value = false;
-    }
+    const payload = {
+      name: formData.name,
+      contractNumber: Number(formData.contractNumber),
+      executingDepartment: formData.executingDepartment,
+      cost: Number(formData.cost),
+      projectId: Number(formData.projectId),
+      signingDate: signingDate.toISOString(),
+      referralDate: referralDate.toISOString(),
+    };
+    emit('save', payload);
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     Object.keys(errors).forEach((key) => {
       errors[key as keyof typeof errors] = '';
     });
-    emit('update:open', false);
   };
 </script>
+
+<style scoped>
+  .animate-pulse-slow {
+    animation: pulse-slow 2s infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+</style>

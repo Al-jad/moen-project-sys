@@ -19,12 +19,6 @@
                   <p class="text-foreground-muted">عرض وإدارة جميع العقود في النظام</p>
                 </div>
               </div>
-              <div class="flex items-center gap-4">
-                <Button @click="handleAdd" class="gap-2">
-                  <Icon icon="lucide:plus" class="h-4 w-4" />
-                  اضافة عقد جديد
-                </Button>
-              </div>
             </div>
           </div>
 
@@ -198,37 +192,20 @@
   import { Toaster } from '@/components/ui/sonner';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
+  import type { Contract, CreateContractRequest } from '@/types/contract';
+  import type { Procedure } from '@/types/procedure';
+  import type { Project } from '@/types/project-type';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
+
   interface Column {
     key: string;
     label: string;
     type: 'text' | 'button' | 'action' | 'actions' | 'custom';
   }
-  interface Contract {
-    id: number;
-    name: string;
-    contractNumber: number;
-    executingDepartment: string;
-    cost: number;
-    signingDate: string;
-    referralDate: string;
-    projectId: number;
-    project?: {
-      id: number;
-      name: string;
-    };
-  }
-  interface Project {
-    id: number;
-    name: string;
-  }
-  interface Procedure {
-    id: number;
-    contractId: number;
-  }
+
   interface ContractWithProject extends Contract {
     project?: {
       id: number;
@@ -236,6 +213,7 @@
     };
     proceduresCount?: number;
   }
+
   const columns: Column[] = [
     { key: 'contractNumber', label: 'رقم العقد', type: 'text' },
     { key: 'name', label: 'اسم العقد', type: 'text' },
@@ -247,6 +225,7 @@
     { key: 'proceduresCount', label: 'عدد الاجراءات', type: 'text' },
     { key: 'action', label: 'الإجراءات', type: 'action' },
   ];
+
   const showModal = ref(false);
   const editingContract = ref<Contract | null>(null);
   const isDeleting = ref(false);
@@ -258,6 +237,7 @@
   const projects = computed(() => regionalProjectStore.projects);
   const loading = computed(() => regionalProjectStore.loading);
   const router = useRouter();
+
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     try {
@@ -272,6 +252,7 @@
       return dateString;
     }
   };
+
   const formatCurrency = (value: number) => {
     if (!value) return '0';
     const formattedNumber = new Intl.NumberFormat('ar-IQ', {
@@ -280,16 +261,17 @@
     }).format(value);
     return `${formattedNumber} د.ع`;
   };
-  const handleSave = async (data: Partial<Contract>) => {
+
+  const handleSave = async (data: Partial<CreateContractRequest>) => {
     try {
-      const payload = {
+      const payload: CreateContractRequest = {
         name: data.name || '',
-        projectId: data.projectId,
-        executingDepartment: data.executingDepartment,
-        cost: data.cost,
+        projectId: data.projectId!,
+        executingDepartment: data.executingDepartment!,
+        cost: data.cost!,
         referralDate: data.referralDate,
         signingDate: data.signingDate,
-        contractNumber: data.contractNumber,
+        contractNumber: data.contractNumber!,
       };
 
       if (editingContract.value?.id) {
@@ -315,21 +297,26 @@
       toast.error('حدث خطأ أثناء حفظ بيانات العقد');
     }
   };
+
   const handleEdit = (contract: Contract) => {
     editingContract.value = { ...contract };
     showModal.value = true;
   };
+
   const handleAdd = () => {
     editingContract.value = null;
     showModal.value = true;
   };
+
   const handleDelete = (contract: Contract) => {
     selectedContract.value = contract;
     isDeleteModalOpen.value = true;
   };
+
   const handleView = (contract: Contract) => {
     router.push(`/contracts/${contract.id}`);
   };
+
   const confirmDelete = async () => {
     try {
       isDeleting.value = true;
@@ -349,10 +336,12 @@
       selectedContract.value = null;
     }
   };
+
   const cancelDelete = () => {
     isDeleteModalOpen.value = false;
     selectedContract.value = null;
   };
+
   const contractsWithProjects = computed<ContractWithProject[]>(() => {
     return contracts.value.map((contract) => ({
       ...contract,
@@ -362,6 +351,7 @@
       ).length,
     }));
   });
+
   const exportToExcel = () => {
     const headerLabels = [
       'رقم العقد',
@@ -383,6 +373,7 @@
     }));
     tableRef.value?.exportToExcel(formattedData, headerLabels, 'العقود');
   };
+
   onMounted(async () => {
     await Promise.all([
       regionalProjectStore.fetchAllContracts(),

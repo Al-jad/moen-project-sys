@@ -6,9 +6,9 @@ export interface Contract {
   projectId: number;
   executingDepartment: string;
   cost: number;
-  referralDate?: string;
-  signingDate?: string;
-  contractNumber?: string;
+  referralDate: string;
+  signingDate: string;
+  contractNumber: number;
   procedures?: Procedure[];
   createdAt?: string;
   updatedAt?: string;
@@ -21,7 +21,7 @@ export interface CreateContractRequest {
   cost: number;
   referralDate?: string;
   signingDate?: string;
-  contractNumber?: string;
+  contractNumber: number;
 }
 
 export interface UpdateContractRequest extends Partial<CreateContractRequest> {
