@@ -214,23 +214,25 @@
   import StatusBadge from '@/components/StatusBadge.vue';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
   import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
   import { getProjectStatusConfig } from '@/utils/statusBadge';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { toast } from 'vue-sonner';
+
   const route = useRoute();
   const router = useRouter();
   const store = useRegionalProjectStore();
-  const project = ref(null);
-  const loading = ref(true);
-  const error = ref(null);
-  const contracts = ref([]);
-  const isLoadingContracts = ref(false);
-  const contractsCount = computed(() => store.contractsCount);
-  const proceduresCount = computed(() => store.proceduresCount);
+
+  // Computed properties from store
+  const project = computed(() => store.currentProject);
+  const loading = computed(() => store.loading);
+  const error = computed(() => store.error);
+  const contracts = computed(() => store.contracts);
+  const totalProcedures = computed(() => store.proceduresCount);
+
+  // Local state
   const isSaving = ref(false);
   const showDeleteModal = ref(false);
   const isDeleting = ref(false);
@@ -240,50 +242,28 @@
   const isProcedureModalOpen = ref(false);
   const selectedProcedure = ref(null);
   const isDeleteProcedureModalOpen = ref(false);
+
   const statusConfig = computed(() =>
     project.value?.projectStatus !== undefined
       ? getProjectStatusConfig(project.value.projectStatus)
       : { key: 'cancelled', label: 'غير معروف' }
   );
-  const fetchContracts = async () => {
-    if (!project.value?.id) return;
-    try {
-      isLoadingContracts.value = true;
-      const response = await axiosInstance.get(
-        `/api/RegionalProject/Contract/Project/${project.value.id}`
-      );
-      contracts.value = response.data;
-    } catch (err) {
-      console.error('Error fetching contracts:', err);
-      toast.error('حدث خطأ في تحميل العقود');
-    } finally {
-      isLoadingContracts.value = false;
-    }
-  };
+
+  // Methods
   const fetchProject = async () => {
     try {
-      const projectId = parseInt(route.params.id);
+      const projectId = route.params.id;
       if (!projectId) {
         error.value = 'معرف المشروع غير صالح';
         return;
       }
-      const response = await axiosInstance.get(`/api/RegionalProject/${projectId}`);
-      project.value = response.data;
-      if (!project.value) {
-        error.value = 'المشروع غير موجود';
-        return;
-      }
-      await fetchContracts();
+      await store.fetchProjectById(projectId);
+      await store.fetchContractsByProjectId(projectId);
     } catch (err) {
       console.error('Error fetching project:', err);
-      error.value = err.message || 'حدث خطأ في تحميل بيانات المشروع';
-    } finally {
-      loading.value = false;
     }
   };
-  onMounted(() => {
-    fetchProject();
-  });
+
   const handleSaveProject = async (updatedProject) => {
     isSaving.value = true;
     try {
@@ -291,11 +271,7 @@
         ...updatedProject,
         projectStatus: parseInt(updatedProject.projectStatus) || 1,
       };
-      const response = await axiosInstance.put(
-        `/api/RegionalProject/${project.value.id}`,
-        projectData
-      );
-      project.value = { ...project.value, ...response.data };
+      await store.updateProject(project.value.id, projectData);
       await fetchProject();
       toast.success('تم حفظ التغييرات بنجاح');
     } catch (error) {
@@ -314,9 +290,11 @@
       isSaving.value = false;
     }
   };
+
   const handleCancelEdit = () => {
     fetchProject();
   };
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     try {
@@ -331,6 +309,7 @@
       return dateString;
     }
   };
+
   const formatCurrency = (value) => {
     if (!value) return '0';
     const formattedNumber = new Intl.NumberFormat('ar-IQ', {
@@ -339,17 +318,22 @@
     }).format(value);
     return `${formattedNumber} د.ع`;
   };
+
+  // Contract handlers
   const handleAdd = () => {
     selectedContract.value = null;
     isContractDialogOpen.value = true;
   };
+
   const handleEdit = (contract) => {
     selectedContract.value = { ...contract };
     isContractDialogOpen.value = true;
   };
+
   const handleView = (contract) => {
     router.push(`/contracts/${contract.id}`);
   };
+
   const handleContractSubmit = async (data) => {
     try {
       isSaving.value = true;
@@ -358,17 +342,14 @@
         projectId: project.value.id,
       };
       if (selectedContract.value?.id) {
-        await axiosInstance.put(
-          `/api/RegionalProject/Contract/${selectedContract.value.id}`,
-          payload
-        );
+        await store.updateContract(selectedContract.value.id.toString(), payload);
         toast.success('تم تعديل العقد بنجاح');
       } else {
-        await axiosInstance.post('/api/RegionalProject/Contract', payload);
+        await store.createContract(payload);
         toast.success('تم اضافة العقد بنجاح');
       }
       closeContractDialog();
-      await fetchContracts();
+      await store.fetchContractsByProjectId(project.value.id.toString());
     } catch (error) {
       console.error('Error in contract process:', error);
       toast.error('حدث خطأ أثناء معالجة العقد');
@@ -376,19 +357,22 @@
       isSaving.value = false;
     }
   };
+
   const closeContractDialog = () => {
     selectedContract.value = null;
     isContractDialogOpen.value = false;
   };
+
   const handleDelete = (contract) => {
     selectedContract.value = contract;
     isDeleteContractModalOpen.value = true;
   };
+
   const confirmDeleteContract = async () => {
     try {
       isDeleting.value = true;
-      await axiosInstance.delete(`/api/RegionalProject/Contract/${selectedContract.value.id}`);
-      await fetchContracts();
+      await store.deleteContract(selectedContract.value.id.toString());
+      await store.fetchContractsByProjectId(project.value.id.toString());
       toast.success('تم حذف العقد بنجاح');
     } catch (error) {
       console.error('Error deleting contract:', error);
@@ -399,18 +383,22 @@
       selectedContract.value = null;
     }
   };
+
   const cancelDeleteContract = () => {
     isDeleteContractModalOpen.value = false;
     selectedContract.value = null;
   };
+
+  // Project deletion
   const showDeleteConfirmation = () => {
     if (!project.value) return;
     showDeleteModal.value = true;
   };
+
   const confirmDeleteProject = async () => {
     isDeleting.value = true;
     try {
-      await axiosInstance.delete(`/api/RegionalProject/${project.value.id}`);
+      await store.deleteProject(project.value.id);
       toast.success('تم حذف المشروع بنجاح');
       router.push('/regional-projects');
     } catch (error) {
@@ -421,36 +409,35 @@
       showDeleteModal.value = false;
     }
   };
+
+  // Procedure handlers
   const handleEditProcedure = (procedure, contract) => {
     selectedProcedure.value = { ...procedure };
     selectedContract.value = contract;
     isProcedureModalOpen.value = true;
   };
+
   const handleDeleteProcedure = (procedure) => {
     selectedProcedure.value = procedure;
     isDeleteProcedureModalOpen.value = true;
   };
+
   const handleProcedureSubmit = async (data) => {
     try {
       isSaving.value = true;
       const procedureData = {
         ...data,
         contractId: selectedContract.value.id,
-        calculatedPlannedCompletionPercentage: data.calculatedPlannedCompletionPercentage,
-        calculatedActualCompletionPercentage: data.calculatedActualCompletionPercentage,
-        calculatedTechnicalDeviation: data.calculatedTechnicalDeviation,
-        calculatedPlannedFinancialProgress: data.calculatedPlannedFinancialProgress,
-        calculatedActualFinancialProgress: data.calculatedActualFinancialProgress,
       };
       if (selectedProcedure.value?.id) {
-        await store.updateProcedure(selectedProcedure.value.id, procedureData);
+        await store.updateProcedure(selectedProcedure.value.id.toString(), procedureData);
         toast.success('تم تعديل الاجراء بنجاح');
       } else {
         await store.createProcedure(procedureData);
         toast.success('تم اضافة الاجراء بنجاح');
       }
       closeProcedureDialog();
-      await fetchContracts();
+      await store.fetchContractsByProjectId(project.value.id.toString());
     } catch (error) {
       console.error('Error in procedure process:', error);
       toast.error('حدث خطأ أثناء معالجة الاجراء');
@@ -458,16 +445,18 @@
       isSaving.value = false;
     }
   };
+
   const closeProcedureDialog = () => {
     selectedProcedure.value = null;
     selectedContract.value = null;
     isProcedureModalOpen.value = false;
   };
+
   const confirmDeleteProcedure = async () => {
     try {
       isDeleting.value = true;
-      await store.deleteProcedure(selectedProcedure.value.id, selectedProcedure.value.contractId);
-      await fetchContracts();
+      await store.deleteProcedure(selectedProcedure.value.id.toString());
+      await store.fetchContractsByProjectId(project.value.id.toString());
       toast.success('تم حذف الاجراء بنجاح');
     } catch (error) {
       console.error('Error deleting procedure:', error);
@@ -478,19 +467,20 @@
       selectedProcedure.value = null;
     }
   };
+
   const cancelDeleteProcedure = () => {
     isDeleteProcedureModalOpen.value = false;
     selectedProcedure.value = null;
   };
+
   const handleAddProcedure = (contract) => {
     selectedProcedure.value = null;
     selectedContract.value = contract;
     isProcedureModalOpen.value = true;
   };
-  const totalProcedures = computed(() => {
-    return contracts.value.reduce((total, contract) => {
-      return total + (contract.procedures?.length || 0);
-    }, 0);
+
+  onMounted(() => {
+    fetchProject();
   });
 </script>
 <style scoped>
