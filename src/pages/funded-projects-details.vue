@@ -50,7 +50,7 @@
                 </div>
               </div>
               <div class="flex items-center gap-4">
-                <PrimaryButton icon="material-symbols-light:print-outline"> طباعة </PrimaryButton>
+                <PrimaryButton variant="lock"> طباعة </PrimaryButton>
               </div>
             </div>
           </div>
