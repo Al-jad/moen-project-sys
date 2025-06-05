@@ -1,47 +1,49 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gray-100 p-6 dark:bg-gray-900">
+    <div class="min-h-screen bg-background p-6">
       <div class="mx-auto w-full max-w-6xl space-y-8">
         <div v-if="loading" class="space-y-4">
-          <div class="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-48 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
-          <div class="h-96 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="h-24 animate-pulse rounded-xl bg-background-hover"></div>
+          <div class="h-48 animate-pulse rounded-xl bg-background-hover"></div>
+          <div class="h-96 animate-pulse rounded-xl bg-background-hover"></div>
         </div>
         <div
           v-else-if="error"
-          class="rounded-xl border border-red-200 bg-white p-6 text-center dark:border-red-800 dark:bg-gray-800"
+          class="flex flex-col items-center justify-center gap-4 rounded-xl border border-destructive bg-background-surface p-6 text-center"
         >
-          <div class="mb-3 inline-block rounded-full bg-red-100 p-3 dark:bg-red-900/30">
-            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div class="mb-3 inline-block rounded-full bg-destructive/10 p-3">
+            <Icon icon="lucide:alert-circle" class="h-6 w-6 text-destructive" />
           </div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            حدث خطأ في تحميل المشروع
-          </h3>
-          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <h3 class="text-lg font-medium text-foreground-heading"> حدث خطأ في تحميل المشروع </h3>
+          <p class="mt-2 text-sm text-foreground-muted">
             {{ error }}
           </p>
-          <Button @click="fetchProject" variant="outline" class="mt-4">
-            <Icon icon="lucide:refresh-cw" class="mr-2 h-4 w-4" />
+          <PrimaryButton
+            @click="fetchProject"
+            variant="primary"
+            class="mt-4"
+            icon="lucide:refresh-cw"
+          >
             إعادة المحاولة
-          </Button>
+          </PrimaryButton>
         </div>
         <template v-else-if="project">
-          <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+          <div class="rounded-xl border border-border bg-background-surface p-6">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div>
-                  <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <h1 class="text-2xl font-bold text-foreground-heading">
                     {{ project?.name }}
                   </h1>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <p class="text-sm text-foreground-muted">
                     {{ project?.directorate }}
                   </p>
                 </div>
               </div>
               <div class="flex items-center gap-4">
-                <Badge :variant="getStatusVariant(project?.projectStatus)">
-                  {{ getStatusLabel(project?.projectStatus) }}
-                </Badge>
+                <div v-if="project?.projectStatus !== undefined">
+                  <StatusBadge :status="statusConfig.key" :label="statusConfig.label" />
+                </div>
               </div>
             </div>
           </div>
@@ -267,11 +269,12 @@
   import EditProcedureModal from '@/components/EditProcedureModal.vue';
   import ContractCard from '@/components/regional-project/ContractCard.vue';
   import RegionalProjectDetails from '@/components/regional-project/RegionalProjectDetails.vue';
-  import Badge from '@/components/ui/badge/Badge.vue';
+  import StatusBadge from '@/components/StatusBadge.vue';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance from '@/plugins/axios';
   import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
+  import { getProjectStatusConfig } from '@/utils/statusBadge';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -295,6 +298,11 @@
   const isProcedureModalOpen = ref(false);
   const selectedProcedure = ref(null);
   const isDeleteProcedureModalOpen = ref(false);
+  const statusConfig = computed(() =>
+    project.value?.projectStatus !== undefined
+      ? getProjectStatusConfig(project.value.projectStatus)
+      : { key: 'cancelled', label: 'غير معروف' }
+  );
   const fetchContracts = async () => {
     if (!project.value?.id) return;
     try {
@@ -536,31 +544,6 @@
     selectedProcedure.value = null;
     selectedContract.value = contract;
     isProcedureModalOpen.value = true;
-  };
-  const projectStatuses = [
-    { value: 1, label: 'قيد التنفيذ' },
-    { value: 2, label: 'منجزة' },
-    { value: 3, label: 'متلكئة' },
-    { value: 0, label: 'ملغاة' },
-    { value: 4, label: 'مقترح' },
-  ];
-  const getStatusLabel = (status) => {
-    const statusObj = projectStatuses.find((s) => s.value === status);
-    return statusObj ? statusObj.label : 'غير محدد';
-  };
-  const getStatusVariant = (status) => {
-    switch (status) {
-      case 1:
-        return 'warning';
-      case 2:
-        return 'success';
-      case 3:
-        return 'destructive';
-      case 0:
-        return 'outline';
-      default:
-        return 'secondary';
-    }
   };
   const totalProcedures = computed(() => {
     return contracts.value.reduce((total, contract) => {

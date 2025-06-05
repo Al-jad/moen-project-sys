@@ -21,13 +21,11 @@
               >
                 {{ project.name || 'لا يوجد اسم' }}
               </h3>
-              <div
+              <StatusBadge
                 v-if="project.projectStatus !== undefined"
-                :class="getStatusBadgeClass(project.projectStatus)"
-                class="rounded-full px-3 py-1 text-xs font-medium"
-              >
-                {{ getStatusText(project.projectStatus) }}
-              </div>
+                :status="statusConfig.key"
+                :label="statusConfig.label"
+              />
             </div>
             <p class="text-sm text-foreground-muted">{{ project.directorate }}</p>
           </div>
@@ -93,7 +91,9 @@
 </template>
 
 <script setup>
+  import StatusBadge from '@/components/StatusBadge.vue';
   import { CURRENCY_CONVERSION, UNITS } from '@/constants';
+  import { getProjectStatusConfig } from '@/utils/statusBadge';
   import { Icon } from '@iconify/vue';
   import { computed } from 'vue';
   import { useRouter } from 'vue-router';
@@ -113,6 +113,8 @@
       default: 'IQD',
     },
   });
+
+  const statusConfig = computed(() => getProjectStatusConfig(props.project.projectStatus));
 
   const cardSections = [
     {
@@ -206,24 +208,4 @@
 
     return `${formattedValue} ${props.selectedCurrency === 'USD' ? UNITS.CURRENCY.USD : UNITS.CURRENCY.IQD}`;
   };
-
-  function getStatusBadgeClass(status) {
-    const statusClasses = {
-      0: 'bg-gray-500/10 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300',
-      1: 'bg-yellow-500/30 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300',
-      2: 'bg-green-500/30 text-green-800 dark:bg-green-500/20 dark:text-green-300',
-      3: 'bg-red-500/30 text-red-800 dark:bg-red-500/20 dark:text-red-300',
-    };
-    return statusClasses[status] || '';
-  }
-
-  function getStatusText(status) {
-    const statusMap = {
-      0: 'ملغاة',
-      1: 'قيد التنفيذ',
-      2: 'منجزة',
-      3: 'متلكئة',
-    };
-    return statusMap[status] || 'غير معروف';
-  }
 </script>
