@@ -18,12 +18,12 @@
       </div>
       <div class="flex-1 bg-background">
         <div class="p-6 lg:p-8">
-          <div class="w-full mx-auto space-y-8 max-w-7xl">
+          <div class="mx-auto w-full max-w-7xl space-y-8">
             <div class="flex flex-col gap-6">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                  <div class="p-3 rounded-lg bg-primary/10">
-                    <Icon icon="lucide:building-2" class="w-8 h-8 text-primary" />
+                  <div class="rounded-lg bg-primary/10 p-3">
+                    <Icon icon="lucide:building-2" class="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <h1 class="text-3xl font-bold text-foreground">مشاريع تنمية الاقاليم</h1>
@@ -69,12 +69,12 @@
                 />
               </div>
             </div>
-            <div class="border shadow-sm rounded-xl border-border bg-background-surface">
-              <div class="p-6 border-b border-border">
+            <div class="rounded-xl border border-border bg-background-surface shadow-sm">
+              <div class="border-b border-border p-6">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div class="flex items-center gap-4">
                     <h2 class="text-xl font-semibold text-foreground">قائمة المشاريع</h2>
-                    <Badge class="px-3 py-1 bg-primary/10 text-primary">
+                    <Badge class="bg-primary/10 px-3 py-1 text-primary">
                       {{ filteredProjects.length }} من {{ projects.length }} مشروع
                     </Badge>
                   </div>
@@ -89,24 +89,15 @@
                       />
                       <div
                         v-if="selectedSort"
-                        class="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-background-hover text-foreground-muted"
+                        class="flex items-center gap-2 rounded-lg text-sm text-foreground-muted"
                       >
                         <span>{{ getSelectedSortLabel }}</span>
-                        <button
-                          class="p-1 transition-colors rounded-full hover:bg-background-hover"
-                          @click="clearSort"
-                        >
-                          <Icon icon="lucide:x" class="w-3 h-3" />
-                        </button>
+                        <PrimaryButton variant="delete" @click="clearSort">
+                          <Icon icon="lucide:x" class="h-3 w-3" />
+                        </PrimaryButton>
                       </div>
                     </div>
-                    <PrimaryButton
-                      @click="OpenPremiumModal"
-                      variant="destructive"
-                      icon="lucide:lock"
-                    >
-                      طباعة
-                    </PrimaryButton>
+                    <PrimaryButton @click="OpenPremiumModal" variant="lock"> طباعة </PrimaryButton>
                     <RouterLink to="/add-devlopment-project">
                       <PrimaryButton variant="primary" icon="lucide:plus">
                         اضافة مشروع جديد
@@ -120,15 +111,15 @@
                   <div
                     v-for="n in 6"
                     :key="n"
-                    class="rounded-lg h-80 animate-pulse bg-background-hover"
+                    class="h-80 animate-pulse rounded-lg bg-background-hover"
                   />
                 </div>
                 <div v-else>
                   <div
                     v-if="projects.length === 0"
-                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
+                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
                   >
-                    <Icon icon="lucide:folder-open" class="w-12 h-12 mb-4 text-foreground-muted" />
+                    <Icon icon="lucide:folder-open" class="mb-4 h-12 w-12 text-foreground-muted" />
                     <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد مشاريع</h3>
                     <p class="mb-4 text-sm text-foreground-muted">
                       قم بإضافة مشروع جديد للبدء في إدارة المشاريع
@@ -141,9 +132,9 @@
                   </div>
                   <div
                     v-else-if="filteredProjects.length === 0"
-                    class="flex flex-col items-center justify-center py-16 text-center border border-dashed rounded-lg border-border"
+                    class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center"
                   >
-                    <Icon icon="lucide:search-x" class="w-12 h-12 mb-4 text-foreground-muted" />
+                    <Icon icon="lucide:search-x" class="mb-4 h-12 w-12 text-foreground-muted" />
                     <h3 class="mb-2 text-lg font-semibold text-foreground">لا توجد نتائج مطابقة</h3>
                     <p class="mb-4 text-sm text-foreground-muted">
                       حاول تعديل معايير الفلتر أو قم بإلغاء الفلتر لعرض جميع المشاريع.
@@ -165,7 +156,7 @@
               <!-- Pagination at bottom of container -->
               <div
                 v-if="filteredProjects.length > 0"
-                class="px-6 py-4 border-t border-border bg-background-surface"
+                class="border-t border-border bg-background-surface px-6 py-4"
               >
                 <div class="flex justify-center">
                   <CustomPagination
@@ -186,16 +177,16 @@
 
 <script setup>
   import CustomSelect from '@/components/CustomSelect.vue';
-import RegionalProjectCard from '@/components/RegionalProjectCard.vue';
-import { useBeneficiaries } from '@/composables/useBeneficiaries';
-import { useToast } from '@/composables/useToast';
-import { UNITS } from '@/constants';
-import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
-import { formatTotalCost } from '@/utils/formatCost';
-import { Icon } from '@iconify/vue';
-import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+  import RegionalProjectCard from '@/components/RegionalProjectCard.vue';
+  import { useBeneficiaries } from '@/composables/useBeneficiaries';
+  import { useToast } from '@/composables/useToast';
+  import { UNITS } from '@/constants';
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
+  import { useRegionalProjectStore } from '@/stores/regionalProjectStore';
+  import { formatTotalCost } from '@/utils/formatCost';
+  import { Icon } from '@iconify/vue';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
   const regionalProjectStore = useRegionalProjectStore();
   const projects = computed(() => regionalProjectStore.projects);

@@ -1,20 +1,20 @@
 <template>
   <div
     @click="!disabled && router.push(`/regional-projects/${project.id}`)"
-    class="group relative overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
+    class="group relative overflow-hidden rounded-lg border border-primary/20 bg-background-card transition-all duration-300"
     :class="[
       disabled
         ? 'cursor-not-allowed opacity-70'
-        : 'hover:cursor-pointer hover:border-blue-500/20 hover:shadow-lg',
+        : 'hover:cursor-pointer hover:border-primary/50 hover:shadow-lg',
     ]"
   >
-    <div class="border-b border-gray-200 p-6 dark:border-gray-700">
+    <div class="border-b border-border p-6">
       <div class="mb-4 flex items-start justify-between">
         <div class="flex items-center gap-4">
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
               <h3
-                class="text-lg font-medium text-gray-900 transition-colors dark:text-gray-100"
+                class="text-lg font-medium text-foreground transition-colors"
                 :class="[
                   disabled ? '' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400',
                 ]"
@@ -24,27 +24,27 @@
               <div
                 v-if="project.projectStatus !== undefined"
                 :class="getStatusBadgeClass(project.projectStatus)"
-                class="rounded-full px-3 py-1 text-xs font-medium dark:bg-opacity-20"
+                class="rounded-full px-3 py-1 text-xs font-medium"
               >
                 {{ getStatusText(project.projectStatus) }}
               </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ project.directorate }}</p>
+            <p class="text-sm text-foreground-muted">{{ project.directorate }}</p>
           </div>
         </div>
         <h3
-          class="rounded-full bg-blue-500 px-4 py-1 text-lg font-medium text-white shadow-sm transition-all dark:bg-blue-600"
+          class="rounded-full bg-info px-4 py-1 text-lg font-medium text-white shadow-sm transition-all"
           :class="{ 'opacity-70': disabled }"
         >
           {{ formatCost(project.cost) }}
         </h3>
       </div>
-      <hr class="mb-6 w-full border-gray-200 dark:border-gray-700" />
+      <hr class="mb-6 w-full border-border" />
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(section, index) in cardSections"
           :key="index"
-          class="flex flex-col space-y-4 rounded-lg bg-white p-2 shadow-sm transition-all dark:bg-gray-800"
+          class="flex flex-col space-y-4 rounded-lg bg-background-surface p-4 transition-all"
         >
           <div
             v-for="(item, itemIndex) in section.items"
@@ -53,10 +53,10 @@
             :class="{ 'opacity-50 hover:cursor-not-allowed': item.disabled }"
           >
             <div class="flex items-center gap-2">
-              <div class="rounded-full bg-gray-50 p-2 dark:bg-gray-500/10">
-                <Icon :icon="item.icon" class="h-4 w-4 text-gray-600 dark:text-gray-100" />
+              <div class="rounded-full bg-background-hover p-2">
+                <Icon :icon="item.icon" class="h-4 w-4 text-foreground-muted" />
               </div>
-              <h3 class="font-medium text-gray-900 dark:text-gray-100">{{ item.title }}</h3>
+              <h3 class="font-medium text-foreground-heading">{{ item.title }}</h3>
             </div>
             <template v-if="item.type === 'progress'">
               <div class="flex items-center gap-2">
@@ -73,15 +73,15 @@
                   ></div>
                 </div>
                 <div class="flex items-center gap-1">
-                  <h3 class="font-semibold text-gray-600 dark:text-gray-100">
+                  <h3 class="font-semibold text-foreground">
                     {{ item.value || 0 }}
                   </h3>
-                  <span class="text-xs text-gray-500 dark:text-gray-400">%</span>
+                  <span class="text-xs text-foreground-muted">%</span>
                 </div>
               </div>
             </template>
             <template v-else>
-              <h3 class="font-semibold text-gray-600 dark:text-gray-100">
+              <h3 class="font-semibold text-foreground">
                 {{ item.value }}
               </h3>
             </template>
@@ -209,10 +209,10 @@
 
   function getStatusBadgeClass(status) {
     const statusClasses = {
-      0: 'bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-300',
-      1: 'bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300',
-      2: 'bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-300',
-      3: 'bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-300',
+      0: 'bg-gray-500/10 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300',
+      1: 'bg-yellow-500/30 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300',
+      2: 'bg-green-500/30 text-green-800 dark:bg-green-500/20 dark:text-green-300',
+      3: 'bg-red-500/30 text-red-800 dark:bg-red-500/20 dark:text-red-300',
     };
     return statusClasses[status] || '';
   }
