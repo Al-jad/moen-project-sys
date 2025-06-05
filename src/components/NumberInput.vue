@@ -9,13 +9,14 @@
       :readonly="readonly"
       :class="[
         'w-full rounded-lg px-4 py-2 transition-colors',
-        'bg-background-surface',
         'border border-border',
         'text-foreground',
         'placeholder:text-foreground-muted',
         'focus:border-primary',
         'outline-none focus:ring-0',
-        'pr-10', // Always add right padding for the unit
+        'pr-10',
+        disabled ? 'bg-background-hover' : 'bg-background-surface',
+        // Always add right padding for the unit
       ]"
       @input="handleInput"
       @keypress="onlyNumbers"

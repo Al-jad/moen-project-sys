@@ -8,23 +8,24 @@
         class="flex-1"
         @keydown.enter.prevent="addItem"
       />
-      <Button @click="addItem" variant="outline" class="dark:border-gray-700 dark:text-gray-100">
+      <PrimaryButton @click="addItem" variant="primary" icon="lucide:plus">
         {{ buttonText || 'اضافة' }}
-      </Button>
+      </PrimaryButton>
     </div>
     <div v-if="items?.length > 0" class="flex flex-wrap gap-2">
       <div
         v-for="(item, index) in items"
         :key="index"
-        class="flex items-center gap-1 rounded-lg border bg-gray-50 px-3 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+        class="flex items-center gap-1 rounded-lg border bg-background-hover px-3 py-1 text-sm"
       >
-        <span class="text-gray-900 dark:text-gray-100">{{ item }}</span>
-        <button
+        <span class="text-foreground-heading">{{ item }}</span>
+        <PrimaryButton
+          variant="delete"
+          class="bg-transparent p-0 hover:bg-transparent hover:underline"
           @click="removeItem(index)"
-          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         >
           <Icon icon="lucide:x" class="h-4 w-4" />
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   </div>
@@ -32,7 +33,6 @@
 
 <script setup>
   import CustomInput from '@/components/CustomInput.vue';
-  import Button from '@/components/ui/button/Button.vue';
   import { Icon } from '@iconify/vue';
   import { ref } from 'vue';
 

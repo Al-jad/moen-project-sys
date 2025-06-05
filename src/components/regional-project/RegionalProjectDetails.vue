@@ -1,67 +1,67 @@
 <template>
-  <div class="rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-800">
-    <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
+  <div class="rounded-xl border border-border bg-background-surface">
+    <div class="flex items-center justify-between border-b border-border p-4">
       <div class="flex items-center gap-2">
-        <Icon icon="lucide:info" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
-        <h4 class="font-medium text-gray-900 dark:text-gray-100">تفاصيل المشروع</h4>
+        <Icon icon="lucide:info" class="h-5 w-5 text-foreground-muted" />
+        <h4 class="font-medium text-foreground">تفاصيل المشروع</h4>
       </div>
-      <Button @click="toggleEdit" variant="ghost" size="sm">
-        <Icon v-if="!isEditing" icon="lucide:edit" class="h-4 w-4" />
-        <Icon v-else icon="lucide:x" class="h-4 w-4" />
-      </Button>
+      <PrimaryButton
+        :variant="isEditing ? 'destructive' : 'ghost'"
+        @click="toggleEdit"
+        :icon="isEditing ? 'lucide:x' : 'lucide:edit'"
+        size="sm"
+      />
     </div>
 
     <!-- View Mode -->
-    <div v-if="!isEditing" class="divide-y dark:divide-gray-700">
+    <div v-if="!isEditing" class="divide-y divide-border">
       <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">اسم المشروع</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">اسم المشروع</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.name || 'لم يتم تحديد اسم المشروع' }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">الخطة (المديرية)</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">الخطة (المديرية)</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.directorate || 'لم يتم تحديد المديرية' }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">هدف المشروع</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">هدف المشروع</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.goals || 'لم يتم تحديد الأهداف' }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">العنوان</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">العنوان</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.address || 'لم يتم تحديد العنوان' }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">الكلفة الكلية للمشروع</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">الكلفة الكلية للمشروع</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ formatCurrency(project?.cost) }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">الفترة الزمنية لتنفيذ المشروع</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">الفترة الزمنية لتنفيذ المشروع</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.duration || 0 }} يوم
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">نسبة الإنجاز المالي التراكمي</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">نسبة الإنجاز المالي التراكمي</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ project?.cumulativeFinancialProgress || 0 }}%
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400"
-            >نسبة الإنجاز المالي التراكمي المحسوب</div
-          >
+          <div class="text-sm text-foreground-muted">نسبة الإنجاز المالي التراكمي المحسوب</div>
           <div class="mt-1 flex items-center gap-2">
-            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <span class="text-sm font-medium text-foreground">
               {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
             </span>
             <Icon
@@ -88,46 +88,46 @@
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">حالة المشروع الحالية</div>
+          <div class="text-sm text-foreground-muted">حالة المشروع الحالية</div>
           <div class="mt-1">
-            <Badge :variant="getProjectStatusVariant(project?.projectStatus)">
-              {{ getProjectStatusText(project?.projectStatus) }}
-            </Badge>
+            <StatusBadge
+              v-if="project?.projectStatus !== undefined"
+              :status="statusConfig.key"
+              :label="statusConfig.label"
+            />
           </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ المباشرة المخطط له</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">تاريخ المباشرة المخطط له</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ formatDate(project?.plannedStartDate) }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ المباشرة الفعلي</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">تاريخ المباشرة الفعلي</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ formatDate(project?.actualStartDate) }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ الانجاز المخطط له</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">تاريخ الانجاز المخطط له</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ formatDate(project?.plannedEndDate) }}
           </div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">تاريخ الانجاز الفعلي</div>
-          <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm text-foreground-muted">تاريخ الانجاز الفعلي</div>
+          <div class="mt-1 text-sm font-medium text-foreground">
             {{ formatDate(project?.actualEndDate) }}
           </div>
         </div>
       </div>
 
       <div class="flex flex-col gap-2 p-4">
-        <div class="text-sm text-gray-500 dark:text-gray-400"
-          >ربط المشروع بأهداف التنمية المستدامة</div
-        >
+        <div class="text-sm text-foreground-muted">ربط المشروع بأهداف التنمية المستدامة</div>
         <div class="mt-1 flex flex-wrap gap-2">
           <Badge
             v-for="(item, index) in project?.sustainableDevelopment"
@@ -140,7 +140,7 @@
       </div>
 
       <div class="flex flex-col gap-2 p-4">
-        <div class="text-sm text-gray-500 dark:text-gray-400">الجهات الساندة</div>
+        <div class="text-sm text-foreground-muted">الجهات الساندة</div>
         <div class="mt-1 flex flex-wrap gap-2">
           <Badge
             v-for="(item, index) in project?.supportingEntities"
@@ -153,7 +153,7 @@
       </div>
 
       <div class="flex flex-col gap-2 p-4">
-        <div class="text-sm text-gray-500 dark:text-gray-400">اسم الجهة المستفيدة</div>
+        <div class="text-sm text-foreground-muted">اسم الجهة المستفيدة</div>
         <div class="mt-1 flex flex-wrap gap-2">
           <Badge v-for="(item, index) in project?.beneficiaries" :key="index" variant="outline">
             {{ item.name }}
@@ -162,8 +162,8 @@
       </div>
 
       <div class="flex flex-col gap-2 p-4">
-        <div class="text-sm text-gray-500 dark:text-gray-400">ملاحظات</div>
-        <div class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+        <div class="text-sm text-foreground-muted">ملاحظات</div>
+        <div class="mt-1 text-sm font-medium text-foreground">
           {{ project?.notes || 'لا توجد ملاحظات' }}
         </div>
       </div>
@@ -171,15 +171,13 @@
       <!-- New Calculated Values Section -->
       <div class="flex flex-col gap-2 p-4">
         <div class="mb-2">
-          <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100">القيم المحسوبة</h4>
+          <h4 class="text-lg font-medium text-foreground">القيم المحسوبة</h4>
         </div>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <!-- Financial Progress -->
-          <div class="space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+          <div class="space-y-2 rounded-lg bg-background-card p-4">
             <div class="flex items-center justify-between">
-              <div class="text-sm text-gray-500 dark:text-gray-400"
-                >نسبة الإنجاز المالي التراكمي</div
-              >
+              <div class="text-sm text-foreground-muted">نسبة الإنجاز المالي التراكمي</div>
               <div class="flex items-center gap-2">
                 <span
                   :class="[
@@ -216,14 +214,14 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">المدخل</div>
-                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-xs text-foreground-muted">المدخل</div>
+                <div class="text-sm font-medium text-foreground">
                   {{ project?.cumulativeFinancialProgress || 0 }}%
                 </div>
               </div>
               <div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">المحسوب</div>
-                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-xs text-foreground-muted">المحسوب</div>
+                <div class="text-sm font-medium text-foreground">
                   {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
                 </div>
               </div>
@@ -231,11 +229,9 @@
           </div>
 
           <!-- Technical Progress -->
-          <div class="space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+          <div class="space-y-2 rounded-lg bg-background-card p-4">
             <div class="flex items-center justify-between">
-              <div class="text-sm text-gray-500 dark:text-gray-400"
-                >نسبة الإنجاز الفني التراكمي</div
-              >
+              <div class="text-sm text-foreground-muted">نسبة الإنجاز الفني التراكمي</div>
               <div class="flex items-center gap-2">
                 <span
                   :class="[
@@ -272,14 +268,14 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">المدخل</div>
-                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-xs text-foreground-muted">المدخل</div>
+                <div class="text-sm font-medium text-foreground">
                   {{ project?.cumulativeTechnicalProgress || 0 }}%
                 </div>
               </div>
               <div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">المحسوب</div>
-                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div class="text-xs text-foreground-muted">المحسوب</div>
+                <div class="text-sm font-medium text-foreground">
                   {{ project?.calculatedCumulativeTechnicalProgress || 0 }}%
                 </div>
               </div>
@@ -302,7 +298,7 @@
           </FormField>
 
           <FormField label="هدف المشروع">
-            <Textarea v-model="form.goals" dir="rtl" placeholder="ادخل هدف المشروع" />
+            <CustomTextArea v-model="form.goals" dir="rtl" placeholder="ادخل هدف المشروع" />
           </FormField>
 
           <FormField label="ربط المشروع بأهداف التنمية المستدامة">
@@ -335,21 +331,20 @@
           </FormField>
 
           <FormField label="الموقع الجغرافي">
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
               <CustomInput
                 v-model="form.location"
                 dir="rtl"
                 placeholder="ادخل الموقع الجغرافي"
                 class="flex-1"
               />
-              <Button
+              <PrimaryButton
                 @click="showLocationPicker = true"
-                variant="outline"
-                class="flex items-center gap-2 dark:border-gray-700 dark:text-gray-100"
+                variant="primary"
+                icon="lucide:map-pin"
               >
-                <Icon icon="lucide:map-pin" class="h-4 w-4" />
                 اختر على الخريطة
-              </Button>
+              </PrimaryButton>
             </div>
           </FormField>
 
@@ -365,7 +360,7 @@
           <FormField label="الفترة الزمنية لتنفيذ المشروع">
             <div class="flex items-center gap-4">
               <NumberInput v-model="form.duration" placeholder="ادخل المدة" />
-              <Label class="text-sm dark:text-gray-300">يوم</Label>
+              <Label class="text-sm text-foreground-heading">يوم</Label>
             </div>
           </FormField>
 
@@ -401,28 +396,27 @@
           </FormField>
 
           <!-- New Calculated Fields Section -->
-          <FormSection title="القيم المحسوبة" class="dark:border-gray-700">
-            <FormField label="نسبة الإنجاز المالي التراكمي المحسوب">
-              <NumberInput
-                v-model="form.calculatedCumulativeFinancialProgress"
-                placeholder="القيمة المحسوبة"
-                unit="%"
-                min="0"
-                max="100"
-              />
-            </FormField>
-          </FormSection>
+          <FormField label="نسبة الإنجاز المالي التراكمي المحسوب">
+            <NumberInput
+              v-model="form.calculatedCumulativeFinancialProgress"
+              placeholder="القيمة المحسوبة"
+              unit="%"
+              min="0"
+              max="100"
+            />
+          </FormField>
 
           <div class="flex items-center gap-4 md:col-span-2">
-            <Label class="text-sm font-medium dark:text-gray-100">ضمن البرنامج الحكومي</Label>
+            <Label class="text-sm font-medium text-foreground-heading">ضمن البرنامج الحكومي</Label>
             <div class="flex items-center gap-2">
               <Switch
                 id="is-government-edit"
                 :checked="form.isGovernment"
                 @update:checked="form.isGovernment = $event"
-                class="dark:data-[state=checked]:bg-green-500"
               />
-              <Label for="is-government-edit" class="mb-0 text-sm dark:text-gray-300">نعم</Label>
+              <Label for="is-government-edit" class="mb-0 text-sm text-foreground-heading"
+                >نعم</Label
+              >
             </div>
           </div>
         </FormSection>
@@ -510,7 +504,7 @@
           </FormField>
 
           <FormField label="الملاحظات" class="md:col-span-2">
-            <Textarea
+            <CustomTextArea
               v-model="form.notes"
               dir="rtl"
               placeholder="ادخل الملاحظات"
@@ -521,11 +515,15 @@
       </form>
 
       <div class="mt-4 flex justify-end gap-2">
-        <Button @click="cancelEdit" variant="outline"> الغاء </Button>
-        <Button @click="saveChanges" :disabled="isSaving" class="bg-slate-700 hover:bg-slate-800">
-          <Icon v-if="isSaving" icon="lucide:loader-2" class="mr-2 h-4 w-4 animate-spin" />
+        <PrimaryButton @click="cancelEdit" variant="outline"> الغاء </PrimaryButton>
+        <PrimaryButton
+          variant="primary"
+          @click="saveChanges"
+          :disabled="isSaving"
+          :icon="isSaving ? 'lucide:loader-2' : 'lucide:save'"
+        >
           حفظ التغييرات
-        </Button>
+        </PrimaryButton>
       </div>
     </div>
   </div>
@@ -544,17 +542,18 @@
   import CustomMultiSelect from '@/components/CustomMultiSelect.vue';
   import CustomSelect from '@/components/CustomSelect.vue';
   import Switch from '@/components/CustomSwitch.vue';
+  import CustomTextArea from '@/components/CustomTextArea.vue';
   import DateInput from '@/components/DateInput.vue';
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
   import InputWithAddButton from '@/components/InputWithAddButton.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
   import NumberInput from '@/components/NumberInput.vue';
+  import StatusBadge from '@/components/StatusBadge.vue';
   import Badge from '@/components/ui/badge/Badge.vue';
-  import Button from '@/components/ui/button/Button.vue';
   import { Label } from '@/components/ui/label';
-  import { Textarea } from '@/components/ui/textarea';
   import axiosInstance from '@/plugins/axios';
+  import { getProjectStatusConfig } from '@/utils/statusBadge';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, reactive, ref, watch } from 'vue';
   import { toast } from 'vue-sonner';
@@ -607,26 +606,6 @@
     { value: 0, label: 'ملغاة' },
     { value: 4, label: 'مقترح' },
   ];
-
-  const getProjectStatusText = (status) => {
-    const statusObj = projectStatuses.find((s) => s.value === status);
-    return statusObj ? statusObj.label : 'غير محدد';
-  };
-
-  const getProjectStatusVariant = (status) => {
-    switch (status) {
-      case 1:
-        return 'warning';
-      case 2:
-        return 'success';
-      case 3:
-        return 'destructive';
-      case 0:
-        return 'outline';
-      default:
-        return 'secondary';
-    }
-  };
 
   const getSustainableDevelopmentLabel = (value) => {
     const goal = sustainableDevelopmentGoals.find((g) => g.value === value);
@@ -779,7 +758,7 @@
             typeof newProject.projectStatus === 'number'
               ? {
                   value: newProject.projectStatus,
-                  label: getProjectStatusText(newProject.projectStatus),
+                  label: getProjectStatusConfig(newProject.projectStatus).label,
                 }
               : projectStatuses.find((s) => s.value === 1),
           notes: newProject.notes || '',
@@ -938,4 +917,6 @@
       },
     };
   });
+
+  const statusConfig = computed(() => getProjectStatusConfig(props.project?.projectStatus));
 </script>
