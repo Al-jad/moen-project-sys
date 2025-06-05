@@ -14,8 +14,55 @@
     </div>
 
     <div class="p-4">
-      <div v-if="duration && periodType" class="space-y-6">
+      <!-- No Components State -->
+      <div
+        v-if="!components?.length"
+        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border p-8 text-center"
+      >
+        <div class="mb-4 rounded-full bg-background-hover p-3">
+          <Icon icon="lucide:gantt-chart" class="h-8 w-8 text-foreground-muted" />
+        </div>
+        <h3 class="mb-2 text-base font-medium text-foreground-heading">لا يوجد مخطط زمني</h3>
+        <p class="text-sm text-foreground-muted"
+          >قم بإضافة مكونات وفعاليات للمشروع لعرض المخطط الزمني</p
+        >
+      </div>
+
+      <!-- No Duration/Period Type State -->
+      <div
+        v-else-if="!duration || !periodType"
+        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-background-card p-8 text-center"
+      >
+        <div class="mb-4 rounded-full bg-background-hover p-3">
+          <Icon icon="lucide:calendar-clock" class="h-8 w-8 text-foreground-muted" />
+        </div>
+        <h3 class="mb-2 text-base font-medium text-foreground-heading"
+          >لا يمكن عرض المخطط الزمني</h3
+        >
+        <p class="text-sm text-foreground-muted"
+          >يرجى تحديد مدة المشروع ونوع الفترة الزمنية أولاً</p
+        >
+      </div>
+
+      <!-- Timeline Content -->
+      <div v-else class="space-y-6">
+        <!-- Empty Activities State -->
         <div
+          v-if="!hasAnyActivities"
+          class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-background-card p-8 text-center"
+        >
+          <div class="mb-4 rounded-full bg-background-hover p-3">
+            <Icon icon="lucide:list-checks" class="h-8 w-8 text-foreground-muted" />
+          </div>
+          <h3 class="mb-2 text-base font-medium text-foreground-heading">لا توجد فعاليات</h3>
+          <p class="text-sm text-foreground-muted"
+            >قم بإضافة فعاليات للمكونات لعرضها في المخطط الزمني</p
+          >
+        </div>
+
+        <!-- Timeline Grid -->
+        <div
+          v-else
           class="relative isolate overflow-hidden rounded-lg border border-border bg-background-card"
         >
           <div class="flex">
@@ -121,17 +168,6 @@
           </div>
         </div>
       </div>
-
-      <!-- No Timeline Data State -->
-      <div
-        v-else
-        class="flex items-center justify-center rounded-lg border border-border bg-background-card p-8 text-center text-foreground-muted"
-      >
-        <div class="space-y-2">
-          <div class="text-sm font-medium">لا يمكن عرض المخطط الزمني</div>
-          <div class="text-xs">يرجى تحديد مدة المشروع ونوع الفترة الزمنية أولاً</div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -189,6 +225,11 @@
     const colorIndex = index % componentColors.length;
     return isLight ? componentColors[colorIndex].light : componentColors[colorIndex].base;
   };
+
+  // Add computed property for checking if any activities exist
+  const hasAnyActivities = computed(() => {
+    return props.components?.some((component) => component.activities?.length > 0) ?? false;
+  });
 </script>
 
 <style scoped>
