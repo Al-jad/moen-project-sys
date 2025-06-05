@@ -196,7 +196,6 @@ declare module 'vue' {
     UserDetailsModal: typeof import('./components/UserDetailsModal.vue')['default']
     UsersList: typeof import('./components/UsersList.vue')['default']
     ViewActionModal: typeof import('./components/ViewActionModal.vue')['default']
-    ViewEditSection: typeof import('./components/ViewEditSection.vue')['default']
     ViewLogModal: typeof import('./components/ViewLogModal.vue')['default']
     ViewModeSection: typeof import('./components/ViewModeSection.vue')['default']
   }

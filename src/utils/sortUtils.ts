@@ -1,4 +1,4 @@
-import type { TransformedFundedProject } from '@/types/funded-project';
+import type { FundedProject } from '@/types/funded-project';
 
 export interface SortOption {
   id: string;
@@ -21,10 +21,10 @@ export const getSelectedSortLabel = (selectedSort: string): string => {
 };
 
 export const sortProjects = (
-  projects: TransformedFundedProject[],
+  projects: FundedProject[],
   field: 'cost' | 'progress' | 'duration',
   order: 'high' | 'low'
-): TransformedFundedProject[] => {
+): FundedProject[] => {
   const sortedProjects = [...projects];
 
   sortedProjects.sort((a, b) => {
@@ -37,12 +37,12 @@ export const sortProjects = (
         bValue = b.cost || 0;
         break;
       case 'progress':
-        aValue = a.progress || 0;
-        bValue = b.progress || 0;
+        aValue = a.financialAchievement || 0;
+        bValue = b.financialAchievement || 0;
         break;
       case 'duration':
-        aValue = parseInt(a.duration) || 0;
-        bValue = parseInt(b.duration) || 0;
+        aValue = a.duration || 0;
+        bValue = b.duration || 0;
         break;
     }
 
@@ -52,10 +52,7 @@ export const sortProjects = (
   return sortedProjects;
 };
 
-export const handleSort = (
-  projects: TransformedFundedProject[],
-  sortId: string
-): TransformedFundedProject[] | null => {
+export const handleSort = (projects: FundedProject[], sortId: string): FundedProject[] | null => {
   const [field, order] = sortId.split('-') as [string, string];
 
   if (field && (field === 'cost' || field === 'progress' || field === 'duration')) {
