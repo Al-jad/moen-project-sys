@@ -16,13 +16,13 @@
     <div class="p-4">
       <div v-if="duration && periodType" class="space-y-6">
         <div
-          class="relative isolate overflow-hidden rounded-lg border border-border bg-background-surface"
+          class="relative isolate overflow-hidden rounded-lg border border-border bg-background-card"
         >
           <div class="flex">
             <!-- Fixed Left Column -->
-            <div class="sticky left-0 z-[15] w-48 shrink-0 border-l bg-background-surface">
+            <div class="sticky left-0 z-[15] w-48 shrink-0 border-l bg-background-card">
               <div
-                class="sticky top-0 z-[15] h-[4rem] border-b bg-background-surface p-4 font-medium text-foreground"
+                class="sticky top-0 z-[15] h-[4rem] border-b bg-background-card p-4 font-medium text-foreground"
               >
                 المكون / الفعالية
               </div>
@@ -42,7 +42,7 @@
                           <TooltipTrigger asChild>
                             <div class="truncate">{{ component.name }}</div>
                           </TooltipTrigger>
-                          <TooltipContent class="bg-background-surface text-foreground">
+                          <TooltipContent class="bg-background-card text-foreground">
                             <p>{{ component.name }}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -52,7 +52,7 @@
                   <div
                     v-for="(activity, activityIndex) in sortedActivities(component.activities)"
                     :key="activityIndex"
-                    class="h-[4rem] border-b bg-background-hover/50 p-4 pr-8 text-sm text-foreground-muted"
+                    class="h-[4rem] border-b bg-background-card p-4 pr-8 text-sm text-foreground-muted"
                   >
                     <div class="flex items-center gap-2">
                       <div
@@ -64,7 +64,7 @@
                           <TooltipTrigger asChild>
                             <div class="truncate">{{ activity.name }}</div>
                           </TooltipTrigger>
-                          <TooltipContent class="bg-background-surface text-foreground">
+                          <TooltipContent class="bg-background-card text-foreground">
                             <p>{{ activity.name }}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -78,7 +78,7 @@
             <!-- Scrollable Timeline Grid -->
             <div class="custom-scrollbar relative overflow-x-auto">
               <div class="inline-block min-w-[800px]">
-                <div class="sticky top-0 z-[10] flex h-[4rem] border-b bg-background-surface">
+                <div class="sticky top-0 z-[10] flex h-[4rem] border-b bg-background-card">
                   <div
                     v-for="period in totalPeriods"
                     :key="period"
@@ -104,7 +104,7 @@
                     <div
                       v-for="(activity, activityIndex) in sortedActivities(component.activities)"
                       :key="activityIndex"
-                      class="flex h-[4rem] border-b bg-background-hover/50 transition-colors duration-150 hover:bg-background-hover"
+                      class="flex h-[4rem] border-b bg-background-card transition-colors duration-150 hover:bg-background-hover"
                     >
                       <div
                         v-for="period in totalPeriods"

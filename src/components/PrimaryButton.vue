@@ -14,8 +14,16 @@
       variant === 'ghost' && 'bg-transparent text-primary hover:bg-primary/10 hover:text-primary',
       variant === 'lock' &&
         'border border-destructive/50 bg-destructive/40 hover:bg-destructive/20',
+      variant === 'delete' &&
+        'border-none bg-destructive/10 px-2 text-destructive shadow-none hover:bg-destructive/40 hover:text-destructive hover:underline',
     ]"
-    :variant="variant === 'primary' ? 'default' : variant === 'lock' ? 'outline' : variant"
+    :variant="
+      variant === 'primary'
+        ? 'default'
+        : variant === 'lock' || variant === 'delete'
+          ? 'outline'
+          : variant
+    "
     :size="size"
     v-bind="$attrs"
   >
@@ -41,7 +49,8 @@
         | 'outline'
         | 'secondary'
         | 'ghost'
-        | 'lock';
+        | 'lock'
+        | 'delete';
       size?: 'default' | 'icon' | 'xs' | 'sm' | 'lg';
       buttonClass?: string;
       icon?: string;

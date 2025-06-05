@@ -215,7 +215,7 @@
                   <template #componentActions="{ component }">
                     <PrimaryButton
                       @click="handleDeleteComponent(component)"
-                      variant="destructive"
+                      variant="delete"
                       icon="lucide:trash"
                       size="sm"
                     />
@@ -223,14 +223,14 @@
                   <template #activityActions="{ activity, component }">
                     <PrimaryButton
                       @click="handleDeleteActivity(activity, component)"
-                      variant="destructive"
+                      variant="delete"
                       icon="lucide:trash"
                       size="sm"
                     />
                   </template>
                 </ComponentsActivitiesDetails>
               </div>
-              <div v-else class="p-4">
+              <div v-else class="min-w-full p-4">
                 <ProjectComponents
                   :components="editForm.components"
                   :period-type="editForm.periodType"
@@ -265,51 +265,104 @@
             @toggle-edit="toggleEditAchievements"
           >
             <template #view-content="{ isEditing }">
-              <div class="divide-y divide-border">
-                <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+              <div class="space-y-6 p-6">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <!-- Financial Achievement -->
-                  <div>
-                    <div class="text-sm text-foreground-muted">الإنجاز المالي</div>
-                    <div v-if="!isEditing" class="mt-1 text-sm font-medium text-foreground-heading">
-                      {{
-                        project?.financialAchievement
-                          ? project.financialAchievement + '%'
-                          : 'لم يتم تحديد الإنجاز المالي'
-                      }}
-                    </div>
-                    <div v-else class="mt-1">
-                      <NumberInput
-                        v-model="editForm.financialAchievement"
-                        class="w-full"
-                        placeholder="ادخل الإنجاز المالي"
-                        unit="%"
-                      />
+                  <div class="relative overflow-hidden rounded-lg border bg-background-surface p-6">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10"
+                        >
+                          <Icon icon="lucide:trending-up" class="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium text-foreground-muted"
+                            >الإنجاز المالي</div
+                          >
+                          <div v-if="!isEditing" class="mt-1">
+                            <div class="flex items-baseline gap-1">
+                              <span class="text-2xl font-bold text-foreground-heading">
+                                {{ project?.financialAchievement || 0 }}
+                              </span>
+                              <span class="text-sm font-medium text-foreground-muted">%</span>
+                            </div>
+                            <div class="mt-2">
+                              <div
+                                class="relative h-2 w-full overflow-hidden rounded-full bg-primary/10"
+                              >
+                                <div
+                                  class="absolute inset-y-0 left-0 bg-primary transition-all duration-300"
+                                  :style="{ width: `${project?.financialAchievement || 0}%` }"
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div v-else class="mt-4 w-full">
+                            <NumberInput
+                              v-model="editForm.financialAchievement"
+                              class="w-full"
+                              placeholder="ادخل الإنجاز المالي"
+                              unit="%"
+                              min="0"
+                              max="100"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+
                   <!-- Technical Achievement (Premium) -->
                   <div
                     @click="OpenPremiumModal"
-                    class="relative rounded-lg border border-red-300 bg-red-200 p-4"
+                    class="group relative cursor-pointer overflow-hidden rounded-lg border border-red-200 bg-red-50/50 p-6 transition-all duration-300 hover:border-red-300 hover:bg-red-50 dark:border-red-900 dark:bg-red-950/20 dark:hover:border-red-800"
                   >
-                    <div class="text-sm text-red-600">الإنجاز الفني (ميزة مدفوعة)</div>
-                    <div class="mt-1 text-sm font-medium text-red-600">
-                      {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
+                    <div class="relative z-10">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30"
+                        >
+                          <Icon
+                            icon="lucide:bar-chart-2"
+                            class="h-5 w-5 text-red-600 dark:text-red-400"
+                          />
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium text-red-600 dark:text-red-400">
+                            الإنجاز الفني (ميزة مدفوعة)
+                          </div>
+                          <div class="mt-1 text-sm text-red-500 dark:text-red-300">
+                            {{ project?.technicalAchievements || 'لم يتم تحديد الإنجاز الفني' }}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div
-                      class="absolute inset-0 flex items-center justify-center bg-red-200/10 dark:bg-gray-800/80"
+                      class="absolute inset-0 flex items-center justify-center bg-red-50/80 backdrop-blur-[1px] transition-all duration-300 group-hover:backdrop-blur-[2px] dark:bg-red-950/80"
                     >
                       <div class="text-center">
-                        <Icon icon="lucide:lock" class="mx-auto h-6 w-6 text-red-400" />
-                        <p class="mt-2 text-sm text-red-400">هذه ميزة مدفوعة</p>
+                        <div
+                          class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50"
+                        >
+                          <Icon icon="lucide:lock" class="h-6 w-6 text-red-600 dark:text-red-400" />
+                        </div>
+                        <p class="mt-3 text-sm font-medium text-red-600 dark:text-red-400">
+                          هذه ميزة مدفوعة
+                        </p>
+                        <p class="mt-1 text-xs text-red-500 dark:text-red-300">
+                          انقر للترقية إلى النسخة المدفوعة
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
+
                 <!-- Save/Cancel Buttons -->
-                <div v-if="isEditing" class="flex justify-end gap-2 p-4">
-                  <PrimaryButton variant="outline" @click="cancelEditAchievements"
-                    >الغاء</PrimaryButton
-                  >
+                <div v-if="isEditing" class="flex justify-end gap-2">
+                  <PrimaryButton variant="outline" @click="cancelEditAchievements">
+                    الغاء
+                  </PrimaryButton>
                   <PrimaryButton
                     @click="saveAchievements"
                     :disabled="isSaving"
@@ -487,13 +540,13 @@
           <!-- Action Buttons -->
           <div class="flex justify-end">
             <div class="flex items-center gap-2">
-              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+              <PrimaryButton variant="lock" class="hover:cursor-not-allowed">
                 توجيه المهام
               </PrimaryButton>
-              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+              <PrimaryButton variant="lock" class="hover:cursor-not-allowed">
                 عرض النسخة السابقة
               </PrimaryButton>
-              <PrimaryButton icon="lucide:lock" variant="outline" class="hover:cursor-not-allowed">
+              <PrimaryButton variant="lock" class="hover:cursor-not-allowed">
                 تدقيق المشروع
               </PrimaryButton>
               <PrimaryButton

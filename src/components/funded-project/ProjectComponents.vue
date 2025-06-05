@@ -1,47 +1,46 @@
 <template>
-  <FormSection title="مكونات المشروع" full-width>
-    <div class="space-y-6">
+  <FormSection fullWidth title="المكونات والفعاليات">
+    <div class="min-w-full space-y-6">
+      <!-- Components List -->
       <div
         v-for="(component, index) in components"
-        :key="index"
-        class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+        :key="component.id"
+        class="relative overflow-hidden rounded-lg border-r-4 bg-background-surface p-6 transition-all duration-300 hover:shadow-md dark:hover:shadow-lg"
+        :style="{
+          '--component-color': getComponentColor(index),
+          '--component-color-light': getComponentColor(index, true),
+          borderRightColor: getComponentColor(index),
+        }"
       >
-        <div class="mb-6 flex items-center justify-between">
+        <!-- Component Header -->
+        <div class="mb-6 flex items-center justify-between rounded-lg bg-background-card p-4">
           <div class="flex items-center gap-3">
             <div
-              class="h-8 w-8 rounded-lg"
-              :style="{ backgroundColor: getComponentColor(index, true) }"
-            >
-              <div
-                class="flex h-full w-full items-center justify-center text-sm font-medium"
-                :style="{ color: getComponentColor(index) }"
-              >
-                {{ index + 1 }}
-              </div>
+              class="h-5 w-5 rounded-full transition-transform duration-300 group-hover:scale-110"
+              :style="{ backgroundColor: getComponentColor(index) }"
+            ></div>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground-heading">
+                {{ component.name ? component.name : `المكون ${index + 1}` }}
+              </h3>
+              <p class="mt-1 text-sm text-foreground-muted">
+                {{ component.activities?.length || 0 }} فعالية
+              </p>
             </div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-              المكون {{ index + 1 }}
-            </h3>
           </div>
-          <Button
-            @click="removeComponent(index)"
-            variant="ghost"
-            size="sm"
-            class="text-red-500 hover:text-red-600 dark:text-red-400"
-          >
+          <PrimaryButton @click="removeComponent(index)" variant="delete" size="sm">
             <Icon icon="lucide:trash" class="h-4 w-4" />
-          </Button>
+          </PrimaryButton>
         </div>
 
-        <div class="space-y-6">
+        <div class="space-y-6 pr-4">
           <!-- Component Fields -->
-          <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+          <div class="grid grid-cols-2 gap-x-6 gap-y-4 rounded-lg bg-background-card p-4">
             <FormField label="اسم المكون">
               <CustomInput
                 v-model="component.name"
                 dir="rtl"
                 placeholder="ادخل اسم المكون"
-                class="bg-white dark:bg-gray-800"
                 @update:modelValue="updateComponent(index, 'name', $event)"
               />
             </FormField>
@@ -50,7 +49,6 @@
                 v-model="component.targetPercentage"
                 placeholder="ادخل المستهدف الكلي"
                 unit="%"
-                class="bg-white dark:bg-gray-800"
                 @update:modelValue="updateComponent(index, 'targetPercentage', $event)"
               />
             </FormField>
@@ -58,9 +56,12 @@
 
           <!-- Activities Section -->
           <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <h4 class="font-medium text-gray-900 dark:text-gray-100">الفعاليات</h4>
-              <Button
+            <div class="flex items-center justify-between rounded-lg bg-background-surface p-3">
+              <div class="flex items-center gap-2">
+                <Icon icon="lucide:list-checks" class="h-5 w-5 text-foreground-muted" />
+                <h4 class="font-medium text-foreground-heading">الفعاليات</h4>
+              </div>
+              <PrimaryButton
                 @click="addActivity(index)"
                 variant="outline"
                 size="sm"
@@ -71,44 +72,43 @@
               >
                 <Icon icon="lucide:plus" class="h-4 w-4" />
                 اضافة فعالية
-              </Button>
+              </PrimaryButton>
             </div>
 
             <!-- Activities List -->
-            <div class="space-y-3">
+            <div class="space-y-4">
               <div
                 v-for="(activity, activityIndex) in component.activities"
                 :key="activityIndex"
-                class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700/50"
+                class="activity-item group relative rounded-lg border bg-background-card p-6 transition-all duration-300"
               >
+                <!-- Activity Header -->
                 <div class="mb-4 flex items-center justify-between">
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-3">
                     <div
-                      class="h-2 w-2 rounded-full"
+                      class="h-3 w-3 rounded-full transition-transform duration-300 group-hover:scale-110"
                       :style="{ backgroundColor: getComponentColor(index) }"
                     ></div>
-                    <span class="font-medium text-gray-900 dark:text-gray-100">
-                      الفعالية {{ activityIndex + 1 }}
-                    </span>
+                    <h5 class="font-medium text-foreground-heading">
+                      {{ activity.name ? activity.name : `الفعالية ${activityIndex + 1}` }}
+                    </h5>
                   </div>
-                  <Button
+                  <PrimaryButton
                     @click="removeActivity(index, activityIndex)"
-                    variant="ghost"
+                    variant="delete"
                     size="sm"
-                    class="text-red-500 hover:text-red-600 dark:text-red-400"
                   >
                     <Icon icon="lucide:trash" class="h-4 w-4" />
-                  </Button>
+                  </PrimaryButton>
                 </div>
 
                 <!-- Activity Fields -->
-                <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                <div class="flex flex-col gap-x-6 gap-y-4 rounded-lg p-4">
                   <FormField label="اسم الفعالية">
                     <CustomInput
                       v-model="activity.name"
                       dir="rtl"
                       placeholder="ادخل اسم الفعالية"
-                      class="bg-white dark:bg-gray-800"
                       @update:modelValue="updateActivity(index, activityIndex, 'name', $event)"
                     />
                   </FormField>
@@ -117,18 +117,17 @@
                       v-model="activity.targetPercentage"
                       placeholder="ادخل المستهدف الكلي"
                       unit="%"
-                      class="bg-white dark:bg-gray-800"
                       @update:modelValue="
                         updateActivity(index, activityIndex, 'targetPercentage', $event)
                       "
                     />
                   </FormField>
-                  <FormField label="ملاحظات" class="md:col-span-2">
-                    <Textarea
+                  <FormField label="ملاحظات">
+                    <CustomTextArea
                       v-model="activity.notes"
                       dir="rtl"
                       placeholder="ادخل الملاحظات"
-                      class="min-h-[80px] bg-white dark:bg-gray-800"
+                      class="min-h-[80px]"
                       :value="activity.notes ?? ''"
                       @update:modelValue="
                         updateActivity(index, activityIndex, 'notes', $event || '')
@@ -137,76 +136,78 @@
                   </FormField>
                 </div>
 
-                <!-- Activity Weeks Selection -->
-                <div class="mt-4">
+                <!-- Activity Periods Selection -->
+                <div class="mt-6">
                   <FormField label="الفترات المحددة">
                     <div v-if="totalPeriods > 0" class="space-y-4">
+                      <!-- Periods Header -->
                       <div
-                        class="flex items-center justify-between rounded-lg border bg-gray-50/50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800/50"
+                        class="flex items-center justify-between rounded-lg border bg-background-surface p-4"
                       >
-                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                          {{
-                            periodType === 1
-                              ? `اختر الاسابيع (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
-                              : `اختر الاشهر (${activity.selectedPeriods?.length || 0} من ${totalPeriods})`
-                          }}
-                        </span>
-                        <button
+                        <div class="flex items-center gap-2">
+                          <Icon icon="lucide:calendar" class="h-5 w-5 text-foreground-muted" />
+                          <span class="text-sm font-medium text-foreground-heading">
+                            {{ periodType === 1 ? 'الاسابيع' : 'الاشهر' }}
+                            <span class="text-primary"
+                              >({{ activity.selectedPeriods?.length || 0 }} من
+                              {{ totalPeriods }})</span
+                            >
+                          </span>
+                        </div>
+                        <PrimaryButton
                           v-if="activity.selectedPeriods?.length"
-                          type="button"
-                          class="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                          variant="link"
+                          class="text-sm text-destructive transition-colors hover:text-destructive/80"
                           @click="clearActivityPeriods(index, activityIndex)"
                         >
                           مسح التحديد
-                        </button>
+                        </PrimaryButton>
                       </div>
-                      <div
-                        class="grid gap-2 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-                        :class="{
-                          'grid-cols-4': totalPeriods <= 4,
-                          'grid-cols-8': totalPeriods > 4 && totalPeriods <= 8,
-                          'grid-cols-12': totalPeriods > 8,
-                        }"
-                      >
+                      <div class="rounded-lg border bg-background-surface p-4">
                         <div
-                          v-for="period in totalPeriods"
-                          :key="period"
-                          class="flex flex-col items-center"
+                          class="grid auto-rows-fr gap-2"
+                          :class="{
+                            'grid-cols-8': totalPeriods <= 8,
+                            'grid-cols-12': totalPeriods > 8 && totalPeriods <= 12,
+                            'grid-cols-16': totalPeriods > 12,
+                          }"
                         >
-                          <span class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                            {{ periodType === 1 ? `${period}` : `${period}` }}
-                          </span>
-                          <button
-                            type="button"
-                            class="group relative h-12 w-full cursor-pointer rounded-md border transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
+                          <PrimaryButton
+                            v-for="period in totalPeriods"
+                            :key="period"
+                            variant="outline"
+                            class="flex h-10 items-center justify-center rounded-md border text-sm font-medium transition-all duration-300"
                             :class="[
                               activity.selectedPeriods?.includes(period)
-                                ? 'border-blue-500 bg-blue-500 dark:border-blue-600 dark:bg-blue-600'
-                                : 'border-gray-200 bg-white hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600',
+                                ? 'border-primary bg-primary/10 font-semibold hover:bg-primary/5 hover:text-primary'
+                                : 'border-border bg-background-card text-foreground-muted hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
                             ]"
-                            @click.prevent="toggleActivityPeriod(index, activityIndex, period)"
+                            @click="toggleActivityPeriod(index, activityIndex, period)"
                           >
-                            <span
-                              class="absolute inset-0 flex items-center justify-center text-xs font-medium"
-                              :class="[
-                                activity.selectedPeriods?.includes(period)
-                                  ? 'text-white'
-                                  : 'text-gray-600 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-white',
-                              ]"
-                            >
-                              {{ periodType === 1 ? 'اسبوع' : 'شهر' }}
-                            </span>
-                          </button>
+                            {{ periodType === 1 ? `اسبوع ${period}` : `شهر ${period}` }}
+                          </PrimaryButton>
                         </div>
                       </div>
                     </div>
                     <div
                       v-else
-                      class="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                      class="flex items-center justify-center rounded-lg border border-dashed p-6 text-center"
                     >
-                      <div class="space-y-1">
-                        <div class="text-sm font-medium">يرجى تحديد مدة المشروع أولاً</div>
-                        <div class="text-xs">قم بتحديد المدة ونوع الفترة في القسم السابق</div>
+                      <div class="space-y-2">
+                        <div
+                          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-background-surface"
+                        >
+                          <Icon
+                            icon="lucide:calendar-x"
+                            class="h-6 w-6 text-gray-400 dark:text-gray-500"
+                          />
+                        </div>
+                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          يرجى تحديد مدة المشروع أولاً
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          قم بتحديد المدة ونوع الفترة في القسم السابق
+                        </div>
                       </div>
                     </div>
                   </FormField>
@@ -218,14 +219,9 @@
       </div>
 
       <!-- Add Component Button -->
-      <Button
-        @click="addComponent"
-        variant="outline"
-        class="w-full border-dashed py-6 hover:border-gray-400 dark:hover:border-gray-600"
-      >
-        <Icon icon="lucide:plus" class="ml-2 h-4 w-4" />
-        اضافة مكون جديد
-      </Button>
+      <PrimaryButton @click="addComponent" icon="lucide:plus" variant="primary" class="w-full py-6">
+        <span>اضافة مكون جديد</span>
+      </PrimaryButton>
     </div>
   </FormSection>
 </template>
@@ -235,13 +231,11 @@
   import FormField from '@/components/FormField.vue';
   import FormSection from '@/components/FormSection.vue';
   import NumberInput from '@/components/NumberInput.vue';
-  import Textarea from '@/components/ui/textarea/Textarea.vue';
   import { Icon } from '@iconify/vue';
   import { computed, nextTick } from 'vue';
 
   // Update the Button import to match where it's located in your project
   // This path should match the one used in add-funded-project.vue
-  import Button from '@/components/ui/button/Button.vue';
 
   interface Activity {
     name: string;
@@ -390,31 +384,12 @@
 </script>
 
 <style scoped>
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #e2e8f0;
+  .activity-item {
+    border-right: 3px solid transparent;
+    transition: all 0.3s ease;
   }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    height: 0.5rem;
-    width: 0.5rem;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-gray-200 dark:bg-gray-700;
-    border-radius: 0.25rem;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 dark:bg-gray-500;
-    border-radius: 0.25rem;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500 dark:bg-gray-400;
-  }
-
-  :deep(.dark) .custom-scrollbar {
-    scrollbar-color: #4b5563 #1f2937;
+  .activity-item:hover {
+    border-right-color: var(--component-color);
+    transform: translateX(-4px);
   }
 </style>

@@ -2,22 +2,32 @@
   <div class="overflow-hidden border bg-white dark:border-gray-700 dark:bg-gray-800">
     <div class="divide-y dark:divide-gray-700">
       <template v-for="(component, componentIndex) in reversedComponents" :key="componentIndex">
+        <!-- Component Container with distinct styling -->
         <div
-          class="component-item p-4 transition-all duration-300"
+          class="component-item relative border-r-4 bg-white p-6 transition-all duration-300 dark:bg-gray-800"
           :style="{
             '--component-color': getComponentColor(componentIndex),
             '--component-color-light': getComponentColor(componentIndex, true),
+            borderRightColor: getComponentColor(componentIndex),
           }"
         >
-          <div class="mb-4 flex items-center justify-between">
+          <!-- Component Header with enhanced visibility -->
+          <div
+            class="mb-6 flex items-center justify-between rounded-lg bg-gray-50/80 p-4 dark:bg-gray-700/50"
+          >
             <div class="flex items-center gap-3">
               <div
-                class="component-dot h-3 w-3 rounded-full transition-transform duration-300"
+                class="component-dot h-5 w-5 rounded-full transition-transform duration-300"
                 :style="{ backgroundColor: getComponentColor(componentIndex) }"
               ></div>
-              <h5 class="font-medium text-gray-900 dark:text-gray-100">
-                {{ component.name || `المكون ${componentIndex + 1}` }}
-              </h5>
+              <div>
+                <h5 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {{ component.name || `المكون ${componentIndex + 1}` }}
+                </h5>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {{ component.activities?.length || 0 }} فعالية
+                </p>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <Badge
@@ -52,14 +62,17 @@
               <slot name="componentActions" :component="component" />
             </div>
           </div>
-          <div class="space-y-3 pl-6">
+
+          <!-- Activities Container with distinct styling -->
+          <div class="space-y-4 pr-4">
             <div
               v-if="component.activities && component.activities.length > 0"
-              class="mb-3 flex items-center justify-between rounded-md bg-gray-50 p-2 dark:bg-gray-700/50"
+              class="mb-4 flex items-center justify-between rounded-md bg-gray-50 p-3 dark:bg-gray-700/50"
             >
               <div
-                class="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400"
+                class="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400"
               >
+                <Icon icon="lucide:list-checks" class="h-4 w-4" />
                 <span>مجموع نسب الفعاليات:</span>
                 <Badge
                   :style="
@@ -83,68 +96,99 @@
                 {{ isPercentageMatching(component) ? 'متطابق' : 'غير متطابق' }}
               </Badge>
             </div>
-            <template
-              v-for="(activity, activityIndex) in sortedActivities(component.activities)"
-              :key="activityIndex"
-            >
-              <div
-                class="activity-item rounded-lg border border-dashed border-gray-300 p-3 transition-all duration-300 dark:border-gray-700"
-                :style="{
-                  '--component-color': getComponentColor(componentIndex),
-                  '--component-color-light': getComponentColor(componentIndex, true),
-                }"
+
+            <!-- Activities List with enhanced distinction -->
+            <div class="space-y-3">
+              <template
+                v-for="(activity, activityIndex) in sortedActivities(component.activities)"
+                :key="activityIndex"
               >
-                <div class="mb-2 flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <div
-                      class="activity-dot h-2 w-2 rounded-full transition-transform duration-300"
-                      :style="{ backgroundColor: getComponentColor(componentIndex) }"
-                    ></div>
-                    <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {{ activity.name || `الفعالية ${activityIndex + 1}` }}
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      :style="{
-                        borderColor: `${getComponentColor(componentIndex)}`,
-                        color: `${getComponentColor(componentIndex)}`,
-                      }"
-                    >
-                      المستهدف: {{ activity.targetPercentage || activity.totalTarget || 0 }}%
-                    </Badge>
-                    <slot name="activityActions" :activity="activity" :component="component" />
-                  </div>
-                </div>
-                <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">الفترات المحددة</div>
-                    <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      {{ (activity.selectedPeriods || activity.weeks || []).length || 0 }}
-                      {{ periodType === 1 ? 'اسبوع' : 'شهر' }}
-                      <span class="text-xs text-gray-500">
-                        ({{
-                          (activity.selectedPeriods || activity.weeks || []).join(', ') ||
-                          'لم يتم التحديد'
-                        }})
-                      </span>
+                <div
+                  class="activity-item relative rounded-lg border border-gray-200 bg-white p-4 transition-all duration-300 dark:border-gray-700 dark:bg-gray-800/50"
+                  :style="{
+                    '--component-color': getComponentColor(componentIndex),
+                    '--component-color-light': getComponentColor(componentIndex, true),
+                  }"
+                >
+                  <!-- Activity Header -->
+                  <div class="mb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-2">
+                        <div
+                          class="activity-dot h-2 w-2 rounded-full transition-transform duration-300"
+                          :style="{ backgroundColor: getComponentColor(componentIndex) }"
+                        ></div>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {{ activity.name || `الفعالية ${activityIndex + 1}` }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        :style="{
+                          borderColor: `${getComponentColor(componentIndex)}`,
+                          color: `${getComponentColor(componentIndex)}`,
+                        }"
+                      >
+                        المستهدف: {{ activity.targetPercentage || activity.totalTarget || 0 }}%
+                      </Badge>
+                      <slot name="activityActions" :activity="activity" :component="component" />
                     </div>
                   </div>
-                  <div v-if="activity.notes">
-                    <div class="text-xs text-gray-500 dark:text-gray-400">ملاحظات</div>
-                    <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      {{ activity.notes }}
+
+                  <!-- Activity Details with enhanced readability -->
+                  <div
+                    class="grid grid-cols-1 gap-3 rounded-lg bg-gray-50/50 p-3 dark:bg-gray-700/30 md:grid-cols-2"
+                  >
+                    <div>
+                      <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <Icon icon="lucide:calendar" class="h-4 w-4" />
+                        <span>الفترات المحددة</span>
+                      </div>
+                      <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                        {{ (activity.selectedPeriods || activity.weeks || []).length || 0 }}
+                        {{ periodType === 1 ? 'اسبوع' : 'شهر' }}
+                        <span class="text-xs text-gray-500">
+                          ({{
+                            (activity.selectedPeriods || activity.weeks || []).join(', ') ||
+                            'لم يتم التحديد'
+                          }})
+                        </span>
+                      </div>
+                    </div>
+                    <div v-if="activity.notes">
+                      <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <Icon icon="lucide:clipboard" class="h-4 w-4" />
+                        <span>ملاحظات</span>
+                      </div>
+                      <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                        {{ activity.notes }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </template>
+              </template>
+            </div>
+
+            <!-- Empty Activities State -->
             <div
               v-if="!component.activities || component.activities.length === 0"
-              class="rounded-lg border border-dashed border-gray-200 p-3 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
+              class="flex items-center justify-center rounded-lg border border-dashed border-gray-200 p-6 text-center dark:border-gray-700"
             >
-              لا توجد فعاليات لهذا المكون
+              <div class="space-y-2">
+                <div
+                  class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+                >
+                  <Icon icon="lucide:list" class="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                </div>
+                <h3 class="text-base font-medium text-gray-900 dark:text-gray-100">
+                  لا توجد فعاليات
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  قم بإضافة فعاليات لهذا المكون
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -183,7 +227,7 @@
     if (!activities || !Array.isArray(activities)) {
       return [];
     }
-    
+
     if (props.useExternalSorting) {
       return activities;
     }
@@ -231,23 +275,24 @@
     background-color: var(--component-color-light);
   }
   .component-item:hover .component-dot {
-    transform: scale(1.25);
+    transform: scale(1.2);
   }
   .activity-item {
-    background-color: rgba(243, 244, 246, 0.5);
+    background-color: white;
+    border-right: 3px solid transparent;
+  }
+  .activity-item:hover {
+    border-right-color: var(--component-color);
+    transform: translateX(-4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
   .dark .activity-item {
     background-color: rgba(31, 41, 55, 0.3);
   }
-  .activity-item:hover {
-    border: 1px solid var(--component-color);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-  }
   .dark .activity-item:hover {
-    background-color: var(--component-color-light);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   .activity-item:hover .activity-dot {
-    transform: scale(1.25);
+    transform: scale(1.2);
   }
 </style>
