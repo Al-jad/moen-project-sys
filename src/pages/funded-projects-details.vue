@@ -378,7 +378,33 @@
           <!-- Attachments Section -->
           <ViewModeSection title="المرفقات" icon="lucide:paperclip" :edit-enabled="false">
             <template #view-content>
-              <div class="p-4">
+              <div class="p-6">
+                <div class="mb-6 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10"
+                    >
+                      <Icon icon="lucide:paperclip" class="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-semibold text-foreground-heading">
+                        المرفقات
+                        <span class="text-sm font-normal text-foreground-muted">
+                          ({{ project?.attachments?.length || 0 }})
+                        </span>
+                      </h3>
+                    </div>
+                  </div>
+                  <PrimaryButton
+                    icon="lucide:plus"
+                    variant="primary"
+                    size="sm"
+                    @click="openAttachmentDialog"
+                  >
+                    إضافة مرفق
+                  </PrimaryButton>
+                </div>
+
                 <div v-if="project?.attachments?.length > 0">
                   <CustomTable
                     :columns="attachmentColumns"
@@ -435,15 +461,7 @@
                   <h3 class="mb-1 text-base font-medium text-foreground-heading">
                     لا توجد مرفقات
                   </h3>
-                  <p class="mb-4 text-sm text-foreground-muted"> قم بإضافة مرفقات للمشروع </p>
-                  <PrimaryButton
-                    icon="lucide:plus"
-                    variant="outline"
-                    size="sm"
-                    @click="openAttachmentDialog"
-                  >
-                    إضافة
-                  </PrimaryButton>
+                  <p class="mb-4 text-sm text-foreground-muted">قم بإضافة مرفقات للمشروع</p>
                 </div>
               </div>
             </template>
@@ -453,7 +471,14 @@
           <AttachmentEditModal
             v-model:open="isAttachmentDialogOpen"
             :loading="isUploading"
-            :attachment="selectedAttachment"
+            :attachment="
+              selectedAttachment
+                ? {
+                    ...selectedAttachment,
+                    projectName: project?.name,
+                  }
+                : null
+            "
             :project-id="project?.id"
             @confirm="handleAttachmentSubmit"
             @cancel="closeAttachmentDialog"
@@ -1076,8 +1101,11 @@
     }
   };
 
-  const handleEditAttachment = (attachment) => {
-    selectedAttachment.value = attachment;
+  const handleEditAttachment = (item) => {
+    selectedAttachment.value = {
+      ...item,
+      projectName: project.value?.name,
+    };
     isAttachmentDialogOpen.value = true;
   };
 

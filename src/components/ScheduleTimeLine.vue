@@ -27,10 +27,7 @@
                 المكون / الفعالية
               </div>
               <div class="divide-y">
-                <template
-                  v-for="(component, componentIndex) in reversedComponents"
-                  :key="componentIndex"
-                >
+                <template v-for="(component, componentIndex) in components" :key="componentIndex">
                   <div class="h-[4rem] border-b p-4 font-medium text-foreground">
                     <div class="flex items-center gap-2">
                       <div
@@ -88,10 +85,7 @@
                   </div>
                 </div>
                 <div class="divide-y">
-                  <template
-                    v-for="(component, componentIndex) in reversedComponents"
-                    :key="componentIndex"
-                  >
+                  <template v-for="(component, componentIndex) in components" :key="componentIndex">
                     <div
                       class="flex h-[4rem] border-b transition-colors duration-150 hover:bg-background-hover"
                     >
@@ -150,6 +144,7 @@
     TooltipTrigger,
   } from '@/components/ui/tooltip';
   import { Icon } from '@iconify/vue';
+  import { computed } from 'vue';
 
   const props = defineProps({
     components: {
@@ -178,34 +173,8 @@
     return props.duration;
   });
 
-  const reversedComponents = computed(() => {
-    return [...props.components].reverse();
-  });
-
-  const sortedActivities = (activities) => {
-    // Check if activities is an array
-    if (!activities || !Array.isArray(activities)) {
-      return [];
-    }
-
-    // Sort the activities based on the selectedPeriods
-    return [...activities].sort((a, b) => {
-      // If activities have selectedPeriods, sort by the earliest period
-      if (
-        a.selectedPeriods &&
-        b.selectedPeriods &&
-        Array.isArray(a.selectedPeriods) &&
-        Array.isArray(b.selectedPeriods)
-      ) {
-        const aMin = a.selectedPeriods.length > 0 ? Math.min(...a.selectedPeriods) : 0;
-        const bMin = b.selectedPeriods.length > 0 ? Math.min(...b.selectedPeriods) : 0;
-        return aMin - bMin;
-      }
-
-      // Fallback for activities without selectedPeriods
-      return 0;
-    });
-  };
+  // Simplified activities validation
+  const sortedActivities = (activities) => (activities?.length ? activities : []);
 
   const componentColors = [
     { base: '#3B82F6', light: 'rgba(59, 130, 246, 0.2)' },

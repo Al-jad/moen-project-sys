@@ -217,21 +217,14 @@
   });
 
   const reversedComponents = computed(() => {
-    if (props.useExternalSorting) {
-      return props.components;
-    }
-    return [...props.components].reverse();
+    return props.components;
   });
 
   const sortedActivities = (activities) => {
     if (!activities || !Array.isArray(activities)) {
       return [];
     }
-
-    if (props.useExternalSorting) {
-      return activities;
-    }
-    return [...activities].reverse();
+    return activities;
   };
 
   const componentColors = [

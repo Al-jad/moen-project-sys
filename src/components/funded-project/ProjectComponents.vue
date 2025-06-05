@@ -1,5 +1,5 @@
 <template>
-  <FormSection fullWidth title="المكونات والفعاليات">
+  <FormSection fullWidth>
     <div class="min-w-full space-y-6">
       <!-- Components List -->
       <div
@@ -61,18 +61,6 @@
                 <Icon icon="lucide:list-checks" class="h-5 w-5 text-foreground-muted" />
                 <h4 class="font-medium text-foreground-heading">الفعاليات</h4>
               </div>
-              <PrimaryButton
-                @click="addActivity(index)"
-                variant="outline"
-                size="sm"
-                :style="{
-                  borderColor: getComponentColor(index),
-                  color: getComponentColor(index),
-                }"
-              >
-                <Icon icon="lucide:plus" class="h-4 w-4" />
-                اضافة فعالية
-              </PrimaryButton>
             </div>
 
             <!-- Activities List -->
@@ -213,6 +201,20 @@
                   </FormField>
                 </div>
               </div>
+
+              <!-- New Add Activity Button at the end of activities list -->
+              <button
+                @click="addActivity(index)"
+                class="activity-item group relative flex w-full items-center justify-center gap-2 rounded-lg border border-dashed bg-background-card p-4 text-foreground-muted transition-all duration-300 hover:border-solid hover:text-foreground"
+                :style="{
+                  '--component-color': getComponentColor(index),
+                  borderColor: getComponentColor(index, true),
+                  color: getComponentColor(index),
+                }"
+              >
+                <Icon icon="lucide:plus" class="h-5 w-5" />
+                <span>اضافة فعالية جديدة</span>
+              </button>
             </div>
           </div>
         </div>
