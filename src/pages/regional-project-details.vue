@@ -47,104 +47,45 @@
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-blue-500/10 p-3 dark:bg-blue-500/20">
-                  <Icon icon="lucide:clock" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ project?.duration || 0 }} يوم
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">المدة الكلية</div>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
-                  <Icon
-                    icon="lucide:calculator"
-                    class="h-6 w-6 text-green-600 dark:text-green-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ project?.calculatedCumulativeFinancialProgress || 0 }}%
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400"
-                    >نسبة الانجاز المالي التراكمي المحسوب</div
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
-                  <Icon
-                    icon="lucide:trending-up"
-                    class="h-6 w-6 text-purple-600 dark:text-purple-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ project?.cumulativeFinancialProgress || 0 }}%
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400"
-                    >نسبة الانجاز المالي التراكمي المدخل</div
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-orange-500/10 p-3 dark:bg-orange-500/20">
-                  <Icon icon="lucide:wallet" class="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ formatCurrency(project?.cost) }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">الكلفة</div>
-                </div>
-              </div>
-            </div>
+          <div class="flex w-full flex-row gap-4">
+            <StatsCard
+              icon="lucide:clock"
+              :value="`${project?.duration || 0} يوم`"
+              label="المدة الكلية"
+              color="blue"
+            />
+            <!-- <StatsCard
+              icon="lucide:calculator"
+              :value="`${project?.calculatedCumulativeFinancialProgress || 0}%`"
+              label="نسبة الانجاز المالي التراكمي المحسوب"
+              color="green"
+            />
+            <StatsCard
+              icon="lucide:trending-up"
+              :value="`${project?.cumulativeFinancialProgress || 0}%`"
+              label="نسبة الانجاز المالي التراكمي "
+              color="purple"
+            /> -->
+            <StatsCard
+              icon="lucide:file-text"
+              :value="contracts.length || 0"
+              label="عدد العقود"
+              color="green"
+            />
+            <StatsCard
+              icon="lucide:list-checks"
+              :value="totalProcedures"
+              label="الاجراءات التنفيذية"
+              color="purple"
+            />
+            <StatsCard
+              icon="lucide:wallet"
+              :value="formatCurrency(project?.cost)"
+              label="الكلفة"
+              color="orange"
+            />
           </div>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-green-500/10 p-3 dark:bg-green-500/20">
-                  <Icon
-                    icon="lucide:file-text"
-                    class="h-6 w-6 text-green-600 dark:text-green-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ contracts.length || 0 }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">عدد العقود</div>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-              <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-purple-500/10 p-3 dark:bg-purple-500/20">
-                  <Icon
-                    icon="lucide:list-checks"
-                    class="h-6 w-6 text-purple-600 dark:text-purple-400"
-                  />
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {{ totalProcedures }}
-                  </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">الاجراءات التنفيذية</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-4"> </div>
           <RegionalProjectDetails
             :project="project"
             @save="handleSaveProject"
@@ -269,6 +210,7 @@
   import EditProcedureModal from '@/components/EditProcedureModal.vue';
   import ContractCard from '@/components/regional-project/ContractCard.vue';
   import RegionalProjectDetails from '@/components/regional-project/RegionalProjectDetails.vue';
+  import StatsCard from '@/components/regional-project/StatsCard.vue';
   import StatusBadge from '@/components/StatusBadge.vue';
   import { Button } from '@/components/ui/button';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';

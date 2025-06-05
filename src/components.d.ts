@@ -127,6 +127,7 @@ declare module 'vue' {
     ProjectsFilter: typeof import('./components/ProjectsFilter.vue')['default']
     ProjectsList: typeof import('./components/ProjectsList.vue')['default']
     ProjectStatCard: typeof import('./components/ProjectStatCard.vue')['default']
+    ProjectStatsCard: typeof import('./components/ProjectStatsCard.vue')['default']
     RadialProgress: typeof import('./components/RadialProgress.vue')['default']
     RadioGroup: typeof import('./components/ui/radio-group/RadioGroup.vue')['default']
     RadioGroupItem: typeof import('./components/ui/radio-group/RadioGroupItem.vue')['default']
