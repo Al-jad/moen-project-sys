@@ -1,316 +1,319 @@
 <template>
-  <Dialog :open="isOpen" @update:open="$emit('update:isOpen', $event)">
-    <DialogContent class="flex max-h-[90vh] flex-col dark:bg-gray-800 sm:max-w-[800px]">
-      <DialogHeader>
-        <DialogTitle class="text-right">{{
-          isEdit ? 'تعديل الاجراء التنفيذي' : 'اضافة اجراء تنفيذي'
-        }}</DialogTitle>
-      </DialogHeader>
+  <BaseAddEditModal
+    :open="isOpen"
+    @update:open="$emit('update:isOpen', $event)"
+    :edit-data="props.procedure"
+    :default-form-data="defaultFormData"
+    entity-name="الاجراء التنفيذي"
+    :loading="isLoading"
+    :validate="validateForm"
+    @save="handleSave"
+    @cancel="$emit('update:isOpen', false)"
+    content-class="max-w-[800px] h-[90vh]"
+  >
+    <template #form="{ formData, updateForm, isLoading: modalLoading }">
+      <!-- Contract Info Badge -->
+      <div
+        class="mx-auto flex w-1/2 items-center justify-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2"
+      >
+        <Icon icon="lucide:briefcase" class="h-4 w-4 text-accent" />
+        <span class="text-sm font-medium text-accent">{{ contractInfo.name }}</span>
+      </div>
 
-      <div class="custom-scrollbar flex-1 overflow-y-auto">
-        <!-- Contract Info Header -->
-        <div class="mx-4 border-b py-4 dark:border-gray-700">
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">معلومات العقد</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">تفاصيل العقد والمشروع</p>
+      <div class="space-y-6">
+        <!-- Basic Information Section -->
+        <div class="space-y-4 rounded-xl border border-border/60 bg-background/50 p-4">
+          <div class="flex items-center gap-2">
+            <Icon icon="lucide:info" class="h-5 w-5 text-primary" />
+            <h3 class="text-sm font-semibold text-foreground-body">المعلومات الأساسية</h3>
           </div>
+
+          <!-- Name Field -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <Icon
+                icon="lucide:type"
+                class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+                :class="{ 'animate-pulse': modalLoading }"
+              />
+              <Label for="name" class="text-sm font-semibold text-foreground-body"
+                >اسم الاجراء</Label
+              >
+              <span class="text-sm text-destructive">*</span>
+            </div>
+            <div class="group relative">
+              <CustomInput
+                id="name"
+                :model-value="formData.name"
+                :disabled="modalLoading"
+                placeholder="ادخل اسم الاجراء..."
+                @update:model-value="updateForm('name', $event)"
+              />
+            </div>
+          </div>
+
+          <!-- Details Field -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <Icon
+                icon="lucide:align-left"
+                class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
+                :class="{ 'animate-pulse': modalLoading }"
+              />
+              <Label for="details" class="text-sm font-semibold text-foreground-body"
+                >التفاصيل</Label
+              >
+            </div>
+            <div class="group relative">
+              <CustomTextArea
+                id="details"
+                :model-value="formData.details"
+                :disabled="modalLoading"
+                placeholder="ادخل تفاصيل الاجراء..."
+                @update:model-value="updateForm('details', $event)"
+              />
+            </div>
+          </div>
+
+          <!-- Weight and Duration -->
           <div class="grid grid-cols-2 gap-4">
-            <div class="grid items-center gap-2">
-              <Label class="text-right text-gray-500 dark:text-gray-400">العقد</Label>
-              <div class="text-right font-medium text-gray-900 dark:text-gray-100">{{
-                contractInfo.name
-              }}</div>
-            </div>
-            <div class="grid items-center gap-2">
-              <Label class="text-right text-gray-500 dark:text-gray-400">المشروع</Label>
-              <div class="text-right font-medium text-gray-900 dark:text-gray-100">{{
-                contractInfo.project
-              }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Basic Information -->
-        <div class="mx-4 border-b py-4 dark:border-gray-700">
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100"
-              >المعلومات الأساسية</h3
-            >
-            <p class="text-sm text-gray-500 dark:text-gray-400">تفاصيل الإجراء الأساسية</p>
-          </div>
-          <div class="grid gap-y-6">
-            <div class="grid grid-cols-2 gap-4">
-              <FormField label="اسم الاجراء">
-                <CustomInput v-model="form.name" dir="rtl" placeholder="ادخل اسم الاجراء" />
-              </FormField>
-              <FormField label="التفاصيل">
-                <CustomInput
-                  v-model="form.details"
-                  type="textarea"
-                  dir="rtl"
-                  placeholder="ادخل تفاصيل الاجراء"
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <Icon
+                  icon="lucide:scale"
+                  class="h-5 w-5 text-muted-foreground"
+                  :class="{ 'animate-pulse': modalLoading }"
                 />
-              </FormField>
+                <Label for="weight" class="text-sm font-semibold text-foreground-body">الوزن</Label>
+                <span class="text-sm text-destructive">*</span>
+              </div>
+              <div class="group relative">
+                <NumberInput
+                  id="weight"
+                  type="number"
+                  :model-value="formData.weight"
+                  :disabled="modalLoading"
+                  placeholder="ادخل الوزن"
+                  min="0"
+                  max="100"
+                  @update:model-value="updateForm('weight', $event)"
+                />
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                  >%</span
+                >
+              </div>
             </div>
 
-            <!-- Timing and Weight -->
-            <div class="grid grid-cols-3 gap-4">
-              <FormField label="الوزن">
-                <div class="flex items-center gap-2">
-                  <CustomInput
-                    v-model="form.weight"
-                    type="number"
-                    dir="rtl"
-                    placeholder="ادخل الوزن"
-                    min="0"
-                    max="100"
-                  />
-                  <span class="dark:text-gray-400">%</span>
-                </div>
-              </FormField>
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <Icon
+                  icon="lucide:clock"
+                  class="h-5 w-5 text-muted-foreground"
+                  :class="{ 'animate-pulse': modalLoading }"
+                />
+                <Label for="duration" class="text-sm font-semibold text-foreground-body"
+                  >مدة الاجراء</Label
+                >
+                <span class="text-sm text-destructive">*</span>
+              </div>
+              <div class="group relative">
+                <NumberInput
+                  id="duration"
+                  type="number"
+                  :model-value="formData.duration"
+                  :disabled="modalLoading || (formData.startDate && formData.endDate)"
+                  placeholder="المدة"
+                  min="0"
+                  @update:model-value="updateForm('duration', $event)"
+                />
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                  >يوم</span
+                >
+              </div>
+            </div>
+          </div>
 
-              <FormField label="مدة الاجراء">
-                <div class="flex items-center gap-2">
-                  <CustomInput
-                    v-model="form.duration"
-                    type="number"
-                    dir="rtl"
-                    placeholder="المدة"
-                    :readonly="form.startDate && form.endDate"
-                  />
-                  <span class="dark:text-gray-400">يوم</span>
-                </div>
-              </FormField>
+          <!-- Dates -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <Icon
+                  icon="lucide:calendar-range"
+                  class="h-5 w-5 text-muted-foreground"
+                  :class="{ 'animate-pulse': modalLoading }"
+                />
+                <Label for="startDate" class="text-sm font-semibold text-foreground-body"
+                  >تاريخ البداية</Label
+                >
+                <span class="text-sm text-red-500">*</span>
+              </div>
+              <DateInput
+                id="startDate"
+                :model-value="formData.startDate"
+                @update:model-value="updateForm('startDate', $event)"
+                :disabled="modalLoading"
+                class="h-12 rounded-xl border-2 border-border/60 bg-background/50"
+              />
             </div>
 
-            <!-- Dates -->
-            <div class="grid grid-cols-2 gap-4">
-              <FormField label="تاريخ البداية">
-                <DateInput v-model="form.startDate" />
-              </FormField>
-
-              <FormField label="تاريخ النهاية">
-                <DateInput v-model="form.endDate" />
-              </FormField>
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <Icon
+                  icon="lucide:calendar-range"
+                  class="h-5 w-5 text-muted-foreground"
+                  :class="{ 'animate-pulse': modalLoading }"
+                />
+                <Label for="endDate" class="text-sm font-semibold text-foreground-body"
+                  >تاريخ النهاية</Label
+                >
+                <span class="text-sm text-red-500">*</span>
+              </div>
+              <DateInput
+                id="endDate"
+                :model-value="formData.endDate"
+                @update:model-value="updateForm('endDate', $event)"
+                :disabled="modalLoading"
+                class="h-12 rounded-xl border-2 border-border/60 bg-background/50"
+              />
             </div>
           </div>
         </div>
 
-        <!-- Manual Progress Section -->
-        <div class="mx-4 border-b py-4 dark:border-gray-700">
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100"
-              >نسب الإنجاز المدخلة</h3
-            >
-            <p class="text-sm text-gray-500 dark:text-gray-400">النسب المدخلة يدوياً</p>
-          </div>
-          <div class="grid grid-cols-2 gap-6">
-            <!-- Financial Progress -->
-            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-              <div class="flex items-center justify-between">
-                <h6 class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
-                  <Icon icon="lucide:trending-up" class="h-4 w-4 text-blue-500" />
-                  المعلومات المالية
-                </h6>
-              </div>
-              <div class="space-y-3">
-                <FormField label="نسبة الإنجاز المالي المخطط له">
-                  <div class="flex items-center gap-2">
-                    <CustomInput
-                      v-model="form.plannedFinancialProgress"
-                      type="number"
-                      dir="rtl"
-                      min="0"
-                      max="100"
-                      placeholder="ادخل النسبة"
-                    />
-                    <span class="dark:text-gray-400">%</span>
-                  </div>
-                </FormField>
-
-                <FormField label="نسبة الإنجاز المالي الفعلي">
-                  <div class="flex items-center gap-2">
-                    <CustomInput
-                      v-model="form.actualFinancialProgress"
-                      type="number"
-                      dir="rtl"
-                      min="0"
-                      max="100"
-                      placeholder="ادخل النسبة"
-                    />
-                    <span class="dark:text-gray-400">%</span>
-                  </div>
-                </FormField>
-              </div>
+        <!-- Progress Section -->
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Financial Progress -->
+          <div class="space-y-4 rounded-xl border border-border/60 bg-background/50 p-4">
+            <div class="flex items-center gap-2">
+              <Icon icon="lucide:trending-up" class="h-5 w-5 text-blue-500" />
+              <h3 class="text-sm font-semibold text-foreground-body">المعلومات المالية</h3>
             </div>
 
-            <!-- Technical Progress -->
-            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-              <div class="flex items-center justify-between">
-                <h6 class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
-                  <Icon icon="lucide:settings" class="h-4 w-4 text-purple-500" />
-                  المعلومات الفنية
-                </h6>
-              </div>
+            <div class="space-y-4">
               <div class="space-y-3">
-                <FormField label="نسبة الإنجاز الفني المخطط له">
-                  <div class="flex items-center gap-2">
-                    <CustomInput
-                      v-model="form.plannedCompletionPercentage"
-                      type="number"
-                      dir="rtl"
-                      min="0"
-                      max="100"
-                      placeholder="ادخل النسبة"
-                    />
-                    <span class="dark:text-gray-400">%</span>
-                  </div>
-                </FormField>
+                <Label class="text-sm text-muted-foreground">نسبة الإنجاز المالي المخطط له</Label>
+                <div class="group relative">
+                  <NumberInput
+                    type="number"
+                    :model-value="formData.plannedFinancialProgress"
+                    @update:model-value="updateForm('plannedFinancialProgress', $event)"
+                    :disabled="modalLoading"
+                    min="0"
+                    max="100"
+                  />
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                    >%</span
+                  >
+                </div>
+              </div>
 
-                <FormField label="نسبة الإنجاز الفني الفعلي">
-                  <div class="flex items-center gap-2">
-                    <CustomInput
-                      v-model="form.actualCompletionPercentage"
-                      type="number"
-                      dir="rtl"
-                      min="0"
-                      max="100"
-                      placeholder="ادخل النسبة"
-                    />
-                    <span class="dark:text-gray-400">%</span>
-                  </div>
-                </FormField>
-
-                <FormField label="نسبة الإنحراف الفني">
-                  <div class="flex items-center gap-2">
-                    <CustomInput
-                      v-model="form.technicalDeviation"
-                      type="number"
-                      dir="rtl"
-                      readonly
-                      :class="{
-                        'text-green-600': form.technicalDeviation >= 0,
-                        'text-red-600': form.technicalDeviation < 0,
-                      }"
-                    />
-                    <span class="dark:text-gray-400">%</span>
-                  </div>
-                </FormField>
+              <div class="space-y-3">
+                <Label class="text-sm text-muted-foreground">نسبة الإنجاز المالي الفعلي</Label>
+                <div class="group relative">
+                  <NumberInput
+                    type="number"
+                    :model-value="formData.actualFinancialProgress"
+                    @update:model-value="updateForm('actualFinancialProgress', $event)"
+                    :disabled="modalLoading"
+                    min="0"
+                    max="100"
+                  />
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                    >%</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Calculated Progress Section -->
-        <div class="mx-4 py-4">
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">النسب المحسوبة</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400"
-              >النسب المحسوبة تلقائياً من النظام</p
-            >
-          </div>
-          <div class="grid grid-cols-2 gap-6">
-            <!-- Calculated Financial Progress -->
-            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-              <div class="flex items-center justify-between">
-                <h6 class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
-                  <Icon icon="lucide:calculator" class="h-4 w-4 text-blue-500" />
-                  المعلومات المالية المحسوبة
-                </h6>
-              </div>
-              <div class="space-y-3">
-                <FormField label="نسبة الانجاز المالي المخطط المحسوب">
-                  <NumberInput
-                    v-model="form.calculatedPlannedFinancialProgress"
-                    placeholder="القيمة المحسوبة"
-                    unit="%"
-                    min="0"
-                    max="100"
-                  />
-                </FormField>
-
-                <FormField label="نسبة الانجاز المالي الفعلي المحسوب">
-                  <NumberInput
-                    v-model="form.calculatedActualFinancialProgress"
-                    placeholder="القيمة المحسوبة"
-                    unit="%"
-                    min="0"
-                    max="100"
-                  />
-                </FormField>
-              </div>
+          <!-- Technical Progress -->
+          <div class="space-y-4 rounded-xl border border-border/60 bg-background/50 p-4">
+            <div class="flex items-center gap-2">
+              <Icon icon="lucide:settings" class="h-5 w-5 text-purple-500" />
+              <h3 class="text-sm font-semibold text-foreground-body">المعلومات الفنية</h3>
             </div>
 
-            <!-- Calculated Technical Progress -->
-            <div class="space-y-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-              <div class="flex items-center justify-between">
-                <h6 class="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
-                  <Icon icon="lucide:calculator" class="h-4 w-4 text-purple-500" />
-                  المعلومات الفنية المحسوبة
-                </h6>
-              </div>
+            <div class="space-y-4">
               <div class="space-y-3">
-                <FormField label="نسبة الانجاز الفني المخطط المحسوب">
+                <Label class="text-sm text-muted-foreground">نسبة الإنجاز الفني المخطط له</Label>
+                <div class="group relative">
                   <NumberInput
-                    v-model="form.calculatedPlannedCompletionPercentage"
-                    placeholder="القيمة المحسوبة"
-                    unit="%"
+                    type="number"
+                    :model-value="formData.plannedCompletionPercentage"
+                    @update:model-value="updateForm('plannedCompletionPercentage', $event)"
+                    :disabled="modalLoading"
                     min="0"
                     max="100"
                   />
-                </FormField>
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                    >%</span
+                  >
+                </div>
+              </div>
 
-                <FormField label="نسبة الانجاز الفني الفعلي المحسوب">
+              <div class="space-y-3">
+                <Label class="text-sm text-muted-foreground">نسبة الإنجاز الفني الفعلي</Label>
+                <div class="group relative">
                   <NumberInput
-                    v-model="form.calculatedActualCompletionPercentage"
-                    placeholder="القيمة المحسوبة"
-                    unit="%"
+                    type="number"
+                    :model-value="formData.actualCompletionPercentage"
+                    @update:model-value="updateForm('actualCompletionPercentage', $event)"
+                    :disabled="modalLoading"
                     min="0"
                     max="100"
                   />
-                </FormField>
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                    >%</span
+                  >
+                </div>
+              </div>
 
-                <FormField label="نسبة الانحراف الفني المحسوب">
+              <div class="space-y-3">
+                <Label class="text-sm text-muted-foreground">نسبة الإنحراف الفني</Label>
+                <div class="group relative">
                   <NumberInput
-                    v-model="form.calculatedTechnicalDeviation"
-                    placeholder="القيمة المحسوبة"
-                    unit="%"
-                    min="0"
-                    max="100"
+                    type="number"
+                    :model-value="
+                      Number(formData.actualCompletionPercentage || 0) -
+                      Number(formData.plannedCompletionPercentage || 0)
+                    "
+                    disabled
+                    :class="{
+                      'text-green-600':
+                        Number(formData.actualCompletionPercentage || 0) -
+                          Number(formData.plannedCompletionPercentage || 0) >=
+                        0,
+                      'text-red-600':
+                        Number(formData.actualCompletionPercentage || 0) -
+                          Number(formData.plannedCompletionPercentage || 0) <
+                        0,
+                    }"
                   />
-                </FormField>
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                    >%</span
+                  >
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <DialogFooter class="mt-4 flex justify-between border-t pt-4 dark:border-gray-700">
-        <Button variant="outline" @click="$emit('update:isOpen', false)"> الغاء </Button>
-        <Button type="submit" @click="handleSubmit">
-          <Icon icon="lucide:check" class="ml-2 h-4 w-4" />
-          {{ isEdit ? 'تعديل' : 'إضافة' }}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+    </template>
+  </BaseAddEditModal>
 </template>
 
 <script setup>
+  import BaseAddEditModal from '@/components/BaseAddEditModal.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import DateInput from '@/components/DateInput.vue';
-  import FormField from '@/components/FormField.vue';
-  import { Button } from '@/components/ui/button';
-  import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-  } from '@/components/ui/dialog';
+  import NumberInput from '@/components/NumberInput.vue';
   import { Label } from '@/components/ui/label';
   import { Icon } from '@iconify/vue';
-  import { computed, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import { toast } from 'vue-sonner';
 
   const props = defineProps({
@@ -337,7 +340,9 @@
 
   const emit = defineEmits(['update:isOpen', 'save']);
 
-  const form = ref({
+  const isLoading = ref(false);
+
+  const defaultFormData = computed(() => ({
     name: '',
     details: '',
     weight: 0,
@@ -345,154 +350,70 @@
     startDate: '',
     endDate: '',
     plannedCompletionPercentage: 0,
-    calculatedPlannedCompletionPercentage: null,
     actualCompletionPercentage: 0,
-    calculatedActualCompletionPercentage: null,
     technicalDeviation: 0,
-    calculatedTechnicalDeviation: null,
     plannedFinancialProgress: 0,
-    calculatedPlannedFinancialProgress: null,
     actualFinancialProgress: 0,
-    calculatedActualFinancialProgress: null,
-    contractId: null,
-    id: null,
-    createdAt: null,
-    updatedAt: null,
-  });
+  }));
 
-  watch(
-    () => props.procedure,
-    (newProcedure) => {
-      if (newProcedure) {
-        form.value = {
-          name: newProcedure.name || '',
-          details: newProcedure.details || '',
-          weight: newProcedure.weight || 0,
-          duration: newProcedure.duration || 0,
-          startDate: newProcedure.startDate || '',
-          endDate: newProcedure.endDate || '',
-          plannedCompletionPercentage: newProcedure.plannedCompletionPercentage || 0,
-          calculatedPlannedCompletionPercentage:
-            newProcedure.calculatedPlannedCompletionPercentage || null,
-          actualCompletionPercentage: newProcedure.actualCompletionPercentage || 0,
-          calculatedActualCompletionPercentage:
-            newProcedure.calculatedActualCompletionPercentage || null,
-          technicalDeviation: newProcedure.technicalDeviation || 0,
-          calculatedTechnicalDeviation: newProcedure.calculatedTechnicalDeviation || null,
-          plannedFinancialProgress: newProcedure.plannedFinancialProgress || 0,
-          calculatedPlannedFinancialProgress:
-            newProcedure.calculatedPlannedFinancialProgress || null,
-          actualFinancialProgress: newProcedure.actualFinancialProgress || 0,
-          calculatedActualFinancialProgress: newProcedure.calculatedActualFinancialProgress || null,
-          contractId: newProcedure.contractId || null,
-          id: newProcedure.id || null,
-          createdAt: newProcedure.createdAt || null,
-          updatedAt: newProcedure.updatedAt || null,
-        };
-      } else {
-        form.value = {
-          name: '',
-          details: '',
-          weight: 0,
-          duration: 0,
-          startDate: '',
-          endDate: '',
-          plannedCompletionPercentage: 0,
-          calculatedPlannedCompletionPercentage: null,
-          actualCompletionPercentage: 0,
-          calculatedActualCompletionPercentage: null,
-          technicalDeviation: 0,
-          calculatedTechnicalDeviation: null,
-          plannedFinancialProgress: 0,
-          calculatedPlannedFinancialProgress: null,
-          actualFinancialProgress: 0,
-          calculatedActualFinancialProgress: null,
-          contractId: null,
-          id: null,
-          createdAt: null,
-          updatedAt: null,
-        };
-      }
-    },
-    { immediate: true }
-  );
-
-  const handleSubmit = () => {
-    // Validate required fields
-    if (!form.value.name) {
+  // Validation function
+  const validateForm = (formData) => {
+    if (!formData.name) {
       toast.error('يجب إدخال اسم الاجراء');
-      return;
+      return false;
     }
 
-    if (!form.value.duration) {
-      toast.error('يجب إدخال مدة الاجراء');
-      return;
-    }
-
-    if (!form.value.weight) {
+    if (!formData.weight) {
       toast.error('يجب إدخال وزن الاجراء');
-      return;
+      return false;
     }
 
-    if (!form.value.startDate) {
+    if (!formData.duration && !(formData.startDate && formData.endDate)) {
+      toast.error('يجب إدخال مدة الاجراء أو تواريخ البداية والنهاية');
+      return false;
+    }
+
+    if (!formData.startDate) {
       toast.error('يجب إدخال تاريخ البداية');
-      return;
+      return false;
     }
 
-    if (!form.value.endDate) {
+    if (!formData.endDate) {
       toast.error('يجب إدخال تاريخ النهاية');
-      return;
+      return false;
     }
 
-    // Format the form data to match API expectations
-    const formattedData = {
-      name: form.value.name,
-      details: form.value.details,
-      weight: Number(form.value.weight),
-      duration: Number(form.value.duration),
-      startDate: form.value.startDate ? new Date(form.value.startDate).toISOString() : null,
-      endDate: form.value.endDate ? new Date(form.value.endDate).toISOString() : null,
-      plannedCompletionPercentage: Number(form.value.plannedCompletionPercentage),
-      calculatedPlannedCompletionPercentage: Number(
-        form.value.calculatedPlannedCompletionPercentage
-      ),
-      actualCompletionPercentage: Number(form.value.actualCompletionPercentage),
-      calculatedActualCompletionPercentage: Number(form.value.calculatedActualCompletionPercentage),
-      technicalDeviation: Number(form.value.technicalDeviation),
-      calculatedTechnicalDeviation: Number(form.value.calculatedTechnicalDeviation),
-      plannedFinancialProgress: Number(form.value.plannedFinancialProgress),
-      calculatedPlannedFinancialProgress: Number(form.value.calculatedPlannedFinancialProgress),
-      actualFinancialProgress: Number(form.value.actualFinancialProgress),
-      calculatedActualFinancialProgress: Number(form.value.calculatedActualFinancialProgress),
-    };
+    return true;
+  };
 
+  const handleSave = async (formData) => {
     try {
+      isLoading.value = true;
+
+      // Format the form data
+      const formattedData = {
+        ...formData,
+        weight: Number(formData.weight),
+        duration: Number(formData.duration),
+        startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
+        endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
+        plannedCompletionPercentage: Number(formData.plannedCompletionPercentage),
+        actualCompletionPercentage: Number(formData.actualCompletionPercentage),
+        technicalDeviation: Number(formData.technicalDeviation),
+        plannedFinancialProgress: Number(formData.plannedFinancialProgress),
+        actualFinancialProgress: Number(formData.actualFinancialProgress),
+      };
+
       emit('save', formattedData);
-      emit('update:isOpen', false);
       toast.success(props.isEdit ? 'تم تعديل الاجراء بنجاح! 🎉' : 'تم إضافة الاجراء بنجاح! 🎉');
     } catch (error) {
       console.error('Error saving procedure:', error);
       toast.error('حدث خطأ أثناء حفظ الاجراء');
+      throw error;
+    } finally {
+      isLoading.value = false;
     }
   };
-
-  // Add computed properties for technical deviation
-  const calculateTechnicalDeviation = computed(() => {
-    const actual = Number(form.value.actualCompletionPercentage) || 0;
-    const planned = Number(form.value.plannedCompletionPercentage) || 0;
-    return actual - planned;
-  });
-
-  // Add watch for dates to auto-calculate duration
-  watch([() => form.value.startDate, () => form.value.endDate], ([newStartDate, newEndDate]) => {
-    if (newStartDate && newEndDate) {
-      const start = new Date(newStartDate);
-      const end = new Date(newEndDate);
-      const diffTime = Math.abs(end - start);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      form.value.duration = diffDays;
-    }
-  });
 </script>
 
 <style scoped>
@@ -521,8 +442,22 @@
     @apply bg-gray-500 dark:bg-gray-400;
   }
 
-  /* Fix for RTL content with LTR scrollbar */
   .custom-scrollbar > * {
     direction: rtl;
+  }
+
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: animate-in 0.3s ease-out;
   }
 </style>
