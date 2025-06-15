@@ -18,7 +18,7 @@
               class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
             />
             <Label class="text-sm font-semibold text-foreground-body">اسم العقد</Label>
-            <span class="text-sm text-red-500">*</span>
+            <span class="text-sm text-destructive">*</span>
           </div>
           <div class="group relative">
             <CustomInput
@@ -26,7 +26,7 @@
               @update:model-value="updateForm('name', $event)"
               placeholder="ادخل اسم العقد"
             />
-            <p v-if="errors.name" class="mt-2 text-sm text-red-500">{{ errors.name }}</p>
+            <p v-if="errors.name" class="mt-2 text-sm text-destructive">{{ errors.name }}</p>
           </div>
         </div>
 
@@ -38,7 +38,7 @@
               class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
             />
             <Label class="text-sm font-semibold text-foreground-body">رقم العقد</Label>
-            <span class="text-sm text-red-500">*</span>
+            <span class="text-sm text-destructive">*</span>
           </div>
           <div class="group relative">
             <CustomInput
@@ -46,7 +46,7 @@
               @update:model-value="updateForm('contractNumber', $event)"
               placeholder="ادخل رقم العقد"
             />
-            <p v-if="errors.contractNumber" class="mt-2 text-sm text-red-500">{{
+            <p v-if="errors.contractNumber" class="mt-2 text-sm text-destructive">{{
               errors.contractNumber
             }}</p>
           </div>
@@ -60,7 +60,7 @@
               class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
             />
             <Label class="text-sm font-semibold text-foreground-body">الجهة المنفذة</Label>
-            <span class="text-sm text-red-500">*</span>
+            <span class="text-sm text-destructive">*</span>
           </div>
           <div class="group relative">
             <CustomInput
@@ -68,7 +68,7 @@
               @update:model-value="updateForm('executingDepartment', $event)"
               placeholder="ادخل اسم الجهة المنفذة"
             />
-            <p v-if="errors.executingDepartment" class="mt-2 text-sm text-red-500">{{
+            <p v-if="errors.executingDepartment" class="mt-2 text-sm text-destructive">{{
               errors.executingDepartment
             }}</p>
           </div>
@@ -82,7 +82,7 @@
               class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
             />
             <Label class="text-sm font-semibold text-foreground-body">الكلفة</Label>
-            <span class="text-sm text-red-500">*</span>
+            <span class="text-sm text-destructive">*</span>
           </div>
           <div class="group relative">
             <NumberInput
@@ -90,7 +90,7 @@
               @update:model-value="updateForm('cost', $event)"
               placeholder="ادخل الكلفة"
             />
-            <p v-if="errors.cost" class="mt-2 text-sm text-red-500">{{ errors.cost }}</p>
+            <p v-if="errors.cost" class="mt-2 text-sm text-destructive">{{ errors.cost }}</p>
           </div>
         </div>
 
@@ -103,7 +103,7 @@
                 class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
               />
               <Label class="text-sm font-semibold text-foreground-body">تاريخ التوقيع</Label>
-              <span class="text-sm text-red-500">*</span>
+              <span class="text-sm text-destructive">*</span>
             </div>
             <div class="group relative">
               <DateInput
@@ -111,7 +111,7 @@
                 @update:model-value="updateForm('signingDate', $event)"
                 placeholder="اختر تاريخ التوقيع"
               />
-              <p v-if="errors.signingDate" class="mt-2 text-sm text-red-500">{{
+              <p v-if="errors.signingDate" class="mt-2 text-sm text-destructive">{{
                 errors.signingDate
               }}</p>
             </div>
@@ -123,7 +123,7 @@
                 class="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary"
               />
               <Label class="text-sm font-semibold text-foreground-body">تاريخ الإحالة</Label>
-              <span class="text-sm text-red-500">*</span>
+              <span class="text-sm text-destructive">*</span>
             </div>
             <div class="group relative">
               <DateInput
@@ -131,7 +131,7 @@
                 @update:model-value="updateForm('referralDate', $event)"
                 placeholder="اختر تاريخ الإحالة"
               />
-              <p v-if="errors.referralDate" class="mt-2 text-sm text-red-500">{{
+              <p v-if="errors.referralDate" class="mt-2 text-sm text-destructive">{{
                 errors.referralDate
               }}</p>
             </div>
