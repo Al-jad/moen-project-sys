@@ -1,11 +1,11 @@
 <template>
   <DefaultLayout>
-    <main class="min-h-screen bg-gray-200 p-6 dark:bg-darkmode">
+    <main class="min-h-screen bg-background p-6">
       <div>
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-6">
             <BackToMainButton />
-            <h1 class="text-xl font-bold dark:text-white">الاجراءات الادارية</h1>
+            <h1 class="text-xl font-bold text-foreground">الاجراءات الادارية</h1>
           </div>
         </div>
       </div>
@@ -13,7 +13,7 @@
       <!-- Notification Banner -->
       <Premium />
 
-      <div class="relative rounded-lg bg-white shadow-sm dark:bg-gray-800">
+      <div class="relative rounded-lg bg-background-surface shadow-sm">
         <div class="absolute inset-0 z-10 cursor-not-allowed"></div>
         <div class="p-6">
           <div class="pointer-events-auto w-full">
@@ -30,46 +30,46 @@
               :is-export-premium="true"
             >
               <template #action="{ item }">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" class="text-gray-400 hover:text-gray-600">
-                      <Icon icon="lucide:eye" class="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent class="sm:max-w-[600px]">
-                    <DialogHeader>
-                      <DialogTitle class="text-right">
-                        <p class="text-xl font-bold">اجراء اداري</p>
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div class="grid gap-y-4 py-4">
-                      <div class="grid grid-cols-[120px_1fr] items-center gap-4">
-                        <span class="text-right text-gray-500">تاريخ اخر تعديل</span>
-                        <span>{{ item.modificationDate }} @ {{ item.modificationTime }}</span>
-                      </div>
-                      <div class="grid grid-cols-[120px_1fr] items-center gap-4">
-                        <span class="text-right text-gray-500">الموظف</span>
-                        <span>{{ item.employee }}</span>
-                      </div>
-                      <div class="grid grid-cols-[120px_1fr] items-center gap-4">
-                        <span class="text-right text-gray-500">المشروع</span>
-                        <span>{{ item.project }}</span>
-                      </div>
-                      <div class="grid grid-cols-[120px_1fr] items-center gap-4">
-                        <span class="text-right text-gray-500">الحقل</span>
-                        <span>{{ item.field }}</span>
-                      </div>
-                      <div class="grid grid-cols-[120px_1fr] items-start gap-4">
-                        <span class="text-right text-gray-500">القيمة السابقة</span>
-                        <p class="text-sm leading-6">{{ item.oldValue }}</p>
-                      </div>
-                      <div class="grid grid-cols-[120px_1fr] items-start gap-4">
-                        <span class="text-right text-gray-500">القيمة الحالية</span>
-                        <p class="text-sm leading-6">{{ item.newValue }}</p>
-                      </div>
+                <BaseModal :open="isModalOpen" @update:open="isModalOpen = $event">
+                  <template #trigger>
+                    <PrimaryButton
+                      icon="lucide:eye"
+                      variant="ghost"
+                      size="icon"
+                      class="text-foreground-muted"
+                      @click="isModalOpen = true"
+                    />
+                  </template>
+                  <template #title>
+                    <p class="text-xl font-bold">اجراء اداري</p>
+                  </template>
+                  <div class="grid gap-y-4 py-4">
+                    <div class="grid grid-cols-[120px_1fr] items-center gap-4">
+                      <span class="text-right text-gray-500">تاريخ اخر تعديل</span>
+                      <span>{{ item.modificationDate }} @ {{ item.modificationTime }}</span>
                     </div>
-                  </DialogContent>
-                </Dialog>
+                    <div class="grid grid-cols-[120px_1fr] items-center gap-4">
+                      <span class="text-right text-gray-500">الموظف</span>
+                      <span>{{ item.employee }}</span>
+                    </div>
+                    <div class="grid grid-cols-[120px_1fr] items-center gap-4">
+                      <span class="text-right text-gray-500">المشروع</span>
+                      <span>{{ item.project }}</span>
+                    </div>
+                    <div class="grid grid-cols-[120px_1fr] items-center gap-4">
+                      <span class="text-right text-gray-500">الحقل</span>
+                      <span>{{ item.field }}</span>
+                    </div>
+                    <div class="grid grid-cols-[120px_1fr] items-start gap-4">
+                      <span class="text-right text-gray-500">القيمة السابقة</span>
+                      <p class="text-sm leading-6">{{ item.oldValue }}</p>
+                    </div>
+                    <div class="grid grid-cols-[120px_1fr] items-start gap-4">
+                      <span class="text-right text-gray-500">القيمة الحالية</span>
+                      <p class="text-sm leading-6">{{ item.newValue }}</p>
+                    </div>
+                  </div>
+                </BaseModal>
               </template>
             </CustomTable>
           </div>
@@ -81,17 +81,10 @@
 
 <script setup lang="ts">
   import BackToMainButton from '@/components/BackToMainButton.vue';
+  import BaseModal from '@/components/BaseModal.vue';
   import CustomTable from '@/components/CustomTable.vue';
   import Premium from '@/components/Premium.vue';
-  import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from '@/components/ui/dialog';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import { Icon } from '@iconify/vue';
   import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
   import type { DateRange } from 'radix-vue';
   import { computed, ref } from 'vue';
@@ -266,4 +259,6 @@
   const handleDateChange = (date: any) => {};
 
   const handleExport = () => {};
+
+  const isModalOpen = ref(false);
 </script>
