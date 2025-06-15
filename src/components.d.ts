@@ -163,7 +163,7 @@ declare module 'vue' {
     Sidebar: typeof import('./components/Sidebar.vue')['default']
     Slider: typeof import('./components/ui/slider/Slider.vue')['default']
     Sonner: typeof import('./components/ui/sonner/Sonner.vue')['default']
-    StatsCard: typeof import('./components/StatsCard.vue')['default']
+    StatsCard: typeof import('./components/regional-project/StatsCard.vue')['default']
     StatusBadge: typeof import('./components/StatusBadge.vue')['default']
     Stepper: typeof import('./components/ui/stepper/Stepper.vue')['default']
     StepperDescription: typeof import('./components/ui/stepper/StepperDescription.vue')['default']

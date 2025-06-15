@@ -14,7 +14,7 @@
       />
       <div class="relative flex items-center justify-center w-full h-full px-3">
         <img
-          src="/public/img/Logo.png"
+          src="/img/Logo.png"
           alt="Logo"
           class="absolute object-contain w-10 h-12 transition-all duration-300 ease-in-out bg-transparent right-3"
           :class="{
@@ -23,7 +23,7 @@
           }"
         />
         <img
-          :src="isDark ? '/public/img/logo-white-text.png' : '/public/img/logo-text.png'"
+          :src="isDark ? '/img/logo-white-text.png' : '/img/logo-text.png'"
           alt="Logo with Text"
           class="absolute object-contain h-12 transition-all duration-300 ease-in-out"
           :class="{
