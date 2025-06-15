@@ -263,7 +263,7 @@
   const fetchContractDetails = async () => {
     try {
       isLoading.value = true;
-      const contractData = await regionalProjectStore.fetchContractById(Number(contractId));
+      const contractData = await regionalProjectStore.fetchContractById(contractId);
 
       if (!contractData) {
         toast.error('لم يتم العثور على العقد');

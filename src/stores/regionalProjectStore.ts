@@ -121,6 +121,16 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
     }
   };
 
+  const fetchContractById = async (id: string | number) => {
+    try {
+      const response = await regionalProjectService.getContractById(id.toString());
+      return response;
+    } catch (err) {
+      console.error('Error fetching contract:', err);
+      throw err;
+    }
+  };
+
   const fetchContractsByProjectId = async (projectId: string) => {
     try {
       const response = await regionalProjectService.getContractsByProjectId(projectId);
@@ -247,6 +257,7 @@ export const useRegionalProjectStore = defineStore('regionalProject', () => {
 
     // Contract Actions
     fetchAllContracts,
+    fetchContractById,
     fetchContractsByProjectId,
     createContract,
     updateContract,

@@ -35,6 +35,11 @@ class RegionalProjectService {
     return response.data as Contract[];
   }
 
+  async getContractById(id: string) {
+    const response = await axiosInstance.get(`/api/RegionalProject/Contract/${id}`);
+    return response.data as Contract;
+  }
+
   async getContractsByProjectId(projectId: string) {
     const response = await axiosInstance.get(`/api/RegionalProject/Contract/Project/${projectId}`);
     return response.data as Contract[];
