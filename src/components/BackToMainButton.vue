@@ -1,7 +1,6 @@
 <template>
   <div>
-    <PrimaryButton variant="link" @click="$router.push('/')" class="">
-      <Icon icon="lucide:arrow-right" class="h-4 w-4" />
+    <PrimaryButton icon="lucide:arrow-right" variant="link" @click="$router.push('/')" class="">
       الرئيسية
     </PrimaryButton>
   </div>
