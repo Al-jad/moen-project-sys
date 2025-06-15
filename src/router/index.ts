@@ -12,7 +12,6 @@ import HistoryLog from '@/pages/history-log.vue';
 import Home from '@/pages/index.vue';
 import Login from '@/pages/login.vue';
 import Map from '@/pages/map.vue';
-import ProjectDetails from '@/pages/project-details.vue';
 import ProjectModifications from '@/pages/project-modifications.vue';
 import Projects from '@/pages/projects.vue';
 import RegionalProjects from '@/pages/regional-projects.vue';
@@ -37,12 +36,6 @@ const routes: RouteRecordRaw[] = [
     path: '/projects',
     name: 'projects',
     component: Projects,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/projects/:id',
-    name: 'project-details',
-    component: ProjectDetails,
     meta: { requiresAuth: true },
   },
   {
