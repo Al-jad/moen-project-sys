@@ -25,9 +25,9 @@
         >
           <l-popup class="custom-popup !w-[23rem]">
             <div
-              class="pt-4 overflow-hidden transition-all duration-300 border shadow-lg rounded-xl border-border/40 bg-background-surface/95 backdrop-blur-sm"
+              class="overflow-hidden rounded-xl border border-border/40 bg-background-surface/95 pt-4 shadow-lg backdrop-blur-sm transition-all duration-300"
             >
-              <div class="p-4 mt-6 space-y-4">
+              <div class="mt-6 space-y-4 p-4">
                 <div class="flex items-start justify-between gap-3">
                   <h3 class="text-base font-bold leading-tight text-foreground-heading">{{
                     project.name || 'لا يوجد اسم'
@@ -53,8 +53,8 @@
                     ضمن البرنامج الحكومي
                   </div>
                 </div>
-                <div class="pt-3 space-y-3 border-t border-border/40">
-                  <div class="grid grid-cols-2 text-sm gap-x-4 gap-y-3">
+                <div class="space-y-3 border-t border-border/40 pt-3">
+                  <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                     <div class="flex items-center gap-2">
                       <div class="rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
                         <Icon
@@ -85,7 +85,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="flex items-center justify-end pt-3 border-t border-border/40">
+                <div class="flex items-center justify-end border-t border-border/40 pt-3">
                   <button
                     class="inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-95"
                     @click="viewProjectDetails(project.id)"
@@ -102,36 +102,36 @@
     </l-map>
     <div
       v-if="filteredProjects.length === 0"
-      class="absolute top-0 left-0 right-0 p-4 text-center bg-background-card"
+      class="absolute left-0 right-0 top-0 bg-info p-4 text-center font-bold text-white"
     >
       لا توجد مشاريع لعرضها
     </div>
     <div
       v-else-if="projectsWithCoordinates.length === 0"
-      class="absolute top-0 left-0 right-0 p-4 text-center bg-background-card"
+      class="absolute left-0 right-0 top-0 bg-background-card p-4 text-center"
     >
       لا توجد مشاريع بإحداثيات لعرضها على الخريطة
     </div>
     <div
-      class="absolute z-10 p-4 border shadow-lg right-4 top-4 rounded-xl border-border/40 bg-background-surface/95 backdrop-blur-sm"
+      class="absolute right-4 top-4 z-10 rounded-xl border border-border/40 bg-background-surface/95 p-4 shadow-lg backdrop-blur-sm"
     >
       <div class="mb-2 font-bold text-foreground-heading">مفتاح الخريطة</div>
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
-          <span class="text-sm text-foreground-base">منجزة</span>
+          <div class="h-3 w-3 rounded-full bg-green-500 shadow-sm"></div>
+          <span class="text-foreground-base text-sm">منجزة</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
-          <span class="text-sm text-foreground-base">قيد التنفيذ</span>
+          <div class="h-3 w-3 rounded-full bg-yellow-500 shadow-sm"></div>
+          <span class="text-foreground-base text-sm">قيد التنفيذ</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
-          <span class="text-sm text-foreground-base">متلكئة</span>
+          <div class="h-3 w-3 rounded-full bg-red-500 shadow-sm"></div>
+          <span class="text-foreground-base text-sm">متلكئة</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-gray-500 rounded-full shadow-sm"></div>
-          <span class="text-sm text-foreground-base">ملغاة</span>
+          <div class="h-3 w-3 rounded-full bg-gray-500 shadow-sm"></div>
+          <span class="text-foreground-base text-sm">ملغاة</span>
         </div>
       </div>
     </div>
