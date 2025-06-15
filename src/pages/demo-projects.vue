@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
     <div class="flex min-h-screen">
-      <div class="w-[25%] border-r border-border bg-background-surface">
+      <div class="border-r border-border bg-background-surface">
         <ProjectsFilter disabled />
       </div>
       <div class="flex-1 bg-background">
