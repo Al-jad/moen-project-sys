@@ -1,45 +1,49 @@
 import type { Attachment } from './attachment';
 import type { Beneficiary } from './beneficiary';
-import type { Component } from './component';
-
 export interface FundedProjectComponent {
-  id?: number;
   name: string;
   targetPercentage: number;
-  activities?: FundedProjectActivity[];
+  activities: FundedProjectActivity[];
+  projectId: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FundedProjectActivity {
-  id?: number;
   name: string;
-  description?: string;
-  selectedPeriods?: number[];
+  targetPercentage: number;
+  notes: string;
+  selectedPeriods: number[];
+  id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FundedProject {
-  id: number;
-  name: string;
-  executingDepartment: string;
-  implementingEntity: string;
-  beneficiaries: Beneficiary[];
-  grantingEntity: string;
   fundingType: number;
-  cost: number;
-  actualStartDate?: string;
-  projectObjectives: string;
-  duration: number;
   periodType: number;
+  duration: number;
+  name: null;
+  executingDepartment: null;
+  implementingEntity: null;
+  grantingEntity: null;
+  cost: null;
+  actualStartDate: string;
+  projectObjectives: null;
+  lng: null;
+  lat: null;
   projectStatus: number;
-  lat: number;
-  lng: number;
-  isGovernment: boolean;
-  financialAchievement: number;
-  components: Component[];
+  isFunded: null;
+  isGovernment: null;
+  currency: number;
+  financialAchievement: null;
+  components: FundedProjectComponent[];
   attachments: Attachment[];
+  beneficiaries: Beneficiary[];
+  id: string;
   createdAt: string;
   updatedAt: string;
-  currency: number;
-  isFunded: boolean | null;
 }
 
 export interface CreateFundedProjectRequest {

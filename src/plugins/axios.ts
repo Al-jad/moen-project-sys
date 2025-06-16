@@ -13,7 +13,7 @@ export interface ApiConfig {
 }
 
 export const API_CONFIG: ApiConfig = {
-  BASE_URL: 'https://pmsapi.alfakharco.com/',
+  BASE_URL: 'https://moenapi.idara-iq.com',
   FILE_URL: 'https://encode.ibaity.com/uploads/raw',
 };
 

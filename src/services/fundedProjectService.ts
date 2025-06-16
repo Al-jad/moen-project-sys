@@ -17,17 +17,17 @@ import type {
 
 class FundedProjectService {
   async getAllProjects(params?: QueryParams): Promise<FundedProject[]> {
-    const response = await axiosInstance.get('/api/Project', { params });
+    const response = await axiosInstance.get('/funded', { params });
     return response.data;
   }
 
   async getProjectById(id: number | string): Promise<FundedProject> {
-    const response = await axiosInstance.get(`/api/Project/${id}`);
+    const response = await axiosInstance.get(`/funded/${id}`);
     return response.data;
   }
 
   async createProject(projectData: CreateFundedProjectRequest): Promise<FundedProject> {
-    const response = await axiosInstance.post('/api/Project', projectData);
+    const response = await axiosInstance.post('/funded', projectData);
     return response.data;
   }
 
@@ -35,131 +35,131 @@ class FundedProjectService {
     id: number | string,
     projectData: UpdateFundedProjectRequest
   ): Promise<FundedProject> {
-    const response = await axiosInstance.put(`/api/Project/${id}`, projectData);
+    const response = await axiosInstance.put(`/funded/${id}`, projectData);
     return response.data;
   }
 
   async deleteProject(id: number | string): Promise<void> {
-    await axiosInstance.delete(`/api/Project/${id}`);
+    await axiosInstance.delete(`/funded/${id}`);
   }
 
   // Component CRUD Operations
   async getAllComponents(projectId?: number): Promise<Component[]> {
     const params = projectId ? { projectId } : {};
-    const response = await axiosInstance.get('/api/Component', { params });
+    const response = await axiosInstance.get('/components', { params });
     return response.data;
   }
 
   async getComponentById(id: number): Promise<Component> {
-    const response = await axiosInstance.get(`/api/Component/${id}`);
+    const response = await axiosInstance.get(`/components/${id}`);
     return response.data;
   }
 
   async getComponentsByProjectId(projectId: number): Promise<Component[]> {
-    const response = await axiosInstance.get(`/api/Component/Project/${projectId}`);
+    const response = await axiosInstance.get(`/components/Project/${projectId}`);
     return response.data;
   }
 
   async createComponent(componentData: CreateComponentRequest): Promise<Component> {
-    const response = await axiosInstance.post('/api/Component', componentData);
+    const response = await axiosInstance.post('/components', componentData);
     return response.data;
   }
 
   async updateComponent(id: number, componentData: UpdateComponentRequest): Promise<Component> {
-    const response = await axiosInstance.put(`/api/Component/${id}`, componentData);
+    const response = await axiosInstance.put(`/components/${id}`, componentData);
     return response.data;
   }
 
   async deleteComponent(id: number): Promise<void> {
-    await axiosInstance.delete(`/api/Component/${id}`);
+    await axiosInstance.delete(`/components/${id}`);
   }
 
   // Activity CRUD Operations
   async getAllActivities(componentId?: number): Promise<Activity[]> {
     const params = componentId ? { componentId } : {};
-    const response = await axiosInstance.get('/api/Activity', { params });
+    const response = await axiosInstance.get('/activities', { params });
     return response.data;
   }
 
   async getActivityById(id: number): Promise<Activity> {
-    const response = await axiosInstance.get(`/api/Activity/${id}`);
+    const response = await axiosInstance.get(`/activities/${id}`);
     return response.data;
   }
 
   async getActivitiesByComponentId(componentId: number): Promise<Activity[]> {
-    const response = await axiosInstance.get(`/api/Activity/Component/${componentId}`);
+    const response = await axiosInstance.get(`/activities/component/${componentId}`);
     return response.data;
   }
 
   async createActivity(activityData: CreateActivityRequest): Promise<Activity> {
-    const response = await axiosInstance.post('/api/Activity', activityData);
+    const response = await axiosInstance.post('/activities', activityData);
     return response.data;
   }
 
   async updateActivity(id: number, activityData: UpdateActivityRequest): Promise<Activity> {
-    const response = await axiosInstance.put(`/api/Activity/${id}`, activityData);
+    const response = await axiosInstance.put(`/activities/${id}`, activityData);
     return response.data;
   }
 
   async deleteActivity(id: number): Promise<void> {
-    await axiosInstance.delete(`/api/Activity/${id}`);
+    await axiosInstance.delete(`/activities/${id}`);
   }
 
   // Attachment CRUD Operations
   async getAllAttachments(projectId?: number): Promise<Attachment[]> {
     const params = projectId ? { projectId } : {};
-    const response = await axiosInstance.get('/api/Attachment', { params });
+    const response = await axiosInstance.get('/attachments', { params });
     return response.data;
   }
 
   async getAttachmentById(id: number): Promise<Attachment> {
-    const response = await axiosInstance.get(`/api/Attachment/${id}`);
+    const response = await axiosInstance.get(`/attachments/${id}`);
     return response.data;
   }
 
   async getAttachmentsByProjectId(projectId: number): Promise<Attachment[]> {
-    const response = await axiosInstance.get(`/api/Attachment/Project/${projectId}`);
+    const response = await axiosInstance.get(`/attachments/Project/${projectId}`);
     return response.data;
   }
 
   async createAttachment(attachmentData: CreateAttachmentRequest): Promise<Attachment> {
-    const response = await axiosInstance.post('/api/Attachment', attachmentData);
+    const response = await axiosInstance.post('/attachments', attachmentData);
     return response.data;
   }
 
   async updateAttachment(id: number, attachmentData: UpdateAttachmentRequest): Promise<Attachment> {
-    const response = await axiosInstance.put(`/api/Attachment/${id}`, attachmentData);
+    const response = await axiosInstance.put(`/attachments/${id}`, attachmentData);
     return response.data;
   }
 
   async deleteAttachment(id: number): Promise<void> {
-    await axiosInstance.delete(`/api/Attachment/${id}`);
+    await axiosInstance.delete(`/attachments/${id}`);
   }
 
   // Utility Methods
   async searchProjects(searchTerm: string): Promise<FundedProject[]> {
-    const response = await axiosInstance.get('/api/Project', {
+    const response = await axiosInstance.get('/funded', {
       params: { search: searchTerm },
     });
     return response.data;
   }
 
   async getProjectsByStatus(status: number): Promise<FundedProject[]> {
-    const response = await axiosInstance.get('/api/Project', {
+    const response = await axiosInstance.get('/funded', {
       params: { status },
     });
     return response.data;
   }
 
   async getProjectsByFundingType(fundingType: number): Promise<FundedProject[]> {
-    const response = await axiosInstance.get('/api/Project', {
+    const response = await axiosInstance.get('/funded', {
       params: { fundingType },
     });
     return response.data;
   }
 
   async getGovernmentProjects(): Promise<FundedProject[]> {
-    const response = await axiosInstance.get('/api/Project', {
+    const response = await axiosInstance.get('/funded', {
       params: { isGovernment: true },
     });
     return response.data;
@@ -174,7 +174,7 @@ class FundedProjectService {
     government: number;
     nonGovernment: number;
   }> {
-    const response = await axiosInstance.get('/api/Project/statistics');
+    const response = await axiosInstance.get('/funded/statistics');
     return response.data;
   }
 
@@ -191,7 +191,7 @@ class FundedProjectService {
     for (const componentData of components) {
       await this.createComponent({
         ...componentData,
-        projectId,
+        projectId: projectId as unknown as number,
       });
     }
 
@@ -203,7 +203,7 @@ class FundedProjectService {
     id: number,
     financialAchievement: number
   ): Promise<FundedProject> {
-    const response = await axiosInstance.put(`/api/Project/${id}`, {
+    const response = await axiosInstance.put(`/funded/${id}`, {
       financialAchievement: Number(financialAchievement) || 0,
     });
     return response.data;

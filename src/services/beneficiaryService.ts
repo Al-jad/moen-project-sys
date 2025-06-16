@@ -10,17 +10,17 @@ import type {
 class BeneficiaryService {
   // Beneficiary CRUD Operations
   async getAllBeneficiaries(params?: QueryParams): ServiceResponse<Beneficiary[]> {
-    const response = await axiosInstance.get('/api/beneficiary', { params });
+    const response = await axiosInstance.get('/beneficiaries', { params });
     return response;
   }
 
   async getBeneficiaryById(id: string): ServiceResponse<Beneficiary> {
-    const response = await axiosInstance.get(`/api/beneficiary/${id}`);
+    const response = await axiosInstance.get(`/beneficiaries/${id}`);
     return response;
   }
 
   async createBeneficiary(beneficiaryData: CreateBeneficiaryRequest): ServiceResponse<Beneficiary> {
-    const response = await axiosInstance.post('/api/beneficiary', beneficiaryData);
+    const response = await axiosInstance.post('/beneficiaries', beneficiaryData);
     return response;
   }
 
@@ -28,32 +28,32 @@ class BeneficiaryService {
     id: string,
     beneficiaryData: UpdateBeneficiaryRequest
   ): ServiceResponse<Beneficiary> {
-    const response = await axiosInstance.put(`/api/beneficiary/${id}`, beneficiaryData);
+    const response = await axiosInstance.put(`/beneficiaries/${id}`, beneficiaryData);
     return response;
   }
 
   async deleteBeneficiary(id: string): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/api/beneficiary/${id}`);
+    const response = await axiosInstance.delete(`/beneficiaries/${id}`);
     return response;
   }
 
   // Utility Methods
   async searchBeneficiaries(searchTerm: string): ServiceResponse<Beneficiary[]> {
-    const response = await axiosInstance.get('/api/beneficiary', {
+    const response = await axiosInstance.get('/beneficiaries', {
       params: { search: searchTerm },
     });
     return response;
   }
 
   async getBeneficiariesByLocation(location: string): ServiceResponse<Beneficiary[]> {
-    const response = await axiosInstance.get('/api/beneficiary', {
+    const response = await axiosInstance.get('/beneficiaries', {
       params: { location },
     });
     return response;
   }
 
   async getBeneficiariesByReferenceEntity(referenceEntity: string): ServiceResponse<Beneficiary[]> {
-    const response = await axiosInstance.get('/api/beneficiary', {
+    const response = await axiosInstance.get('/beneficiaries', {
       params: { referenceEntity },
     });
     return response;
