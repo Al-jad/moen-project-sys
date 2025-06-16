@@ -221,7 +221,7 @@
                     <!-- Add Activity Button (Moved here) -->
                     <PrimaryButton
                       @click="addActivity(index)"
-                      variant="accent"
+                      variant="primary"
                       size="sm"
                       class="w-full"
                     >
@@ -273,7 +273,7 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextArea from '@/components/CustomTextArea.vue';
   import FormField from '@/components/FormField.vue';
@@ -281,11 +281,17 @@
   import ProjectAchivments from '@/components/funded-project/ProjectAchivments.vue';
   import NumberInput from '@/components/NumberInput.vue';
   import ScheduleTimeLine from '@/components/ScheduleTimeLine.vue';
-  import Button from '@/components/ui/button/Button.vue'; // Adjust the path if needed
+  import Button from '@/components/ui/button/Button.vue';
   import { CURRENCY_CONVERSION } from '@/constants';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
-  import axiosInstance from '@/plugins/axios';
   import { useFundedProjectStore } from '@/stores/funded-project-store';
+  import {
+    type CreateFundedProjectRequest,
+    type FundedProject,
+    FundedProjectStatus,
+    FundingType,
+    PeriodType,
+  } from '@/types/funded-project';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, onUnmounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -295,63 +301,39 @@
   const router = useRouter();
   const route = useRoute();
   const projectSaved = ref(false);
-  const projectId = ref(null);
+  const projectId = ref<string | undefined>(undefined);
   const selectedCurrency = ref('USD');
   const currencyOptions = [
     { value: 'USD', label: 'دولار أمريكي' },
     { value: 'IQD', label: 'دينار عراقي' },
   ];
 
-  // Function to fetch project data directly
-  const fetchProjectData = async (projectId) => {
+  const fetchProjectData = async (id: string) => {
     try {
-      console.log('Fetching project data for ID:', projectId);
+      const project = await store.fetchProjectById(id);
 
-      // Make a simple GET request and await the response
-      const response = await axiosInstance.get(`/api/projects/${projectId}`);
-
-      // Log the entire response for debugging
-      console.log('API Response:', response);
-      console.log('Response data:', response.data);
-      console.log('isGovernment in response:', response.data.isGovernment);
-
-      // Update the store with the project data
-      if (response.data) {
-        // First assign all data
-        Object.assign(store.form, response.data);
-
-        // Then explicitly force isGovernment to be a boolean
-        store.form.isGovernment = response.data.isGovernment === true;
-
-        console.log('Updated store.form:', store.form);
-        console.log(
-          'Store form isGovernment (after update):',
-          store.form.isGovernment,
-          typeof store.form.isGovernment
-        );
-
-        // Update UI state
+      if (project) {
         projectSaved.value = true;
-        projectId.value = response.data.id;
+        projectId.value = project.id;
       }
     } catch (error) {
       console.error('Error fetching project data:', error);
+      toast.error('فشل في جلب بيانات المشروع');
     }
   };
 
   onMounted(async () => {
-    // Initialize store.form first
     store.form = {
       name: '',
       executingDepartment: '',
       implementingEntity: '',
-      beneficiaryEntities: [], // Initialize as empty array
+      beneficiaryEntities: [],
       grantingEntity: '',
-      fundingType: 1,
+      fundingType: FundingType.GRANT,
       cost: null,
       projectObjectives: '',
       duration: 0,
-      periodType: 1,
+      periodType: PeriodType.WEEKLY,
       durationType: 'weeks',
       actualStartDate: null,
       components: [],
@@ -359,40 +341,16 @@
       longitude: '',
       isSaving: false,
       hasUnsavedChanges: false,
-      projectStatus: 1,
+      projectStatus: FundedProjectStatus.IN_PROGRESS,
       isGovernment: false,
       financialAchievement: 0,
     };
 
-    // Now it's safe to check and transform beneficiaryEntities if needed
-    if (!Array.isArray(store.form.beneficiaryEntities)) {
-      store.form.beneficiaryEntities = store.form.beneficiaryEntities
-        ? [store.form.beneficiaryEntities]
-        : [];
-    }
-
-    // A check to ensure components is always an array
-    if (!Array.isArray(store.form.components)) {
-      store.form.components = [];
-    }
-
-    console.log(
-      'Component mounted, isGovernment initialized as:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-
-    // If there's a project ID in the route, fetch the project data
-    const routeProjectId = route.params.id;
+    const routeProjectId = route.params.id as string;
     if (routeProjectId) {
       await fetchProjectData(routeProjectId);
-    } else {
-      // For new projects, clear the localStorage/sessionStorage
-      localStorage.removeItem('fundedProject');
-      sessionStorage.removeItem('fundedProject');
     }
 
-    // Get saved currency from localStorage if available
     const savedCurrency = localStorage.getItem('projectCurrency');
     if (savedCurrency === 'IQD' || savedCurrency === 'USD') {
       selectedCurrency.value = savedCurrency;
@@ -405,8 +363,8 @@
     window.removeEventListener('beforeunload', handleBeforeUnload);
   });
 
-  const handleBeforeUnload = (e) => {
-    if (store.hasUnsavedChanges) {
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (store.form.hasUnsavedChanges) {
       e.preventDefault();
       e.returnValue = '';
     }
@@ -415,27 +373,20 @@
   const totalPeriods = computed(() => {
     if (!store.form.duration) return 0;
 
-    // For weeks (periodType 1), convert months to weeks if needed
     if (store.form.periodType === 1) {
-      // If the durationType is 'months', convert to weeks (approx 4 weeks per month)
       if (store.form.durationType === 'months') {
-        return parseInt(store.form.duration) * 4;
+        return Number(store.form.duration) * 4;
       }
-      // Otherwise, if already in weeks, return the duration directly
-      return parseInt(store.form.duration);
+      return Number(store.form.duration);
     }
-    // For months (periodType 2), return the duration directly
-    else {
-      return parseInt(store.form.duration);
-    }
+    return Number(store.form.duration);
   });
 
-  const updateGovernmentStatus = (value) => {
+  const updateGovernmentStatus = (value: boolean) => {
     store.form.isGovernment = value;
     store.hasUnsavedChanges = true;
   };
 
-  // New function to validate basic project info
   const validateProjectBasicInfo = () => {
     if (!store.form.name) {
       toast.error('يرجى ادخال اسم المشروع');
@@ -472,83 +423,38 @@
     return true;
   };
 
-  // Function to prepare form data before sending to API
   const prepareFormData = () => {
-    // Ensure data types are correct before saving
     if (store.form.cost) {
-      // First parse as float to handle any existing formatting
-      let costValue = parseFloat(store.form.cost);
-
-      // Ensure it's a valid number
+      let costValue = Number(store.form.cost);
       if (!isNaN(costValue)) {
-        // Convert currency if needed
         if (selectedCurrency.value === 'IQD') {
-          // Convert from IQD to USD using constant
           costValue = costValue * CURRENCY_CONVERSION.IQD_TO_USD;
-          costValue = parseFloat(costValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
+          costValue = Number(costValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
         }
         store.form.cost = costValue;
       }
     }
 
-    // Ensure financialAchievement is a number and has a default value
-    if (store.form.financialAchievement === undefined || store.form.financialAchievement === null) {
-      store.form.financialAchievement = 0;
-    } else {
-      store.form.financialAchievement = Number(store.form.financialAchievement);
-    }
+    store.form.financialAchievement = Number(store.form.financialAchievement) || 0;
+    store.form.duration = Number(store.form.duration);
+    store.form.latitude = Number(store.form.latitude);
+    store.form.longitude = Number(store.form.longitude);
+    store.form.isGovernment = Boolean(store.form.isGovernment);
 
-    if (store.form.duration) {
-      store.form.duration = parseInt(store.form.duration);
-
-      // Ensure periodType and durationType are synchronized
-      if (store.form.periodType === 1) {
-        store.form.durationType = 'weeks';
-      } else if (store.form.periodType === 2) {
-        store.form.durationType = 'months';
+    if (store.form.actualStartDate) {
+      const date = new Date(store.form.actualStartDate);
+      if (!isNaN(date.getTime())) {
+        store.form.actualStartDate = date.toISOString();
       }
     }
 
-    if (store.form.latitude) {
-      store.form.latitude = parseFloat(store.form.latitude);
-    }
-
-    if (store.form.longitude) {
-      store.form.longitude = parseFloat(store.form.longitude);
-    }
-
-    if (store.form.actualStartDate instanceof Date) {
-      store.form.actualStartDate = store.form.actualStartDate.toISOString();
-    }
-
-    // Make sure isGovernment is explicitly a boolean
-    store.form.isGovernment =
-      typeof store.form.isGovernment === 'boolean'
-        ? store.form.isGovernment
-        : Boolean(store.form.isGovernment);
-
-    console.log(
-      'Preparing form data with isGovernment:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-    console.log(
-      'Financial Achievement:',
-      store.form.financialAchievement,
-      typeof store.form.financialAchievement
-    );
-
     if (Array.isArray(store.form.beneficiaryEntities)) {
-      store.form.beneficiaryEntities = store.form.beneficiaryEntities
-        .filter((entity) => entity && entity.toString().trim() !== '')
-        .map((entity) => {
-          const parsed = parseInt(entity);
-          return !isNaN(parsed) ? parsed : entity;
-        });
+      store.form.beneficiaryEntities = store.form.beneficiaryEntities.filter(
+        (entity) => entity && entity.toString().trim() !== ''
+      );
     }
   };
 
-  // Save the initial project data (without components)
   const saveProjectWithComponents = async () => {
     if (!validateProjectBasicInfo()) {
       return;
@@ -556,127 +462,75 @@
 
     try {
       prepareFormData();
-      store.isSaving = true;
+      store.form.isSaving = true;
 
-      console.log('1. Saving project...');
-      // First, save only the project using direct axios call
-      const projectResponse = await axiosInstance.post('/api/project', {
+      const projectData: CreateFundedProjectRequest = {
         fundingType: store.form.fundingType,
         periodType: store.form.periodType,
-        duration: parseInt(store.form.duration) || 0,
+        duration: Number(store.form.duration) || 0,
         name: store.form.name,
         isGovernment: store.form.isGovernment,
         executingDepartment: store.form.executingDepartment,
         implementingEntity: store.form.implementingEntity,
         grantingEntity: store.form.grantingEntity,
-        lng: store.form.longitude ? parseFloat(store.form.longitude) : 0,
-        lat: store.form.latitude ? parseFloat(store.form.latitude) : 0,
+        lat: Number(store.form.latitude) || 0,
+        lng: Number(store.form.longitude) || 0,
         beneficiaryEntities: store.form.beneficiaryEntities,
-        projectStatus: store.form.projectStatus || 1,
-        cost: parseFloat(store.form.cost) || 0,
-        actualStartDate: store.form.actualStartDate,
-        projectObjectives: store.form.projectObjectives || '',
-        financialAchievement: Number(store.form.financialAchievement) || 0,
-      });
+        projectStatus: store.form.projectStatus,
+        cost: Number(store.form.cost) || 0,
+        actualStartDate: store.form.actualStartDate || undefined,
+        projectObjectives: store.form.projectObjectives,
+      };
 
-      if (!projectResponse.data?.id) {
-        throw new Error('Failed to get project ID after creation');
-      }
+      const savedProject = await store.createProject(projectData);
 
-      const projectId = projectResponse.data.id;
-      console.log('Project saved with ID:', projectId);
+      if (savedProject) {
+        toast.success('تم حفظ المشروع بنجاح');
 
-      // Then save each component and its activities sequentially
-      if (store.form.components && store.form.components.length > 0) {
-        for (const component of store.form.components) {
-          console.log('2. Saving component:', component.name);
-          // Save component first using direct axios call
-          const componentResponse = await axiosInstance.post('/api/Component', {
-            projectId: projectId,
-            name: component.name,
-            targetPercentage: component.targetPercentage || 0,
-          });
-
-          if (!componentResponse.data?.id) {
-            throw new Error('Failed to get component ID after creation');
-          }
-
-          const componentId = componentResponse.data.id;
-          console.log('Component saved with ID:', componentId);
-
-          // Then save each activity for this component
-          if (component.activities && component.activities.length > 0) {
-            for (const activity of component.activities) {
-              console.log('3. Saving activity:', activity.name, 'for component:', componentId);
-              // Save activity using direct axios call
-              const activityResponse = await axiosInstance.post('/api/Activity', {
-                componentId: componentId,
-                name: activity.name,
-                targetPercentage: activity.targetPercentage || 0,
-                notes: activity.notes || '',
-                selectedPeriods: activity.selectedPeriods || [],
-                periodType: store.form.periodType,
-              });
-
-              if (!activityResponse.data) {
-                throw new Error('Failed to save activity');
-              }
-              console.log('Activity saved successfully');
-            }
-          }
-        }
-      }
-
-      // Show success message
-      toast.success('تم حفظ المشروع بنجاح');
-
-      // Wait a moment before redirecting to ensure the toast is visible
-      setTimeout(() => {
-        router.push({
-          path: '/done',
-          query: {
-            title: 'تم حفظ المشروع بنجاح',
-            message: `تم حفظ المشروع "${store.form.name}" بنجاح`,
-            projectDetails: {
-              id: projectId,
-              name: store.form.name,
-              executingDepartment: store.form.executingDepartment,
-              components: store.form.components,
+        setTimeout(() => {
+          router.push({
+            path: '/done',
+            query: {
+              title: 'تم حفظ المشروع بنجاح',
+              message: `تم حفظ المشروع "${store.form.name}" بنجاح`,
+              projectDetails: JSON.stringify({
+                id: savedProject.id,
+                name: savedProject.name,
+                executingDepartment: savedProject.executingDepartment,
+                components: savedProject.components,
+              }),
             },
-          },
-        });
-      }, 1000);
+          });
+        }, 1000);
+      }
     } catch (error) {
       console.error('Error in saveProjectWithComponents:', error);
       handleSaveError(error);
     } finally {
-      store.isSaving = false;
+      store.form.isSaving = false;
     }
   };
 
-  // Keep the helper functions for adding/removing components and activities
   const addNewComponent = () => {
     if (!store.form.components) {
       store.form.components = [];
     }
 
-    const newComponent = {
+    store.form.components.push({
       name: '',
       targetPercentage: 0,
       activities: [],
-    };
-
-    store.form.components.push(newComponent);
+    });
     store.hasUnsavedChanges = true;
   };
 
-  const removeComponent = (index) => {
+  const removeComponent = (index: number) => {
     if (!store.form.components) return;
     store.form.components.splice(index, 1);
     store.hasUnsavedChanges = true;
   };
 
-  const addActivity = (componentIndex) => {
+  const addActivity = (componentIndex: number) => {
     if (!store.form.components?.[componentIndex]) return;
 
     const newActivity = {
@@ -684,7 +538,6 @@
       targetPercentage: 0,
       notes: '',
       selectedPeriods: [],
-      periodType: store.form.periodType || 1,
     };
 
     if (!store.form.components[componentIndex].activities) {
@@ -695,13 +548,13 @@
     store.hasUnsavedChanges = true;
   };
 
-  const deleteActivity = (componentIndex, activityIndex) => {
+  const deleteActivity = (componentIndex: number, activityIndex: number) => {
     if (!store.form.components?.[componentIndex]?.activities) return;
     store.form.components[componentIndex].activities.splice(activityIndex, 1);
     store.hasUnsavedChanges = true;
   };
 
-  const toggleActivityPeriod = (componentIndex, activityIndex, period) => {
+  const toggleActivityPeriod = (componentIndex: number, activityIndex: number, period: number) => {
     const activity = store.form.components[componentIndex].activities[activityIndex];
 
     if (!activity.selectedPeriods) {
@@ -715,17 +568,17 @@
       activity.selectedPeriods.splice(periodIndex, 1);
     }
 
-    activity.selectedPeriods.sort((a, b) => a - b);
+    activity.selectedPeriods.sort((a: number, b: number) => a - b);
     store.hasUnsavedChanges = true;
   };
 
-  const clearActivityPeriods = (componentIndex, activityIndex) => {
+  const clearActivityPeriods = (componentIndex: number, activityIndex: number) => {
     const activity = store.form.components[componentIndex].activities[activityIndex];
     activity.selectedPeriods = [];
     store.hasUnsavedChanges = true;
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('ar-EG', {
@@ -735,10 +588,14 @@
     });
   };
 
-  const calculateEndDate = (startDateString, duration, durationType) => {
+  const calculateEndDate = (
+    startDateString: string,
+    duration: number,
+    durationType: 'weeks' | 'months'
+  ) => {
     if (!startDateString || !duration) return '';
     const start = new Date(startDateString);
-    const durationNum = parseInt(duration);
+    const durationNum = Number(duration);
     if (durationType === 'weeks') {
       start.setDate(start.getDate() + durationNum * 7);
     } else if (durationType === 'months') {
@@ -760,102 +617,64 @@
     { base: '#EC4899', light: 'rgba(236, 72, 153, 0.2)' },
   ];
 
-  const getComponentColor = (index, isLight = false) => {
+  const getComponentColor = (index: number, isLight = false) => {
     const colorIndex = index % componentColors.length;
     return isLight ? componentColors[colorIndex].light : componentColors[colorIndex].base;
   };
 
-  const formatCost = (value) => {
+  const formatCost = (value: number | null) => {
     if (!value) return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  const updateProjectDetails = (updatedProject) => {
-    console.log('Received updated project data from ProjectDetails');
-    console.log(
-      'Current isGovernment value:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-    console.log(
-      'New isGovernment value:',
-      updatedProject.isGovernment,
-      typeof updatedProject.isGovernment
-    );
-
-    // First, update all other properties
+  const updateProjectDetails = (updatedProject: Partial<FundedProject>) => {
     Object.assign(store.form, updatedProject);
-
-    // Then, handle isGovernment explicitly to ensure it's a boolean
-    if (updatedProject.hasOwnProperty('isGovernment')) {
-      // Convert explicitly to boolean (true for true/"true"/1, false otherwise)
-      store.form.isGovernment =
-        updatedProject.isGovernment === true ||
-        updatedProject.isGovernment === 'true' ||
-        updatedProject.isGovernment === 1;
-    }
-
-    console.log(
-      'After update, isGovernment value:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-
+    store.form.isGovernment = Boolean(updatedProject.isGovernment);
     store.hasUnsavedChanges = true;
   };
 
-  // Handle API errors
-  const handleSaveError = (error) => {
+  const handleSaveError = (error: unknown) => {
     console.error('API Error:', error);
     let errorMessage = 'يرجى المحاولة مرة أخرى';
 
-    if (error.response) {
-      console.error('Error status:', error.response.status);
-      console.error('Error data:', error.response.data);
-
-      // Handle specific error codes
-      if (error.response.status === 400) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const response = error.response as { status?: number; data?: { message?: string } };
+      if (response.status === 400) {
         errorMessage = 'بيانات غير صحيحة، يرجى التحقق من المدخلات';
-      } else if (error.response.status === 401) {
+      } else if (response.status === 401) {
         errorMessage = 'غير مصرح لك بإضافة مشروع';
-      } else if (error.response.status === 500) {
+      } else if (response.status === 500) {
         errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
       }
     }
 
     toast.error('حدث خطأ أثناء الحفظ', {
-      description: error.response?.data?.message || errorMessage,
+      description:
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        errorMessage,
     });
   };
 
-  const handleCurrencyChange = (newCurrency) => {
+  const handleCurrencyChange = (newCurrency: 'USD' | 'IQD') => {
     if (store.form.cost && selectedCurrency.value !== newCurrency) {
-      // Convert the cost value when currency changes
-      const currentCost = parseFloat(store.form.cost);
+      const currentCost = Number(store.form.cost);
       if (!isNaN(currentCost)) {
         if (newCurrency === 'IQD' && selectedCurrency.value === 'USD') {
-          // Convert from USD to IQD using constant
-          // For display, we want to show a clean integer value for IQD
           const convertedValue = currentCost * CURRENCY_CONVERSION.USD_TO_IQD;
-          store.form.cost = parseInt(convertedValue.toFixed(0));
+          store.form.cost = Math.round(convertedValue);
         } else if (newCurrency === 'USD' && selectedCurrency.value === 'IQD') {
-          // Convert from IQD to USD using constant
           const convertedValue = currentCost * CURRENCY_CONVERSION.IQD_TO_USD;
-          // Preserve 2 decimal places for USD but keep as a clean number
-          store.form.cost = parseFloat(convertedValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
+          store.form.cost = Number(convertedValue.toFixed(CURRENCY_CONVERSION.PRECISION.USD));
         }
       }
     }
     selectedCurrency.value = newCurrency;
-
-    // Save preference to localStorage
     localStorage.setItem('projectCurrency', newCurrency);
   };
 
-  // Add a helper function to format cost display
-  const formatCostWithCurrency = (value, currency) => {
+  const formatCostWithCurrency = (value: number | null, currency: 'USD' | 'IQD') => {
     if (!value) return '';
-    const numValue = parseFloat(value);
+    const numValue = Number(value);
     if (isNaN(numValue)) return '';
 
     let formattedValue;
@@ -874,46 +693,34 @@
     }
   };
 
-  // Add an explicit console log when passing the form to ProjectDetails
   const projectFormWithGovernment = computed(() => {
-    // Add safety check for store.form
     if (!store.form) {
       return {
         isGovernment: false,
         components: [],
-        // Add other default values that ProjectDetails component expects
         name: '',
         executingDepartment: '',
         implementingEntity: '',
         beneficiaryEntities: [],
         grantingEntity: '',
-        fundingType: 1,
+        fundingType: FundingType.GRANT,
         cost: null,
         projectObjectives: '',
         duration: 0,
-        periodType: 1,
+        periodType: PeriodType.WEEKLY,
         durationType: 'weeks',
         actualStartDate: null,
         latitude: '',
         longitude: '',
-        projectStatus: 1,
+        projectStatus: FundedProjectStatus.IN_PROGRESS,
         financialAchievement: 0,
       };
     }
 
-    const isGov = Boolean(store.form.isGovernment);
-    console.log('Computing projectFormWithGovernment:');
-    console.log(
-      '- store.form.isGovernment:',
-      store.form.isGovernment,
-      typeof store.form.isGovernment
-    );
-    console.log('- converted to Boolean:', isGov, typeof isGov);
-
     return {
       ...store.form,
       components: store.form.components || [],
-      isGovernment: isGov,
+      isGovernment: Boolean(store.form.isGovernment),
     };
   });
 </script>

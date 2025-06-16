@@ -31,13 +31,28 @@ interface FormState {
   financialAchievement: number;
 }
 
+// Add interface for non-null project
+interface NonNullProject
+  extends Omit<
+    FundedProject,
+    'name' | 'executingDepartment' | 'implementingEntity' | 'grantingEntity' | 'cost'
+  > {
+  name: string;
+  executingDepartment: string;
+  implementingEntity: string;
+  grantingEntity: string;
+  cost: number;
+}
+
 export const useFundedProjectStore = defineStore('funded-project', () => {
   // State
-  const projects = ref<FundedProject[]>([]);
-  const filteredProjects = ref<FundedProject[]>([]);
+  const projects = ref<NonNullProject[]>([]);
+  const filteredProjects = ref<NonNullProject[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const currentProject = ref<FundedProject | null>(null);
+  const currentProject = ref<NonNullProject | null>(null);
+  const isSaving = ref(false);
+  const hasUnsavedChanges = ref(false);
 
   // Add form state with proper initialization
   const form = ref<FormState>({
@@ -87,7 +102,14 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.getAllProjects();
-      projects.value = response;
+      projects.value = response.map((project) => ({
+        ...project,
+        name: project.name || '',
+        executingDepartment: project.executingDepartment || '',
+        implementingEntity: project.implementingEntity || '',
+        grantingEntity: project.grantingEntity || '',
+        cost: project.cost || 0,
+      }));
       filteredProjects.value = [...projects.value];
     } catch (err) {
       error.value = 'Failed to fetch projects';
@@ -102,8 +124,16 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.getProjectById(id);
-      currentProject.value = response;
-      return response;
+      const nonNullProject: NonNullProject = {
+        ...response,
+        name: response.name || '',
+        executingDepartment: response.executingDepartment || '',
+        implementingEntity: response.implementingEntity || '',
+        grantingEntity: response.grantingEntity || '',
+        cost: response.cost || 0,
+      };
+      currentProject.value = nonNullProject;
+      return nonNullProject;
     } catch (err) {
       error.value = 'Failed to fetch project';
       console.error('Error fetching project:', err);
@@ -118,9 +148,17 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
       loading.value = true;
       error.value = null;
       const response = await fundedProjectService.createProject(projectData);
-      projects.value.push(response);
+      const nonNullProject: NonNullProject = {
+        ...response,
+        name: response.name || '',
+        executingDepartment: response.executingDepartment || '',
+        implementingEntity: response.implementingEntity || '',
+        grantingEntity: response.grantingEntity || '',
+        cost: response.cost || 0,
+      };
+      projects.value.push(nonNullProject);
       filteredProjects.value = [...projects.value];
-      return response;
+      return nonNullProject;
     } catch (err) {
       error.value = 'Failed to create project';
       console.error('Error creating project:', err);
@@ -138,12 +176,20 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
         ...projectData,
         id: typeof id === 'string' ? parseInt(id) : id,
       });
+      const nonNullProject: NonNullProject = {
+        ...response,
+        name: response.name || '',
+        executingDepartment: response.executingDepartment || '',
+        implementingEntity: response.implementingEntity || '',
+        grantingEntity: response.grantingEntity || '',
+        cost: response.cost || 0,
+      };
       const index = projects.value.findIndex((p) => p.id === id);
       if (index !== -1) {
-        projects.value[index] = response;
+        projects.value[index] = nonNullProject;
         filteredProjects.value = [...projects.value];
       }
-      return response;
+      return nonNullProject;
     } catch (err) {
       error.value = 'Failed to update project';
       console.error('Error updating project:', err);
@@ -242,6 +288,8 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     error,
     currentProject,
     form,
+    isSaving,
+    hasUnsavedChanges,
 
     // Getters
     totalProjects,

@@ -174,15 +174,14 @@
       </div>
       <div class="p-4">
         <div class="grid gap-6 md:grid-cols-2">
-          <FormField label="نوع التمويل">
+          <FormField label="نوع العملة">
             <template v-if="isEditing">
-              <select
+              <CustomSelect
                 v-model="formData.fundingType"
-                class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option :value="1">مشروع ممول</option>
-                <option :value="0">مشروع غير ممول</option>
-              </select>
+                :options="currencyOptions"
+                placeholder="اختر العملة"
+                :triggerClass="'flex flex-row-reverse w-full'"
+              />
             </template>
             <template v-else>
               <div class="text-sm font-medium text-foreground-heading">
@@ -259,7 +258,11 @@
   });
 
   const emit = defineEmits(['update:project']);
-
+  const currencyOptions = [
+    { value: 'USD', label: 'دولار أمريكي' },
+    { value: 'IQD', label: 'دينار عراقي' },
+    { value: 'EUR', label: 'يورو أوروبي' },
+  ];
   const store = useFundedProjectStore();
   const beneficiaries = ref([]);
   const formData = ref({

@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
     <div class="flex min-h-screen">
-      <div class="border-r border-border bg-background-surface">
+      <div class="h-full border-r border-border bg-background-surface">
         <ProjectsFilter
           :isFundedProjects="true"
           :showFundingTypeFilter="false"

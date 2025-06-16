@@ -1,7 +1,9 @@
 <template>
   <div
     :class="
-      disabled ? 'cursor-not-allowed opacity-80 min-h-screen w-[400px] bg-background p-6' : 'min-h-screen w-[400px] bg-background p-6'
+      disabled
+        ? 'min-h-screen w-[400px] cursor-not-allowed bg-background p-6 opacity-80'
+        : 'min-h-screen w-[400px] bg-background p-6'
     "
   >
     <div class="flex flex-col gap-6">
