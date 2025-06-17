@@ -12,7 +12,7 @@ export interface FormState {
   name: string;
   executingDepartment: string;
   implementingEntity: string;
-  beneficiaryEntities: number[];
+  beneficiaryEntities: string[];
   grantingEntity: string;
   fundingType: number;
   cost: number | null;
@@ -149,7 +149,11 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     try {
       loading.value = true;
       error.value = null;
+
+      // First create the project - no need for ID conversion
       const response = await fundedProjectService.createProject(projectData);
+
+      // If project creation was successful and we have components, create them
       const nonNullProject: NonNullProject = {
         ...response,
         name: response.name || '',

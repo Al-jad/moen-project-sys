@@ -331,6 +331,7 @@
       grantingEntity: '',
       fundingType: FundingType.GRANT,
       cost: null,
+      currency: 1,
       projectObjectives: '',
       duration: 0,
       periodType: PeriodType.WEEKLY,
@@ -435,11 +436,37 @@
       }
     }
 
+    // Clean up and normalize components data
+    if (store.form.components) {
+      store.form.components = store.form.components.map((component) => {
+        // Handle potential _custom wrapper
+        const componentData = component._custom ? component._custom.value : component;
+        return {
+          name: componentData.name || '',
+          targetPercentage: Number(componentData.targetPercentage) || 0,
+          activities: (componentData.activities || []).map(
+            (activity: {
+              name?: string;
+              targetPercentage?: number;
+              notes?: string;
+              selectedPeriods?: number[];
+            }) => ({
+              name: activity.name || '',
+              targetPercentage: Number(activity.targetPercentage) || 0,
+              notes: activity.notes || '',
+              selectedPeriods: activity.selectedPeriods || [],
+            })
+          ),
+        };
+      });
+    }
+
     store.form.financialAchievement = Number(store.form.financialAchievement) || 0;
     store.form.duration = Number(store.form.duration);
     store.form.latitude = Number(store.form.latitude);
     store.form.longitude = Number(store.form.longitude);
     store.form.isGovernment = Boolean(store.form.isGovernment);
+    store.form.currency = store.form.currency || 1;
 
     if (store.form.actualStartDate) {
       const date = new Date(store.form.actualStartDate);
@@ -480,6 +507,7 @@
         cost: Number(store.form.cost) || 0,
         actualStartDate: store.form.actualStartDate || undefined,
         projectObjectives: store.form.projectObjectives,
+        components: store.form.components || [],
       };
 
       const savedProject = await store.createProject(projectData);

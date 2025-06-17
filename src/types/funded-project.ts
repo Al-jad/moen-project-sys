@@ -47,22 +47,22 @@ export interface FundedProject {
 }
 
 export interface CreateFundedProjectRequest {
+  fundingType: number;
+  periodType: number;
+  duration: number;
   name: string;
+  isGovernment: boolean;
   executingDepartment: string;
   implementingEntity: string;
-  beneficiaryEntities: number[];
   grantingEntity: string;
-  fundingType: number;
+  lat: number;
+  lng: number;
+  beneficiaryEntities: string[];
+  projectStatus: number;
   cost: number;
   actualStartDate?: string;
   projectObjectives: string;
-  duration: number;
-  periodType: number;
-  projectStatus?: number;
-  lat: number;
-  lng: number;
-  isGovernment: boolean;
-  financialAchievement?: number;
+  components: FundedProjectComponentRequest[];
 }
 
 export interface UpdateFundedProjectRequest extends Partial<CreateFundedProjectRequest> {
@@ -72,6 +72,7 @@ export interface UpdateFundedProjectRequest extends Partial<CreateFundedProjectR
 export interface FundedProjectComponentRequest {
   name: string;
   targetPercentage: number;
+  activities: FundedProjectActivityRequest[];
 }
 
 export interface FundedProjectActivityRequest {
