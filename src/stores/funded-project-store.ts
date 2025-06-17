@@ -8,7 +8,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 // Add interface for form state
-interface FormState {
+export interface FormState {
   name: string;
   executingDepartment: string;
   implementingEntity: string;
@@ -16,14 +16,15 @@ interface FormState {
   grantingEntity: string;
   fundingType: number;
   cost: number | null;
+  currency: number;
   projectObjectives: string;
   duration: number;
   periodType: number;
   durationType: string;
   actualStartDate: string | null;
   components: any[];
-  latitude: string | number;
-  longitude: string | number;
+  latitude: number | string;
+  longitude: number | string;
   isSaving: boolean;
   hasUnsavedChanges: boolean;
   projectStatus: number;
@@ -63,6 +64,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     grantingEntity: '',
     fundingType: 1,
     cost: null,
+    currency: 1,
     projectObjectives: '',
     duration: 0,
     periodType: 1,
@@ -123,7 +125,7 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     try {
       loading.value = true;
       error.value = null;
-      const response = await fundedProjectService.getProjectById(id);
+      const response = await fundedProjectService.getProjectById(id.toString());
       const nonNullProject: NonNullProject = {
         ...response,
         name: response.name || '',
@@ -280,6 +282,15 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     });
   };
 
+  // Add new action for updating form
+  function updateForm(updates: Partial<FormState>) {
+    form.value = {
+      ...form.value,
+      ...updates,
+    };
+    hasUnsavedChanges.value = true;
+  }
+
   return {
     // State
     projects,
@@ -304,5 +315,6 @@ export const useFundedProjectStore = defineStore('funded-project', () => {
     deleteProject,
     filterProjects,
     sortProjects,
+    updateForm,
   };
 });

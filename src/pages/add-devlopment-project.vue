@@ -1,8 +1,8 @@
 <template>
   <DefaultLayout>
-    <div class="flex flex-col min-h-screen gap-4 p-6 bg-gray-200 dark:bg-gray-900">
-      <div class="w-full max-w-6xl mx-auto">
-        <h1 class="py-4 pb-6 text-2xl font-bold text-right text-gray-900 dark:text-gray-100"
+    <div class="flex min-h-screen flex-col gap-4 bg-gray-200 p-6 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-6xl">
+        <h1 class="py-4 pb-6 text-right text-2xl font-bold text-gray-900 dark:text-gray-100"
           >اضافة مشروع - تنمية الأقاليم
         </h1>
 
@@ -48,7 +48,7 @@
                 variant="outline"
                 class="flex items-center gap-2 dark:border-gray-700 dark:text-gray-100"
               >
-                <Icon icon="lucide:map-pin" class="w-4 h-4" />
+                <Icon icon="lucide:map-pin" class="h-4 w-4" />
                 اختر على الخريطة
               </Button>
             </div>
@@ -293,14 +293,14 @@
             <div
               v-for="(contract, contractIndex) in form.contracts"
               :key="contractIndex"
-              class="p-4 border rounded-lg dark:border-gray-700 dark:bg-gray-800"
+              class="rounded-lg border p-4 dark:border-gray-700 dark:bg-gray-800"
             >
-              <div class="flex items-center justify-between mb-4">
+              <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-medium dark:text-gray-100">
                   {{ contract.name ? contract.name : `عقد رقم ${contractIndex + 1}` }}
                 </h3>
                 <Button variant="destructive" size="sm" @click="removeContract(contractIndex)">
-                  <Icon icon="lucide:x" class="w-4 h-4" />
+                  <Icon icon="lucide:x" class="h-4 w-4" />
                 </Button>
               </div>
 
@@ -343,7 +343,7 @@
               </div>
 
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-4">
+                <div class="mb-4 flex items-center justify-between">
                   <h4 class="font-medium dark:text-gray-100">الاجراءات التنفيذية</h4>
                 </div>
 
@@ -351,9 +351,9 @@
                   <div
                     v-for="(procedure, procedureIndex) in contract.procedures"
                     :key="procedureIndex"
-                    class="p-4 border rounded-lg bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+                    class="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
                   >
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="mb-4 flex items-center justify-between">
                       <h5 class="font-medium">الاجراء التنفيذي رقم {{ procedureIndex + 1 }}</h5>
                       <Button
                         variant="destructive"
@@ -421,19 +421,19 @@
                         />
                       </FormField>
                       <FormField label="نسبة الانجاز الفني الفعلي">
-                          <NumberInput
-                            v-model="procedure.actualCompletionPercentage"
-                            placeholder="ادخل النسبة"
-                            unit="%"
-                          />
+                        <NumberInput
+                          v-model="procedure.actualCompletionPercentage"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
                       </FormField>
 
                       <FormField label="نسبة الانحراف الفني">
-                          <NumberInput
-                            v-model="procedure.technicalDeviation"
-                            placeholder="ادخل النسبة"
-                            unit="%"
-                          />
+                        <NumberInput
+                          v-model="procedure.technicalDeviation"
+                          placeholder="ادخل النسبة"
+                          unit="%"
+                        />
                       </FormField>
 
                       <FormField label="نسبة الانجاز الفني المخطط المحسوب">
@@ -543,7 +543,7 @@
                   </div>
                 </div>
               </div>
-              <div class="flex items-center justify-center w-full mt-4">
+              <div class="mt-4 flex w-full items-center justify-center">
                 <PrimaryButton
                   variant="secondary"
                   @click="addExecutionProcedure(contractIndex)"
@@ -558,15 +558,15 @@
             >
           </div>
         </FormSection>
-        <div class="sticky left-0 right-0 mt-6 bottom-6">
-          <div class="max-w-6xl px-6 mx-auto">
+        <div class="sticky bottom-6 left-0 right-0 mt-6">
+          <div class="mx-auto max-w-6xl px-6">
             <Button
               @click="saveProject"
-              class="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
+              class="h-12 w-full bg-slate-700 text-lg hover:bg-slate-800 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-700"
               :disabled="isSaving"
             >
-              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 ml-2 animate-spin" />
-              <Icon v-else icon="lucide:plus" class="w-4 h-4 ml-2" />
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="ml-2 h-4 w-4 animate-spin" />
+              <Icon v-else icon="lucide:plus" class="ml-2 h-4 w-4" />
               {{ isSaving ? 'جاري الحفظ...' : 'اضافة المشروع' }}
             </Button>
           </div>
@@ -592,7 +592,6 @@
   import InputWithAddButton from '@/components/InputWithAddButton.vue';
   import LocationPicker from '@/components/LocationPicker.vue';
   import NumberInput from '@/components/NumberInput.vue';
-  import PremiumMask from '@/components/PremiumMask.vue';
   import PremiumModal from '@/components/PremiumModal.vue';
   import PrimaryButton from '@/components/PrimaryButton.vue';
   import { Label } from '@/components/ui/label';
@@ -843,8 +842,21 @@
         description: 'تم حفظ جميع بيانات المشروع والعقود والاجراءات',
       });
 
-      // Navigate to the projects list after successful save
-      router.push('/projects');
+      // Navigate to done page after successful save
+      router.push({
+        path: '/done',
+        query: {
+          title: 'تم حفظ المشروع بنجاح',
+          message: `تم حفظ المشروع "${form.value.projectName}" بنجاح`,
+          from: 'devlopment',
+          projectDetails: JSON.stringify({
+            id: projectResponse.data.id,
+            name: form.value.projectName,
+            executingDepartment: form.value.plan,
+            contracts: form.value.contracts,
+          }),
+        },
+      });
     } catch (error) {
       console.error('Error saving project:', error);
       let errorMessage = 'يرجى المحاولة مرة أخرى';

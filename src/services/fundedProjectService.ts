@@ -21,7 +21,7 @@ class FundedProjectService {
     return response.data;
   }
 
-  async getProjectById(id: number | string): Promise<FundedProject> {
+  async getProjectById(id: string): Promise<FundedProject> {
     const response = await axiosInstance.get(`/funded/${id}`);
     return response.data;
   }
@@ -40,7 +40,7 @@ class FundedProjectService {
   }
 
   async deleteProject(id: number | string): Promise<void> {
-    await axiosInstance.delete(`/funded/${id}`);
+    await axiosInstance.delete(`/funded`, { params: { pId: id } });
   }
 
   // Component CRUD Operations

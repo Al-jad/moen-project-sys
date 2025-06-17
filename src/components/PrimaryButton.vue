@@ -13,7 +13,7 @@
       variant === 'secondary' && 'bg-secondary hover:bg-secondary/90',
       variant === 'ghost' && 'bg-transparent text-primary hover:bg-primary/10 hover:text-primary',
       variant === 'lock' &&
-        'border border-destructive/50 bg-destructive/40 hover:bg-destructive/20',
+        'border border-destructive/50 bg-destructive/40 hover:bg-destructive/20 hover:text-white',
       variant === 'delete' &&
         'border-none bg-destructive/10 px-2 text-destructive shadow-none hover:bg-destructive/40 hover:text-destructive hover:underline',
     ]"

@@ -493,6 +493,7 @@
             query: {
               title: 'تم حفظ المشروع بنجاح',
               message: `تم حفظ المشروع "${store.form.name}" بنجاح`,
+              from: 'funded',
               projectDetails: JSON.stringify({
                 id: savedProject.id,
                 name: savedProject.name,

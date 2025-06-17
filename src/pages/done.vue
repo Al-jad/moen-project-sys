@@ -26,65 +26,22 @@
             </p>
           </div>
 
-          <!-- Project Details -->
-          <div v-if="projectDetails" class="divide-y dark:divide-gray-700">
-            <div class="p-4">
-              <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
-                  <div
-                    class="flex h-full w-full items-center justify-center text-lg font-semibold text-blue-600 dark:text-blue-400"
-                  >
-                    {{ projectDetails.id }}
-                  </div>
-                </div>
-                <div>
-                  <h3 class="font-medium text-gray-900 dark:text-gray-100">
-                    {{ projectDetails.name }}
-                  </h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ projectDetails.executingDepartment }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- <div class="grid grid-cols-2 divide-x dark:divide-gray-700">
-              <div class="p-4 text-center">
-                <div class="text-sm text-gray-500 dark:text-gray-400">المكونات</div>
-                <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {{ projectDetails.components?.length || 0 }}
-                </div>
-              </div>
-              <div class="p-4 text-center">
-                <div class="text-sm text-gray-500 dark:text-gray-400">الفعاليات</div>
-                <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {{ getTotalActivities(projectDetails) }}
-                </div>
-              </div>
-            </div> -->
-          </div>
-
           <!-- Actions -->
           <div class="flex items-center justify-between gap-4 border-t p-4 dark:border-gray-700">
-            <!-- Show single action button if coming from add project -->
+            <!-- Show project details button if project info exists -->
             <div v-if="projectDetails?.id" class="w-full">
-              <RouterLink :to="`/funded-projects/${projectDetails.id}`">
-                <Button
-                  class="w-full bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-700"
-                >
-                  <Icon icon="lucide:eye" class="ml-2 h-4 w-4" />
+              <RouterLink :to="getProjectDetailsRoute">
+                <PrimaryButton variant="primary" icon="lucide:eye">
                   عرض تفاصيل المشروع
-                </Button>
+                </PrimaryButton>
               </RouterLink>
             </div>
 
-            <!-- Show back button only if not coming from add project -->
-            <div v-else class="w-full">
-              <RouterLink to="/funded-projects">
-                <Button variant="outline" class="w-full">
-                  <Icon icon="lucide:arrow-right" class="ml-2 h-4 w-4" />
+            <div class="w-full">
+              <RouterLink :to="getProjectsListRoute">
+                <PrimaryButton variant="outline" class="w-full" icon="lucide:arrow-right">
                   العودة للمشاريع
-                </Button>
+                </PrimaryButton>
               </RouterLink>
             </div>
           </div>
@@ -94,9 +51,11 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
+  import PrimaryButton from '@/components/PrimaryButton.vue';
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import { Icon } from '@iconify/vue';
+  import { computed } from 'vue';
   import { RouterLink, useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -104,10 +63,35 @@
   // Get props from router
   const title = route.params.title || route.query.title;
   const message = route.params.message || route.query.message;
-  const projectDetails = route.params.projectDetails || route.query.projectDetails;
+  const projectDetails = computed(() => {
+    const details = route.query.projectDetails;
+    if (typeof details === 'string') {
+      try {
+        return JSON.parse(details);
+      } catch (e) {
+        console.error('Error parsing project details:', e);
+        return null;
+      }
+    }
+    return null;
+  });
 
-  const getTotalActivities = (project) => {
-    if (!project?.components) return 0;
-    return project.components.reduce((total, comp) => total + (comp.activities?.length || 0), 0);
-  };
+  // Determine project type and generate appropriate routes
+  const projectType = computed(() => {
+    const referrer = route.query.from as string;
+    if (referrer?.includes('funded')) return 'funded';
+    if (referrer?.includes('devlopment') || referrer?.includes('regional')) return 'regional';
+    return 'funded'; // Default to funded if no type specified
+  });
+
+  const getProjectDetailsRoute = computed(() => {
+    if (!projectDetails.value?.id) return '/';
+    return projectType.value === 'funded'
+      ? `/funded-projects/${projectDetails.value.id}`
+      : `/regional-projects/${projectDetails.value.id}`;
+  });
+
+  const getProjectsListRoute = computed(() => {
+    return projectType.value === 'funded' ? '/funded-projects' : '/regional-projects';
+  });
 </script>

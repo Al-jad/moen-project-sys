@@ -623,6 +623,7 @@
   import DefaultLayout from '@/layouts/DefaultLayout.vue';
   import axiosInstance, { API_CONFIG, fileUploadInstance } from '@/plugins/axios';
   import { fundedProjectService } from '@/services/fundedProjectService';
+  import { useBeneficiaryStore } from '@/stores/beneficiary-store';
   import { Icon } from '@iconify/vue';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -664,7 +665,7 @@
     isLoading.value = true;
     error.value = null;
     try {
-      const response = await fundedProjectService.getProjectById(Number(route.params.id));
+      const response = await fundedProjectService.getProjectById(route.params.id);
       project.value = response;
 
       // Initialize editForm with current project data
@@ -985,7 +986,7 @@
   const confirmDeleteProject = async () => {
     isDeleting.value = true;
     try {
-      await axiosInstance.delete(`/api/Project/${project.value.id}`);
+      await fundedProjectService.deleteProject(project.value.id);
       toast.success('تم حذف المشروع بنجاح');
       router.push('/funded-projects');
     } catch (error) {
@@ -1287,16 +1288,18 @@
   };
 
   // Add this near the top of your script setup
-  const beneficiaryOptions = ref([]);
+  const beneficiaryStore = useBeneficiaryStore();
+  const beneficiaryOptions = computed(() => {
+    return beneficiaryStore.getAllBeneficiaries.map((beneficiary) => ({
+      value: beneficiary.id,
+      label: beneficiary.name,
+    }));
+  });
 
-  // Fetch beneficiary options
+  // Replace fetchBeneficiaryOptions with this
   const fetchBeneficiaryOptions = async () => {
     try {
-      const response = await axiosInstance.get('/api/Beneficiary');
-      beneficiaryOptions.value = response.data.map((beneficiary) => ({
-        value: beneficiary.id,
-        label: beneficiary.name,
-      }));
+      await beneficiaryStore.fetchBeneficiaries();
     } catch (error) {
       console.error('Error fetching beneficiary options:', error);
       toast.error('حدث خطأ في تحميل الجهات المستفيدة');
