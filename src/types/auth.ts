@@ -31,7 +31,7 @@ export interface UpdateUserRequest extends Partial<Omit<CreateUserRequest, 'pass
 }
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 

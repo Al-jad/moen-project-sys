@@ -33,7 +33,9 @@ class BeneficiaryService {
   }
 
   async deleteBeneficiary(id: string): ServiceResponse<void> {
-    const response = await axiosInstance.delete(`/beneficiaries/${id}`);
+    const response = await axiosInstance.delete(
+      `https://moenapi.idara-iq.com/beneficiaries?beneficiaryId=${id}`
+    );
     return response;
   }
 

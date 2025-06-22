@@ -4,17 +4,17 @@ import type { CreateUserPayload, UpdateUserPayload, User } from '@/types/users';
 
 // User CRUD Operations
 async function getAllUsers(): ServiceResponse<User[]> {
-  const response = await axiosInstance.get('/api/Auth/users');
+  const response = await axiosInstance.get('/users');
   return response;
 }
 
 async function getUserById(id: number): ServiceResponse<User> {
-  const response = await axiosInstance.get(`/api/Auth/users/${id}`);
+  const response = await axiosInstance.get(`/users/${id}`);
   return response;
 }
 
 async function createUser(userData: CreateUserPayload): ServiceResponse<User> {
-  const response = await axiosInstance.post('/api/Auth/users', userData);
+  const response = await axiosInstance.post('/register', userData);
   return response;
 }
 
@@ -24,7 +24,7 @@ async function updateUser(id: number, userData: UpdateUserPayload): ServiceRespo
 }
 
 async function deleteUser(id: number): ServiceResponse<void> {
-  const response = await axiosInstance.delete(`/api/Auth/users/${id}`);
+  const response = await axiosInstance.delete(`/users/${id}`);
   return response;
 }
 

@@ -111,13 +111,15 @@
     errorMessage.value = '';
     try {
       const credentials: LoginRequest = {
-        username: username.value,
+        email: username.value,
         password: password.value,
       };
       const response = await authService.login(credentials);
-      const { user, tokens } = response.data;
-      if (user && tokens.access) {
-        await Promise.all([authStore.setUser(user), authStore.setToken(tokens.access)]);
+      const token =
+        typeof response.data === 'string' ? response.data : response.data.tokens?.access;
+
+      if (token) {
+        await Promise.all([authStore.setToken(token)]);
         showSuccess('تم تسجيل الدخول بنجاح', 'مرحباً بك في النظام');
         try {
           const redirectPath = route.query.redirect
